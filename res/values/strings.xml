@@ -10,4 +10,6 @@
     </string>
     <string name="status_explaination_merged">Change has been merged to its branch.</string>
     <string name="status_explaination_abandoned">Change was abandoned by its owner or administrator.</string>
+    <string name="view_in_browser">View in Browser</string>
+    <string name="moar_info">Moar Info!</string>
 </resources>

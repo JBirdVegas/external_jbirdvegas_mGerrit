@@ -4,11 +4,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <!-- TODO remove non localized text placeholders -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="project name"
         android:id="@+id/commit_card_project_name"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
@@ -17,7 +15,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="commit author"
         android:id="@+id/commit_card_commit_owner"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/commit_card_project_name"
@@ -26,7 +23,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="commit status"
         android:id="@+id/commit_card_commit_status"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/commit_card_commit_owner"
@@ -35,7 +31,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="title"
         android:id="@+id/commit_card_title"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/commit_card_commit_status"/>
@@ -43,8 +38,53 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="commit last update"
         android:id="@+id/commit_card_last_updated"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/commit_card_title"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="message"
+        android:id="@+id/commit_card_message"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/commit_card_last_updated"
+        android:paddingTop="10dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Changed Files List\nChanged\nChanged"
+        android:id="@+id/commit_card_changed_files"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/commit_card_message"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/commit_card_changed_files"
+        android:weightSum="10">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/view_in_browser"
+            android:id="@+id/commit_card_view_in_browser"
+            android:layout_marginTop="20dp"
+            android:layout_weight="5"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/moar_info"
+            android:id="@+id/commit_card_moar_info"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="5"/>
+        <!--android:textAppearance="@color/card_light_text"-->
+    </LinearLayout>
 </RelativeLayout>

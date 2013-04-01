@@ -2,7 +2,6 @@ package com.aokp.gerrit.tasks;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import com.aokp.gerrit.CardsActivity;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -36,7 +35,7 @@ public abstract class GerritTask extends AsyncTask<String, Void, String> {
         BufferedReader inPost = null;
         try {
             DefaultHttpClient httpclient = new DefaultHttpClient();
-            HttpGet httpost = new HttpGet(CardsActivity.GERRIT_WEBADDRESS + strings[0]);
+            HttpGet httpost = new HttpGet(strings[0] + strings[1]);
             httpost.setHeader("Accept-Type", "application/json");
             HttpResponse response = httpclient.execute(httpost);
             HttpEntity entity = response.getEntity();
