@@ -90,7 +90,13 @@ public class JSONCommit {
             mStatus = Status.valueOf(object.getString(KEY_STATUS));
             mCreatedDate = object.getString(KEY_CREATED);
             mLastUpdatedDate = object.getString(KEY_UPDATED);
-            mIsMergeable = object.getBoolean(KEY_MERGEABLE);
+            try {
+                mIsMergeable = object.getBoolean(KEY_MERGEABLE);
+            } catch (JSONException ignored) {
+                // object is either Abandoned or Merged
+                // ignore and move on
+                mIsMergeable = false;
+            }
             mSortKey = object.getString(KEY_SORT_KEY);
             mCommitNumber = object.getInt(KEY_COMMIT_NUMBER);
             mOwner = getOwnerName(object.getJSONObject(KEY_OWNER));
