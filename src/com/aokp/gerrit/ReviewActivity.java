@@ -1,6 +1,6 @@
 package com.aokp.gerrit;
 
-import android.app.Activity;
+import com.aokp.gerrit.objects.JSONCommit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -8,5 +8,9 @@ import android.app.Activity;
  * Date: 3/31/13
  * Time: 12:45 PM
  */
-public class ReviewActivity extends Activity {
+public class ReviewActivity extends CardsActivity {
+    @Override
+    String getQuery() {
+        return JSONCommit.KEY_STATUS_OPEN;
+    }
 }

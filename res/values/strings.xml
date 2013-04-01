@@ -4,4 +4,10 @@
     <string name="reviewable">Review</string>
     <string name="merged">Merged</string>
     <string name="abandoned">Abandoned</string>
+    <string name="status_explaination_new">Change is still being reviewed.</string>
+    <string name="status_explaination_submitted">Change has been submitted and is in the merge queue. It may be waiting
+        for one or more dependencies.
+    </string>
+    <string name="status_explaination_merged">Change has been merged to its branch.</string>
+    <string name="status_explaination_abandoned">Change was abandoned by its owner or administrator.</string>
 </resources>

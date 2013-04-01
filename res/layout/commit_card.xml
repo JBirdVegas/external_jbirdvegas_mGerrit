@@ -4,27 +4,47 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+    <!-- TODO remove non localized text placeholders -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView1"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_below="@+id/textView"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView2"
+        android:text="project name"
+        android:id="@+id/commit_card_project_name"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/textView1"/>
+        android:layout_alignParentTop="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="commit author"
+        android:id="@+id/commit_card_commit_owner"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/commit_card_project_name"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="commit status"
+        android:id="@+id/commit_card_commit_status"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/commit_card_commit_owner"
+        android:paddingBottom="@dimen/commit_card_padding"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="title"
+        android:id="@+id/commit_card_title"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/commit_card_commit_status"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="commit last update"
+        android:id="@+id/commit_card_last_updated"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/commit_card_title"/>
 </RelativeLayout>
