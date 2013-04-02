@@ -2,6 +2,7 @@ package com.fima.cardsui.views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -75,7 +76,7 @@ public class CardUI extends FrameLayout {
     public CardUI(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         //read the number of columns from the attributes
-        mColumnNumber = attrs.getAttributeIntValue(null, "columnCount", 1);
+        grabStyledContent(context, attrs);
         initData(context);
     }
 
@@ -85,7 +86,7 @@ public class CardUI extends FrameLayout {
     public CardUI(Context context, AttributeSet attrs) {
         super(context, attrs);
         //read the number of columns from the attributes
-        mColumnNumber = attrs.getAttributeIntValue(null, "columnCount", 1);
+        grabStyledContent(context, attrs);
         initData(context);
     }
 
@@ -97,10 +98,29 @@ public class CardUI extends FrameLayout {
         initData(context);
     }
 
+    /**
+     * Handles setting field values from xml content
+     *
+     * @param context callers context to get attributes
+     * @param attributeSet xml attributes provided by the system
+     *                     to the default constructors
+     */
+    private final void grabStyledContent(Context context, AttributeSet attributeSet) {
+        TypedArray typedArray = null;
+        try {
+            typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.CardUI, 0, 0);
+            mColumnNumber = typedArray.getInt(R.styleable.CardUI_columnCount, 1);
+        } finally {
+            if (typedArray != null) {
+                typedArray.recycle();
+            }
+        }
+    }
+
     private void initData(Context context) {
         mContext = context;
         LayoutInflater inflater = LayoutInflater.from(context);
-        mStacks = new ArrayList<AbstractCard>();
+        mStacks = new ArrayList<AbstractCard>(0);
         //inflate a different layout, depending on the number of columns
         if (mColumnNumber == 1) {
             inflater.inflate(R.layout.cards_view, this);
@@ -124,14 +144,11 @@ public class CardUI extends FrameLayout {
     }
 
     public void setHeader(View header) {
-
         mPlaceholderView.setVisibility(View.VISIBLE);
-
         mListView.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-
                         mQuickReturnHeight = mQuickReturnView.getHeight();
                         mListView.computeScrollY();
                         mCachedVerticalScrollRange = mListView.getListHeight();
