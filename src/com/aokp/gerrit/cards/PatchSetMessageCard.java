@@ -9,11 +9,11 @@ import com.fima.cardsui.objects.Card;
  * User: jbird
  * Date: 4/3/13
  * Time: 3:46 PM
- * To change this template use File | Settings | File Templates.
  */
 public class PatchSetMessageCard extends Card {
     @Override
     public View getCardContent(Context context) {
+
         /*
         --Message Card--
         Commit subject
