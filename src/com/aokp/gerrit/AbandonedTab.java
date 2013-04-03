@@ -1,6 +1,5 @@
 package com.aokp.gerrit;
 
-
 import com.aokp.gerrit.objects.JSONCommit;
 
 /**
@@ -9,11 +8,9 @@ import com.aokp.gerrit.objects.JSONCommit;
  * Date: 3/31/13
  * Time: 12:52 PM
  */
-public class MergedActivity extends CardsActivity {
-    private static final String TAG = MergedActivity.class.getSimpleName();
-
+public class AbandonedTab extends CardsActivity {
     @Override
     String getQuery() {
-        return JSONCommit.KEY_STATUS_MERGED;
+        return JSONCommit.KEY_STATUS_ABANDONED;
     }
 }

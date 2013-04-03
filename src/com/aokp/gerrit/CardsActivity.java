@@ -3,7 +3,7 @@ package com.aokp.gerrit;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import com.aokp.gerrit.objects.CommitCard;
+import com.aokp.gerrit.cards.CommitCard;
 import com.aokp.gerrit.objects.JSONCommit;
 import com.aokp.gerrit.tasks.GerritTask;
 import com.fima.cardsui.objects.CardStack;
@@ -22,9 +22,10 @@ import java.util.List;
  * Time: 2:07 AM
  */
 public abstract class CardsActivity extends Activity {
-    public static final String GERRIT_BASE = "http://gerrit.sudoservers.com/changes/?q=";
+    public static final String GERRIT = "http://gerrit.sudoservers.com/";
+    public static final String GERRIT_BASE = GERRIT + "changes/?q=";
     protected String TAG = getClass().getSimpleName();
-    public static String GERRIT_WEBADDRESS = "http://gerrit.sudoservers.com/changes/?q=status:";
+    public static String GERRIT_WEBADDRESS = GERRIT + "changes/?q=status:";
 
     // draws a stack of cards
     protected void drawCardsFromListToStack(List<CommitCard> cards, final CardUI cardUI) {
@@ -37,6 +38,13 @@ public abstract class CardsActivity extends Activity {
         cardUI.refresh();
     }
 
+    /**
+     * TODO: remove
+     * @param cardUI
+     * @param card
+     * @param json
+     */
+    @Deprecated
     private void redrawCard(CardUI cardUI, CommitCard card, String json) {
         try {
             card.update(new JSONCommit(new JSONObject(json)));
@@ -90,5 +98,9 @@ public abstract class CardsActivity extends Activity {
         gerritTask.execute(GERRIT_WEBADDRESS, getQuery());
     }
 
+    /**
+     * Each tab provides its own query for ?p=status:[open:merged:abandoned]
+     * @return
+     */
     abstract String getQuery();
 }

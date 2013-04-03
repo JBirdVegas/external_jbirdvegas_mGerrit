@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.widget.TabHost;
 
 public class GerritControllerActivity extends TabActivity {
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -15,7 +14,7 @@ public class GerritControllerActivity extends TabActivity {
         // Setup tabs //
         TabHost host = getTabHost();
         // Review tab
-        Intent intentReview = new Intent().setClass(this, ReviewActivity.class);
+        Intent intentReview = new Intent().setClass(this, ReviewTab.class);
         TabHost.TabSpec tabSpecReview = host
                 .newTabSpec(getString(R.string.reviewable))
                 .setContent(intentReview)
@@ -23,7 +22,7 @@ public class GerritControllerActivity extends TabActivity {
         host.addTab(tabSpecReview);
 
         // Merged tab
-        Intent intentMerged = new Intent().setClass(this, MergedActivity.class);
+        Intent intentMerged = new Intent().setClass(this, MergedTab.class);
         TabHost.TabSpec tabSpecMerged = host
                 .newTabSpec(getString(R.string.merged))
                 .setContent(intentMerged)
@@ -31,7 +30,7 @@ public class GerritControllerActivity extends TabActivity {
         host.addTab(tabSpecMerged);
 
         // Abandon tab
-        Intent intentAbandon = new Intent().setClass(this, AbandonedActivity.class);
+        Intent intentAbandon = new Intent().setClass(this, AbandonedTab.class);
         TabHost.TabSpec tabSpecAbandon = host
                 .newTabSpec(getString(R.string.abandoned))
                 .setContent(intentAbandon)

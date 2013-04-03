@@ -1,24 +1,47 @@
-package com.aokp.gerrit.objects;
+package com.aokp.gerrit;
 
 import android.app.Activity;
 import android.os.Bundle;
-import com.aokp.gerrit.R;
+import android.util.Log;
+import com.aokp.gerrit.objects.JSONCommit;
 import com.fima.cardsui.views.CardUI;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created with IntelliJ IDEA.
  * User: jbird
  * Date: 4/2/13
  * Time: 5:30 PM
+ *
+ * Class handles populating the screen with several
+ * cards each giving more information about the patchset
+ *
+ * All cards are located at aokp.gerrit.cards.*
  */
-public class PatchSetView extends Activity {
+public class PatchSetViewerActivity extends Activity {
+    private static final String TAG = PatchSetViewerActivity.class.getSimpleName();
+
     private CardUI mCardsUI;
+    private JSONObject mChangeInfo;
+    private JSONCommit mPatchsetInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.commit_list);
         mCardsUI = (CardUI) findViewById(R.id.commit_cards);
+
+        try {
+            mChangeInfo = new JSONObject(savedInstanceState.getString(JSONCommit.KEY_JSON_COMMIT));
+            mPatchsetInfo = new JSONCommit(new JSONObject(savedInstanceState.getString(JSONCommit.KEY_PATCHSET_IN_JSON)));
+        } catch (JSONException e) {
+            // should never happen
+            Log.wtf(TAG, "failed to parse PatchSet details", e);
+        }
+    }
+
+    private void addCards() {
 
     }
 

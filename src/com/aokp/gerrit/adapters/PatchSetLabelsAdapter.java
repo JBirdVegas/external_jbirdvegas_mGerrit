@@ -1,0 +1,59 @@
+package com.aokp.gerrit.adapters;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+import com.aokp.gerrit.R;
+import com.aokp.gerrit.objects.Reviewer;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class PatchSetLabelsAdapter extends ArrayAdapter<Reviewer> {
+    private final Context context;
+    private final List<Reviewer> values;
+
+    public PatchSetLabelsAdapter(Context context, ArrayList<Reviewer> values) {
+        super(context, R.layout.patchset_labels_card, values);
+        this.context = context;
+        this.values = values;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View rowView = inflater.inflate(R.layout.patchset_labels_list_item, parent, false);
+        TextView approval = (TextView) rowView.findViewById(R.id.labels_card_approval);
+        TextView name = (TextView) rowView.findViewById(R.id.labels_card_reviewer_name);
+        Reviewer reviewer = values.get(position);
+        if (reviewer.getValue() != null) {
+            setColoredApproval(reviewer.getValue(), approval);
+        }
+        name.setText(reviewer.getName());
+        return rowView;
+    }
+
+    private void setColoredApproval(String value, TextView approval) {
+        int plusStatus = 0;
+        try {
+            plusStatus = Integer.parseInt(value);
+            if (plusStatus >= 1) {
+                approval.setText(value);
+                approval.setTextColor(Color.GREEN);
+            } else if (plusStatus <= -1) {
+                approval.setText(value);
+                approval.setTextColor(Color.RED);
+            } else {
+                approval.setText(Reviewer.NO_SCORE);
+            }
+        } catch (NumberFormatException nfe) {
+            // ignore
+        }
+    }
+} 

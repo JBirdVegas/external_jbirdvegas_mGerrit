@@ -1,4 +1,4 @@
-package com.aokp.gerrit.objects;
+package com.aokp.gerrit.cards;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import com.aokp.gerrit.CardsActivity;
+import com.aokp.gerrit.PatchSetViewerActivity;
 import com.aokp.gerrit.R;
+import com.aokp.gerrit.objects.JSONCommit;
 import com.aokp.gerrit.tasks.GerritTask;
 import com.fima.cardsui.objects.Card;
 
@@ -47,12 +49,22 @@ public class CommitCard extends Card {
             public void onClick(View view) {
                 GerritTask task = new GerritTask() {
                     @Override
-                    protected void onPostExecute(String s) {
-                        // not a good idea :-?
-                        getCardContent(context);
+                    protected void onPostExecute(String returnedJSON) {
+                        Intent patchsetViewer = new Intent(context, PatchSetViewerActivity.class);
+                        patchsetViewer.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        // pass all information about the current patchset from our direct query
+                        patchsetViewer.putExtra(JSONCommit.KEY_PATCHSET_IN_JSON, returnedJSON);
+                        // pass json original card was formed with
+                        // TODO remove? we pass the json not the object
+                        // allowing destination to handle object creation
+                        patchsetViewer.putExtra(JSONCommit.KEY_JSON_COMMIT,
+                                mCommit.getRawJSONCommit().toString());
+                        // so our extras don't get recycled
+                        patchsetViewer.setAction(JSONCommit.KEY_FOOBAR);
+                        context.startActivity(patchsetViewer);
                     }
                 };
-                task.execute(CardsActivity.GERRIT_BASE + mCommit.getCommitNumber() + "&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES");
+                task.execute(CardsActivity.GERRIT + "changes/" + mCommit.getId() + "/details");
             }
         });
         browserView.setOnClickListener(new View.OnClickListener() {
@@ -88,5 +100,9 @@ public class CommitCard extends Card {
 
     public int getNumber() {
         return mCommit.getCommitNumber();
+    }
+
+    public JSONCommit getJSONCommit() {
+        return this.mCommit;
     }
 }

@@ -19,9 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ReviewActivity"/>
-        <activity android:name=".MergedActivity"/>
-        <activity android:name=".AbandonedActivity"/>
+        <activity android:name=".ReviewTab"/>
+        <activity android:name=".MergedTab"/>
+        <activity android:name=".AbandonedTab"/>
+        <activity android:name=".PatchSetViewerActivity"/>
 
     </application>
 </manifest>

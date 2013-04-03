@@ -19,9 +19,21 @@ import java.util.List;
 public class JSONCommit {
     private static final String TAG = JSONCommit.class.getSimpleName();
 
+    // public
+    public static final String KEY_FOOBAR = "foobar";
     public static final String KEY_STATUS_OPEN = "open";
     public static final String KEY_STATUS_MERGED = "merged";
     public static final String KEY_STATUS_ABANDONED = "abandoned";
+    public static final String KEY_JSON_COMMIT = "json_commit";
+    public static final String KEY_PATCHSET_IN_JSON = "patchset_json";
+    // used to query commit message
+    public static final String CURRENT_PATCHSET_ARGS
+        = "&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES";
+    public static final String KEY_INSERTED = "lines_inserted";
+    public static final String KEY_DELETED = "lines_deleted";
+    public static final String KEY_STATUS = "status";
+
+    // internal
     private static final String KEY_KIND = "kind";
     private static final String KEY_ID = "id";
     private static final String KEY_PROJECT = "project";
@@ -29,7 +41,6 @@ public class JSONCommit {
     private static final String KEY_CHANGE_ID = "change_id";
     private static final String KEY_SUBJECT = "subject";
     private static final String KEY_MESSAGE = "message";
-    private static final String KEY_STATUS = "status";
     private static final String KEY_CREATED = "created";
     private static final String KEY_UPDATED = "updated";
     private static final String KEY_MERGEABLE = "mergeable";
@@ -40,8 +51,27 @@ public class JSONCommit {
     private static final String KEY_CURRENT_REVISION = "current_revision";
     private static final String KEY_COMMITTER = "committer";
     private static final String KEY_CHANGED_FILES = "files";
-    private static final String KEY_INSERTED = "lines_inserted";
-    private static final String KEY_DELETED = "lines_deleted";
+    private static final String KEY_LABELS = "labels";
+    private static final String KEY_VERIFIED = "Verified";
+    private static final String KEY_CODE_REVIEW = "Code-Review";
+    private static final String KEY_RECOMMENDED = "recommended";
+    private static final String KEY_DISLIKED = "disliked";
+    private static final String KEY_ALL = "all";
+    private static final String KEY_VALUE = "value";
+    private static final String KEY_ACCOUNT_ID = "_account_id";
+    private static final String KEY_EMAIL = "email";
+
+    public JSONObject getRawJSONCommit() {
+        return mRawJSONCommit;
+    }
+
+    public List<Reviewer> getVerifiedReviewers() {
+        return mVerifiedReviewers;
+    }
+
+    public List<Reviewer> getCodeReviewers() {
+        return mCodeReviewers;
+    }
 
     public enum Status {
         NEW {
@@ -119,6 +149,14 @@ public class JSONCommit {
                 // we only have these fields if we directly queried
                 // gerrit for this changeset
             }
+            // handle labels
+            try {
+                JSONObject labels = object.getJSONObject(KEY_LABELS);
+                mVerifiedReviewers = getReviewers(labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
+                mCodeReviewers = getReviewers(labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
+            } catch (JSONException ignored) {
+                // we didn't directly query the patch set
+            }
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse JSONObject into useful data", e);
         }
@@ -143,20 +181,8 @@ public class JSONCommit {
     private String mMessage;
     private List<ChangedFile> mChangedFiles;
     private String mWebAddress;
-
-    class ChangedFile {
-        public String path;
-        public String status;
-        public int inserted;
-        public int deleted;
-        public ChangedFile parseFromJSONObject(String path, JSONObject object) throws JSONException {
-            this.path = path;
-            this.status = object.getString(KEY_STATUS);
-            this.inserted = object.getInt(KEY_INSERTED);
-            this.deleted = object.getInt(KEY_DELETED);
-            return this;
-        }
-    }
+    private List<Reviewer> mVerifiedReviewers;
+    private List<Reviewer> mCodeReviewers;
 
     private List<ChangedFile> getChangedFilesSet(JSONObject filesObject){
         List<ChangedFile> list = new LinkedList<ChangedFile>();
@@ -167,6 +193,21 @@ public class JSONCommit {
                 list.add(new ChangedFile().parseFromJSONObject(path, filesObject.getJSONObject(path)));
             } catch (JSONException e) {
                 Log.e(TAG, "Failed to parse jsonObject", e);
+            }
+        }
+        return list;
+    }
+
+    private List<Reviewer> getReviewers(JSONArray jsonArray) throws JSONException {
+        List<Reviewer> list = new LinkedList<Reviewer>();
+        for (int i = 0; jsonArray.length() > i; i++) {
+            JSONObject object = jsonArray.getJSONObject(i);
+            try {
+                list.add(new Reviewer(null,
+                        object.getString(KEY_NAME)));
+            } catch (JSONException je) {
+                list.add(new Reviewer(null,
+                        object.getString(KEY_NAME)));
             }
         }
         return list;

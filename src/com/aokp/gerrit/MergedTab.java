@@ -1,16 +1,19 @@
 package com.aokp.gerrit;
 
+
 import com.aokp.gerrit.objects.JSONCommit;
 
 /**
  * Created with IntelliJ IDEA.
  * User: jbird
  * Date: 3/31/13
- * Time: 12:45 PM
+ * Time: 12:52 PM
  */
-public class ReviewActivity extends CardsActivity {
+public class MergedTab extends CardsActivity {
+    private static final String TAG = MergedTab.class.getSimpleName();
+
     @Override
     String getQuery() {
-        return JSONCommit.KEY_STATUS_OPEN;
+        return JSONCommit.KEY_STATUS_MERGED;
     }
 }
