@@ -136,7 +136,7 @@ public class JSONCommit {
             mWebAddress = "http://gerrit.sudoservers.com/#/c/" + mCommitNumber + '/';
             try {
                 mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
-                mMessage = object.getString(KEY_MESSAGE);
+                mMessage = getMessageFromJSON(object, mCurrentRevision);
                 mChangedFiles = getChangedFilesSet(object.getJSONObject(KEY_CHANGED_FILES));
                 mAuthor = getCommitter(mCurrentRevision, KEY_AUTHOR, object);
                 mCommitter = getCommitter(mCurrentRevision, KEY_COMMITTER, object);
@@ -194,6 +194,14 @@ public class JSONCommit {
                 authorObject.getString(KEY_EMAIL),
                 authorObject.getString(KEY_DATE),
                 authorObject.getString(KEY_TIMEZONE));
+    }
+
+    private String getMessageFromJSON(JSONObject mainObject, String currentRevision) throws JSONException {
+        JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
+        JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
+        JSONObject commitObject = revisionObject.getJSONObject(KEY_COMMIT);
+        return commitObject.getString(KEY_MESSAGE);
+
     }
 
     private List<ChangedFile> getChangedFilesSet(JSONObject filesObject){
@@ -323,4 +331,35 @@ public class JSONCommit {
     public CommitterObject getAuthor() {
         return mAuthor;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(0);
+        sb.append("JSONCommit");
+        sb.append("{mRawJSONCommit=").append(mRawJSONCommit);
+        sb.append(", mKind='").append(mKind).append('\'');
+        sb.append(", mId='").append(mId).append('\'');
+        sb.append(", mProject='").append(mProject).append('\'');
+        sb.append(", mBranch='").append(mBranch).append('\'');
+        sb.append(", mChangeId='").append(mChangeId).append('\'');
+        sb.append(", mSubject='").append(mSubject).append('\'');
+        sb.append(", mStatus=").append(mStatus);
+        sb.append(", mCreatedDate='").append(mCreatedDate).append('\'');
+        sb.append(", mLastUpdatedDate='").append(mLastUpdatedDate).append('\'');
+        sb.append(", mIsMergeable=").append(mIsMergeable);
+        sb.append(", mSortKey='").append(mSortKey).append('\'');
+        sb.append(", mCommitNumber=").append(mCommitNumber);
+        sb.append(", mOwner='").append(mOwner).append('\'');
+        sb.append(", mCurrentRevision='").append(mCurrentRevision).append('\'');
+        sb.append(", mAuthor=").append(mAuthor);
+        sb.append(", mCommitter=").append(mCommitter);
+        sb.append(", mMessage='").append(mMessage).append('\'');
+        sb.append(", mChangedFiles=").append(mChangedFiles);
+        sb.append(", mWebAddress='").append(mWebAddress).append('\'');
+        sb.append(", mVerifiedReviewers=").append(mVerifiedReviewers);
+        sb.append(", mCodeReviewers=").append(mCodeReviewers);
+        sb.append('}');
+        return sb.toString();
+    }
+
 }

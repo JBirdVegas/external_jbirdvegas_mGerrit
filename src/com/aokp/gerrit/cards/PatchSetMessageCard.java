@@ -1,6 +1,7 @@
 package com.aokp.gerrit.cards;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import com.fima.cardsui.objects.Card;
  */
 public class PatchSetMessageCard extends Card {
     private final JSONCommit mJSONCommit;
+    private static final String TAG = PatchSetMessageCard.class.getSimpleName();
 
     public PatchSetMessageCard(JSONCommit commit) {
         this.mJSONCommit = commit;
@@ -32,6 +34,7 @@ public class PatchSetMessageCard extends Card {
         Commit message
         ----------------
          */
+        Log.d(TAG, "JSONCommit.toString()::" + mJSONCommit.toString());
         ((TextView) rootView.findViewById(R.id.message_card_subject))
                 .setText(mJSONCommit.getSubject());
         ((TextView) rootView.findViewById(R.id.message_card_last_update))
