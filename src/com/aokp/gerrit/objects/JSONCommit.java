@@ -8,7 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -150,7 +149,7 @@ public class JSONCommit {
                 JSONObject labels = object.getJSONObject(KEY_LABELS);
                 mVerifiedReviewers = getReviewers(
                         labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
-                mCodeReviewers = (ArrayList<Reviewer>) getReviewers(
+                mCodeReviewers = getReviewers(
                         labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
             } catch (JSONException ignored) {
                 // we didn't directly query the patch set
@@ -198,7 +197,7 @@ public class JSONCommit {
     }
 
     private List<ChangedFile> getChangedFilesSet(JSONObject filesObject){
-        List<ChangedFile> list = new LinkedList<ChangedFile>();
+        List<ChangedFile> list = new ArrayList<ChangedFile>(0);
         JSONArray keysArray = filesObject.names();
         for (int i = 0; keysArray.length()> i; i++) {
             try {

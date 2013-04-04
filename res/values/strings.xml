@@ -12,4 +12,6 @@
     <string name="status_explaination_abandoned">Change was abandoned by its owner or administrator.</string>
     <string name="view_in_browser">View in Browser</string>
     <string name="moar_info">Moar Info!</string>
+    <string name="patchset_labels_code_reviewer_title">Code-Reviewers</string>
+    <string name="patchset_labels_verified_reviewer_title">Verified</string>
 </resources>

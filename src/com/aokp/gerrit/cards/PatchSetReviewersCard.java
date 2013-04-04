@@ -24,6 +24,7 @@ public class PatchSetReviewersCard extends Card {
     private static final String TAG = PatchSetLabelsAdapter.class.getSimpleName();
     private JSONCommit mJSONCommit;
     private ListView mReviewersList;
+    private ListView mVerifiedList;
 
     public PatchSetReviewersCard(JSONCommit commit) {
         mJSONCommit = commit;
@@ -42,12 +43,15 @@ public class PatchSetReviewersCard extends Card {
 
         }
         */
-        mReviewersList = (ListView) view.findViewById(R.id.patchset_labels_listview);
+        mReviewersList = (ListView) view.findViewById(R.id.patchset_labels_code_reviewers);
+        mVerifiedList = (ListView) view.findViewById(R.id.patchset_labels_verified_reviewers);
         mReviewersList.setAdapter(new PatchSetLabelsAdapter(context,
                 mJSONCommit.getCodeReviewers()));
+        mVerifiedList.setAdapter(new PatchSetLabelsAdapter(context,
+                mJSONCommit.getVerifiedReviewers()));
         // static import of PatchSetViewerActivity.setListViewHeightBasedOnChildren(ListView)
         // handles setting listview height correctly
-        setListViewHeightBasedOnChildren(mReviewersList);
+        setListViewHeightBasedOnChildren(mReviewersList, mVerifiedList);
         Log.d(TAG, "all code reviewers::" + Arrays.toString(mJSONCommit.getCodeReviewers().toArray()));
         return view;
     }

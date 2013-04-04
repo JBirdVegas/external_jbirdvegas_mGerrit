@@ -36,19 +36,20 @@ public class PatchSetLabelsAdapter extends ArrayAdapter<Reviewer> {
         TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
         Reviewer reviewer = values.get(position);
         Log.d(TAG, "Found Reviewer: " + reviewer.toString() + " at position:" + position + '/' + values.size());
-        if (reviewer.getValue() != null) {
-            setColoredApproval(reviewer.getValue(), approval);
-        }
+        setColoredApproval(reviewer.getValue(), approval);
         name.setText(reviewer.getName());
         return root;
     }
 
     private void setColoredApproval(String value, TextView approval) {
         int plusStatus = 0;
+        if (value == null) {
+            value = "0";
+        }
         try {
             plusStatus = Integer.parseInt(value);
             if (plusStatus >= 1) {
-                approval.setText(value);
+                approval.setText('+' + value);
                 approval.setTextColor(Color.GREEN);
             } else if (plusStatus <= -1) {
                 approval.setText(value);

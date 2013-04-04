@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.aokp.gerrit.R;
 import com.aokp.gerrit.objects.ChangedFile;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,9 +19,9 @@ import java.util.ArrayList;
  */
 public class PatchSetChangedFilesAdapter extends ArrayAdapter<ChangedFile> {
     private final Context mContext;
-    private final ArrayList<ChangedFile> mValues;
+    private final List<ChangedFile> mValues;
 
-    public PatchSetChangedFilesAdapter(Context context, ArrayList<ChangedFile> values) {
+    public PatchSetChangedFilesAdapter(Context context, List<ChangedFile> values) {
         super(context, R.layout.patchset_file_changed_list_item, values);
         this.mContext = context;
         this.mValues = values;

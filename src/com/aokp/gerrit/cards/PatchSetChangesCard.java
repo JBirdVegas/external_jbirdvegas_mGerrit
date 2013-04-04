@@ -37,7 +37,7 @@ public class PatchSetChangesCard extends Card {
         //ListView listView = (ListView) rootView.findViewById(R.id.listView);
         try {
             //listView.setAdapter(new PatchSetChangedFilesAdapter(context,
-            //        (ArrayList<ChangedFile>) mCommit.getChangedFiles()));
+            //        mCommit.getChangedFiles()));
         } catch (NullPointerException npe) {
             Log.d(TAG, "Failed to set ListView Adapter", npe);
         }
