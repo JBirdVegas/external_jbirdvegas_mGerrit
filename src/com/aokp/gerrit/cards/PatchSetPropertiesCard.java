@@ -27,8 +27,13 @@ public class PatchSetPropertiesCard extends Card {
         View rootView = inflater.inflate(R.layout.properties_card, null);
         ((TextView) rootView.findViewById(R.id.prop_card_subject)).setText(mJSONCommit.getSubject());
         ((TextView) rootView.findViewById(R.id.prop_card_owner)).setText(mJSONCommit.getOwner());
-        ((TextView) rootView.findViewById(R.id.prop_card_author)).setText(mJSONCommit.getAuthor().getName());
-        ((TextView) rootView.findViewById(R.id.prop_card_committer)).setText(mJSONCommit.getCommitter().getName());
+        try {
+            ((TextView) rootView.findViewById(R.id.prop_card_author)).setText(mJSONCommit.getAuthor().getName());
+            ((TextView) rootView.findViewById(R.id.prop_card_committer)).setText(mJSONCommit.getCommitter().getName());
+        } catch (NullPointerException npe) {
+            rootView.findViewById(R.id.prop_card_author).setVisibility(View.GONE);
+            rootView.findViewById(R.id.prop_card_committer).setVisibility(View.GONE);
+        }
         /*
         TODO evaluate adding Owner/Author/Committer's email *privacy concerns*
          */

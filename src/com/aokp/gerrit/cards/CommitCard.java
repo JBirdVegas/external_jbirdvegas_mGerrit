@@ -12,7 +12,6 @@ import com.aokp.gerrit.PatchSetViewerActivity;
 import com.aokp.gerrit.R;
 import com.aokp.gerrit.objects.ChangedFile;
 import com.aokp.gerrit.objects.JSONCommit;
-import com.aokp.gerrit.tasks.GerritTask;
 import com.fima.cardsui.objects.Card;
 
 import java.util.List;
@@ -48,24 +47,15 @@ public class CommitCard extends Card {
         moarInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GerritTask task = new GerritTask() {
-                    @Override
-                    protected void onPostExecute(String returnedJSON) {
-                        Intent patchsetViewer = new Intent(context, PatchSetViewerActivity.class);
-                        patchsetViewer.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        // pass all information about the current patchset from our direct query
-                        patchsetViewer.putExtra(JSONCommit.KEY_PATCHSET_IN_JSON, returnedJSON);
-                        // pass json original card was formed with
-                        // TODO remove? we pass the json not the object
-                        // allowing destination to handle object creation
-                        patchsetViewer.putExtra(JSONCommit.KEY_JSON_COMMIT,
-                                mCommit.getRawJSONCommit().toString());
-                        // so our extras don't get recycled
-                        patchsetViewer.setAction(JSONCommit.KEY_FOOBAR);
-                        context.startActivity(patchsetViewer);
-                    }
-                };
-                task.execute(CardsActivity.GERRIT + "changes/" + mCommit.getId() + "/details");
+                Intent intent = new Intent(context, PatchSetViewerActivity.class);
+                // example website
+                // http://gerrit.sudoservers.com/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
+                intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
+                        .append(CardsActivity.GERRIT_BASE)
+                        .append(mCommit.getCommitNumber())
+                        .append(JSONCommit.CURRENT_PATCHSET_ARGS).toString());
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                context.startActivity(intent);
             }
         });
         browserView.setOnClickListener(new View.OnClickListener() {

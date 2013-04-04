@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,10 +33,11 @@ public class JSONCommit {
     public static final String KEY_INSERTED = "lines_inserted";
     public static final String KEY_DELETED = "lines_deleted";
     public static final String KEY_STATUS = "status";
+    public static final String KEY_ID = "id";
+    public static String KEY_WEBSITE = "website";
 
     // internal
     private static final String KEY_KIND = "kind";
-    private static final String KEY_ID = "id";
     private static final String KEY_PROJECT = "project";
     private static final String KEY_BRANCH = "branch";
     private static final String KEY_CHANGE_ID = "change_id";
@@ -148,7 +150,7 @@ public class JSONCommit {
                 JSONObject labels = object.getJSONObject(KEY_LABELS);
                 mVerifiedReviewers = getReviewers(
                         labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
-                mCodeReviewers = getReviewers(
+                mCodeReviewers = (ArrayList<Reviewer>) getReviewers(
                         labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
             } catch (JSONException ignored) {
                 // we didn't directly query the patch set
@@ -210,7 +212,7 @@ public class JSONCommit {
     }
 
     private List<Reviewer> getReviewers(JSONArray jsonArray) throws JSONException {
-        List<Reviewer> list = new LinkedList<Reviewer>();
+        List<Reviewer> list = new ArrayList<Reviewer>(0);
         for (int i = 0; jsonArray.length() > i; i++) {
             JSONObject object = jsonArray.getJSONObject(i);
             try {
@@ -315,8 +317,8 @@ public class JSONCommit {
         return mVerifiedReviewers;
     }
 
-    public List<Reviewer> getCodeReviewers() {
-        return mCodeReviewers;
+    public ArrayList<Reviewer> getCodeReviewers() {
+        return (ArrayList<Reviewer>) mCodeReviewers;
     }
 
     public CommitterObject getAuthor() {

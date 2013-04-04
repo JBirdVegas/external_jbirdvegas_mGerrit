@@ -31,13 +31,13 @@ public abstract class GerritTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... strings) {
         BufferedReader in = null;
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb = new StringBuffer(0);
         BufferedReader inPost = null;
         try {
             DefaultHttpClient httpclient = new DefaultHttpClient();
-            HttpGet httpost = new HttpGet(strings[0] + strings[1]);
-            httpost.setHeader("Accept-Type", "application/json");
-            HttpResponse response = httpclient.execute(httpost);
+            HttpGet httpGet = new HttpGet(strings[0]);
+            //httpost.setHeader("Accept-Type", "application/json");
+            HttpResponse response = httpclient.execute(httpGet);
             HttpEntity entity = response.getEntity();
             inPost = new BufferedReader(new InputStreamReader(entity.getContent()));
             String linePost = "";
@@ -48,7 +48,6 @@ public abstract class GerritTask extends AsyncTask<String, Void, String> {
                     sb.append(linePost + NLPOST);
                 isFirst = false;
             }
-            inPost.close();
             if (entity != null) {
                 entity.consumeContent();
             }
@@ -60,6 +59,13 @@ public abstract class GerritTask extends AsyncTask<String, Void, String> {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            if (inPost != null) {
+                try {
+                    inPost.close();
+                } catch (IOException e) {
+                    // let it go
+                }
+            }
             return sb.toString();
         }
     }

@@ -8,9 +8,10 @@ import com.aokp.gerrit.cards.PatchSetMessageCard;
 import com.aokp.gerrit.cards.PatchSetPropertiesCard;
 import com.aokp.gerrit.cards.PatchSetReviewers;
 import com.aokp.gerrit.objects.JSONCommit;
+import com.aokp.gerrit.tasks.GerritTask;
 import com.fima.cardsui.views.CardUI;
+import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,35 +28,38 @@ public class PatchSetViewerActivity extends Activity {
     private static final String TAG = PatchSetViewerActivity.class.getSimpleName();
 
     private CardUI mCardsUI;
-    private JSONObject mChangeInfo;
-    private JSONCommit mPatchsetInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.commit_list);
+        String query = getIntent().getStringExtra(JSONCommit.KEY_WEBSITE);
+        Log.d(TAG,"Website to query: " + query);
         mCardsUI = (CardUI) findViewById(R.id.commit_cards);
-        try {
-            // TODO any need for the abbreviated commit information?
-            mChangeInfo = new JSONObject(savedInstanceState.getString(JSONCommit.KEY_JSON_COMMIT));
-            mPatchsetInfo = new JSONCommit(new JSONObject(savedInstanceState.getString(JSONCommit.KEY_PATCHSET_IN_JSON)));
-            addCards(mPatchsetInfo);
-        } catch (JSONException e) {
-            // should never happen
-            Log.wtf(TAG, "failed to parse PatchSet details", e);
-        }
+        new GerritTask() {
+            @Override
+            protected void onPostExecute(String s) {
+                try {
+                    Log.d(TAG, "Query response: " + s);
+                    addCards(mCardsUI, new JSONCommit(new JSONArray(s).getJSONObject(0)));
+                } catch (JSONException e) {
+                    Log.d(TAG, "Failed to get patchset info from JSON", e);
+                }
+            }
+        }.execute(query);
     }
 
-    private void addCards(JSONCommit jsonCommit) {
-        mCardsUI.addCard(new PatchSetPropertiesCard(jsonCommit));
-        mCardsUI.addCard(new PatchSetMessageCard(jsonCommit));
-        mCardsUI.addCard(new PatchSetChangesCard(jsonCommit));
-        mCardsUI.addCard(new PatchSetReviewers(jsonCommit));
+    private void addCards(CardUI ui, JSONCommit jsonCommit) {
+        ui.addCard(new PatchSetPropertiesCard(jsonCommit));
+        ui.addCard(new PatchSetMessageCard(jsonCommit));
+        ui.addCard(new PatchSetChangesCard(jsonCommit));
+        ui.addCard(new PatchSetReviewers(jsonCommit));
         // TODO make card!
-        //mCardsUI.addCard(new PatchSetCommentCard(jsonCommit));
+        //ui.addCard(new PatchSetCommentCard(jsonCommit));
+        ui.refresh();
     }
 
-    /* TODO
+    /*
     Possible cards
 
     --Patch Set--

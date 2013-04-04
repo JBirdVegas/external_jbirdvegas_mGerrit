@@ -25,7 +25,7 @@ public abstract class CardsActivity extends Activity {
     public static final String GERRIT = "http://gerrit.sudoservers.com/";
     public static final String GERRIT_BASE = GERRIT + "changes/?q=";
     protected String TAG = getClass().getSimpleName();
-    public static String GERRIT_WEBADDRESS = GERRIT + "changes/?q=status:";
+    public static String GERRIT_WEBADDRESS = GERRIT_BASE + "status:";
 
     // draws a stack of cards
     protected void drawCardsFromListToStack(List<CommitCard> cards, final CardUI cardUI) {
@@ -72,7 +72,7 @@ public abstract class CardsActivity extends Activity {
                         new CommitCard(new JSONCommit(jsonArray.getJSONObject(i))));
             }
         } catch (JSONException e) {
-            Log.d(TAG, "Failed to parse response from " + GERRIT_WEBADDRESS);
+            Log.d(TAG, "Failed to parse response from " + GERRIT_WEBADDRESS + getQuery());
         }
         return commitCardList;
     }
@@ -89,13 +89,12 @@ public abstract class CardsActivity extends Activity {
         setContentView(R.layout.commit_list);
         Log.d(TAG, "Calling gerrit");
         mCards = (CardUI) findViewById(R.id.commit_cards);
-        GerritTask gerritTask = new GerritTask() {
+        new GerritTask() {
             @Override
             protected void onPostExecute(String s) {
                 drawCardsFromList(generateCardsList(s), mCards);
             }
-        };
-        gerritTask.execute(GERRIT_WEBADDRESS, getQuery());
+        }.execute(GERRIT_WEBADDRESS + getQuery());
     }
 
     /**
