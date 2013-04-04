@@ -34,7 +34,7 @@ public class PatchSetChangedFilesAdapter extends ArrayAdapter<ChangedFile> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater)
                 mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.patchset_file_changed_list_item, parent, false);
+        View rowView = inflater.inflate(R.layout.patchset_file_changed_list_item, null);
         TextView path = (TextView) rowView.findViewById(R.id.changed_file_path);
         TextView inserted = (TextView) rowView.findViewById(R.id.changed_file_inserted);
         TextView deleted = (TextView) rowView.findViewById(R.id.changed_file_deleted);
@@ -56,14 +56,14 @@ public class PatchSetChangedFilesAdapter extends ArrayAdapter<ChangedFile> {
             if (changedFile.getInserted() == Integer.MIN_VALUE) {
                 inserted.setVisibility(View.GONE);
             } else {
-                inserted.setText(String.valueOf(changedFile.getInserted()));
+                inserted.setText('+' + String.valueOf(changedFile.getInserted()));
                 inserted.setTextColor(Color.GREEN);
             }
             // we may not have deleted lines so remove if unneeded
             if (changedFile.getDeleted() == Integer.MIN_VALUE) {
                 deleted.setVisibility(View.GONE);
             } else {
-                deleted.setText(String.valueOf(changedFile.getDeleted()));
+                deleted.setText('-' + String.valueOf(changedFile.getDeleted()));
                 deleted.setTextColor(Color.RED);
             }
         }

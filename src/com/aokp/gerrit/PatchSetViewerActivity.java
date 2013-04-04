@@ -101,20 +101,23 @@ public class PatchSetViewerActivity extends Activity {
                 // pre-condition
                 return;
             }
-
-            int totalHeight = 0;
-            int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
-            for (int i = 0; i < listAdapter.getCount(); i++) {
-                View listItem = listAdapter.getView(i, null, listView);
-                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                totalHeight += listItem.getMeasuredHeight();
-            }
-
             ViewGroup.LayoutParams params = listView.getLayoutParams();
-            params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+            params.height = getTotalHeight(listView, listAdapter)
+                    + listView.getDividerHeight() * (listAdapter.getCount() - 1);
             listView.setLayoutParams(params);
             listView.requestLayout();
         }
+    }
+
+    static int getTotalHeight(ListView listView, ListAdapter listAdapter) {
+        int totalHeight = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+        return totalHeight;
     }
 
 

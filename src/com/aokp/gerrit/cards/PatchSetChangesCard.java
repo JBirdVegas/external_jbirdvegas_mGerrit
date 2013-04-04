@@ -4,10 +4,12 @@ import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.aokp.gerrit.PatchSetViewerActivity;
 import com.aokp.gerrit.R;
 import com.aokp.gerrit.adapters.PatchSetChangedFilesAdapter;
+import com.aokp.gerrit.objects.ChangedFile;
 import com.aokp.gerrit.objects.JSONCommit;
 import com.fima.cardsui.objects.Card;
 
@@ -47,7 +49,9 @@ public class PatchSetChangesCard extends Card {
                 listView.setAdapter(new PatchSetChangedFilesAdapter(context,
                         mCommit.getChangedFiles()));
                 // TODO Remove?
-                //PatchSetViewerActivity.setListViewHeightBasedOnChildren(listView);
+                PatchSetViewerActivity.setListViewHeightBasedOnChildren(listView);
+
+                ((ArrayAdapter<ChangedFile>) listView.getAdapter()).notifyDataSetChanged();
             } catch (NullPointerException npe) {
                 Log.d(TAG, "Failed to set ListView Adapter", npe);
             }
