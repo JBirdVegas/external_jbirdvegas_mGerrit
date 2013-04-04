@@ -13,9 +13,14 @@ public class Reviewer {
     public static final String CODE_REVIEW_MINUS_TWO = "Do not submit";
     public static final String VERIFIED_PLUS_ONE = "Verified";
     public static final String VERIFIED_MINUS_ONE = "Fails";
-    public Reviewer(String val, String _name) {
+
+    private Reviewer(String val, String _name) {
         value = val;
         name = _name;
+    }
+
+    public static Reviewer getReviewerInstance(String val, String name) {
+        return new Reviewer(val, name);
     }
 
     private String value;

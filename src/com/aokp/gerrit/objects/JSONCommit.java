@@ -28,7 +28,7 @@ public class JSONCommit {
     public static final String KEY_PATCHSET_IN_JSON = "patchset_json";
     // used to query commit message
     public static final String CURRENT_PATCHSET_ARGS
-        = "&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES";
+        = "&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS";
     public static final String KEY_INSERTED = "lines_inserted";
     public static final String KEY_DELETED = "lines_deleted";
     public static final String KEY_STATUS = "status";
@@ -49,6 +49,7 @@ public class JSONCommit {
     private static final String KEY_OWNER = "owner";
     private static final String KEY_NAME = "name";
     private static final String KEY_CURRENT_REVISION = "current_revision";
+    private static final String KEY_AUTHOR = "author";
     private static final String KEY_COMMITTER = "committer";
     private static final String KEY_CHANGED_FILES = "files";
     private static final String KEY_LABELS = "labels";
@@ -60,18 +61,10 @@ public class JSONCommit {
     private static final String KEY_VALUE = "value";
     private static final String KEY_ACCOUNT_ID = "_account_id";
     private static final String KEY_EMAIL = "email";
-
-    public JSONObject getRawJSONCommit() {
-        return mRawJSONCommit;
-    }
-
-    public List<Reviewer> getVerifiedReviewers() {
-        return mVerifiedReviewers;
-    }
-
-    public List<Reviewer> getCodeReviewers() {
-        return mCodeReviewers;
-    }
+    private static final String KEY_REVISIONS = "revisions";
+    private static final String KEY_COMMIT = "commit";
+    private static final String KEY_DATE = "date";
+    private static final String KEY_TIMEZONE = "tz";
 
     public enum Status {
         NEW {
@@ -142,9 +135,10 @@ public class JSONCommit {
             mWebAddress = "http://gerrit.sudoservers.com/#/c/" + mCommitNumber + '/';
             try {
                 mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
-                mCommitter = object.getString(KEY_COMMITTER);
                 mMessage = object.getString(KEY_MESSAGE);
                 mChangedFiles = getChangedFilesSet(object.getJSONObject(KEY_CHANGED_FILES));
+                mAuthor = getCommitter(mCurrentRevision, KEY_AUTHOR, object);
+                mCommitter = getCommitter(mCurrentRevision, KEY_COMMITTER, object);
             } catch (JSONException ignored) {
                 // we only have these fields if we directly queried
                 // gerrit for this changeset
@@ -152,8 +146,10 @@ public class JSONCommit {
             // handle labels
             try {
                 JSONObject labels = object.getJSONObject(KEY_LABELS);
-                mVerifiedReviewers = getReviewers(labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
-                mCodeReviewers = getReviewers(labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
+                mVerifiedReviewers = getReviewers(
+                        labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
+                mCodeReviewers = getReviewers(
+                        labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
             } catch (JSONException ignored) {
                 // we didn't directly query the patch set
             }
@@ -177,12 +173,27 @@ public class JSONCommit {
     private int mCommitNumber;
     private String mOwner;
     private String mCurrentRevision;
-    private String mCommitter;
+    private CommitterObject mAuthor;
+    private CommitterObject mCommitter;
     private String mMessage;
     private List<ChangedFile> mChangedFiles;
     private String mWebAddress;
     private List<Reviewer> mVerifiedReviewers;
     private List<Reviewer> mCodeReviewers;
+
+    private CommitterObject getCommitter(String currentRevision,
+                                         String authorOrCommitter,
+                                         JSONObject mainObject)
+            throws JSONException {
+        JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
+        JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
+        JSONObject commitObject = revisionObject.getJSONObject(KEY_COMMIT);
+        JSONObject authorObject = commitObject.getJSONObject(authorOrCommitter);
+        return CommitterObject.getInstance(authorObject.getString(KEY_NAME),
+                authorObject.getString(KEY_EMAIL),
+                authorObject.getString(KEY_DATE),
+                authorObject.getString(KEY_TIMEZONE));
+    }
 
     private List<ChangedFile> getChangedFilesSet(JSONObject filesObject){
         List<ChangedFile> list = new LinkedList<ChangedFile>();
@@ -190,7 +201,7 @@ public class JSONCommit {
         for (int i = 0; keysArray.length()> i; i++) {
             try {
                 String path = (String) keysArray.get(i);
-                list.add(new ChangedFile().parseFromJSONObject(path, filesObject.getJSONObject(path)));
+                list.add(ChangedFile.parseFromJSONObject(path, filesObject.getJSONObject(path)));
             } catch (JSONException e) {
                 Log.e(TAG, "Failed to parse jsonObject", e);
             }
@@ -203,10 +214,10 @@ public class JSONCommit {
         for (int i = 0; jsonArray.length() > i; i++) {
             JSONObject object = jsonArray.getJSONObject(i);
             try {
-                list.add(new Reviewer(null,
+                list.add(Reviewer.getReviewerInstance(object.getString(KEY_VALUE),
                         object.getString(KEY_NAME)));
             } catch (JSONException je) {
-                list.add(new Reviewer(null,
+                list.add(Reviewer.getReviewerInstance(null,
                         object.getString(KEY_NAME)));
             }
         }
@@ -279,7 +290,7 @@ public class JSONCommit {
         return mCurrentRevision;
     }
 
-    public String getCommitter() {
+    public CommitterObject getCommitter() {
         return mCommitter;
     }
 
@@ -293,5 +304,22 @@ public class JSONCommit {
 
     public String getWebAddress() {
         return mWebAddress;
+    }
+
+
+    public JSONObject getRawJSONCommit() {
+        return mRawJSONCommit;
+    }
+
+    public List<Reviewer> getVerifiedReviewers() {
+        return mVerifiedReviewers;
+    }
+
+    public List<Reviewer> getCodeReviewers() {
+        return mCodeReviewers;
+    }
+
+    public CommitterObject getAuthor() {
+        return mAuthor;
     }
 }

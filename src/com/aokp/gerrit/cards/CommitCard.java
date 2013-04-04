@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.aokp.gerrit.CardsActivity;
 import com.aokp.gerrit.PatchSetViewerActivity;
 import com.aokp.gerrit.R;
+import com.aokp.gerrit.objects.ChangedFile;
 import com.aokp.gerrit.objects.JSONCommit;
 import com.aokp.gerrit.tasks.GerritTask;
 import com.fima.cardsui.objects.Card;
@@ -94,7 +95,7 @@ public class CommitCard extends Card {
      * @param fileList
      * @return
      */
-    private String buildChangedFilesString(List<JSONCommit.ChangedFile> fileList) {
+    private String buildChangedFilesString(List<ChangedFile> fileList) {
         return "gibber\njabbing\nabout gibber\njabbing";
     }
 

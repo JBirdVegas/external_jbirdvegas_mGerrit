@@ -10,15 +10,24 @@ import org.json.JSONObject;
  */
 public class ChangedFile {
     public String path;
-    public String status;
     public int inserted;
     public int deleted;
 
-    public ChangedFile parseFromJSONObject(String path, JSONObject object) throws JSONException {
-        this.path = path;
-        this.status = object.getString(JSONCommit.KEY_STATUS);
-        this.inserted = object.getInt(JSONCommit.KEY_INSERTED);
-        this.deleted = object.getInt(JSONCommit.KEY_DELETED);
-        return this;
+    private ChangedFile(String _path, JSONObject object) throws JSONException {
+        path = _path;
+        try {
+            inserted = object.getInt(JSONCommit.KEY_INSERTED);
+        } catch (JSONException noInserted) {
+            inserted = Integer.MIN_VALUE;
+        }
+        try {
+            deleted = object.getInt(JSONCommit.KEY_DELETED);
+        } catch (JSONException noDeleted) {
+            deleted = Integer.MIN_VALUE;
+        }
+    }
+
+    public static ChangedFile parseFromJSONObject(String _path, JSONObject object) throws JSONException {
+        return new ChangedFile(_path, object);
     }
 }

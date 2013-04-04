@@ -3,6 +3,10 @@ package com.aokp.gerrit;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import com.aokp.gerrit.cards.PatchSetChangesCard;
+import com.aokp.gerrit.cards.PatchSetMessageCard;
+import com.aokp.gerrit.cards.PatchSetPropertiesCard;
+import com.aokp.gerrit.cards.PatchSetReviewers;
 import com.aokp.gerrit.objects.JSONCommit;
 import com.fima.cardsui.views.CardUI;
 import org.json.JSONException;
@@ -31,42 +35,28 @@ public class PatchSetViewerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.commit_list);
         mCardsUI = (CardUI) findViewById(R.id.commit_cards);
-
         try {
+            // TODO any need for the abbreviated commit information?
             mChangeInfo = new JSONObject(savedInstanceState.getString(JSONCommit.KEY_JSON_COMMIT));
             mPatchsetInfo = new JSONCommit(new JSONObject(savedInstanceState.getString(JSONCommit.KEY_PATCHSET_IN_JSON)));
+            addCards(mPatchsetInfo);
         } catch (JSONException e) {
             // should never happen
             Log.wtf(TAG, "failed to parse PatchSet details", e);
         }
     }
 
-    private void addCards() {
-
+    private void addCards(JSONCommit jsonCommit) {
+        mCardsUI.addCard(new PatchSetPropertiesCard(jsonCommit));
+        mCardsUI.addCard(new PatchSetMessageCard(jsonCommit));
+        mCardsUI.addCard(new PatchSetChangesCard(jsonCommit));
+        mCardsUI.addCard(new PatchSetReviewers(jsonCommit));
+        // TODO make card!
+        //mCardsUI.addCard(new PatchSetCommentCard(jsonCommit));
     }
 
-    // Generate cards
-    /*
+    /* TODO
     Possible cards
-
-
-    --Properties Card--
-    Subject
-    Owner
-    Author
-    Committer
-    ------------------
-
-    --Message Card--
-    Commit subject
-    Last Update timestamp
-    Commit message
-    ----------------
-
-    --Changes Card--
-    Files Changed (ListView?)
-    File Diff?
-    ----------------
 
     --Patch Set--
     Select patchset number to display in these cards
@@ -76,14 +66,6 @@ public class PatchSetViewerActivity extends Activity {
     Original upload time
     Most recent update
     --------------
-
-    --Comments Card--
-    ListView with Commentor name, Timestamp and comment
-    -----------------
-
-    --Reviewers--
-    ListView or TableView with all reviews and their +1;+2;-1;-2s
-    -------------
 
     --Inline comments Card?--
     Show all comments inlined on code view pages

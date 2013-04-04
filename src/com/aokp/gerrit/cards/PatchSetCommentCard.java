@@ -12,6 +12,11 @@ import com.fima.cardsui.objects.Card;
  * To change this template use File | Settings | File Templates.
  */
 public class PatchSetCommentCard extends Card {
+    /**
+     * TODO!!! Add all comments to this card!
+     * @param context
+     * @return
+     */
     @Override
     public View getCardContent(Context context) {
         return null;
