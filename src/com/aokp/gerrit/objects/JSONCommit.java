@@ -147,6 +147,7 @@ public class JSONCommit {
             // handle labels
             try {
                 JSONObject labels = object.getJSONObject(KEY_LABELS);
+                mPatchSetNumber = getPatchSetNumberInternal(object, mCurrentRevision);
                 mVerifiedReviewers = getReviewers(
                         labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
                 mCodeReviewers = getReviewers(
@@ -181,6 +182,7 @@ public class JSONCommit {
     private String mWebAddress;
     private List<Reviewer> mVerifiedReviewers;
     private List<Reviewer> mCodeReviewers;
+    private int mPatchSetNumber;
 
     private CommitterObject getCommitter(String currentRevision,
                                          String authorOrCommitter,
@@ -201,7 +203,12 @@ public class JSONCommit {
         JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
         JSONObject commitObject = revisionObject.getJSONObject(KEY_COMMIT);
         return commitObject.getString(KEY_MESSAGE);
+    }
 
+    private int getPatchSetNumberInternal(JSONObject mainObject, String currentRevision) throws JSONException {
+        JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
+        JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
+        return revisionObject.getInt(KEY_COMMIT_NUMBER);
     }
 
     private List<ChangedFile> getChangedFilesSet(JSONObject mainObject, String currentRevision) throws JSONException {
@@ -333,6 +340,10 @@ public class JSONCommit {
 
     public CommitterObject getAuthor() {
         return mAuthor;
+    }
+
+    public int getPatchSetNumber() {
+        return mPatchSetNumber;
     }
 
     @Override

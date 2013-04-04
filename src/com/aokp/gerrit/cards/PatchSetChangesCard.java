@@ -29,7 +29,7 @@ public class PatchSetChangesCard extends Card {
     }
 
     @Override
-    public View getCardContent(Context context) {
+    public View getCardContent(final Context context) {
         /*
         --Changes Card--
         Files Changed (ListView?)
@@ -47,7 +47,8 @@ public class PatchSetChangesCard extends Card {
         } else {
             try {
                 listView.setAdapter(new PatchSetChangedFilesAdapter(context,
-                        mCommit.getChangedFiles()));
+                        mCommit.getChangedFiles(),
+                        mCommit));
                 // TODO Remove?
                 PatchSetViewerActivity.setListViewHeightBasedOnChildren(listView);
 

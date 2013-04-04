@@ -1,7 +1,9 @@
 package com.aokp.gerrit.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.aokp.gerrit.R;
 import com.aokp.gerrit.objects.ChangedFile;
+import com.aokp.gerrit.objects.JSONCommit;
 
 import java.util.List;
 
@@ -23,11 +26,13 @@ public class PatchSetChangedFilesAdapter extends ArrayAdapter<ChangedFile> {
     private static final boolean VERBOSE = false;
     private final Context mContext;
     private final List<ChangedFile> mValues;
+    private final JSONCommit mCommit;
 
-    public PatchSetChangedFilesAdapter(Context context, List<ChangedFile> values) {
+    public PatchSetChangedFilesAdapter(Context context, List<ChangedFile> values, JSONCommit commit) {
         super(context, R.layout.patchset_file_changed_list_item, values);
         this.mContext = context;
         this.mValues = values;
+        this.mCommit = commit;
     }
 
     @Override
@@ -35,11 +40,21 @@ public class PatchSetChangedFilesAdapter extends ArrayAdapter<ChangedFile> {
         LayoutInflater inflater = (LayoutInflater)
                 mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.patchset_file_changed_list_item, null);
+        final ChangedFile changedFile = mValues.get(position);
+        rowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String base = "http://gerrit.sudoservers.com/#/c/%d/%d/%s";
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(base,
+                        mCommit.getCommitNumber(),
+                        mCommit.getPatchSetNumber(),
+                        changedFile.getPath())));
+                mContext.startActivity(browserIntent);
+            }
+        });
         TextView path = (TextView) rowView.findViewById(R.id.changed_file_path);
         TextView inserted = (TextView) rowView.findViewById(R.id.changed_file_inserted);
         TextView deleted = (TextView) rowView.findViewById(R.id.changed_file_deleted);
-
-        ChangedFile changedFile = mValues.get(position);
         String changedFilePath = changedFile.getPath();
         int insertedInFile = changedFile.getInserted();
         int deletedInFile = changedFile.getDeleted();
