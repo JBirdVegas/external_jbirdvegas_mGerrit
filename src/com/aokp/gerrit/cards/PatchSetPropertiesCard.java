@@ -37,6 +37,6 @@ public class PatchSetPropertiesCard extends Card {
         /*
         TODO evaluate adding Owner/Author/Committer's email *privacy concerns*
          */
-        return null;
+        return rootView;
     }
 }

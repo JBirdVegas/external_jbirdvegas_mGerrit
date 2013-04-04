@@ -38,6 +38,6 @@ public class PatchSetMessageCard extends Card {
                 .setText(mJSONCommit.getLastUpdatedDate());
         ((TextView) rootView.findViewById(R.id.message_card_message))
                 .setText(mJSONCommit.getMessage());
-        return null;
+        return rootView;
     }
 }

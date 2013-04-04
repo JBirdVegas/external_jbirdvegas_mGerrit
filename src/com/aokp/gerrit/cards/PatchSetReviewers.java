@@ -1,14 +1,13 @@
 package com.aokp.gerrit.cards;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
+import com.aokp.gerrit.R;
 import com.aokp.gerrit.adapters.PatchSetLabelsAdapter;
 import com.aokp.gerrit.objects.JSONCommit;
-import com.aokp.gerrit.objects.Reviewer;
 import com.fima.cardsui.objects.Card;
-
-import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,9 +25,12 @@ public class PatchSetReviewers extends Card {
 
     @Override
     public View getCardContent(Context context) {
-        mReviewersList = new ListView(context);
+        LayoutInflater inflater = (LayoutInflater)
+                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View rootView = inflater.inflate(R.layout.listview_card, null);
+        mReviewersList = (ListView) rootView.findViewById(R.id.listView);
         mReviewersList.setAdapter(new PatchSetLabelsAdapter(context,
-                (ArrayList<Reviewer>) mJSONCommit.getCodeReviewers()));
-        return null;
+                mJSONCommit.getCodeReviewers()));
+        return mCardLayout;
     }
 }
