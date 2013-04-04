@@ -33,4 +33,14 @@ public class Reviewer {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Reviewer");
+        sb.append("{value='").append(value).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

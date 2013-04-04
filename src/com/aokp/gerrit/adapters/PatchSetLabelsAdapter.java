@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.aokp.gerrit.R;
 import com.aokp.gerrit.objects.Reviewer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,7 +19,7 @@ public class PatchSetLabelsAdapter extends ArrayAdapter<Reviewer> {
     private final List<Reviewer> values;
     private static final String TAG = PatchSetLabelsAdapter.class.getSimpleName();
 
-    public PatchSetLabelsAdapter(Context context, ArrayList<Reviewer> values) {
+    public PatchSetLabelsAdapter(Context context, List<Reviewer> values) {
         super(context, R.layout.patchset_labels_list_item, values);
         this.context = context;
         this.values = values;
@@ -36,6 +35,7 @@ public class PatchSetLabelsAdapter extends ArrayAdapter<Reviewer> {
         TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);
         TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
         Reviewer reviewer = values.get(position);
+        Log.d(TAG, "Found Reviewer: " + reviewer.toString() + " at position:" + position + '/' + values.size());
         if (reviewer.getValue() != null) {
             setColoredApproval(reviewer.getValue(), approval);
         }
