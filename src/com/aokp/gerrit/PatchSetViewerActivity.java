@@ -6,7 +6,7 @@ import android.util.Log;
 import com.aokp.gerrit.cards.PatchSetChangesCard;
 import com.aokp.gerrit.cards.PatchSetMessageCard;
 import com.aokp.gerrit.cards.PatchSetPropertiesCard;
-import com.aokp.gerrit.cards.PatchSetReviewers;
+import com.aokp.gerrit.cards.PatchSetReviewersCard;
 import com.aokp.gerrit.objects.JSONCommit;
 import com.aokp.gerrit.tasks.GerritTask;
 import com.fima.cardsui.views.CardUI;
@@ -50,10 +50,14 @@ public class PatchSetViewerActivity extends Activity {
     }
 
     private void addCards(CardUI ui, JSONCommit jsonCommit) {
+        Log.d(TAG, "Loading Properties Card");
         ui.addCard(new PatchSetPropertiesCard(jsonCommit));
+        Log.d(TAG, "Loading Message Card");
         ui.addCard(new PatchSetMessageCard(jsonCommit));
+        Log.d(TAG, "Loading Changes Card");
         ui.addCard(new PatchSetChangesCard(jsonCommit));
-        ui.addCard(new PatchSetReviewers(jsonCommit));
+        Log.d(TAG, "Loading Reviewers Card");
+        ui.addCard(new PatchSetReviewersCard(jsonCommit));
         // TODO make card!
         //ui.addCard(new PatchSetCommentCard(jsonCommit));
         ui.refresh();

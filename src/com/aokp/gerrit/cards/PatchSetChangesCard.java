@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListView;
 import com.aokp.gerrit.R;
 import com.aokp.gerrit.objects.JSONCommit;
 import com.fima.cardsui.objects.Card;
@@ -35,7 +34,7 @@ public class PatchSetChangesCard extends Card {
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rootView = inflater.inflate(R.layout.listview_card, null);
-        ListView listView = (ListView) rootView.findViewById(R.id.listView);
+        //ListView listView = (ListView) rootView.findViewById(R.id.listView);
         try {
             //listView.setAdapter(new PatchSetChangedFilesAdapter(context,
             //        (ArrayList<ChangedFile>) mCommit.getChangedFiles()));
