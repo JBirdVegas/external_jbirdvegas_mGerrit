@@ -14,12 +14,12 @@ import com.aokp.gerrit.objects.Reviewer;
 import java.util.List;
 
 
-public class PatchSetLabelsAdapter extends ArrayAdapter<Reviewer> {
+public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
+    private static final String TAG = PatchSetReviewersAdapter.class.getSimpleName();
     private final Context context;
     private final List<Reviewer> values;
-    private static final String TAG = PatchSetLabelsAdapter.class.getSimpleName();
 
-    public PatchSetLabelsAdapter(Context context, List<Reviewer> values) {
+    public PatchSetReviewersAdapter(Context context, List<Reviewer> values) {
         super(context, R.layout.patchset_labels_list_item, values);
         this.context = context;
         this.values = values;
@@ -29,7 +29,7 @@ public class PatchSetLabelsAdapter extends ArrayAdapter<Reviewer> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View root = convertView;
         if (root == null) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             root = inflater.inflate(R.layout.patchset_labels_list_item, null);
         }
         TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);

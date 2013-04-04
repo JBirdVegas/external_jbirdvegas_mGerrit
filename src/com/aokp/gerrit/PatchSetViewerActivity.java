@@ -1,10 +1,12 @@
 package com.aokp.gerrit;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import com.aokp.gerrit.cards.PatchSetChangesCard;
@@ -40,14 +42,17 @@ public class PatchSetViewerActivity extends Activity {
         String query = getIntent().getStringExtra(JSONCommit.KEY_WEBSITE);
         Log.d(TAG,"Website to query: " + query);
         mCardsUI = (CardUI) findViewById(R.id.commit_cards);
+        executeGerritTask(query);
+    }
+
+    private void executeGerritTask(final String query) {
         new GerritTask() {
             @Override
             protected void onPostExecute(String s) {
                 try {
-                    Log.d(TAG, "Query response: " + s);
                     addCards(mCardsUI, new JSONCommit(new JSONArray(s).getJSONObject(0)));
                 } catch (JSONException e) {
-                    Log.d(TAG, "Failed to get patchset info from JSON", e);
+                    Log.d(TAG, "Response from " + query + " could not be parsed into cards :(", e);
                 }
             }
         }.execute(query);
@@ -110,5 +115,17 @@ public class PatchSetViewerActivity extends Activity {
             listView.setLayoutParams(params);
             listView.requestLayout();
         }
+    }
+
+
+    public static void setNotFoundListView(Context context, ListView listView) {
+        listView.setAdapter(
+                new ArrayAdapter<String>(context,
+                        android.R.layout.simple_list_item_1,
+                        android.R.id.text1,
+                        new String[]{
+                                context.getString(R.string.none_found),
+                                context.getString(R.string.please_try_again)
+                        }));
     }
 }

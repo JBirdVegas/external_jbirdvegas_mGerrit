@@ -137,7 +137,7 @@ public class JSONCommit {
             try {
                 mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
                 mMessage = getMessageFromJSON(object, mCurrentRevision);
-                mChangedFiles = getChangedFilesSet(object.getJSONObject(KEY_CHANGED_FILES));
+                mChangedFiles = getChangedFilesSet(object, mCurrentRevision);
                 mAuthor = getCommitter(mCurrentRevision, KEY_AUTHOR, object);
                 mCommitter = getCommitter(mCurrentRevision, KEY_COMMITTER, object);
             } catch (JSONException ignored) {
@@ -204,7 +204,10 @@ public class JSONCommit {
 
     }
 
-    private List<ChangedFile> getChangedFilesSet(JSONObject filesObject){
+    private List<ChangedFile> getChangedFilesSet(JSONObject mainObject, String currentRevision) throws JSONException {
+        JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
+        JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
+        JSONObject filesObject = revisionObject.getJSONObject(KEY_CHANGED_FILES);
         List<ChangedFile> list = new ArrayList<ChangedFile>(0);
         JSONArray keysArray = filesObject.names();
         for (int i = 0; keysArray.length()> i; i++) {

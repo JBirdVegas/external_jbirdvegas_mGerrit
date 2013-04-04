@@ -14,4 +14,8 @@
     <string name="moar_info">Moar Info!</string>
     <string name="patchset_labels_code_reviewer_title">Code-Reviewers</string>
     <string name="patchset_labels_verified_reviewer_title">Verified</string>
+    <string name="inserted">Inserted Lines</string>
+    <string name="deleted">Deleted Lines</string>
+    <string name="none_found">None Found</string>
+    <string name="please_try_again">Please back out and try again</string>
 </resources>

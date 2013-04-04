@@ -9,9 +9,9 @@ import org.json.JSONObject;
  * Date: 4/3/13 6:49 PM
  */
 public class ChangedFile {
-    public String path;
-    public int inserted;
-    public int deleted;
+    private String path;
+    private int inserted;
+    private int deleted;
 
     private ChangedFile(String _path, JSONObject object) throws JSONException {
         path = _path;
@@ -27,7 +27,31 @@ public class ChangedFile {
         }
     }
 
+    public String getPath() {
+        return this.path;
+    }
+
+    public int getInserted() {
+        return this.inserted;
+    }
+
+    public int getDeleted() {
+        return this.deleted;
+    }
+
     public static ChangedFile parseFromJSONObject(String _path, JSONObject object) throws JSONException {
         return new ChangedFile(_path, object);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("ChangedFile");
+        sb.append("{path='").append(path).append('\'');
+        sb.append(", inserted=").append(inserted);
+        sb.append(", deleted=").append(deleted);
+        sb.append('}');
+        return sb.toString();
+    }
+
 }
