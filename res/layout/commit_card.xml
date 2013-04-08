@@ -45,7 +45,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="message"
         android:id="@+id/commit_card_message"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/commit_card_last_updated"
@@ -55,7 +54,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Changed Files List\nChanged\nChanged"
         android:id="@+id/commit_card_changed_files"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/commit_card_message"
