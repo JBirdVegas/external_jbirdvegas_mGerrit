@@ -58,11 +58,21 @@ public class GerritControllerActivity extends TabActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (!Prefs.getCurrentGerrit(getApplicationContext())
+                .equals(Prefs.getSavedGerrit(getApplicationContext()))) {
+            getTabHost().invalidate();
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this, Prefs.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(intent);
+        Prefs.setSavedGerrit(getApplicationContext(), Prefs.getCurrentGerrit(getApplicationContext()));
+        startActivityForResult(intent, 0);
         return true;
     }
 
