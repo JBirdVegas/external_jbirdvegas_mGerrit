@@ -13,7 +13,8 @@
         android:id="@+id/labels_card_approval"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        />
 
     <TextView
         android:layout_width="wrap_content"

@@ -51,7 +51,7 @@ public class CommitCard extends Card {
                 // example website
                 // http://gerrit.sudoservers.com/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
                 intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
-                        .append(CardsActivity.GERRIT_BASE)
+                        .append(CardsActivity.CHANGES_QUERY)
                         .append(mCommit.getCommitNumber())
                         .append(JSONCommit.CURRENT_PATCHSET_ARGS).toString());
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

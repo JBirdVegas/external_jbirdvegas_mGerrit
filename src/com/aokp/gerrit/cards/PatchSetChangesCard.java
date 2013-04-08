@@ -4,12 +4,10 @@ import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.aokp.gerrit.PatchSetViewerActivity;
 import com.aokp.gerrit.R;
 import com.aokp.gerrit.adapters.PatchSetChangedFilesAdapter;
-import com.aokp.gerrit.objects.ChangedFile;
 import com.aokp.gerrit.objects.JSONCommit;
 import com.fima.cardsui.objects.Card;
 
@@ -30,12 +28,6 @@ public class PatchSetChangesCard extends Card {
 
     @Override
     public View getCardContent(final Context context) {
-        /*
-        --Changes Card--
-        Files Changed (ListView?)
-        File Diff?
-        ----------------
-         */
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rootView = inflater.inflate(R.layout.listview_card, null);
@@ -50,9 +42,8 @@ public class PatchSetChangesCard extends Card {
                         mCommit.getChangedFiles(),
                         mCommit));
                 // TODO Remove?
-                PatchSetViewerActivity.setListViewHeightBasedOnChildren(listView);
-
-                ((ArrayAdapter<ChangedFile>) listView.getAdapter()).notifyDataSetChanged();
+                //PatchSetViewerActivity.setListViewHeightBasedOnChildren(listView);
+                //((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
             } catch (NullPointerException npe) {
                 Log.d(TAG, "Failed to set ListView Adapter", npe);
             }

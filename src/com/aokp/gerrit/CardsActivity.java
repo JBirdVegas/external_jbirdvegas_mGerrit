@@ -23,9 +23,9 @@ import java.util.List;
  */
 public abstract class CardsActivity extends Activity {
     public static final String GERRIT = "http://gerrit.sudoservers.com/";
-    public static final String GERRIT_BASE = GERRIT + "changes/?q=";
+    public static final String CHANGES_QUERY = GERRIT + "changes/?q=";
     protected String TAG = getClass().getSimpleName();
-    public static String GERRIT_WEBADDRESS = GERRIT_BASE + "status:";
+    public static String STATUS_QUERY = CHANGES_QUERY + "status:";
 
     // draws a stack of cards
     protected void drawCardsFromListToStack(List<CommitCard> cards, final CardUI cardUI) {
@@ -72,7 +72,7 @@ public abstract class CardsActivity extends Activity {
                         new CommitCard(new JSONCommit(jsonArray.getJSONObject(i))));
             }
         } catch (JSONException e) {
-            Log.d(TAG, "Failed to parse response from " + GERRIT_WEBADDRESS + getQuery());
+            Log.d(TAG, "Failed to parse response from " + STATUS_QUERY + getQuery());
         }
         return commitCardList;
     }
@@ -94,7 +94,7 @@ public abstract class CardsActivity extends Activity {
             protected void onPostExecute(String s) {
                 drawCardsFromList(generateCardsList(s), mCards);
             }
-        }.execute(GERRIT_WEBADDRESS + getQuery());
+        }.execute(STATUS_QUERY + getQuery());
     }
 
     /**
