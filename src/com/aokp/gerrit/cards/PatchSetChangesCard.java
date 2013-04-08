@@ -41,9 +41,7 @@ public class PatchSetChangesCard extends Card {
                 listView.setAdapter(new PatchSetChangedFilesAdapter(context,
                         mCommit.getChangedFiles(),
                         mCommit));
-                // TODO Remove?
                 PatchSetViewerActivity.setListViewHeightBasedOnChildren(listView);
-                //((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
             } catch (NullPointerException npe) {
                 Log.d(TAG, "Failed to set ListView Adapter", npe);
             }

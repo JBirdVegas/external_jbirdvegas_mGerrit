@@ -33,6 +33,7 @@ public class CardUI extends FrameLayout {
     private static final int STATE_ONSCREEN = 0;
     private static final int STATE_OFFSCREEN = 1;
     private static final int STATE_RETURNING = 2;
+    private static final String TAG = CardUI.class.getSimpleName();
 
     public interface OnRenderedListener {
         public void onRendered();
@@ -56,6 +57,14 @@ public class CardUI extends FrameLayout {
      * The number of columns, 1 by default
      */
     private int mColumnNumber = 1;
+    /**
+     * Causes the constructor to not inflate the layouts
+     *
+     * if you set waitToInflate=true in xml declaration you
+     * must init the data on your own with
+     * CardUI#manuallyInitData(Context)
+     */
+    private boolean mWaitToInflate = false;
     private View mPlaceholderView;
     private QuickReturnListView mListView;
     private int mMinRawY = 0;
@@ -77,7 +86,9 @@ public class CardUI extends FrameLayout {
         super(context, attrs, defStyle);
         //read the number of columns from the attributes
         grabStyledContent(context, attrs);
-        initData(context);
+        if (!mWaitToInflate) {
+            initData(context);
+        }
     }
 
     /**
@@ -87,7 +98,9 @@ public class CardUI extends FrameLayout {
         super(context, attrs);
         //read the number of columns from the attributes
         grabStyledContent(context, attrs);
-        initData(context);
+        if (!mWaitToInflate) {
+            initData(context);
+        }
     }
 
     /**
@@ -105,16 +118,22 @@ public class CardUI extends FrameLayout {
      * @param attributeSet xml attributes provided by the system
      *                     to the default constructors
      */
-    private final void grabStyledContent(Context context, AttributeSet attributeSet) {
+    private void grabStyledContent(Context context, AttributeSet attributeSet) {
         TypedArray typedArray = null;
         try {
             typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.CardUI, 0, 0);
             mColumnNumber = typedArray.getInt(R.styleable.CardUI_columnCount, 1);
+            mWaitToInflate = typedArray.getBoolean(R.styleable.CardUI_waitToInflate, false);
         } finally {
             if (typedArray != null) {
                 typedArray.recycle();
             }
         }
+    }
+
+    public CardUI manuallyInitData(Context context) {
+        initData(context);
+        return this;
     }
 
     private void initData(Context context) {
@@ -136,7 +155,11 @@ public class CardUI extends FrameLayout {
         mHeader = inflater.inflate(R.layout.header, null);
         mQuickReturnView = (ViewGroup) findViewById(R.id.sticky);
         mPlaceholderView = mHeader.findViewById(R.id.placeholder);
+    }
 
+    public CardUI setColumnNumber(int count) {
+        mColumnNumber = count;
+        return this;
     }
 
     public void setSwipeable(boolean b) {

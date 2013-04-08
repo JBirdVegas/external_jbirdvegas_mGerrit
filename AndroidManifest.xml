@@ -23,6 +23,6 @@
         <activity android:name=".MergedTab"/>
         <activity android:name=".AbandonedTab"/>
         <activity android:name=".PatchSetViewerActivity"/>
-
+        <activity android:name=".Prefs"/>
     </application>
 </manifest>

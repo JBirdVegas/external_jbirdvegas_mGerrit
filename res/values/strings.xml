@@ -18,4 +18,6 @@
     <string name="deleted">Deleted Lines</string>
     <string name="none_found">None Found</string>
     <string name="please_try_again">Please back out and try again</string>
+    <string name="menu_preferences">Preferences</string>
+    <string name="choose_gerrit_instance">Choose Team Gerrit Instance</string>
 </resources>

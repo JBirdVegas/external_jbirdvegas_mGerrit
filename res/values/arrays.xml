@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="gerrit_names">
+        <item>AOKP</item>
+        <item>AOSP</item>
+        <item>CyanogenMod</item>
+    </string-array>
+    <string-array name="gerrit_webaddresses">
+        <item>http://gerrit.sudoservers.com/</item>
+        <item>https://android-review.googlesource.com/</item>
+        <item>http://review.cyanogenmod.org/</item>
+    </string-array>
+</resources>

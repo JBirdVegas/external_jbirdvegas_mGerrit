@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:cardsShit="http://schemas.android.com/apk/res/com.aokp.gerrit"
               android:orientation="vertical"
               android:layout_width="wrap_content"
               android:layout_height="match_parent">
@@ -8,5 +8,6 @@
     <com.fima.cardsui.views.CardUI
         android:id="@+id/commit_cards"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        cardsShit:waitToInflate="true"/>
 </LinearLayout>

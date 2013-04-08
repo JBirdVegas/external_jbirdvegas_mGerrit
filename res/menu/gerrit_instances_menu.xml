@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_save"
+        android:icon="@drawable/ic_menu_moreoverflow_normal_holo_light"
+        android:title="@string/menu_preferences"
+        android:showAsAction="ifRoom|withText"/>
+</menu>

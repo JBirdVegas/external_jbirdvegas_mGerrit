@@ -7,9 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import com.aokp.gerrit.CardsActivity;
 import com.aokp.gerrit.PatchSetViewerActivity;
 import com.aokp.gerrit.R;
+import com.aokp.gerrit.StaticWebAddress;
 import com.aokp.gerrit.objects.ChangedFile;
 import com.aokp.gerrit.objects.JSONCommit;
 import com.fima.cardsui.objects.Card;
@@ -51,7 +51,7 @@ public class CommitCard extends Card {
                 // example website
                 // http://gerrit.sudoservers.com/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
                 intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
-                        .append(CardsActivity.CHANGES_QUERY)
+                        .append(StaticWebAddress.getChangesQuery())
                         .append(mCommit.getCommitNumber())
                         .append(JSONCommit.CURRENT_PATCHSET_ARGS).toString());
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

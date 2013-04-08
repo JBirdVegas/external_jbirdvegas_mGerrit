@@ -36,7 +36,10 @@ public class PatchSetReviewersCard extends Card {
         mVerifiedList = (ListView) view.findViewById(R.id.patchset_labels_verified_reviewers);
         // don't try to set from null values
         if (mJSONCommit.getCodeReviewers() == null) {
-            PatchSetViewerActivity.setNotFoundListView(context, mReviewersList);
+            // *hopefully* the only reason this would be null is if user is
+            // viewing ABANDONED tab so just remove the card
+            view.setVisibility(View.GONE);
+            return view;
         } else {
             mReviewersList.setAdapter(new PatchSetReviewersAdapter(context,
                     mJSONCommit.getCodeReviewers()));

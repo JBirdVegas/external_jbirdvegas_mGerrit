@@ -1,7 +1,9 @@
 package com.aokp.gerrit;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,8 +34,8 @@ import org.json.JSONException;
  */
 public class PatchSetViewerActivity extends Activity {
     private static final String TAG = PatchSetViewerActivity.class.getSimpleName();
-
     private CardUI mCardsUI;
+    private ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,12 @@ public class PatchSetViewerActivity extends Activity {
         String query = getIntent().getStringExtra(JSONCommit.KEY_WEBSITE);
         Log.d(TAG,"Website to query: " + query);
         mCardsUI = (CardUI) findViewById(R.id.commit_cards);
+        mActionBar = getActionBar();
+        mActionBar.setHomeButtonEnabled(true);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            mCardsUI.setColumnNumber(2);
+        }
+        mCardsUI.manuallyInitData(getApplicationContext());
         executeGerritTask(query);
     }
 

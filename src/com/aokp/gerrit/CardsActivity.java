@@ -1,16 +1,16 @@
 package com.aokp.gerrit;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import com.aokp.gerrit.tasks.*;
 import com.aokp.gerrit.cards.CommitCard;
 import com.aokp.gerrit.objects.JSONCommit;
-import com.aokp.gerrit.tasks.GerritTask;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,10 +22,9 @@ import java.util.List;
  * Time: 2:07 AM
  */
 public abstract class CardsActivity extends Activity {
-    public static final String GERRIT = "http://gerrit.sudoservers.com/";
-    public static final String CHANGES_QUERY = GERRIT + "changes/?q=";
     protected String TAG = getClass().getSimpleName();
-    public static String STATUS_QUERY = CHANGES_QUERY + "status:";
+    private ActionBar mActionBar;
+    private String mWebsite;
 
     // draws a stack of cards
     protected void drawCardsFromListToStack(List<CommitCard> cards, final CardUI cardUI) {
@@ -36,22 +35,6 @@ public abstract class CardsActivity extends Activity {
         cardUI.addStack(cardStack);
         // once we finish adding all the cards begin building the screen
         cardUI.refresh();
-    }
-
-    /**
-     * TODO: remove
-     * @param cardUI
-     * @param card
-     * @param json
-     */
-    @Deprecated
-    private void redrawCard(CardUI cardUI, CommitCard card, String json) {
-        try {
-            card.update(new JSONCommit(new JSONObject(json)));
-            cardUI.refresh();
-        } catch (JSONException ignored) {
-            // we failed to update move on
-        }
     }
 
     // renders each card separately
@@ -72,7 +55,9 @@ public abstract class CardsActivity extends Activity {
                         new CommitCard(new JSONCommit(jsonArray.getJSONObject(i))));
             }
         } catch (JSONException e) {
-            Log.d(TAG, "Failed to parse response from " + STATUS_QUERY + getQuery());
+            Log.d(TAG, new StringBuilder(0)
+                    .append("Failed to parse response from ")
+                    .append(mWebsite).toString());
         }
         return commitCardList;
     }
@@ -87,14 +72,22 @@ public abstract class CardsActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.commit_list);
-        Log.d(TAG, "Calling gerrit");
         mCards = (CardUI) findViewById(R.id.commit_cards);
+        mWebsite = new StringBuilder(0)
+                .append(Prefs.getCurrentGerrit(getApplicationContext()))
+                .append(StaticWebAddress.getStatusQuery())
+                .append(getQuery()).toString();
+        loadScreen();
+    }
+
+    private void loadScreen() {
+        Log.d(TAG, "Calling gerrit: " + mWebsite);
         new GerritTask() {
             @Override
             protected void onPostExecute(String s) {
                 drawCardsFromList(generateCardsList(s), mCards);
             }
-        }.execute(STATUS_QUERY + getQuery());
+        }.execute(mWebsite);
     }
 
     /**

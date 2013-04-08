@@ -1,7 +1,6 @@
 package com.aokp.gerrit.tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -19,14 +18,9 @@ import java.io.UnsupportedEncodingException;
  * Date: 4/1/13
  * Time: 9:29 AM
  */
+@SuppressWarnings("AccessOfSystemProperties")
 public abstract class GerritTask extends AsyncTask<String, Void, String> {
     private static final String TAG = GerritTask.class.getSimpleName();
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        Log.d(TAG, "preExecute::GerritTask");
-    }
 
     @Override
     protected String doInBackground(String... strings) {
@@ -36,7 +30,8 @@ public abstract class GerritTask extends AsyncTask<String, Void, String> {
         try {
             DefaultHttpClient httpclient = new DefaultHttpClient();
             HttpGet httpGet = new HttpGet(strings[0]);
-            //httpost.setHeader("Accept-Type", "application/json");
+            // only needed for authorized actions
+            httpGet.setHeader("Accept-Type", "application/json");
             HttpResponse response = httpclient.execute(httpGet);
             HttpEntity entity = response.getEntity();
             inPost = new BufferedReader(new InputStreamReader(entity.getContent()));
