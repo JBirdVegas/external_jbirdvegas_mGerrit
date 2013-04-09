@@ -50,22 +50,22 @@ public class GerritControllerActivity extends TabActivity {
         mTabHost.addTab(tabSpecAbandon);
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.gerrit_instances_menu, menu);
         return true;
     }
-
+*/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (!Prefs.getCurrentGerrit(getApplicationContext())
                 .equals(Prefs.getSavedGerrit(getApplicationContext()))) {
-            getTabHost().invalidate();
+            //getTabHost().invalidate();
         }
     }
-
+/*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this, Prefs.class);
@@ -75,7 +75,7 @@ public class GerritControllerActivity extends TabActivity {
         startActivityForResult(intent, 0);
         return true;
     }
-
+*/
     private int findPosition(String[] array, CharSequence query) {
         for (int i = 0; array.length > i; i++) {
             if (query.equals(array[i])) {
