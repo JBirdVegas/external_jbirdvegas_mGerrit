@@ -58,9 +58,13 @@ public class PatchSetViewerActivity extends Activity {
             @Override
             protected void onPostExecute(String s) {
                 try {
-                    addCards(mCardsUI, new JSONCommit(new JSONArray(s).getJSONObject(0)));
+                    addCards(mCardsUI,
+                            new JSONCommit(
+                                    new JSONArray(s).getJSONObject(0),
+                                    getApplicationContext()));
                 } catch (JSONException e) {
-                    Log.d(TAG, "Response from " + query + " could not be parsed into cards :(", e);
+                    Log.d(TAG, "Response from "
+                            + query + " could not be parsed into cards :(", e);
                 }
             }
         }.execute(query);

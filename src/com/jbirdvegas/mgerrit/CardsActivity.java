@@ -53,7 +53,7 @@ public abstract class CardsActivity extends Activity {
             int arraySize = jsonArray.length();
             for (int i = 0; arraySize > i; i++) {
                 commitCardList.add(
-                        new CommitCard(new JSONCommit(jsonArray.getJSONObject(i))));
+                        new CommitCard(new JSONCommit(jsonArray.getJSONObject(i), getApplicationContext())));
             }
         } catch (JSONException e) {
             Log.d(TAG, new StringBuilder(0)

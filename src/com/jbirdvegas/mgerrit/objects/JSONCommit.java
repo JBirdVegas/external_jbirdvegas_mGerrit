@@ -2,6 +2,7 @@ package com.jbirdvegas.mgerrit.objects;
 
 import android.content.Context;
 import android.util.Log;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -111,7 +112,7 @@ public class JSONCommit {
      *
      * @param object JSONObject sent by mgerrit in response to a query
      */
-    public JSONCommit(JSONObject object) {
+    public JSONCommit(JSONObject object, Context context) {
         mRawJSONCommit = object;
         try {
             mKind = object.getString(KEY_KIND);
@@ -133,7 +134,7 @@ public class JSONCommit {
             mSortKey = object.getString(KEY_SORT_KEY);
             mCommitNumber = object.getInt(KEY_COMMIT_NUMBER);
             mOwner = getOwnerName(object.getJSONObject(KEY_OWNER));
-            mWebAddress = "http://mgerrit.sudoservers.com/#/c/" + mCommitNumber + '/';
+            mWebAddress = Prefs.getCurrentGerrit(context) + "#/c/" + mCommitNumber + '/';
             try {
                 mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
                 mMessage = getMessageFromJSON(object, mCurrentRevision);

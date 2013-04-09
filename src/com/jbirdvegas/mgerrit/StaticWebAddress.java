@@ -7,7 +7,7 @@ package com.jbirdvegas.mgerrit;
  */
 public class StaticWebAddress {
     private static String GERRIT_INSTANCE_WEBSITE = null;
-    public static final String HTTP_GERRIT_SUDOSERVERS_COM = "http://mgerrit.sudoservers.com/";
+    public static final String HTTP_GERRIT_SUDOSERVERS_COM = "http://gerrit.sudoservers.com/";
     private static final String CHANGES_QUERY = "changes/?q=";
     private static String STATUS_QUERY = CHANGES_QUERY + "status:";
     private static int CURRENT_GERRIT;
