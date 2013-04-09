@@ -20,4 +20,7 @@
     <string name="please_try_again">Please back out and try again</string>
     <string name="menu_preferences">Preferences</string>
     <string name="choose_gerrit_instance">Choose Team Gerrit Instance</string>
+    <string name="commit_committer">Committer</string>
+    <string name="commit_author">Author</string>
+    <string name="commit_owner">Owner</string>
 </resources>
