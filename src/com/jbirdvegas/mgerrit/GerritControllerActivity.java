@@ -4,6 +4,9 @@ import android.app.ActionBar;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TabHost;
 
 public class GerritControllerActivity extends TabActivity {
@@ -46,14 +49,14 @@ public class GerritControllerActivity extends TabActivity {
                 .setIndicator(getString(R.string.abandoned));
         mTabHost.addTab(tabSpecAbandon);
     }
-/*
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.gerrit_instances_menu, menu);
         return true;
     }
-*/
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -62,14 +65,14 @@ public class GerritControllerActivity extends TabActivity {
             //getTabHost().invalidate();
         }
     }
-/*
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this, Prefs.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         Prefs.setSavedGerrit(getApplicationContext(), Prefs.getCurrentGerrit(getApplicationContext()));
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, 420);
         return true;
-    }*/
+    }
 }
