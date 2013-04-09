@@ -26,7 +26,9 @@ public class GerritControllerActivity extends TabActivity {
 
     private void addTabs() {
         // Review tab
-        Intent intentReview = new Intent().setClass(this, ReviewTab.class);
+        Intent intentReview = new Intent()
+                .setClass(this, ReviewTab.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         TabHost.TabSpec tabSpecReview = mTabHost
                 .newTabSpec(getString(R.string.reviewable))
                 .setContent(intentReview)
@@ -34,7 +36,9 @@ public class GerritControllerActivity extends TabActivity {
         mTabHost.addTab(tabSpecReview);
 
         // Merged tab
-        Intent intentMerged = new Intent().setClass(this, MergedTab.class);
+        Intent intentMerged = new Intent()
+                .setClass(this, MergedTab.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         TabHost.TabSpec tabSpecMerged = mTabHost
                 .newTabSpec(getString(R.string.merged))
                 .setContent(intentMerged)
@@ -42,7 +46,9 @@ public class GerritControllerActivity extends TabActivity {
         mTabHost.addTab(tabSpecMerged);
 
         // Abandon tab
-        Intent intentAbandon = new Intent().setClass(this, AbandonedTab.class);
+        Intent intentAbandon = new Intent()
+                .setClass(this, AbandonedTab.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         TabHost.TabSpec tabSpecAbandon = mTabHost
                 .newTabSpec(getString(R.string.abandoned))
                 .setContent(intentAbandon)
@@ -58,21 +64,12 @@ public class GerritControllerActivity extends TabActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (!Prefs.getCurrentGerrit(getApplicationContext())
-                .equals(Prefs.getSavedGerrit(getApplicationContext()))) {
-            //getTabHost().invalidate();
-        }
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this, Prefs.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         Prefs.setSavedGerrit(getApplicationContext(), Prefs.getCurrentGerrit(getApplicationContext()));
-        startActivityForResult(intent, 420);
+        startActivity(intent);
         return true;
     }
 }
