@@ -1,4 +1,4 @@
-package com.aokp.gerrit.adapters;
+package com.jbirdvegas.mgerrit.adapters;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -1,4 +1,4 @@
-package com.aokp.gerrit.tasks;
+package com.jbirdvegas.mgerrit.tasks;
 
 import android.os.AsyncTask;
 import org.apache.http.HttpEntity;

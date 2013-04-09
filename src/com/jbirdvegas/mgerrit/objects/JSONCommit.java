@@ -1,8 +1,8 @@
-package com.aokp.gerrit.objects;
+package com.jbirdvegas.mgerrit.objects;
 
 import android.content.Context;
 import android.util.Log;
-import com.aokp.gerrit.R;
+import com.jbirdvegas.mgerrit.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,7 +109,7 @@ public class JSONCommit {
      * Default constructor holds a single commit represented by
      * a json formatted response
      *
-     * @param object JSONObject sent by gerrit in response to a query
+     * @param object JSONObject sent by mgerrit in response to a query
      */
     public JSONCommit(JSONObject object) {
         mRawJSONCommit = object;
@@ -133,7 +133,7 @@ public class JSONCommit {
             mSortKey = object.getString(KEY_SORT_KEY);
             mCommitNumber = object.getInt(KEY_COMMIT_NUMBER);
             mOwner = getOwnerName(object.getJSONObject(KEY_OWNER));
-            mWebAddress = "http://gerrit.sudoservers.com/#/c/" + mCommitNumber + '/';
+            mWebAddress = "http://mgerrit.sudoservers.com/#/c/" + mCommitNumber + '/';
             try {
                 mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
                 mMessage = getMessageFromJSON(object, mCurrentRevision);
@@ -142,7 +142,7 @@ public class JSONCommit {
                 mCommitter = getCommitter(mCurrentRevision, KEY_COMMITTER, object);
             } catch (JSONException ignored) {
                 // we only have these fields if we directly queried
-                // gerrit for this changeset
+                // mgerrit for this changeset
             }
             // handle labels
             try {

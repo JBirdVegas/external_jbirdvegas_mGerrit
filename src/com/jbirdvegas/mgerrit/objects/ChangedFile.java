@@ -1,4 +1,4 @@
-package com.aokp.gerrit.objects;
+package com.jbirdvegas.mgerrit.objects;
 
 import org.json.JSONException;
 import org.json.JSONObject;

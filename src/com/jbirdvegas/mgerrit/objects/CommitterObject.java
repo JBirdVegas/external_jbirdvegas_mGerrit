@@ -1,4 +1,4 @@
-package com.aokp.gerrit.objects;
+package com.jbirdvegas.mgerrit.objects;
 
 /**
  * Created with IntelliJ IDEA.

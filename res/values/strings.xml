@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Gerrit</string>
+    <string name="app_name">mGerrit</string>
     <string name="reviewable">Review</string>
     <string name="merged">Merged</string>
     <string name="abandoned">Abandoned</string>

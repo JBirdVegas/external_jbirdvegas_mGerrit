@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.aokp.gerrit.R;
+import com.jbirdvegas.mgerrit.R;
 import com.fima.cardsui.StackAdapter;
 import com.fima.cardsui.SwipeDismissTouchListener;
 import com.fima.cardsui.SwipeDismissTouchListener.OnDismissCallback;

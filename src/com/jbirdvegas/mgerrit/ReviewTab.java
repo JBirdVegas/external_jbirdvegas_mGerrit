@@ -1,6 +1,6 @@
-package com.aokp.gerrit;
+package com.jbirdvegas.mgerrit;
 
-import com.aokp.gerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 /**
  * Created with IntelliJ IDEA.

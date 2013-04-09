@@ -1,12 +1,13 @@
-package com.aokp.gerrit;
+package com.jbirdvegas.mgerrit;
 
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import com.aokp.gerrit.tasks.*;
-import com.aokp.gerrit.cards.CommitCard;
-import com.aokp.gerrit.objects.JSONCommit;
+import android.view.Menu;
+import com.jbirdvegas.mgerrit.cards.CommitCard;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 import org.json.JSONArray;
@@ -81,7 +82,7 @@ public abstract class CardsActivity extends Activity {
     }
 
     private void loadScreen() {
-        Log.d(TAG, "Calling gerrit: " + mWebsite);
+        Log.d(TAG, "Calling mgerrit: " + mWebsite);
         new GerritTask() {
             @Override
             protected void onPostExecute(String s) {
@@ -95,4 +96,12 @@ public abstract class CardsActivity extends Activity {
      * @return
      */
     abstract String getQuery();
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (getParent() != null) {
+            return getParent().onCreateOptionsMenu(menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
 }

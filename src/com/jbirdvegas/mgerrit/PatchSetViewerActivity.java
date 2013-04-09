@@ -1,4 +1,4 @@
-package com.aokp.gerrit;
+package com.jbirdvegas.mgerrit;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -11,12 +11,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import com.aokp.gerrit.cards.PatchSetChangesCard;
-import com.aokp.gerrit.cards.PatchSetMessageCard;
-import com.aokp.gerrit.cards.PatchSetPropertiesCard;
-import com.aokp.gerrit.cards.PatchSetReviewersCard;
-import com.aokp.gerrit.objects.JSONCommit;
-import com.aokp.gerrit.tasks.GerritTask;
+import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
+import com.jbirdvegas.mgerrit.cards.PatchSetMessageCard;
+import com.jbirdvegas.mgerrit.cards.PatchSetPropertiesCard;
+import com.jbirdvegas.mgerrit.cards.PatchSetReviewersCard;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import com.fima.cardsui.views.CardUI;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,7 +30,7 @@ import org.json.JSONException;
  * Class handles populating the screen with several
  * cards each giving more information about the patchset
  *
- * All cards are located at aokp.gerrit.cards.*
+ * All cards are located at jbirdvegas.mgerrit.cards.*
  */
 public class PatchSetViewerActivity extends Activity {
     private static final String TAG = PatchSetViewerActivity.class.getSimpleName();

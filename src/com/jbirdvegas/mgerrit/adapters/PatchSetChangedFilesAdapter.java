@@ -1,4 +1,4 @@
-package com.aokp.gerrit.adapters;
+package com.jbirdvegas.mgerrit.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.aokp.gerrit.R;
-import com.aokp.gerrit.objects.ChangedFile;
-import com.aokp.gerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.objects.ChangedFile;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class PatchSetChangedFilesAdapter extends ArrayAdapter<ChangedFile> {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String base = "http://gerrit.sudoservers.com/#/c/%d/%d/%s";
+                String base = "http://mgerrit.sudoservers.com/#/c/%d/%d/%s";
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(base,
                         mCommit.getCommitNumber(),
                         mCommit.getPatchSetNumber(),

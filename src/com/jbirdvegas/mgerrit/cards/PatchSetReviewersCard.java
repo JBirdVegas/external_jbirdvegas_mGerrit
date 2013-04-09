@@ -1,16 +1,16 @@
-package com.aokp.gerrit.cards;
+package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
-import com.aokp.gerrit.PatchSetViewerActivity;
-import com.aokp.gerrit.R;
-import com.aokp.gerrit.adapters.PatchSetReviewersAdapter;
-import com.aokp.gerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
+import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.adapters.PatchSetReviewersAdapter;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.fima.cardsui.objects.Card;
 
-import static com.aokp.gerrit.PatchSetViewerActivity.setListViewHeightBasedOnChildren;
+import static com.jbirdvegas.mgerrit.PatchSetViewerActivity.setListViewHeightBasedOnChildren;
 
 /**
  * Created with IntelliJ IDEA.

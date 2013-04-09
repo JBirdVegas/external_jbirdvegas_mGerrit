@@ -1,14 +1,14 @@
-package com.aokp.gerrit.cards;
+package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
-import com.aokp.gerrit.PatchSetViewerActivity;
-import com.aokp.gerrit.R;
-import com.aokp.gerrit.adapters.PatchSetChangedFilesAdapter;
-import com.aokp.gerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
+import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.adapters.PatchSetChangedFilesAdapter;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.fima.cardsui.objects.Card;
 
 

@@ -1,12 +1,9 @@
-package com.aokp.gerrit;
+package com.jbirdvegas.mgerrit;
 
 import android.app.ActionBar;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.TabHost;
 
 public class GerritControllerActivity extends TabActivity {
@@ -18,7 +15,7 @@ public class GerritControllerActivity extends TabActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        mActionBar = getActionBar();
+        //mActionBar = getActionBar();
         // Setup tabs //
         mTabHost = getTabHost();
         addTabs();
@@ -49,8 +46,8 @@ public class GerritControllerActivity extends TabActivity {
                 .setIndicator(getString(R.string.abandoned));
         mTabHost.addTab(tabSpecAbandon);
     }
-
-   /* @Override
+/*
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.gerrit_instances_menu, menu);
@@ -74,14 +71,5 @@ public class GerritControllerActivity extends TabActivity {
         Prefs.setSavedGerrit(getApplicationContext(), Prefs.getCurrentGerrit(getApplicationContext()));
         startActivityForResult(intent, 0);
         return true;
-    }
-*/
-    private int findPosition(String[] array, CharSequence query) {
-        for (int i = 0; array.length > i; i++) {
-            if (query.equals(array[i])) {
-                return i;
-            }
-        }
-        return -1;
-    }
+    }*/
 }

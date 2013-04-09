@@ -1,6 +1,6 @@
 Lables JSON example
 
-http://gerrit.sudoservers.com/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=LABELS
+http://mgerrit.sudoservers.com/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=LABELS
 
     "labels": {
       "Verified": {

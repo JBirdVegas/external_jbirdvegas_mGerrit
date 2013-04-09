@@ -1,4 +1,4 @@
-package com.aokp.gerrit.cards;
+package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.view.View;

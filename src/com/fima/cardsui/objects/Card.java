@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import com.aokp.gerrit.R;
+import com.jbirdvegas.mgerrit.R;
 import com.fima.cardsui.Utils;
 
 public abstract class Card extends AbstractCard {

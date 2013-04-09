@@ -16,7 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.Space;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import com.aokp.gerrit.R;
+import com.jbirdvegas.mgerrit.R;
 import com.fima.cardsui.StackAdapter;
 import com.fima.cardsui.objects.AbstractCard;
 import com.fima.cardsui.objects.Card;

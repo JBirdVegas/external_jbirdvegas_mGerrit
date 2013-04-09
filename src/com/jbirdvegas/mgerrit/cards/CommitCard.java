@@ -1,4 +1,4 @@
-package com.aokp.gerrit.cards;
+package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,11 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import com.aokp.gerrit.PatchSetViewerActivity;
-import com.aokp.gerrit.R;
-import com.aokp.gerrit.StaticWebAddress;
-import com.aokp.gerrit.objects.ChangedFile;
-import com.aokp.gerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
+import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.StaticWebAddress;
+import com.jbirdvegas.mgerrit.objects.ChangedFile;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.fima.cardsui.objects.Card;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class CommitCard extends Card {
             public void onClick(View view) {
                 Intent intent = new Intent(context, PatchSetViewerActivity.class);
                 // example website
-                // http://gerrit.sudoservers.com/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
+                // http://mgerrit.sudoservers.com/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
                 intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
                         .append(StaticWebAddress.getChangesQuery())
                         .append(mCommit.getCommitNumber())

@@ -1,4 +1,4 @@
-package com.aokp.gerrit;
+package com.jbirdvegas.mgerrit;
 
 import android.content.Context;
 import android.os.Bundle;
