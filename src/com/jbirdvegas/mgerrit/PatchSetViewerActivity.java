@@ -3,7 +3,6 @@ package com.jbirdvegas.mgerrit;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,13 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetMessageCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetPropertiesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetReviewersCard;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
-import com.fima.cardsui.views.CardUI;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -44,12 +43,12 @@ public class PatchSetViewerActivity extends Activity {
         String query = getIntent().getStringExtra(JSONCommit.KEY_WEBSITE);
         Log.d(TAG,"Website to query: " + query);
         mCardsUI = (CardUI) findViewById(R.id.commit_cards);
-        mActionBar = getActionBar();
-        mActionBar.setHomeButtonEnabled(true);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mCardsUI.setColumnNumber(2);
-        }
-        mCardsUI.manuallyInitData(getApplicationContext());
+        //mActionBar = getActionBar();
+        //mActionBar.setHomeButtonEnabled(true);
+        //if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        //    mCardsUI.setColumnNumber(2);
+        //}
+        //mCardsUI.manuallyInitData(getApplicationContext());
         executeGerritTask(query);
     }
 

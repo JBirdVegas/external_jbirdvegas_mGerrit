@@ -86,9 +86,9 @@ public class CardUI extends FrameLayout {
         super(context, attrs, defStyle);
         //read the number of columns from the attributes
         grabStyledContent(context, attrs);
-        if (!mWaitToInflate) {
+        //if (!mWaitToInflate) {
             initData(context);
-        }
+        //}
     }
 
     /**
@@ -98,9 +98,9 @@ public class CardUI extends FrameLayout {
         super(context, attrs);
         //read the number of columns from the attributes
         grabStyledContent(context, attrs);
-        if (!mWaitToInflate) {
+        //if (!mWaitToInflate) {
             initData(context);
-        }
+        //}
     }
 
     /**
@@ -131,11 +131,12 @@ public class CardUI extends FrameLayout {
         }
     }
 
+    /*
     public CardUI manuallyInitData(Context context) {
         initData(context);
         return this;
     }
-
+*/
     private void initData(Context context) {
         mContext = context;
         LayoutInflater inflater = LayoutInflater.from(context);
