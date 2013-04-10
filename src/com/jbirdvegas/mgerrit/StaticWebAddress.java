@@ -1,16 +1,27 @@
 package com.jbirdvegas.mgerrit;
 
-/**
- * Created with IntelliJ IDEA.
- * User: jbird
- * Date: 4/8/13 2:48 PM
+/*
+ * Copyright (C) 2013 Android Open Kang Project (AOKP)
+ *  Author: Jon Stanford (JBirdVegas), 2013
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
+
 public class StaticWebAddress {
     private static String GERRIT_INSTANCE_WEBSITE = null;
     public static final String HTTP_GERRIT_SUDOSERVERS_COM = "http://gerrit.sudoservers.com/";
     private static final String CHANGES_QUERY = "changes/?q=";
     private static String STATUS_QUERY = CHANGES_QUERY + "status:";
-    private static int CURRENT_GERRIT;
 
     public static String getGERRIT_INSTANCE_WEBSITE() {
         if (GERRIT_INSTANCE_WEBSITE == null) {
@@ -29,17 +40,5 @@ public class StaticWebAddress {
 
     public static String getChangesQuery() {
         return getGERRIT_INSTANCE_WEBSITE() + CHANGES_QUERY;
-    }
-
-    public static int getCURRENT_GERRIT() {
-        if (CURRENT_GERRIT > 0) {
-            return CURRENT_GERRIT;
-        } else {
-            return 1;
-        }
-    }
-
-    public static void setCURRENT_GERRIT(int current_gerrit) {
-        CURRENT_GERRIT = current_gerrit;
     }
 }

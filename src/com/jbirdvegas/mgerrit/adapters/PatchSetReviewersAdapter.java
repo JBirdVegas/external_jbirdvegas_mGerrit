@@ -1,5 +1,22 @@
 package com.jbirdvegas.mgerrit.adapters;
 
+/*
+ * Copyright (C) 2013 Android Open Kang Project (AOKP)
+ *  Author: Jon Stanford (JBirdVegas), 2013
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
@@ -29,13 +46,20 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View root = convertView;
         if (root == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater)
+                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             root = inflater.inflate(R.layout.patchset_labels_list_item, null);
         }
         TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);
         TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
         Reviewer reviewer = values.get(position);
-        Log.d(TAG, "Found Reviewer: " + reviewer.toString() + " at position:" + position + '/' + values.size());
+        Log.d(TAG, new StringBuilder(0)
+                .append("Found Reviewer: ")
+                .append(reviewer.toString())
+                .append(" at position:")
+                .append(position)
+                .append('/')
+                .append(values.size()).toString());
         setColoredApproval(reviewer.getValue(), approval);
         name.setText(reviewer.getName());
         return root;
@@ -61,4 +85,4 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
             Log.e(TAG, "Failed to grab reviewers approval");
         }
     }
-} 
+}

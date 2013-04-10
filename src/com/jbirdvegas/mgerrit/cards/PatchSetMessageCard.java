@@ -1,20 +1,30 @@
 package com.jbirdvegas.mgerrit.cards;
 
+/*
+ * Copyright (C) 2013 Android Open Kang Project (AOKP)
+ *  Author: Jon Stanford (JBirdVegas), 2013
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
-import com.fima.cardsui.objects.Card;
 
-/**
- * Created with IntelliJ IDEA.
- * User: jbird
- * Date: 4/3/13
- * Time: 3:46 PM
- */
 public class PatchSetMessageCard extends Card {
     private final JSONCommit mJSONCommit;
     private static final String TAG = PatchSetMessageCard.class.getSimpleName();
@@ -34,7 +44,6 @@ public class PatchSetMessageCard extends Card {
         Commit message
         ----------------
          */
-        Log.d(TAG, "JSONCommit.toString()::" + mJSONCommit.toString());
         ((TextView) rootView.findViewById(R.id.message_card_subject))
                 .setText(mJSONCommit.getSubject());
         ((TextView) rootView.findViewById(R.id.message_card_last_update))

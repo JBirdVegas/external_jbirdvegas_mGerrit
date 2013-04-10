@@ -1,5 +1,22 @@
 package com.jbirdvegas.mgerrit.cards;
 
+/*
+ * Copyright (C) 2013 Android Open Kang Project (AOKP)
+ *  Author: Jon Stanford (JBirdVegas), 2013
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,22 +24,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.StaticWebAddress;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
-import com.fima.cardsui.objects.Card;
 
+import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: jbird
- * Date: 3/31/13
- * Time: 4:53 PM
-
- */
 public class CommitCard extends Card {
     private JSONCommit mCommit;
 
@@ -32,17 +43,27 @@ public class CommitCard extends Card {
 
     @Override
     public View getCardContent(final Context context) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater)
+                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commitCardView = inflater.inflate(R.layout.commit_card, null);
-        ((TextView) commitCardView.findViewById(R.id.commit_card_commit_owner)).setText(mCommit.getOwner());
-        ((TextView) commitCardView.findViewById(R.id.commit_card_project_name)).setText(mCommit.getProject());
-        ((TextView) commitCardView.findViewById(R.id.commit_card_title)).setText(mCommit.getSubject());
-        ((TextView) commitCardView.findViewById(R.id.commit_card_last_updated)).setText(mCommit.getLastUpdatedDate());
-        ((TextView) commitCardView.findViewById(R.id.commit_card_commit_status)).setText(mCommit.getStatus().toString());
-        TextView messageTv = (TextView) commitCardView.findViewById(R.id.commit_card_message);
-        TextView changedFilesTv = (TextView) commitCardView.findViewById(R.id.commit_card_changed_files);
-        Button browserView = (Button) commitCardView.findViewById(R.id.commit_card_view_in_browser);
-        Button moarInfo = (Button) commitCardView.findViewById(R.id.commit_card_moar_info);
+        ((TextView) commitCardView.findViewById(R.id.commit_card_commit_owner))
+                .setText(mCommit.getOwner());
+        ((TextView) commitCardView.findViewById(R.id.commit_card_project_name))
+                .setText(mCommit.getProject());
+        ((TextView) commitCardView.findViewById(R.id.commit_card_title))
+                .setText(mCommit.getSubject());
+        ((TextView) commitCardView.findViewById(R.id.commit_card_last_updated))
+                .setText(mCommit.getLastUpdatedDate());
+        ((TextView) commitCardView.findViewById(R.id.commit_card_commit_status))
+                .setText(mCommit.getStatus().toString());
+        TextView messageTv = (TextView)
+                commitCardView.findViewById(R.id.commit_card_message);
+        TextView changedFilesTv = (TextView)
+                commitCardView.findViewById(R.id.commit_card_changed_files);
+        Button browserView = (Button) commitCardView.findViewById(
+                R.id.commit_card_view_in_browser);
+        Button moarInfo = (Button) commitCardView.findViewById(
+                R.id.commit_card_moar_info);
         // TODO FIX ME!!!
         moarInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,14 +82,16 @@ public class CommitCard extends Card {
         browserView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mCommit.getWebAddress()));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(mCommit.getWebAddress()));
                 context.startActivity(browserIntent);
             }
         });
         // we only have these if we direct query the commit specifically
         if (mCommit.getCurrentRevision() != null) {
             messageTv.setText(mCommit.getMessage());
-            changedFilesTv.setText(buildChangedFilesString(mCommit.getChangedFiles()));
+            changedFilesTv.setText(
+                    buildChangedFilesString(mCommit.getChangedFiles()));
         } else {
             messageTv.setVisibility(View.GONE);
             changedFilesTv.setVisibility(View.GONE);
@@ -81,12 +104,12 @@ public class CommitCard extends Card {
     }
 
     /**
-     * TODO!!!
-     * @param fileList
-     * @return
+     * returns the ChangedFile list as a string
+     * @param fileList List of ChangedFiles
+     * @return String representation of list
      */
     private String buildChangedFilesString(List<ChangedFile> fileList) {
-        return "gibber\njabbing\nabout gibber\njabbing";
+        return Arrays.toString(fileList.toArray());
     }
 
     public int getNumber() {

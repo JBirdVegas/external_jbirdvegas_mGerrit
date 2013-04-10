@@ -1,5 +1,22 @@
 package com.jbirdvegas.mgerrit.objects;
 
+/*
+ * Copyright (C) 2013 Android Open Kang Project (AOKP)
+ *  Author: Jon Stanford (JBirdVegas), 2013
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 import android.content.Context;
 import android.util.Log;
 import com.jbirdvegas.mgerrit.Prefs;
@@ -11,12 +28,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: jbird
- * Date: 3/31/13
- * Time: 4:55 PM
- */
 public class JSONCommit {
     private static final String TAG = JSONCommit.class.getSimpleName();
 
@@ -134,7 +145,9 @@ public class JSONCommit {
             mSortKey = object.getString(KEY_SORT_KEY);
             mCommitNumber = object.getInt(KEY_COMMIT_NUMBER);
             mOwner = getOwnerName(object.getJSONObject(KEY_OWNER));
-            mWebAddress = Prefs.getCurrentGerrit(context) + "#/c/" + mCommitNumber + '/';
+            mWebAddress = String.format("%s#/c/%d/",
+                    Prefs.getCurrentGerrit(context),
+                    mCommitNumber);
             try {
                 mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
                 mMessage = getMessageFromJSON(object, mCurrentRevision);
@@ -199,20 +212,26 @@ public class JSONCommit {
                 authorObject.getString(KEY_TIMEZONE));
     }
 
-    private String getMessageFromJSON(JSONObject mainObject, String currentRevision) throws JSONException {
+    private String getMessageFromJSON(JSONObject mainObject,
+                                      String currentRevision)
+            throws JSONException {
         JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
         JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
         JSONObject commitObject = revisionObject.getJSONObject(KEY_COMMIT);
         return commitObject.getString(KEY_MESSAGE);
     }
 
-    private int getPatchSetNumberInternal(JSONObject mainObject, String currentRevision) throws JSONException {
+    private int getPatchSetNumberInternal(JSONObject mainObject,
+                                          String currentRevision)
+            throws JSONException {
         JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
         JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
         return revisionObject.getInt(KEY_COMMIT_NUMBER);
     }
 
-    private List<ChangedFile> getChangedFilesSet(JSONObject mainObject, String currentRevision) throws JSONException {
+    private List<ChangedFile> getChangedFilesSet(JSONObject mainObject,
+                                                 String currentRevision)
+            throws JSONException {
         JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
         JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
         JSONObject filesObject = revisionObject.getJSONObject(KEY_CHANGED_FILES);
@@ -221,7 +240,8 @@ public class JSONCommit {
         for (int i = 0; keysArray.length()> i; i++) {
             try {
                 String path = (String) keysArray.get(i);
-                list.add(ChangedFile.parseFromJSONObject(path, filesObject.getJSONObject(path)));
+                list.add(ChangedFile.parseFromJSONObject(path,
+                        filesObject.getJSONObject(path)));
             } catch (JSONException e) {
                 Log.e(TAG, "Failed to parse jsonObject", e);
             }
@@ -229,7 +249,8 @@ public class JSONCommit {
         return list;
     }
 
-    private List<Reviewer> getReviewers(JSONArray jsonArray) throws JSONException {
+    private List<Reviewer> getReviewers(JSONArray jsonArray)
+            throws JSONException {
         List<Reviewer> list = new ArrayList<Reviewer>(0);
         for (int i = 0; jsonArray.length() > i; i++) {
             JSONObject object = jsonArray.getJSONObject(i);
@@ -376,5 +397,4 @@ public class JSONCommit {
         sb.append('}');
         return sb.toString();
     }
-
 }

@@ -1,33 +1,44 @@
 package com.jbirdvegas.mgerrit;
 
-import android.app.ActionBar;
+/*
+ * Copyright (C) 2013 Android Open Kang Project (AOKP)
+ *  Author: Jon Stanford (JBirdVegas), 2013
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import com.fima.cardsui.objects.CardStack;
+import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
-import com.fima.cardsui.objects.CardStack;
-import com.fima.cardsui.views.CardUI;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: jbird
- * Date: 4/1/13
- * Time: 2:07 AM
- */
 public abstract class CardsActivity extends Activity {
     protected String TAG = getClass().getSimpleName();
-    private ActionBar mActionBar;
     private String mWebsite;
 
     // draws a stack of cards
+    // Currently not used as the number of cards tends
+    // to be so large the stack is impractical to navigate
     protected void drawCardsFromListToStack(List<CommitCard> cards, final CardUI cardUI) {
         CardStack cardStack = new CardStack();
         for (CommitCard card : cards) {
@@ -53,7 +64,9 @@ public abstract class CardsActivity extends Activity {
             int arraySize = jsonArray.length();
             for (int i = 0; arraySize > i; i++) {
                 commitCardList.add(
-                        new CommitCard(new JSONCommit(jsonArray.getJSONObject(i), getApplicationContext())));
+                        new CommitCard(
+                                new JSONCommit(jsonArray.getJSONObject(i),
+                                        getApplicationContext())));
             }
         } catch (JSONException e) {
             Log.d(TAG, new StringBuilder(0)

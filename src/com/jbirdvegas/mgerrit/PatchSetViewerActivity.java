@@ -1,6 +1,22 @@
 package com.jbirdvegas.mgerrit;
 
-import android.app.ActionBar;
+/*
+ * Copyright (C) 2013 Android Open Kang Project (AOKP)
+ *  Author: Jon Stanford (JBirdVegas), 2013
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -21,21 +37,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 /**
- * Created with IntelliJ IDEA.
- * User: jbird
- * Date: 4/2/13
- * Time: 5:30 PM
  *
  * Class handles populating the screen with several
  * cards each giving more information about the patchset
  *
  * All cards are located at jbirdvegas.mgerrit.cards.*
  */
-public class PatchSetViewerActivity extends Activity {
+public abstract class PatchSetViewerActivity extends Activity {
     private static final String TAG = PatchSetViewerActivity.class.getSimpleName();
     private CardUI mCardsUI;
-    private ActionBar mActionBar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,12 +53,6 @@ public class PatchSetViewerActivity extends Activity {
         String query = getIntent().getStringExtra(JSONCommit.KEY_WEBSITE);
         Log.d(TAG,"Website to query: " + query);
         mCardsUI = (CardUI) findViewById(R.id.commit_cards);
-        //mActionBar = getActionBar();
-        //mActionBar.setHomeButtonEnabled(true);
-        //if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        //    mCardsUI.setColumnNumber(2);
-        //}
-        //mCardsUI.manuallyInitData(getApplicationContext());
         executeGerritTask(query);
     }
 
@@ -70,16 +74,14 @@ public class PatchSetViewerActivity extends Activity {
     }
 
     private void addCards(CardUI ui, JSONCommit jsonCommit) {
-        Log.d(TAG, "Loading Properties Card");
+        Log.d(TAG, "Loading Properties Card...");
         ui.addCard(new PatchSetPropertiesCard(jsonCommit));
-        Log.d(TAG, "Loading Message Card");
+        Log.d(TAG, "Loading Message Card...");
         ui.addCard(new PatchSetMessageCard(jsonCommit));
-        Log.d(TAG, "Loading Changes Card");
+        Log.d(TAG, "Loading Changes Card...");
         ui.addCard(new PatchSetChangesCard(jsonCommit));
-        Log.d(TAG, "Loading Reviewers Card");
+        Log.d(TAG, "Loading Reviewers Card...");
         ui.addCard(new PatchSetReviewersCard(jsonCommit));
-        // TODO make card!
-        //ui.addCard(new PatchSetCommentCard(jsonCommit));
         ui.refresh();
     }
 
@@ -97,7 +99,7 @@ public class PatchSetViewerActivity extends Activity {
 
     --Inline comments Card?--
     Show all comments inlined on code view pages
-    **may be kind of pointless without context of sourounding code**
+    **may be kind of pointless without context of surrounding code**
     * maybe a webview for each if possible? *
     -------------------------
 
@@ -122,7 +124,8 @@ public class PatchSetViewerActivity extends Activity {
 
     static int getTotalHeight(ListView listView, ListAdapter listAdapter) {
         int totalHeight = 0;
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(
+                listView.getWidth(), View.MeasureSpec.AT_MOST);
         for (int i = 0; i < listAdapter.getCount(); i++) {
             View listItem = listAdapter.getView(i, null, listView);
             listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
