@@ -74,14 +74,6 @@ public class CardUI extends FrameLayout {
      * The number of columns, 1 by default
      */
     private int mColumnNumber = 1;
-    /**
-     * Causes the constructor to not inflate the layouts
-     *
-     * if you set waitToInflate=true in xml declaration you
-     * must init the data on your own with
-     * CardUI#manuallyInitData(Context)
-     */
-    private boolean mWaitToInflate = false;
     private View mPlaceholderView;
     private QuickReturnListView mListView;
     private int mMinRawY = 0;
@@ -136,7 +128,6 @@ public class CardUI extends FrameLayout {
         try {
             typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.CardUI, 0, 0);
             mColumnNumber = typedArray.getInt(R.styleable.CardUI_columnCount, 1);
-            mWaitToInflate = typedArray.getBoolean(R.styleable.CardUI_waitToInflate, false);
         } finally {
             if (typedArray != null) {
                 typedArray.recycle();

@@ -43,7 +43,6 @@
         android:id="@+id/textView2"
         style="@style/CardText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="text" />
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

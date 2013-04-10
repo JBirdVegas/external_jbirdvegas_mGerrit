@@ -19,6 +19,5 @@
 <resources>
     <declare-styleable name="CardUI">
         <attr name="columnCount" format="integer"/>
-        <attr name="waitToInflate" format="boolean"/>
     </declare-styleable>
 </resources>
