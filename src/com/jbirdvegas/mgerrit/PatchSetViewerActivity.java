@@ -46,6 +46,7 @@ import org.json.JSONException;
 public class PatchSetViewerActivity extends Activity {
     private static final String TAG = PatchSetViewerActivity.class.getSimpleName();
     private CardUI mCardsUI;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,9 +58,9 @@ public class PatchSetViewerActivity extends Activity {
     }
 
     private void executeGerritTask(final String query) {
-        new GerritTask() {
+        new GerritTask(this) {
             @Override
-            protected void onPostExecute(String s) {
+            public void onJSONResult(String s) {
                 try {
                     addCards(mCardsUI,
                             new JSONCommit(

@@ -17,7 +17,12 @@ package com.jbirdvegas.mgerrit.tasks;
  *  limitations under the License.
  */
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
+import com.jbirdvegas.mgerrit.R;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -28,54 +33,163 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 @SuppressWarnings("AccessOfSystemProperties")
-public abstract class GerritTask extends AsyncTask<String, Void, String> {
+public abstract class GerritTask extends AsyncTask<String, Long, String> {
     private static final String TAG = GerritTask.class.getSimpleName();
+    private static final long CONNECTION_ESTABLISHED = -1000;
+    private static final long INITIALIZING_DATA_TRANSFER = -1001;
+    private static final long ERROR_DURING_CONNECTION = -1002;
+    private ProgressDialog mProgressDialog;
+    private Context mContext;
+    private long mCurrentFileLength;
+    private String mCurrentUrl;
 
-    @Override
-    protected String doInBackground(String... strings) {
-        BufferedReader in = null;
-        StringBuffer sb = new StringBuffer(0);
-        BufferedReader inPost = null;
-        try {
-            DefaultHttpClient httpclient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(strings[0]);
-            // only needed for authorized actions
-            httpGet.setHeader("Accept-Type", "application/json");
-            HttpResponse response = httpclient.execute(httpGet);
-            HttpEntity entity = response.getEntity();
-            inPost = new BufferedReader(new InputStreamReader(entity.getContent()));
-            String linePost = "";
-            String NLPOST = System.getProperty("line.separator");
-            boolean isFirst = true;
-            while ((linePost = inPost.readLine()) != null) {
-                if (!isFirst)
-                    sb.append(linePost + NLPOST);
-                isFirst = false;
-            }
-            if (entity != null) {
-                entity.consumeContent();
-            }
-            httpclient.getConnectionManager().shutdown();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (inPost != null) {
-                try {
-                    inPost.close();
-                } catch (IOException e) {
-                    // let it go
-                }
-            }
-            return sb.toString();
-        }
+    public GerritTask(Context context) {
+        mContext = context;
     }
 
     @Override
-    protected abstract void onPostExecute(String s);
+    protected void onPreExecute() {
+        super.onPreExecute();
+        Log.d(TAG, "Loading dialog before download task begins");
+        mProgressDialog = new ProgressDialog(mContext);
+        //mProgressDialog.setTitle(R.string.initializing_connection);
+        mProgressDialog.setMessage(mContext.getString(R.string.establishing_connection));
+        mProgressDialog.show();
+    }
+
+    @Override
+    protected String doInBackground(String... strings) {
+        mCurrentUrl = strings[0];
+        BufferedReader reader = null;
+        StringBuilder stringBuilder = new StringBuilder(0);
+        try {
+            URL url = new URL(strings[0]);
+            URLConnection connection = url.openConnection();
+            connection.connect();
+            publishProgress(CONNECTION_ESTABLISHED);
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            stringBuilder = new StringBuilder();
+            String line;
+            String lineEnding = System.getProperty("line.separator");
+            int counter = 0;
+            long byteProgressCounter = 0;
+            publishProgress(INITIALIZING_DATA_TRANSFER);
+            mCurrentFileLength = connection.getContentLength();
+            boolean isFirstLine = true;
+            while ((line = reader.readLine()) != null) {
+                if (!isFirstLine) {
+                    counter++;
+                    byteProgressCounter += line.getBytes().length;
+                    stringBuilder.append(line + lineEnding);
+                    publishProgress(byteProgressCounter);
+                } else {
+                    isFirstLine = false;
+                }
+            }
+        } catch (MalformedURLException e) {
+            publishProgress(ERROR_DURING_CONNECTION);
+        } catch (IOException e) {
+            publishProgress(ERROR_DURING_CONNECTION);
+        } finally {
+            if (reader != null)
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    // failed to close reader
+                }
+        }
+        return stringBuilder.toString();
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        mProgressDialog.cancel();
+        mProgressDialog.dismiss();
+        onJSONResult(s);
+    }
+
+    public abstract void onJSONResult(String jsonString);
+
+    @Override
+    protected void onProgressUpdate(Long... values) {
+        super.onProgressUpdate(values);
+        if (mProgressDialog == null || !mProgressDialog.isShowing()) {
+            return;
+        }
+        mProgressDialog.setTitle(R.string.deleted);
+        // handle our special messages
+        try {
+            int switchable = Integer.parseInt(String.valueOf(values[0]));
+            // TODO make text display notices
+            switch (switchable) {
+                case (int) CONNECTION_ESTABLISHED:
+                    Log.d(TAG, mContext.getString(R.string.connection_established));
+                    mProgressDialog.setMessage(
+                            mContext.getString(R.string.connection_established));
+                    return;
+                case (int) INITIALIZING_DATA_TRANSFER:
+                    Log.d(TAG, mContext.getString(R.string.initializing_data_transfer));
+                    mProgressDialog.setMessage(
+                            mContext.getString(R.string.initializing_data_transfer));
+                    return;
+                case (int) ERROR_DURING_CONNECTION:
+                    Log.d(TAG, mContext.getString(R.string.communications_error));
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        Toast.makeText(mContext,
+                                String.format("%s with webaddress: %s", mContext.getString(
+                                        R.string.communications_error),
+                                        mCurrentUrl),
+                                Toast.LENGTH_LONG).show();
+                        mProgressDialog.cancel();
+                        mProgressDialog.dismiss();
+                    }
+                    this.cancel(true);
+                    return;
+            }
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Failed to parse number", e);
+        }
+        // if we are still here then we just display the progress of download
+        // display either generic message or progress % (if available)
+        if (mCurrentFileLength != -1) {
+            mProgressDialog.setMessage(
+                    String.format(mContext.getString(R.string.downloading_status),
+                            values[0], // progress
+                            mCurrentFileLength, // total transfer size
+                            findPercent(values[0], mCurrentFileLength))); // percent complete
+        } else {
+            mProgressDialog.setMessage(mContext.getString(R.string.transfering_json_data));
+        }
+        }
+
+    static int findPercent(long progress, long totalSize) {
+        try {
+            Log.d(TAG, "progress: " + progress + " totalSize: " + totalSize +
+                    " as percent:" +  safeLongToInt(progress * 100 / totalSize));
+            // use a safe casting method
+            return safeLongToInt(progress * 100 / totalSize);
+            // handle division by zero just in case
+        } catch (ArithmeticException ae) {
+            return -1;
+        }
+    }
+
+    /**
+     * safely casts long to int
+     *
+     * @param l long to be transformed
+     * @return int value of l
+     */
+    public static int safeLongToInt(long l) {
+        if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException
+                    (l + " cannot be cast to int without changing its value.");
+        }
+        return (int) l;
+    }
 }

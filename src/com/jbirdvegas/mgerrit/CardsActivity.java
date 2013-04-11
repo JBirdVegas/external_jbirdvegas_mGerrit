@@ -18,6 +18,8 @@ package com.jbirdvegas.mgerrit;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -70,8 +72,12 @@ public abstract class CardsActivity extends Activity {
             }
         } catch (JSONException e) {
             Log.d(TAG, new StringBuilder(0)
-                    .append("Failed to parse response from ")
-                    .append(mWebsite).toString());
+                    .append(getString(R.string.failed_to_parse_json_response))
+                    .append(' ')
+                    .append(mWebsite)
+                    .append('\n')
+                    .append(result).toString(), e);
+            showErrorDialog(e, false);
         }
         return commitCardList;
     }
@@ -96,9 +102,9 @@ public abstract class CardsActivity extends Activity {
 
     private void loadScreen() {
         Log.d(TAG, "Calling mgerrit: " + mWebsite);
-        new GerritTask() {
+        new GerritTask(this) {
             @Override
-            protected void onPostExecute(String s) {
+            public void onJSONResult(String s) {
                 drawCardsFromList(generateCardsList(s), mCards);
             }
         }.execute(mWebsite);
@@ -106,7 +112,7 @@ public abstract class CardsActivity extends Activity {
 
     /**
      * Each tab provides its own query for ?p=status:[open:merged:abandoned]
-     * @return
+     * @return current tab name used for query { open, merged, abandoned }
      */
     abstract String getQuery();
 
@@ -116,5 +122,49 @@ public abstract class CardsActivity extends Activity {
             return getParent().onCreateOptionsMenu(menu);
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void showErrorDialog(final Exception exception, boolean showException) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(
+                this);
+        builder.setCancelable(true)
+                .setTitle(R.string.failed_to_parse_json_response)
+                .setInverseBackgroundForced(true)
+                .setPositiveButton(R.string.exit,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                dialog.dismiss();
+                                gameOver();
+                            }
+                        });
+        if (showException) {
+            builder.setMessage(stackTraceToString(exception));
+        } else {
+           builder.setMessage(R.string.gerrit_call_failed)
+                  .setNegativeButton(R.string.show_exception,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                showErrorDialog(exception, true);
+                            }
+                        });
+        }
+        builder.create().show();
+    }
+
+    private void gameOver() {
+        finish();
+    }
+
+    public static String stackTraceToString(Throwable e) {
+        StringBuilder sb = new StringBuilder(0);
+        for (StackTraceElement element : e.getStackTrace()) {
+            sb.append(element.toString());
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }

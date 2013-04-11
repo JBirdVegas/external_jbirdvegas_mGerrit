@@ -64,7 +64,6 @@ public class CommitCard extends Card {
                 R.id.commit_card_view_in_browser);
         Button moarInfo = (Button) commitCardView.findViewById(
                 R.id.commit_card_moar_info);
-        // TODO FIX ME!!!
         moarInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,6 +75,7 @@ public class CommitCard extends Card {
                         .append(mCommit.getCommitNumber())
                         .append(JSONCommit.CURRENT_PATCHSET_ARGS).toString());
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 context.startActivity(intent);
             }
         });
@@ -110,13 +110,5 @@ public class CommitCard extends Card {
      */
     private String buildChangedFilesString(List<ChangedFile> fileList) {
         return Arrays.toString(fileList.toArray());
-    }
-
-    public int getNumber() {
-        return mCommit.getCommitNumber();
-    }
-
-    public JSONCommit getJSONCommit() {
-        return this.mCommit;
     }
 }
