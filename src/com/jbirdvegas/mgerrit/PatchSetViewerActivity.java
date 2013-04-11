@@ -43,11 +43,11 @@ import org.json.JSONException;
  *
  * All cards are located at jbirdvegas.mgerrit.cards.*
  */
-public abstract class PatchSetViewerActivity extends Activity {
+public class PatchSetViewerActivity extends Activity {
     private static final String TAG = PatchSetViewerActivity.class.getSimpleName();
     private CardUI mCardsUI;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.commit_list);
         String query = getIntent().getStringExtra(JSONCommit.KEY_WEBSITE);
