@@ -18,19 +18,27 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListView;
-import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
-import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.adapters.PatchSetChangedFilesAdapter;
-import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
+import com.jbirdvegas.mgerrit.Prefs;
+import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.objects.ChangedFile;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
+
+import java.util.List;
 
 public class PatchSetChangesCard extends Card {
     private static final String TAG = PatchSetChangesCard.class.getSimpleName();
+    private static final boolean VERBOSE = true;
     private JSONCommit mCommit;
+    private LayoutInflater mInflater;
 
     public PatchSetChangesCard(JSONCommit commit) {
         mCommit = commit;
@@ -38,24 +46,79 @@ public class PatchSetChangesCard extends Card {
 
     @Override
     public View getCardContent(final Context context) {
-        LayoutInflater inflater = (LayoutInflater)
+        mInflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rootView = inflater.inflate(R.layout.listview_card, null);
-        ListView listView = (ListView) rootView.findViewById(R.id.listView);
+        ViewGroup rootView = (ViewGroup) mInflater.inflate(R.layout.linear_layout, null);
+        List<ChangedFile> changedFileList = mCommit.getChangedFiles();
         // its possible for this to be null so watch out
-        if (mCommit.getChangedFiles() == null) {
+        if (changedFileList == null) {
             // EEK! just show a simple not found message
-            PatchSetViewerActivity.setNotFoundListView(context, listView);
+            // TODO Show some error message?
         } else {
-            try {
-                listView.setAdapter(new PatchSetChangedFilesAdapter(context,
-                        mCommit.getChangedFiles(),
-                        mCommit));
-                PatchSetViewerActivity.setListViewHeightBasedOnChildren(listView);
-            } catch (NullPointerException npe) {
-                Log.d(TAG, "Failed to set ListView Adapter", npe);
+            for (ChangedFile changedFile : changedFileList) {
+                // generate and add the Changed File Views
+                rootView.addView(generateChangedFileView(changedFile, context));
             }
         }
         return rootView;
+    }
+
+    private View generateChangedFileView(final ChangedFile changedFile, final Context context) {
+        View innerRootView = mInflater.inflate(R.layout.patchset_file_changed_list_item, null);
+        TextView path = (TextView)
+                innerRootView.findViewById(R.id.changed_file_path);
+        TextView inserted = (TextView)
+                innerRootView.findViewById(R.id.changed_file_inserted);
+        TextView deleted = (TextView)
+                innerRootView.findViewById(R.id.changed_file_deleted);
+        TextView insText = (TextView)
+                innerRootView.findViewById(R.id.inserted_text);
+        TextView delText = (TextView)
+                innerRootView.findViewById(R.id.deleted_text);
+        String changedFilePath = changedFile.getPath();
+        int insertedInFile = changedFile.getInserted();
+        int deletedInFile = changedFile.getDeleted();
+        if (VERBOSE) {
+            Log.d(TAG, "File change stats Path=" + changedFilePath
+                    + " inserted=" + insertedInFile
+                    + " deleted=" + deletedInFile
+                    + " objectToString()=" + changedFile.toString());
+        }
+        // we always have a path
+        if (path != null) {
+            path.setText(changedFilePath);
+            // we may not have inserted lines so remove if unneeded
+            if (changedFile.getInserted() == Integer.MIN_VALUE) {
+                inserted.setVisibility(View.GONE);
+                insText.setVisibility(View.GONE);
+            } else {
+                inserted.setText('+' + String.valueOf(changedFile.getInserted()));
+                inserted.setTextColor(Color.GREEN);
+                insText.setTextColor(Color.GREEN); //remove?
+            }
+            // we may not have deleted lines so remove if unneeded
+            if (changedFile.getDeleted() == Integer.MIN_VALUE) {
+                deleted.setVisibility(View.GONE);
+                delText.setVisibility(View.GONE);
+            } else {
+                deleted.setText('-' + String.valueOf(changedFile.getDeleted()));
+                deleted.setTextColor(Color.RED);
+                delText.setTextColor(Color.RED); //remove?
+            }
+        }
+        innerRootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String base = "%s#/c/%d/%d/%s";
+                Intent browserIntent = new Intent(
+                        Intent.ACTION_VIEW, Uri.parse(String.format(base,
+                        Prefs.getCurrentGerrit(context),
+                        mCommit.getCommitNumber(),
+                        mCommit.getPatchSetNumber(),
+                        changedFile.getPath())));
+                context.startActivity(browserIntent);
+            }
+        });
+        return innerRootView;
     }
 }

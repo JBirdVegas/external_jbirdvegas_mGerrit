@@ -19,10 +19,10 @@ package com.jbirdvegas.mgerrit;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
@@ -30,6 +30,7 @@ import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +54,7 @@ public abstract class CardsActivity extends Activity {
 
     // renders each card separately
     protected void drawCardsFromList(List<CommitCard> cards, CardUI cardUI) {
-        for (int i = 1; cards.size() > i; i++) {
+        for (int i = 0; cards.size() > i; i++) {
             cardUI.addCard(cards.get(i));
         }
         cardUI.refresh();
@@ -65,10 +66,8 @@ public abstract class CardsActivity extends Activity {
             JSONArray jsonArray = new JSONArray(result);
             int arraySize = jsonArray.length();
             for (int i = 0; arraySize > i; i++) {
-                commitCardList.add(
-                        new CommitCard(
-                                new JSONCommit(jsonArray.getJSONObject(i),
-                                        getApplicationContext())));
+                commitCardList.add(getCommitCard(jsonArray.getJSONObject(i),
+                        getApplicationContext()));
             }
         } catch (JSONException e) {
             Log.d(TAG, new StringBuilder(0)
@@ -80,6 +79,10 @@ public abstract class CardsActivity extends Activity {
             showErrorDialog(e, false);
         }
         return commitCardList;
+    }
+
+    private CommitCard getCommitCard(JSONObject jsonObject, Context context) {
+        return new CommitCard (new JSONCommit(jsonObject, context));
     }
 
     CardUI mCards;
@@ -116,16 +119,8 @@ public abstract class CardsActivity extends Activity {
      */
     abstract String getQuery();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (getParent() != null) {
-            return getParent().onCreateOptionsMenu(menu);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
     private void showErrorDialog(final Exception exception, boolean showException) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(
+        AlertDialog.Builder builder = new AlertDialog.Builder(
                 this);
         builder.setCancelable(true)
                 .setTitle(R.string.failed_to_parse_json_response)
@@ -163,7 +158,7 @@ public abstract class CardsActivity extends Activity {
         StringBuilder sb = new StringBuilder(0);
         for (StackTraceElement element : e.getStackTrace()) {
             sb.append(element.toString());
-            sb.append("\n");
+            sb.append('\n');
         }
         return sb.toString();
     }

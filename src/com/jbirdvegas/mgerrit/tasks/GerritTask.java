@@ -19,20 +19,15 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 import com.jbirdvegas.mgerrit.R;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -40,6 +35,7 @@ import java.net.URLConnection;
 @SuppressWarnings("AccessOfSystemProperties")
 public abstract class GerritTask extends AsyncTask<String, Long, String> {
     private static final String TAG = GerritTask.class.getSimpleName();
+    private static final boolean DEBUG = true;
     private static final long CONNECTION_ESTABLISHED = -1000;
     private static final long INITIALIZING_DATA_TRANSFER = -1001;
     private static final long ERROR_DURING_CONNECTION = -1002;
@@ -73,22 +69,25 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
             connection.connect();
             publishProgress(CONNECTION_ESTABLISHED);
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            stringBuilder = new StringBuilder();
+            stringBuilder = new StringBuilder(0);
             String line;
             String lineEnding = System.getProperty("line.separator");
-            int counter = 0;
             long byteProgressCounter = 0;
             publishProgress(INITIALIZING_DATA_TRANSFER);
+            // will most likely be -1 :(
             mCurrentFileLength = connection.getContentLength();
             boolean isFirstLine = true;
             while ((line = reader.readLine()) != null) {
                 if (!isFirstLine) {
-                    counter++;
                     byteProgressCounter += line.getBytes().length;
                     stringBuilder.append(line + lineEnding);
                     publishProgress(byteProgressCounter);
                 } else {
                     isFirstLine = false;
+                    String subString = line.substring(4);
+                    byteProgressCounter += subString.getBytes().length;
+                    stringBuilder.append(subString);
+                    publishProgress(byteProgressCounter);
                 }
             }
         } catch (MalformedURLException e) {
@@ -110,6 +109,12 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
     protected void onPostExecute(String s) {
         mProgressDialog.cancel();
         mProgressDialog.dismiss();
+        // check if we are in production code or debugging mode
+        boolean isDebuggable = (0 != (mContext.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
+        // if we are debugging then dump the response to logcat
+        if (isDebuggable || DEBUG) {
+            Log.d(TAG, "[DEBUG-MODE] Gerrit instance response: " + s);
+        }
         onJSONResult(s);
     }
 
@@ -165,7 +170,7 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
         } else {
             mProgressDialog.setMessage(mContext.getString(R.string.transfering_json_data));
         }
-        }
+    }
 
     static int findPercent(long progress, long totalSize) {
         try {

@@ -76,14 +76,13 @@ public class PatchSetViewerActivity extends Activity {
 
     private void addCards(CardUI ui, JSONCommit jsonCommit) {
         Log.d(TAG, "Loading Properties Card...");
-        ui.addCard(new PatchSetPropertiesCard(jsonCommit));
+        ui.addCard(new PatchSetPropertiesCard(jsonCommit), true);
         Log.d(TAG, "Loading Message Card...");
-        ui.addCard(new PatchSetMessageCard(jsonCommit));
+        ui.addCard(new PatchSetMessageCard(jsonCommit), true);
         Log.d(TAG, "Loading Changes Card...");
-        ui.addCard(new PatchSetChangesCard(jsonCommit));
+        ui.addCard(new PatchSetChangesCard(jsonCommit), true);
         Log.d(TAG, "Loading Reviewers Card...");
-        ui.addCard(new PatchSetReviewersCard(jsonCommit));
-        ui.refresh();
+        ui.addCard(new PatchSetReviewersCard(jsonCommit), true);
     }
 
     /*
