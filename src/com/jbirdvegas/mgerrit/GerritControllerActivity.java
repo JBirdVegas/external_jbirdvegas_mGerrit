@@ -82,7 +82,6 @@ public class GerritControllerActivity extends TabActivity {
         Intent intent = new Intent(this, Prefs.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        Prefs.setSavedGerrit(getApplicationContext(), Prefs.getCurrentGerrit(getApplicationContext()));
         startActivity(intent);
         return true;
     }

@@ -75,7 +75,6 @@ public class CommitCard extends Card {
                         .append(mCommit.getCommitNumber())
                         .append(JSONCommit.CURRENT_PATCHSET_ARGS).toString());
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 context.startActivity(intent);
             }
         });

@@ -25,4 +25,14 @@
         <item>http://gerrit.sudoservers.com/</item>
         <item>https://android-review.googlesource.com/</item>
     </string-array>
+    <string-array name="status_entries">
+        <item>@string/reviewable</item>
+        <item>@string/merged</item>
+        <item>@string/abandoned</item>
+    </string-array>
+    <string-array name="status_entry_values">
+        <item>@string/status_explaination_new</item>
+        <item>@string/status_explaination_merged</item>
+        <item>@string/status_explaination_abandoned</item>
+    </string-array>
 </resources>
