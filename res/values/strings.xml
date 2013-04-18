@@ -48,17 +48,17 @@
         and try again.
     </string>
     <string name="establishing_connection">Establishing connection...</string>
-    <string name="transfering">Transfering JSON encoded data...</string>
+    <string name="transfering">Transferring JSON encoded data...</string>
     <string name="downloading_status" formatted="false">%d of %d bytes downloaded\t%d%% completed</string>
     <string name="connection_established">Connection established</string>
     <string name="initializing_data_transfer">Initializing data transfer...</string>
     <string name="communications_error">Communication ERROR!!!</string>
-    <string name="transfering_json_data">Transfering JSON encoded data...</string>
+    <string name="transfering_json_data">Transferring JSON encoded data...</string>
     <string name="open_source_libs">Open Source Libraries</string>
     <string name="cards_ui">CardsUI</string>
     <string name="cards_ui_website">http://www.androidviews.net/2012/12/cardsui/</string>
     <string name="nine_old_androids">NineOldAndroids</string>
     <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
     <string name="explain_status_title">Explain statuses</string>
-    <string name="explain_status_summary">Breif explaination of the Status tabs meanings</string>
+    <string name="explain_status_summary">Brief explanation of the Status tabs meanings</string>
 </resources>
