@@ -1,0 +1,29 @@
+{
+    "gerrit-server/src/main/java/com/google/gerrit/server/project/RefControl.java": [
+        {
+            "kind": "gerritcodereview#comment",
+            "id": "TvcXrmjM",
+            "line": 23,
+            "message": "[nit] trailing whitespace",
+            "updated": "2013-02-26 15:40:43.986000000",
+            "author": {
+                "_account_id": 1000096,
+                "name": "John Doe",
+                "email": "john.doe@example.com"
+            }
+        },
+        {
+            "kind": "gerritcodereview#comment",
+            "id": "TveXwFiA",
+            "line": 49,
+            "in_reply_to": "TfYX-Iuo",
+            "message": "Done",
+            "updated": "2013-02-26 15:40:45.328000000",
+            "author": {
+                "_account_id": 1000097,
+                "name": "Jane Roe",
+                "email": "jane.roe@example.com"
+            }
+        }
+    ]
+}

@@ -35,7 +35,7 @@ import java.net.URLConnection;
 @SuppressWarnings("AccessOfSystemProperties")
 public abstract class GerritTask extends AsyncTask<String, Long, String> {
     private static final String TAG = GerritTask.class.getSimpleName();
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final long CONNECTION_ESTABLISHED = -1000;
     private static final long INITIALIZING_DATA_TRANSFER = -1001;
     private static final long ERROR_DURING_CONNECTION = -1002;

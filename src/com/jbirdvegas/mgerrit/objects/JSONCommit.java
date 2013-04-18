@@ -46,9 +46,9 @@ public class JSONCommit {
     public static final String KEY_STATUS = "status";
     public static final String KEY_ID = "id";
     public static String KEY_WEBSITE = "website";
+    public static final String KEY_KIND = "kind";
 
     // internal
-    private static final String KEY_KIND = "kind";
     private static final String KEY_PROJECT = "project";
     private static final String KEY_BRANCH = "branch";
     private static final String KEY_CHANGE_ID = "change_id";
