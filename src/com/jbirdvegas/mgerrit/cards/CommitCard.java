@@ -69,7 +69,7 @@ public class CommitCard extends Card {
             public void onClick(View view) {
                 Intent intent = new Intent(context, PatchSetViewerActivity.class);
                 // example website
-                // http://gerrit.sudoservers.com/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
+                // http://gerrit.aokp.co/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
                 intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
                         .append(StaticWebAddress.getChangesQuery())
                         .append(mCommit.getCommitNumber())

@@ -22,7 +22,7 @@
         <item>AOSP</item>
     </string-array>
     <string-array name="gerrit_webaddresses">
-        <item>http://gerrit.sudoservers.com/</item>
+        <item>http://gerrit.aokp.co/</item>
         <item>https://android-review.googlesource.com/</item>
     </string-array>
     <string-array name="status_entries">
