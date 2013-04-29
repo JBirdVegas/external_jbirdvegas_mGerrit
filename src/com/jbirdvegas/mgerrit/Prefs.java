@@ -73,7 +73,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
      */
     public static String getCurrentGerrit(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(GERRIT_KEY, StaticWebAddress.HTTP_GERRIT_SUDOSERVERS_COM);
+                .getString(GERRIT_KEY, StaticWebAddress.HTTP_GERRIT_AOKP_CO);
     }
 
     /**

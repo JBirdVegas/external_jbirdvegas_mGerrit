@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
@@ -36,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class CardsActivity extends Activity {
+    private static final String KEY_STORED_CARDS = "storedCards";
     protected String TAG = getClass().getSimpleName();
     private String mWebsite;
 
@@ -82,13 +84,14 @@ public abstract class CardsActivity extends Activity {
     }
 
     private CommitCard getCommitCard(JSONObject jsonObject, Context context) {
-        return new CommitCard (new JSONCommit(jsonObject, context));
+        return new CommitCard(new JSONCommit(jsonObject, context));
     }
 
     CardUI mCards;
 
     /**
      * This class handles the boilerplate code for those that inherit
+     *
      * @param savedInstanceState bundle containing state
      */
     @Override
@@ -100,21 +103,29 @@ public abstract class CardsActivity extends Activity {
                 .append(Prefs.getCurrentGerrit(getApplicationContext()))
                 .append(StaticWebAddress.getStatusQuery())
                 .append(getQuery()).toString();
+        if (savedInstanceState == null) {
+            saveCards("");
+        }
         loadScreen();
     }
 
     private void loadScreen() {
         Log.d(TAG, "Calling mgerrit: " + mWebsite);
-        new GerritTask(this) {
-            @Override
-            public void onJSONResult(String s) {
-                drawCardsFromList(generateCardsList(s), mCards);
-            }
-        }.execute(mWebsite);
+        if (getStoredCards().equals(""))
+            new GerritTask(this) {
+                @Override
+                public void onJSONResult(String s) {
+                    saveCards(s);
+                    drawCardsFromList(generateCardsList(s), mCards);
+                }
+            }.execute(mWebsite);
+        else
+            drawCardsFromList(generateCardsList(getStoredCards()), mCards);
     }
 
     /**
      * Each tab provides its own query for ?p=status:[open:merged:abandoned]
+     *
      * @return current tab name used for query { open, merged, abandoned }
      */
     abstract String getQuery();
@@ -137,15 +148,15 @@ public abstract class CardsActivity extends Activity {
         if (showException) {
             builder.setMessage(stackTraceToString(exception));
         } else {
-           builder.setMessage(R.string.gerrit_call_failed)
-                  .setNegativeButton(R.string.show_exception,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                                showErrorDialog(exception, true);
-                            }
-                        });
+            builder.setMessage(R.string.gerrit_call_failed)
+                    .setNegativeButton(R.string.show_exception,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int which) {
+                                    showErrorDialog(exception, true);
+                                }
+                            });
         }
         builder.create().show();
     }
@@ -161,5 +172,13 @@ public abstract class CardsActivity extends Activity {
             sb.append('\n');
         }
         return sb.toString();
+    }
+
+    private void saveCards(String jsonCards) {
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putString(KEY_STORED_CARDS, jsonCards).commit();
+    }
+
+    private String getStoredCards() {
+        return PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_STORED_CARDS, "");
     }
 }

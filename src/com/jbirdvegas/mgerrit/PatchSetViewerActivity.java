@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,14 +38,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 /**
- *
  * Class handles populating the screen with several
  * cards each giving more information about the patchset
- *
+ * <p/>
  * All cards are located at jbirdvegas.mgerrit.cards.*
  */
 public class PatchSetViewerActivity extends Activity {
     private static final String TAG = PatchSetViewerActivity.class.getSimpleName();
+    private static final String KEY_STORED_PATCHSET = "storedPatchset";
     private CardUI mCardsUI;
 
     @Override
@@ -52,26 +53,41 @@ public class PatchSetViewerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.commit_list);
         String query = getIntent().getStringExtra(JSONCommit.KEY_WEBSITE);
-        Log.d(TAG,"Website to query: " + query);
+        Log.d(TAG, "Website to query: " + query);
         mCardsUI = (CardUI) findViewById(R.id.commit_cards);
+        if (savedInstanceState == null) {
+            savePatchSet("");
+        }
         executeGerritTask(query);
     }
 
     private void executeGerritTask(final String query) {
-        new GerritTask(this) {
-            @Override
-            public void onJSONResult(String s) {
-                try {
-                    addCards(mCardsUI,
-                            new JSONCommit(
-                                    new JSONArray(s).getJSONObject(0),
-                                    getApplicationContext()));
-                } catch (JSONException e) {
-                    Log.d(TAG, "Response from "
-                            + query + " could not be parsed into cards :(", e);
+        if ("".equals(getStoredPatchSet())) {
+            new GerritTask(this) {
+                @Override
+                public void onJSONResult(String s) {
+                    try {
+                        savePatchSet(s);
+                        addCards(mCardsUI,
+                                new JSONCommit(
+                                        new JSONArray(s).getJSONObject(0),
+                                        getApplicationContext()));
+                    } catch (JSONException e) {
+                        Log.d(TAG, "Response from "
+                                + query + " could not be parsed into cards :(", e);
+                    }
                 }
+            }.execute(query);
+        } else {
+            try {
+                addCards(mCardsUI, new JSONCommit(
+                        new JSONArray(getStoredPatchSet()).getJSONObject(0),
+                        getApplicationContext()
+                ));
+            } catch (JSONException e) {
+                Log.d(TAG, "Stored response could not be parsed into cards :(", e);
             }
-        }.execute(query);
+        }
     }
 
     private void addCards(CardUI ui, JSONCommit jsonCommit) {
@@ -145,4 +161,13 @@ public class PatchSetViewerActivity extends Activity {
                                 context.getString(R.string.please_try_again)
                         }));
     }
+
+    private void savePatchSet(String jsonResponse) {
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putString(KEY_STORED_PATCHSET, jsonResponse).commit();
+    }
+
+    private String getStoredPatchSet() {
+        return PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_STORED_PATCHSET, "");
+    }
+
 }
