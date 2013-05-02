@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
+  ~  Author: Jon Stanford (JBirdVegas), 2013
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">mGerrit</string>
+    <string name="reviewable">Review</string>
+    <string name="merged">Merged</string>
+    <string name="abandoned">Abandoned</string>
+    <string name="status_explaination_new">変更はレビュー中です。</string>
+    <string name="status_explaination_submitted">変更は提出されてマージ中です。ひとつ以上の依存関係が解消されるのを待っています。</string>
+    <string name="status_explaination_merged">変更はブランチにマージされました。</string>
+    <string name="status_explaination_abandoned">変更はオーナーまたは管理者によって取り下げられました。</string>
+    <string name="view_in_browser">ブラウザ</string>
+    <string name="moar_info">詳細情報</string>
+    <string name="patchset_labels_code_reviewer_title">コードレビュー</string>
+    <string name="patchset_labels_verified_reviewer_title">検証</string>
+    <string name="inserted">挿入行</string>
+    <string name="deleted">削除行</string>
+    <string name="none_found">見つかりません</string>
+    <string name="please_try_again">戻って再度試してください</string>
+    <string name="menu_preferences">設定</string>
+    <string name="choose_gerrit_instance">Gerritインスタンス選択</string>
+    <string name="commit_committer">コミット</string>
+    <string name="commit_author">作者</string>
+    <string name="commit_owner">オーナー</string>
+    <string name="failed_to_parse_json_response">解析失敗:</string>
+    <string name="ok">ok</string>
+    <string name="show_exception">例外を表示</string>
+    <string name="exit">終了</string>
+    <string name="gerrit_call_failed">Gerritインスタンスのデータ取得に失敗しました。接続を確認して再度試してください。</string>
+    <string name="establishing_connection">接続確立中...</string>
+    <string name="transfering">JSONデータ変換中...</string>
+    <string name="downloading_status" formatted="false">%d / %d バイトダウンロード\t%d%% 完了</string>
+    <string name="connection_established">接続確率</string>
+    <string name="initializing_data_transfer">データ変換初期化中...</string>
+    <string name="communications_error">通信エラー!!!</string>
+    <string name="transfering_json_data">JSONデータ変換中...</string>
+    <string name="open_source_libs">オープンソースライブラリー</string>
+    <string name="cards_ui">CardsUI</string>
+    <string name="cards_ui_website">http://www.androidviews.net/2012/12/cardsui/</string>
+    <string name="nine_old_androids">NineOldAndroids</string>
+    <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
+    <string name="explain_status_title">ステータス説明</string>
+    <string name="explain_status_summary">ステータスタブの概要説明</string>
+</resources>
