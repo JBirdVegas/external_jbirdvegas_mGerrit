@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">mGerrit</string>
+    <string name="reviewable">Revisat</string>
+    <string name="merged">Fusionat</string>
+    <string name="abandoned">Abandonat</string>
+    <string name="status_explaination_new">Encara s\'està revisant el canvi.</string>
+    <string name="status_explaination_submitted">S\'ha proposat el canvi i està a la cua de fusió. Pot ser que estigui esperant una o més dependències.</string>
+    <string name="status_explaination_merged">El canvi s\'ha fusionat a la seva branca.</string>
+    <string name="status_explaination_abandoned">El canvi ha estat abandonat pel seu propietari o l\'administrador.</string>
+    <string name="view_in_browser">Navegador</string>
+    <string name="moar_info">Més Info!</string>
+    <string name="patchset_labels_code_reviewer_title">Revisors del codi</string>
+    <string name="patchset_labels_verified_reviewer_title">Verificat</string>
+    <string name="inserted">Línies inserides</string>
+    <string name="deleted">Línies suprimides</string>
+    <string name="none_found">No se n\'ha trobat cap</string>
+    <string name="please_try_again">Torneu enrere i proveu-ho un altre cop</string>
+    <string name="menu_preferences">Preferències</string>
+    <string name="choose_gerrit_instance">Trieu la instància d\'equip Gerrit</string>
+    <string name="commit_committer">Validador</string>
+    <string name="commit_author">Autor</string>
+    <string name="commit_owner">Propietari</string>
+    <string name="failed_to_parse_json_response">No s\'ha pogut analitzar la resposta de</string>
+    <string name="ok">d\'acord</string>
+    <string name="show_exception">Mostra l\'excepció</string>
+    <string name="exit">Surt</string>
+    <string name="gerrit_call_failed">No s\'ha pogut aconseguir una resposta útil de la instància Gerrit. Comproveu la connexió i torneu a intentar-ho.</string>
+    <string name="establishing_connection">S\'està establint la connexió...</string>
+    <string name="transfering">S\'està transferint les dades codificades JSON...</string>
+    <string name="downloading_status" formatted="false">S\'ha baixat %d de %d bytes\t%d%% completat</string>
+    <string name="connection_established">Connexió establerta</string>
+    <string name="initializing_data_transfer">S\'està iniciant la transferència de dades...</string>
+    <string name="communications_error">ERROR de comunicació!!!</string>
+    <string name="transfering_json_data">S\'està transferint les dades codificades JSON...</string>
+    <string name="open_source_libs">Biblioteques de codi obert</string>
+    <string name="cards_ui">CardsUI</string>
+    <string name="cards_ui_website">http://www.androidviews.net/2012/12/cardsui/</string>
+    <string name="nine_old_androids">NineOldAndroids</string>
+    <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
+    <string name="explain_status_title">Explicació dels estats</string>
+    <string name="explain_status_summary">Explicació breu dels significats de les pestanyes d\'estat</string>
+</resources>
