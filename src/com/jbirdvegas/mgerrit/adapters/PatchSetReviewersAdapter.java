@@ -66,6 +66,8 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
     }
 
     private void setColoredApproval(String value, TextView approval) {
+        int mGreen = this.getContext().getResources().getColor(R.color.text_green);
+        int mRed = this.getContext().getResources().getColor(R.color.text_red);
         int plusStatus = 0;
         if (value == null) {
             value = "0";
@@ -74,10 +76,10 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
             plusStatus = Integer.parseInt(value);
             if (plusStatus >= 1) {
                 approval.setText('+' + value);
-                approval.setTextColor(Color.GREEN);
+                approval.setTextColor(mGreen);
             } else if (plusStatus <= -1) {
                 approval.setText(value);
-                approval.setTextColor(Color.RED);
+                approval.setTextColor(mRed);
             } else {
                 approval.setText(Reviewer.NO_SCORE);
             }

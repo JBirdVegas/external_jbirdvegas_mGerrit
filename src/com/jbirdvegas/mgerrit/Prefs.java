@@ -55,15 +55,6 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
                 return true;
             }
         });
-        // explain Review, Merged, Abandoned
-        ListPreference explainStatus = (ListPreference) findPreference(EXPLAIN_STATUS_KEY);
-        explainStatus.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                Toast.makeText(getApplicationContext(), (CharSequence) o, Toast.LENGTH_LONG).show();
-                return true;
-            }
-        });
     }
 
     /**
