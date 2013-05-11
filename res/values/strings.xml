@@ -29,17 +29,19 @@
     <string name="status_explaination_abandoned">Change was abandoned by its owner or administrator.</string>
     <string name="view_in_browser">Browser</string>
     <string name="moar_info">Moar Info!</string>
-    <string name="patchset_labels_code_reviewer_title">Code-Reviewers</string>
-    <string name="patchset_labels_verified_reviewer_title">Verified</string>
-    <string name="inserted">Inserted Lines</string>
-    <string name="deleted">Deleted Lines</string>
+    <string name="patchset_labels_code_reviewer_title">Code-Reviewers:</string>
+    <string name="patchset_labels_verified_reviewer_title">Verified:</string>
+    <string name="dash">-</string>
+    <string name="inserted">Inserted Lines:</string>
+    <string name="deleted">Deleted Lines:</string>
     <string name="none_found">None Found</string>
     <string name="please_try_again">Please back out and try again</string>
     <string name="menu_preferences">Preferences</string>
+    <string name="menu_help">Help</string>
     <string name="choose_gerrit_instance">Choose Team Gerrit Instance</string>
-    <string name="commit_committer">Committer</string>
-    <string name="commit_author">Author</string>
-    <string name="commit_owner">Owner</string>
+    <string name="commit_committer">Committer:</string>
+    <string name="commit_author">Author:</string>
+    <string name="commit_owner">Owner:</string>
     <string name="failed_to_parse_json_response">Failed to parse response from</string>
     <string name="ok">ok</string>
     <string name="show_exception">Show Exception</string>
@@ -61,4 +63,5 @@
     <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
     <string name="explain_status_title">Explain statuses</string>
     <string name="explain_status_summary">Brief explanation of the Status tabs meanings</string>
+    <string name="menu_gerrit_instance">Gerrit Instance</string>
 </resources>

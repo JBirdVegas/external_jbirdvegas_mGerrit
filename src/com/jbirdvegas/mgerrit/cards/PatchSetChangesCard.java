@@ -92,18 +92,18 @@ public class PatchSetChangesCard extends Card {
                 inserted.setVisibility(View.GONE);
                 insText.setVisibility(View.GONE);
             } else {
+                int mGreen = context.getResources().getColor(R.color.text_green);
                 inserted.setText('+' + String.valueOf(changedFile.getInserted()));
-                inserted.setTextColor(Color.GREEN);
-                insText.setTextColor(Color.GREEN); //remove?
+                inserted.setTextColor(mGreen);
             }
             // we may not have deleted lines so remove if unneeded
             if (changedFile.getDeleted() == Integer.MIN_VALUE) {
                 deleted.setVisibility(View.GONE);
                 delText.setVisibility(View.GONE);
             } else {
+                int mRed = context.getResources().getColor(R.color.text_red);
                 deleted.setText('-' + String.valueOf(changedFile.getDeleted()));
-                deleted.setTextColor(Color.RED);
-                delText.setTextColor(Color.RED); //remove?
+                deleted.setTextColor(mRed);
             }
         }
         innerRootView.setOnClickListener(new View.OnClickListener() {

@@ -16,32 +16,28 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/message_card_subject"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"/>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/message_card_last_update"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
-        android:layout_marginTop="5dp"/>
-
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:paddingTop="6dip"
+        android:paddingBottom="8dip"
+        android:textAppearance="@style/CardText"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/message_card_message"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        />
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:textAppearance="@style/CardText"
+        android:textSize="13sp"/>
 </LinearLayout>

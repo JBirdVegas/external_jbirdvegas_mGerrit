@@ -22,5 +22,9 @@
         android:id="@+id/menu_save"
         android:icon="@drawable/ic_menu_moreoverflow_normal_holo_light"
         android:title="@string/menu_preferences"
-        android:showAsAction="ifRoom|withText"/>
+        android:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_help"
+        android:title="@string/menu_help"
+        android:showAsAction="never"/>
 </menu>

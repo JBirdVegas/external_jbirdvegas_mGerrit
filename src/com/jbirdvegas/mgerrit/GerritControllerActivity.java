@@ -17,13 +17,19 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
+import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TabHost;
+
 
 public class GerritControllerActivity extends TabActivity {
     private static final String TAG = GerritControllerActivity.class.getSimpleName();
@@ -79,10 +85,32 @@ public class GerritControllerActivity extends TabActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(this, Prefs.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(intent);
-        return true;
+
+        switch(item.getItemId()) {
+
+        case R.id.menu_save:
+
+            Intent intent = new Intent(this, Prefs.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(intent);
+            return true;
+
+        case R.id.menu_help:
+
+            Builder builder = new Builder(this);
+            builder.setTitle(R.string.menu_help);
+            LayoutInflater layoutInflater = this.getLayoutInflater();
+            View dialog = layoutInflater.inflate(R.layout.dialog_help, null);
+            builder.setView(dialog);
+            builder.create();
+            builder.show();
+            return true;
+
+        default:
+
+            return super.onOptionsItemSelected(item);
+
+        }
     }
 }

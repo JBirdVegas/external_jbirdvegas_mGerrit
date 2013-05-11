@@ -19,27 +19,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              android:paddingBottom="12dip">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/patchset_labels_code_reviewer_title"
-        android:text="@string/patchset_labels_code_reviewer_title"/>
+        android:text="@string/patchset_labels_code_reviewer_title"
+        android:paddingLeft="8dip"
+        android:paddingBottom="8dip"
+        android:textAppearance="@style/CardTitle"
+        android:textSize="20sp"/>
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/patchset_labels_code_reviewers"/>
+        android:id="@+id/patchset_labels_code_reviewers"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"/>
 
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:id="@+id/patchset_labels_verified_reviewer_title"
-        android:text="@string/patchset_labels_verified_reviewer_title"/>
+        android:text="@string/patchset_labels_verified_reviewer_title"
+        android:paddingLeft="8dip"
+        android:paddingTop="8dip"
+        android:paddingBottom="8dip"
+        android:textAppearance="@style/CardTitle"
+        android:textSize="20sp"/>
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/patchset_labels_verified_reviewers"/>
+        android:id="@+id/patchset_labels_verified_reviewers"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"/>
 
 </LinearLayout>

@@ -24,13 +24,6 @@
         android:entryValues="@array/gerrit_webaddresses"
         android:title="@string/choose_gerrit_instance"/>
 
-    <ListPreference
-        android:key="explain_status_key"
-        android:entries="@array/status_entries"
-        android:entryValues="@array/status_entry_values"
-        android:title="@string/explain_status_title"
-        android:summary="@string/explain_status_summary"/>
-
     <PreferenceCategory
         android:title="@string/open_source_libs">
 

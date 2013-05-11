@@ -21,36 +21,59 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-    >
+              android:paddingBottom="8dip">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/changed_file_path"
-        android:layout_gravity="center"/>
+        android:gravity="left"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:paddingBottom="8dip"
+        android:textAppearance="@style/CardText"
+        android:textStyle="bold"/>
 
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="@string/inserted"
-        android:id="@+id/inserted_text"/>
+        android:id="@+id/inserted_text"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:textAppearance="@style/CardText"
+        android:textSize="13sp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/changed_file_inserted"
-        android:layout_gravity="right|center_vertical"/>
+        android:gravity="right"
+        android:layout_gravity="right"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:textAppearance="@style/CardText"
+        android:textSize="13sp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/deleted"
-        android:id="@+id/deleted_text"/>
+        android:id="@+id/deleted_text"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:textAppearance="@style/CardText"
+        android:textSize="13sp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/changed_file_deleted"
-        android:layout_gravity="right|center_vertical"/>
+        android:gravity="right"
+        android:layout_gravity="right"
+        android:paddingLeft="8dip"
+        android:paddingRight="8dip"
+        android:textAppearance="@style/CardText"
+        android:textSize="13sp"/>
 
 </LinearLayout>

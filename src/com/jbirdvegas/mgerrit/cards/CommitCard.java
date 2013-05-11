@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,8 @@ public class CommitCard extends Card {
 
     @Override
     public View getCardContent(final Context context) {
+        int mGreen = context.getResources().getColor(R.color.text_green);
+        int mRed = context.getResources().getColor(R.color.text_red);
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commitCardView = inflater.inflate(R.layout.commit_card, null);
@@ -56,6 +59,11 @@ public class CommitCard extends Card {
                 .setText(mCommit.getLastUpdatedDate());
         ((TextView) commitCardView.findViewById(R.id.commit_card_commit_status))
                 .setText(mCommit.getStatus().toString());
+        if(mCommit.getStatus().toString() == "MERGED") {
+            ((TextView) commitCardView.findViewById(R.id.commit_card_commit_status)).setTextColor(mGreen);
+        } else if(mCommit.getStatus().toString() == "ABANDONED") {
+            ((TextView) commitCardView.findViewById(R.id.commit_card_commit_status)).setTextColor(mRed);
+        }
         TextView messageTv = (TextView)
                 commitCardView.findViewById(R.id.commit_card_message);
         TextView changedFilesTv = (TextView)

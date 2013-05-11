@@ -44,8 +44,6 @@ public class PatchSetMessageCard extends Card {
         Commit message
         ----------------
          */
-        ((TextView) rootView.findViewById(R.id.message_card_subject))
-                .setText(mJSONCommit.getSubject());
         ((TextView) rootView.findViewById(R.id.message_card_last_update))
                 .setText(mJSONCommit.getLastUpdatedDate());
         ((TextView) rootView.findViewById(R.id.message_card_message))
