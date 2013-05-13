@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
-  ~  Author: Jon Stanford (JBirdVegas), 2013
+  ~  Author: Petr Reznicek (kecinzer), 2013
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 <resources>
     <string name="app_name">mGerrit</string>
-    <string name="reviewable">Review</string>
+    <string name="reviewable">Revidováno</string>
     <string name="merged">Sloučeno</string>
     <string name="abandoned">Zamítnuto</string>
     <string name="status_explaination_new">Změna stále podléha revidování.</string>
@@ -27,17 +27,17 @@
     <string name="status_explaination_abandoned">Změna byla zamítnuta majitelem nebo správcem.</string>
     <string name="view_in_browser">Prohlížeč</string>
     <string name="moar_info">Více informací!</string>
-    <string name="patchset_labels_code_reviewer_title">Code-Reviewers</string>
-    <string name="patchset_labels_verified_reviewer_title">Verified</string>
-    <string name="inserted">Vložené řádky</string>
-    <string name="deleted">Smazané řádky</string>
+    <string name="patchset_labels_code_reviewer_title">Revidenti kódu:</string>
+    <string name="patchset_labels_verified_reviewer_title">Ověřeno:</string>
+    <string name="inserted">Vložené řádky:</string>
+    <string name="deleted">Smazané řádky:</string>
     <string name="none_found">Nic nenalzeneo</string>
     <string name="please_try_again">Je třeba se vrátit a zkusit znovu</string>
     <string name="menu_preferences">Předvolby</string>
     <string name="choose_gerrit_instance">Zvolit instanci Gerrit týmu</string>
-    <string name="commit_committer">Odeslal</string>
-    <string name="commit_author">Autor</string>
-    <string name="commit_owner">Vlastník</string>
+    <string name="commit_committer">Odeslal:</string>
+    <string name="commit_author">Autor:</string>
+    <string name="commit_owner">Vlastník:</string>
     <string name="failed_to_parse_json_response">Chyba při parsování odpovědi</string>
     <string name="ok">ok</string>
     <string name="show_exception">Zobrazit vyjímku</string>
@@ -57,4 +57,10 @@
     <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
     <string name="explain_status_title">Vysvětlení stavů</string>
     <string name="explain_status_summary">Jednoduché vysvětlení, co znamenají stavy na záložkách</string>
+    <string name="menu_gerrit_instance">Instance gerritu</string>
+    <string name="owner_gravatar">Gravatar profilu vlastníka</string>
+    <string name="author_gravatar">Gravatar profilu autora</string>
+    <string name="committer_gravatar">Gravatar profilu odesilatele</string>
+    <string name="koush_url_imageview_helper_title">Koush Duttův UrlImageViewHelper</string>
+    <string name="koush_url_imageview_helper_website">https://github.com/koush/UrlImageViewHelper</string>
 </resources>
