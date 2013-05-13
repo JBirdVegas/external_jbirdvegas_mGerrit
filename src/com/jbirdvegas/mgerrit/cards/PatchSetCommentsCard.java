@@ -1,6 +1,7 @@
 package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,8 +48,9 @@ public class PatchSetCommentsCard extends Card {
         View commentView = mInflater.inflate(R.layout.commit_comment, null);
         ((TextView) commentView.findViewById(R.id.comment_author_name))
                 .setText(comment.getAuthorObject().getName());
-        ((TextView) commentView.findViewById(R.id.comment_message))
-                .setText(comment.getMessage());
+        TextView commentMessage = (TextView) commentView.findViewById(R.id.comment_message);
+        commentMessage.setText(comment.getMessage());
+        Linkify.addLinks(commentMessage, Linkify.ALL);
         GravatarHelper.populateProfilePicture(
                 (ImageView) commentView.findViewById(R.id.comment_gravatar),
                 comment.getAuthorObject().getEmail());

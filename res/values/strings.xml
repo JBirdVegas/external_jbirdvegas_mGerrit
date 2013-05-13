@@ -73,4 +73,5 @@
     <string name="current_revision_is_draft_message">Current revision is a draft.
         Some information will be unavailable
     </string>
+    <string name="comments_card_title">Comments:</string>
 </resources>

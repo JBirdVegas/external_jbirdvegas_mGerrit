@@ -191,4 +191,5 @@
     <dimen name="histogram_width">100.0dip</dimen><dimen name="commit_card_padding">8dp</dimen>
     <dimen name="gravatar_image_padding">4dip</dimen>
     <dimen name="message_comments_padding">5dip</dimen>
+    <dimen name="standard_padding">8dip</dimen>
 </resources>
