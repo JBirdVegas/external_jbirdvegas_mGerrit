@@ -155,41 +155,64 @@ public class JSONCommit {
             mWebAddress = String.format("%s#/c/%d/",
                     Prefs.getCurrentGerrit(context),
                     mCommitNumber);
+            // handle owner object that may not exist
             try {
+                JSONObject ownerJsonObject = object.getJSONObject(KEY_OWNER);
+                mOwnerObject = CommitterObject.getInstance(
+                        ownerJsonObject.getString(KEY_NAME),
+                        ownerJsonObject.getString(KEY_EMAIL));
+            } catch (JSONException ignored) {
+                // we did not directly query the patch set
+            }
+            /*
+            handle messages that may not exist
+
+            If we throw JSONException here then we did not
+            directly query the patchset and are only showing
+            the commit list. Don't bother trying to load the
+            rest as they are dependant on JSONObject "current_revision"
+            which does not exist past here
+
+             **
+             *  There is one other circumstance where the patchset
+             * was once public but the current revision of the patch
+             * set is a draft (we do not have authenticated actions
+             * permission) and therefor the information about the
+             * current revision is not public and hidden.
+             *
+             * This causes almost all fields to be null. This is a rare
+             * case but needs to be addressed in the catch block here
+             **
+            */
+            try {
+                mMessagesList = makeMessagesList(object);
+                // we did not directly query the patch set
                 mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
                 mMessage = getMessageFromJSON(object, mCurrentRevision);
                 mChangedFiles = getChangedFilesSet(object, mCurrentRevision);
-                mAuthor = getCommitter(mCurrentRevision, KEY_AUTHOR, object);
-                mCommitter = getCommitter(mCurrentRevision, KEY_COMMITTER, object);
-            } catch (JSONException ignored) {
-                // we only have these fields if we directly queried
-                // mgerrit for this changeset
-            }
-            // handle labels
-            try {
+                mAuthorObject = getCommitter(mCurrentRevision, KEY_AUTHOR, object);
+                mCommitterObject = getCommitter(mCurrentRevision, KEY_COMMITTER, object);
+                // handle labels
                 JSONObject labels = object.getJSONObject(KEY_LABELS);
                 mPatchSetNumber = getPatchSetNumberInternal(object, mCurrentRevision);
                 mVerifiedReviewers = getReviewers(
                         labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
                 mCodeReviewers = getReviewers(
                         labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
+
             } catch (JSONException ignored) {
-                // we did not directly query the patch set
-            }
-            // handle owner object that may not exist
-            try {
-                mOwnerObject = CommitterObject.getInstance(
-                        object.getJSONObject(KEY_OWNER).getString(KEY_NAME),
-                        object.getJSONObject(KEY_OWNER).getString(KEY_EMAIL));
-            } catch (JSONException ignored) {
-                // we did not directly query the patch set
-            }
-            // handle messages that may not exist
-            try {
-                mMessagesList = makeMessagesList(object);
-            } catch (JSONException ignored) {
-                // we did not directly query the patch set
-                // or there are no messages yet
+                // string displayed instead of blank information we don't have
+                String draftNotice = context.getString(R.string.current_revision_is_draft_message);
+                mCurrentRevision = draftNotice;
+                mMessage = draftNotice;
+                mChangedFiles = new ArrayList<ChangedFile>(0);
+                mAuthorObject = CommitterObject.getInstance(draftNotice, draftNotice, null, null);
+                mCommitterObject = CommitterObject.getInstance(draftNotice, draftNotice, null, null);
+                mPatchSetNumber = -1;
+                mVerifiedReviewers = new ArrayList<Reviewer>(0);
+                mVerifiedReviewers.add(Reviewer.getReviewerInstance("0", draftNotice));
+                mCodeReviewers = new ArrayList<Reviewer>(0);
+                mCodeReviewers.add(Reviewer.getReviewerInstance("0", draftNotice));
             }
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse JSONObject into useful data", e);
@@ -221,8 +244,8 @@ public class JSONCommit {
     private String mOwnerName;
     private String mCurrentRevision;
     private CommitterObject mOwnerObject;
-    private CommitterObject mAuthor;
-    private CommitterObject mCommitter;
+    private CommitterObject mAuthorObject;
+    private CommitterObject mCommitterObject;
     private String mMessage;
     private List<ChangedFile> mChangedFiles;
     private String mWebAddress;
@@ -235,6 +258,7 @@ public class JSONCommit {
                                          String authorOrCommitter,
                                          JSONObject mainObject)
             throws JSONException {
+        Log.d(TAG, "JSONObject we check for: " + mainObject);
         JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
         JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
         JSONObject commitObject = revisionObject.getJSONObject(KEY_COMMIT);
@@ -364,8 +388,8 @@ public class JSONCommit {
         return mCurrentRevision;
     }
 
-    public CommitterObject getCommitter() {
-        return mCommitter;
+    public CommitterObject getCommitterObject() {
+        return mCommitterObject;
     }
 
     public String getMessage() {
@@ -393,8 +417,8 @@ public class JSONCommit {
         return (ArrayList<Reviewer>) mCodeReviewers;
     }
 
-    public CommitterObject getAuthor() {
-        return mAuthor;
+    public CommitterObject getAuthorObject() {
+        return mAuthorObject;
     }
 
     public CommitterObject getOwnerObject() {
@@ -424,8 +448,8 @@ public class JSONCommit {
         sb.append(", mOwnerName='").append(mOwnerName).append('\'');
         sb.append(", mCurrentRevision='").append(mCurrentRevision).append('\'');
         sb.append(", mOwnerObject=").append(mOwnerObject);
-        sb.append(", mAuthor=").append(mAuthor);
-        sb.append(", mCommitter=").append(mCommitter);
+        sb.append(", mAuthorObject=").append(mAuthorObject);
+        sb.append(", mCommitterObject=").append(mCommitterObject);
         sb.append(", mMessage='").append(mMessage).append('\'');
         sb.append(", mChangedFiles=").append(mChangedFiles);
         sb.append(", mWebAddress='").append(mWebAddress).append('\'');

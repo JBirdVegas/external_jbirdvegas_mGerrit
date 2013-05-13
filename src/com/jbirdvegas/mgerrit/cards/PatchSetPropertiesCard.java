@@ -44,9 +44,9 @@ public class PatchSetPropertiesCard extends Card {
                 .setText(mJSONCommit.getOwnerName());
         try {
             ((TextView) rootView.findViewById(R.id.prop_card_author))
-                    .setText(mJSONCommit.getAuthor().getName());
+                    .setText(mJSONCommit.getAuthorObject().getName());
             ((TextView) rootView.findViewById(R.id.prop_card_committer))
-                    .setText(mJSONCommit.getCommitter().getName());
+                    .setText(mJSONCommit.getCommitterObject().getName());
         } catch (NullPointerException npe) {
             rootView.findViewById(R.id.prop_card_author)
                     .setVisibility(View.GONE);
@@ -58,14 +58,25 @@ public class PatchSetPropertiesCard extends Card {
         GravatarHelper.populateProfilePicture(
                 (ImageView) rootView.findViewById(R.id.prop_card_owner_gravatar),
                 mJSONCommit.getOwnerObject().getEmail());
+        ImageView authorAvatar = (ImageView) rootView.findViewById(R.id.prop_card_author_gravatar);
+        try {
 
-        GravatarHelper.populateProfilePicture(
-                (ImageView) rootView.findViewById(R.id.prop_card_author_gravatar),
-                mJSONCommit.getAuthor().getEmail());
+            GravatarHelper.populateProfilePicture(
+                    authorAvatar,
+                    mJSONCommit.getAuthorObject().getEmail());
+        } catch (NullPointerException npe) {
+            // failed to get author email removing avatar
+            authorAvatar.setVisibility(View.GONE);
+        }
 
-        GravatarHelper.populateProfilePicture(
-                (ImageView) rootView.findViewById(R.id.prop_card_committer_gravatar),
-                mJSONCommit.getCommitter().getEmail());
+        ImageView committerGravatar = (ImageView) rootView.findViewById(R.id.prop_card_committer_gravatar);
+        try {
+            GravatarHelper.populateProfilePicture(
+                    committerGravatar,
+                    mJSONCommit.getCommitterObject().getEmail());
+        } catch (NullPointerException npe) {
+            committerGravatar.setVisibility(View.GONE);
+        }
         return rootView;
     }
 }
