@@ -49,7 +49,7 @@ public class CommitCard extends Card {
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commitCardView = inflater.inflate(R.layout.commit_card, null);
         ((TextView) commitCardView.findViewById(R.id.commit_card_commit_owner))
-                .setText(mCommit.getOwnerObject().getName());
+                .setText(mCommit.getOwnerName());
         ((TextView) commitCardView.findViewById(R.id.commit_card_project_name))
                 .setText(mCommit.getProject());
         ((TextView) commitCardView.findViewById(R.id.commit_card_title))

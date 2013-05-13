@@ -35,7 +35,7 @@ import java.net.URLConnection;
 @SuppressWarnings("AccessOfSystemProperties")
 public abstract class GerritTask extends AsyncTask<String, Long, String> {
     private static final String TAG = GerritTask.class.getSimpleName();
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final long CONNECTION_ESTABLISHED = -1000;
     private static final long INITIALIZING_DATA_TRANSFER = -1001;
     private static final long ERROR_DURING_CONNECTION = -1002;
@@ -51,7 +51,6 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        Log.d(TAG, "Loading dialog before download task begins");
         mProgressDialog = new ProgressDialog(mContext);
         //mProgressDialog.setTitle(R.string.initializing_connection);
         mProgressDialog.setMessage(mContext.getString(R.string.establishing_connection));
@@ -110,7 +109,7 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
         mProgressDialog.cancel();
         mProgressDialog.dismiss();
         // check if we are in production code or debugging mode
-        boolean isDebuggable = (0 != (mContext.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE));
+        boolean isDebuggable = 0 != (mContext.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
         // if we are debugging then dump the response to logcat
         if (isDebuggable || DEBUG) {
             Log.d(TAG, "[DEBUG-MODE] Gerrit instance response: " + s);

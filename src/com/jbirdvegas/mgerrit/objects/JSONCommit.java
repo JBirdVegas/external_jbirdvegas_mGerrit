@@ -26,18 +26,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class JSONCommit {
     private static final String TAG = JSONCommit.class.getSimpleName();
 
     // public
-    public static final String KEY_FOOBAR = "foobar";
     public static final String KEY_STATUS_OPEN = "open";
     public static final String KEY_STATUS_MERGED = "merged";
     public static final String KEY_STATUS_ABANDONED = "abandoned";
-    public static final String KEY_JSON_COMMIT = "json_commit";
-    public static final String KEY_PATCHSET_IN_JSON = "patchset_json";
     // used to query commit message
     public static final String CURRENT_PATCHSET_ARGS = new StringBuilder(0)
             .append("&o=CURRENT_REVISION")
@@ -45,13 +43,19 @@ public class JSONCommit {
             .append("&o=CURRENT_FILES")
             .append("&o=DETAILED_LABELS")
             .append("&o=DETAILED_ACCOUNTS")
-            //.append("&o=MESSAGES") soon :)
+            .append("&o=MESSAGES")
             .toString();
     public static final String KEY_INSERTED = "lines_inserted";
     public static final String KEY_DELETED = "lines_deleted";
     public static final String KEY_STATUS = "status";
     public static final String KEY_ID = "id";
-    public static String KEY_WEBSITE = "website";
+    public static final String KEY_WEBSITE = "website";
+    public static final String KEY_AUTHOR = "author";
+    public static final String KEY_ACCOUNT_ID = "_account_id";
+    public static final String KEY_EMAIL = "email";
+    public static final String KEY_DATE = "date";
+    public static final String KEY_MESSAGE = "message";
+    public static final String KEY_NAME = "name";
 
     // internal
     private static final String KEY_KIND = "kind";
@@ -59,31 +63,28 @@ public class JSONCommit {
     private static final String KEY_BRANCH = "branch";
     private static final String KEY_CHANGE_ID = "change_id";
     private static final String KEY_SUBJECT = "subject";
-    private static final String KEY_MESSAGE = "message";
     private static final String KEY_CREATED = "created";
     private static final String KEY_UPDATED = "updated";
     private static final String KEY_MERGEABLE = "mergeable";
     private static final String KEY_SORT_KEY = "_sortkey";
     private static final String KEY_COMMIT_NUMBER = "_number";
     private static final String KEY_OWNER = "owner";
-    private static final String KEY_NAME = "name";
+    private static final String KEY_MESSAGES = "messages";
     private static final String KEY_CURRENT_REVISION = "current_revision";
-    private static final String KEY_AUTHOR = "author";
     private static final String KEY_COMMITTER = "committer";
     private static final String KEY_CHANGED_FILES = "files";
     private static final String KEY_LABELS = "labels";
     private static final String KEY_VERIFIED = "Verified";
     private static final String KEY_CODE_REVIEW = "Code-Review";
-    private static final String KEY_RECOMMENDED = "recommended";
-    private static final String KEY_DISLIKED = "disliked";
     private static final String KEY_ALL = "all";
     private static final String KEY_VALUE = "value";
-    private static final String KEY_ACCOUNT_ID = "_account_id";
-    private static final String KEY_EMAIL = "email";
     private static final String KEY_REVISIONS = "revisions";
     private static final String KEY_COMMIT = "commit";
-    private static final String KEY_DATE = "date";
     private static final String KEY_TIMEZONE = "tz";
+
+    public List<CommitComment> getMessagesList() {
+        return mMessagesList;
+    }
 
     public enum Status {
         NEW {
@@ -183,9 +184,25 @@ public class JSONCommit {
             } catch (JSONException ignored) {
                 // we did not directly query the patch set
             }
+            // handle messages that may not exist
+            try {
+                mMessagesList = makeMessagesList(object);
+            } catch (JSONException ignored) {
+                // we did not directly query the patch set
+                // or there are no messages yet
+            }
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse JSONObject into useful data", e);
         }
+    }
+
+    private List<CommitComment> makeMessagesList(JSONObject object) throws JSONException {
+        LinkedList<CommitComment> linkedList = new LinkedList<CommitComment>();
+        JSONArray messagesArray = object.getJSONArray(KEY_MESSAGES);
+        for (int i = 0; messagesArray.length() > i; i++) {
+            linkedList.add(CommitComment.getInstance(messagesArray.getJSONObject(i)));
+        }
+        return linkedList.isEmpty() ? null : linkedList;
     }
 
     private final JSONObject mRawJSONCommit;
@@ -212,6 +229,7 @@ public class JSONCommit {
     private List<Reviewer> mVerifiedReviewers;
     private List<Reviewer> mCodeReviewers;
     private int mPatchSetNumber;
+    private List<CommitComment> mMessagesList;
 
     private CommitterObject getCommitter(String currentRevision,
                                          String authorOrCommitter,
@@ -389,7 +407,7 @@ public class JSONCommit {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("JSONCommit{");
+        StringBuilder sb = new StringBuilder("JSONCommit{");
         sb.append("mRawJSONCommit=").append(mRawJSONCommit);
         sb.append(", mKind='").append(mKind).append('\'');
         sb.append(", mId='").append(mId).append('\'');
@@ -414,6 +432,7 @@ public class JSONCommit {
         sb.append(", mVerifiedReviewers=").append(mVerifiedReviewers);
         sb.append(", mCodeReviewers=").append(mCodeReviewers);
         sb.append(", mPatchSetNumber=").append(mPatchSetNumber);
+        sb.append(", mMessagesList=").append(mMessagesList);
         sb.append('}');
         return sb.toString();
     }

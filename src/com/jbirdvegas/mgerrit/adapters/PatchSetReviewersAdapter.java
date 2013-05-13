@@ -32,6 +32,7 @@ import java.util.List;
 
 public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
     private static final String TAG = PatchSetReviewersAdapter.class.getSimpleName();
+    private static final boolean DEBUG = false;
     private final Context context;
     private final List<Reviewer> values;
 
@@ -52,13 +53,15 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
         TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);
         TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
         Reviewer reviewer = values.get(position);
-        Log.d(TAG, new StringBuilder(0)
-                .append("Found Reviewer: ")
-                .append(reviewer.toString())
-                .append(" at position:")
-                .append(position)
-                .append('/')
-                .append(values.size()).toString());
+        if (DEBUG) {
+            Log.d(TAG, new StringBuilder(0)
+                    .append("Found Reviewer: ")
+                    .append(reviewer.toString())
+                    .append(" at position:")
+                    .append(position)
+                    .append('/')
+                    .append(values.size()).toString());
+        }
         setColoredApproval(reviewer.getValue(), approval);
         name.setText(reviewer.getName());
         return root;

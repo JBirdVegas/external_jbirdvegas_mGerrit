@@ -17,21 +17,17 @@ package com.jbirdvegas.mgerrit.cards;
  *  limitations under the License.
  */
 
-import com.jbirdvegas.mgerrit.R;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
-import com.jbirdvegas.mgerrit.helpers.MD5Helper;
+import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class PatchSetPropertiesCard extends Card {
-    private static final String GRAVATAR_API = "http://www.gravatar.com/avatar/";
-    private static final String DEFAULT_AVATAR_SIZE = "80";
     private final JSONCommit mJSONCommit;
 
     public PatchSetPropertiesCard(JSONCommit commit) {
@@ -59,28 +55,17 @@ public class PatchSetPropertiesCard extends Card {
         }
 
         // use emails to get gravatar profile images
-        populateProfilePicture((ImageView) rootView.findViewById(R.id.prop_card_owner_gravatar),
+        GravatarHelper.populateProfilePicture(
+                (ImageView) rootView.findViewById(R.id.prop_card_owner_gravatar),
                 mJSONCommit.getOwnerObject().getEmail());
 
-        populateProfilePicture((ImageView) rootView.findViewById(R.id.prop_card_author_gravatar),
+        GravatarHelper.populateProfilePicture(
+                (ImageView) rootView.findViewById(R.id.prop_card_author_gravatar),
                 mJSONCommit.getAuthor().getEmail());
 
-        populateProfilePicture((ImageView) rootView.findViewById(R.id.prop_card_committer_gravatar),
+        GravatarHelper.populateProfilePicture(
+                (ImageView) rootView.findViewById(R.id.prop_card_committer_gravatar),
                 mJSONCommit.getCommitter().getEmail());
         return rootView;
-    }
-
-    private void populateProfilePicture(ImageView imageView, String email) {
-        String emailMd5 = MD5Helper.md5Hex(email.trim().toLowerCase());
-        if (emailMd5 != null) {
-            String url = GRAVATAR_API + emailMd5 + "?s=" + DEFAULT_AVATAR_SIZE;
-            Log.d(this.getClass().getSimpleName(), "Gravatar url called: " + url);
-            UrlImageViewHelper.setUrlDrawable(imageView,
-                    url,
-                    R.drawable.ic_action_clock,
-                    UrlImageViewHelper.CACHE_DURATION_THREE_DAYS);
-        } else {
-            imageView.setVisibility(View.GONE);
-        }
     }
 }

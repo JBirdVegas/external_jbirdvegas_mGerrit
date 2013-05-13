@@ -29,6 +29,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
+import com.jbirdvegas.mgerrit.cards.PatchSetCommentsCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetMessageCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetPropertiesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetReviewersCard;
@@ -97,8 +98,20 @@ public class PatchSetViewerActivity extends Activity {
         ui.addCard(new PatchSetMessageCard(jsonCommit), true);
         Log.d(TAG, "Loading Changes Card...");
         ui.addCard(new PatchSetChangesCard(jsonCommit), true);
-        Log.d(TAG, "Loading Reviewers Card...");
-        ui.addCard(new PatchSetReviewersCard(jsonCommit), true);
+        if (jsonCommit.getCodeReviewers() != null
+                && !jsonCommit.getCodeReviewers().isEmpty()) {
+            Log.d(TAG, "Loading Reviewers Card...");
+            ui.addCard(new PatchSetReviewersCard(jsonCommit), true);
+        } else {
+            Log.d(TAG, "No reviewers found! Not adding reviewers card");
+        }
+        if (jsonCommit.getMessagesList() != null
+                && !jsonCommit.getMessagesList().isEmpty()) {
+            Log.d(TAG, "Loading Comments Card...");
+            ui.addCard(new PatchSetCommentsCard(jsonCommit), true);
+        } else {
+            Log.d(TAG, "No commit comments found! Not adding comments card");
+        }
     }
 
     /*
@@ -163,11 +176,15 @@ public class PatchSetViewerActivity extends Activity {
     }
 
     private void savePatchSet(String jsonResponse) {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putString(KEY_STORED_PATCHSET, jsonResponse).commit();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(KEY_STORED_PATCHSET, jsonResponse)
+                .commit();
     }
 
     private String getStoredPatchSet() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_STORED_PATCHSET, "");
+        return PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(KEY_STORED_PATCHSET, "");
     }
 
 }

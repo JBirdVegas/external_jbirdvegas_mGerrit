@@ -35,7 +35,7 @@ import java.util.List;
 
 public class PatchSetChangesCard extends Card {
     private static final String TAG = PatchSetChangesCard.class.getSimpleName();
-    private static final boolean VERBOSE = true;
+    private static final boolean VERBOSE = false;
     private JSONCommit mCommit;
     private LayoutInflater mInflater;
 
