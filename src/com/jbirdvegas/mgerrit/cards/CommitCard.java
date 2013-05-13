@@ -19,7 +19,6 @@ package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +49,7 @@ public class CommitCard extends Card {
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commitCardView = inflater.inflate(R.layout.commit_card, null);
         ((TextView) commitCardView.findViewById(R.id.commit_card_commit_owner))
-                .setText(mCommit.getOwner());
+                .setText(mCommit.getOwnerObject().getName());
         ((TextView) commitCardView.findViewById(R.id.commit_card_project_name))
                 .setText(mCommit.getProject());
         ((TextView) commitCardView.findViewById(R.id.commit_card_title))
@@ -59,9 +58,9 @@ public class CommitCard extends Card {
                 .setText(mCommit.getLastUpdatedDate());
         ((TextView) commitCardView.findViewById(R.id.commit_card_commit_status))
                 .setText(mCommit.getStatus().toString());
-        if(mCommit.getStatus().toString() == "MERGED") {
+        if (mCommit.getStatus().toString() == "MERGED") {
             ((TextView) commitCardView.findViewById(R.id.commit_card_commit_status)).setTextColor(mGreen);
-        } else if(mCommit.getStatus().toString() == "ABANDONED") {
+        } else if (mCommit.getStatus().toString() == "ABANDONED") {
             ((TextView) commitCardView.findViewById(R.id.commit_card_commit_status)).setTextColor(mRed);
         }
         TextView messageTv = (TextView)
@@ -112,6 +111,7 @@ public class CommitCard extends Card {
 
     /**
      * returns the ChangedFile list as a string
+     *
      * @param fileList List of ChangedFiles
      * @return String representation of list
      */

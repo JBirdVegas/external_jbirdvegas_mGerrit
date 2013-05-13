@@ -1,3 +1,5 @@
+idea_out/
+build.properties
 bin/
 gen/
 out/

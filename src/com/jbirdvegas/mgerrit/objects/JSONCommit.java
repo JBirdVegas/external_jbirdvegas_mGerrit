@@ -39,8 +39,14 @@ public class JSONCommit {
     public static final String KEY_JSON_COMMIT = "json_commit";
     public static final String KEY_PATCHSET_IN_JSON = "patchset_json";
     // used to query commit message
-    public static final String CURRENT_PATCHSET_ARGS
-        = "&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS";
+    public static final String CURRENT_PATCHSET_ARGS = new StringBuilder(0)
+            .append("&o=CURRENT_REVISION")
+            .append("&o=CURRENT_COMMIT")
+            .append("&o=CURRENT_FILES")
+            .append("&o=DETAILED_LABELS")
+            .append("&o=DETAILED_ACCOUNTS")
+            //.append("&o=MESSAGES") soon :)
+            .toString();
     public static final String KEY_INSERTED = "lines_inserted";
     public static final String KEY_DELETED = "lines_deleted";
     public static final String KEY_STATUS = "status";
@@ -144,7 +150,7 @@ public class JSONCommit {
             }
             mSortKey = object.getString(KEY_SORT_KEY);
             mCommitNumber = object.getInt(KEY_COMMIT_NUMBER);
-            mOwner = getOwnerName(object.getJSONObject(KEY_OWNER));
+            mOwnerName = getOwnerName(object.getJSONObject(KEY_OWNER));
             mWebAddress = String.format("%s#/c/%d/",
                     Prefs.getCurrentGerrit(context),
                     mCommitNumber);
@@ -167,7 +173,15 @@ public class JSONCommit {
                 mCodeReviewers = getReviewers(
                         labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
             } catch (JSONException ignored) {
-                // we didn't directly query the patch set
+                // we did not directly query the patch set
+            }
+            // handle owner object that may not exist
+            try {
+                mOwnerObject = CommitterObject.getInstance(
+                        object.getJSONObject(KEY_OWNER).getString(KEY_NAME),
+                        object.getJSONObject(KEY_OWNER).getString(KEY_EMAIL));
+            } catch (JSONException ignored) {
+                // we did not directly query the patch set
             }
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse JSONObject into useful data", e);
@@ -187,8 +201,9 @@ public class JSONCommit {
     private boolean mIsMergeable;
     private String mSortKey;
     private int mCommitNumber;
-    private String mOwner;
+    private String mOwnerName;
     private String mCurrentRevision;
+    private CommitterObject mOwnerObject;
     private CommitterObject mAuthor;
     private CommitterObject mCommitter;
     private String mMessage;
@@ -323,8 +338,8 @@ public class JSONCommit {
         return mCommitNumber;
     }
 
-    public String getOwner() {
-        return mOwner;
+    public String getOwnerName() {
+        return mOwnerName;
     }
 
     public String getCurrentRevision() {
@@ -364,15 +379,18 @@ public class JSONCommit {
         return mAuthor;
     }
 
+    public CommitterObject getOwnerObject() {
+        return mOwnerObject;
+    }
+
     public int getPatchSetNumber() {
         return mPatchSetNumber;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(0);
-        sb.append("JSONCommit");
-        sb.append("{mRawJSONCommit=").append(mRawJSONCommit);
+        final StringBuilder sb = new StringBuilder("JSONCommit{");
+        sb.append("mRawJSONCommit=").append(mRawJSONCommit);
         sb.append(", mKind='").append(mKind).append('\'');
         sb.append(", mId='").append(mId).append('\'');
         sb.append(", mProject='").append(mProject).append('\'');
@@ -385,8 +403,9 @@ public class JSONCommit {
         sb.append(", mIsMergeable=").append(mIsMergeable);
         sb.append(", mSortKey='").append(mSortKey).append('\'');
         sb.append(", mCommitNumber=").append(mCommitNumber);
-        sb.append(", mOwner='").append(mOwner).append('\'');
+        sb.append(", mOwnerName='").append(mOwnerName).append('\'');
         sb.append(", mCurrentRevision='").append(mCurrentRevision).append('\'');
+        sb.append(", mOwnerObject=").append(mOwnerObject);
         sb.append(", mAuthor=").append(mAuthor);
         sb.append(", mCommitter=").append(mCommitter);
         sb.append(", mMessage='").append(mMessage).append('\'');
@@ -394,6 +413,7 @@ public class JSONCommit {
         sb.append(", mWebAddress='").append(mWebAddress).append('\'');
         sb.append(", mVerifiedReviewers=").append(mVerifiedReviewers);
         sb.append(", mCodeReviewers=").append(mCodeReviewers);
+        sb.append(", mPatchSetNumber=").append(mPatchSetNumber);
         sb.append('}');
         return sb.toString();
     }

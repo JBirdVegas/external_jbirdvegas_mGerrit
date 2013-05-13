@@ -33,11 +33,20 @@ public class CommitterObject {
         mTimezone = timezone;
     }
 
+    private CommitterObject(String name, String email) {
+        this(name, email, null, null);
+    }
+
     public static CommitterObject getInstance(String name,
                               String email,
                               String date,
                               String timezone) {
         return new CommitterObject(name, email, date, timezone);
+    }
+
+    public static CommitterObject getInstance(String name,
+                                              String email) {
+        return new CommitterObject(name, email);
     }
 
     public String getName() {

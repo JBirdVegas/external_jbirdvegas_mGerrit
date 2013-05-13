@@ -17,7 +17,6 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.TabActivity;

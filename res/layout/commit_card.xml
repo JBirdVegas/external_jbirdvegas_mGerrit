@@ -110,6 +110,5 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:textColor="@color/card_title_text"/>
-        <!--android:textAppearance="@color/card_light_text"-->
     </LinearLayout>
 </RelativeLayout>

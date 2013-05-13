@@ -64,4 +64,9 @@
     <string name="explain_status_title">Explain statuses</string>
     <string name="explain_status_summary">Brief explanation of the Status tabs meanings</string>
     <string name="menu_gerrit_instance">Gerrit Instance</string>
+    <string name="owner_gravatar">Owner\'s Gravatar profile image</string>
+    <string name="author_gravatar">Author\'s Gravatar profile image</string>
+    <string name="committer_gravatar">Committer\'s Gravatar profile image</string>
+    <string name="koush_url_imageview_helper_title">Koush Dutta\'s UrlImageViewHelper</string>
+    <string name="koush_url_imageview_helper_website">https://github.com/koush/UrlImageViewHelper</string>
 </resources>

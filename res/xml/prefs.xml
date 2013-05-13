@@ -36,5 +36,10 @@
             android:key="open_source_lib_nine_old_androids"
             android:title="@string/nine_old_androids"
             android:summary="@string/nine_old_androids_website"/>
+
+        <Preference
+            android:key="open_source_koush_uri_imageview_helper"
+            android:title="@string/koush_url_imageview_helper_title"
+            android:summary="@string/koush_url_imageview_helper_website"/>
     </PreferenceCategory>
 </PreferenceScreen>
