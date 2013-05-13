@@ -69,4 +69,8 @@
     <string name="committer_gravatar">Committer\'s Gravatar profile image</string>
     <string name="koush_url_imageview_helper_title">Koush Dutta\'s UrlImageViewHelper</string>
     <string name="koush_url_imageview_helper_website">https://github.com/koush/UrlImageViewHelper</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="current_revision_is_draft_message">Current revision is a draft.
+        Some information will be unavailable
+    </string>
 </resources>

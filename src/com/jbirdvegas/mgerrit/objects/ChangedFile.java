@@ -25,6 +25,12 @@ public class ChangedFile {
     private int inserted;
     private int deleted;
 
+    public ChangedFile(String draft) {
+        path = draft;
+        inserted = -1;
+        deleted = -1;
+    }
+
     private ChangedFile(String _path, JSONObject object) throws JSONException {
         path = _path;
         try {
