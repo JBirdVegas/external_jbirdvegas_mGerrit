@@ -29,11 +29,13 @@
     <string name="moar_info">詳細情報</string>
     <string name="patchset_labels_code_reviewer_title">コードレビュー</string>
     <string name="patchset_labels_verified_reviewer_title">検証</string>
+    <string name="dash">-</string>
     <string name="inserted">挿入行</string>
     <string name="deleted">削除行</string>
     <string name="none_found">見つかりません</string>
     <string name="please_try_again">戻って再度試してください</string>
     <string name="menu_preferences">設定</string>
+    <string name="menu_help">ヘルプ</string>
     <string name="choose_gerrit_instance">Gerritインスタンス選択</string>
     <string name="commit_committer">コミット</string>
     <string name="commit_author">作者</string>
@@ -43,10 +45,10 @@
     <string name="show_exception">例外を表示</string>
     <string name="exit">終了</string>
     <string name="gerrit_call_failed">Gerritインスタンスのデータ取得に失敗しました。接続を確認して再度試してください。</string>
-    <string name="establishing_connection">接続確立中...</string>
+    <string name="establishing_connection">接続中...</string>
     <string name="transfering">JSONデータ変換中...</string>
     <string name="downloading_status" formatted="false">%d / %d バイトダウンロード\t%d%% 完了</string>
-    <string name="connection_established">接続確率</string>
+    <string name="connection_established">接続完了</string>
     <string name="initializing_data_transfer">データ変換初期化中...</string>
     <string name="communications_error">通信エラー!!!</string>
     <string name="transfering_json_data">JSONデータ変換中...</string>
@@ -57,4 +59,10 @@
     <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
     <string name="explain_status_title">ステータス説明</string>
     <string name="explain_status_summary">ステータスタブの概要説明</string>
+    <string name="menu_gerrit_instance">Gerritインスタンス</string>
+    <string name="owner_gravatar">Owner\'s Gravatar profile image</string>
+    <string name="author_gravatar">Author\'s Gravatar profile image</string>
+    <string name="committer_gravatar">Committer\'s Gravatar profile image</string>
+    <string name="koush_url_imageview_helper_title">Koush Dutta\'s UrlImageViewHelper</string>
+    <string name="koush_url_imageview_helper_website">https://github.com/koush/UrlImageViewHelper</string>
 </resources>
