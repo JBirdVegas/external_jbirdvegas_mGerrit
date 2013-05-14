@@ -63,4 +63,8 @@
     <string name="committer_gravatar">Gravatar profilu odesilatele</string>
     <string name="koush_url_imageview_helper_title">Koush Duttův UrlImageViewHelper</string>
     <string name="koush_url_imageview_helper_website">https://github.com/koush/UrlImageViewHelper</string>
+    <string name="menu_refresh">Obnovit</string>
+    <string name="current_revision_is_draft_message">Aktuální revize je draft.
+        Některé informace nebudou k dispozici
+    </string>
 </resources>
