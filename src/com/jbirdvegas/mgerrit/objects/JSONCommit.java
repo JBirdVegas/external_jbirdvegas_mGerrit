@@ -81,6 +81,7 @@ public class JSONCommit {
     private static final String KEY_REVISIONS = "revisions";
     private static final String KEY_COMMIT = "commit";
     private static final String KEY_TIMEZONE = "tz";
+    private static final boolean DEBUG = false;
 
     public List<CommitComment> getMessagesList() {
         return mMessagesList;
@@ -130,6 +131,7 @@ public class JSONCommit {
      *
      * @param object JSONObject sent by mgerrit in response to a query
      */
+    @SuppressWarnings("NestedTryStatement")
     public JSONCommit(JSONObject object, Context context) {
         mRawJSONCommit = object;
         try {
@@ -173,7 +175,8 @@ public class JSONCommit {
                 mCodeReviewers = getReviewers(
                         labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
             } catch (JSONException je) {
-                Log.e(TAG, "Failed to get reviewer labels", je);
+                if (DEBUG)
+                    Log.e(TAG, "Failed to get reviewer labels", je);
             }
 
             /*
@@ -196,39 +199,52 @@ public class JSONCommit {
              * case but needs to be addressed in the catch block here
              **
             */
+            // string displayed instead of blank information we don't have
+            String draftNotice = context.getString(R.string.current_revision_is_draft_message);
             try {
                 mMessagesList = makeMessagesList(object);
                 // we did not directly query the patch set
                 mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
+
                 try {
                     mMessage = getMessageFromJSON(object, mCurrentRevision);
                 } catch (JSONException je) {
-                    Log.e(TAG, "Failed to get message from commit", je);
+                    if (DEBUG) {
+                        Log.e(TAG, "Failed to get message from commit", je);
+                    }
+                    mMessage = draftNotice;
                 }
+
                 try {
                     mChangedFiles = getChangedFilesSet(object, mCurrentRevision);
                 } catch (JSONException je) {
-                    Log.d(TAG, "Failed to get changed files list", je);
+                    if (DEBUG) {
+                        Log.e(TAG, "Failed to get changed files list", je);
+                    }
+                    mChangedFiles = new ArrayList<ChangedFile>(0);
+                    mChangedFiles.add(new ChangedFile(draftNotice));
                 }
+
                 try {
                     mAuthorObject = getCommitter(mCurrentRevision, KEY_AUTHOR, object);
                     mCommitterObject = getCommitter(mCurrentRevision, KEY_COMMITTER, object);
                 } catch (JSONException je) {
-                    Log.e(TAG, "Failed to get author/committer objects", je);
+                    if (DEBUG) {
+                        Log.e(TAG, "Failed to get author/committer objects", je);
+                    }
                 }
+
                 mPatchSetNumber = getPatchSetNumberInternal(object, mCurrentRevision);
             } catch (JSONException ignored) {
-                // string displayed instead of blank information we don't have
-                String draftNotice = context.getString(R.string.current_revision_is_draft_message);
-                mCurrentRevision = draftNotice;
-                mMessage = draftNotice;
-                mChangedFiles = new ArrayList<ChangedFile>(0);
-                mAuthorObject = CommitterObject.getInstance(draftNotice, draftNotice, null, null);
-                mCommitterObject = CommitterObject.getInstance(draftNotice, draftNotice, null, null);
                 mPatchSetNumber = -1;
+                String unknown = context.getString(R.string.unknown);
+                mAuthorObject = CommitterObject.getInstance(unknown, unknown, null, null);
+                mCommitterObject = CommitterObject.getInstance(unknown, unknown, null, null);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Failed to parse JSONObject into useful data", e);
+            if (DEBUG) {
+                Log.e(TAG, "Failed to parse JSONObject into useful data", e);
+            }
         }
     }
 
@@ -271,7 +287,9 @@ public class JSONCommit {
                                          String authorOrCommitter,
                                          JSONObject mainObject)
             throws JSONException {
-        Log.d(TAG, "JSONObject we check for: " + mainObject);
+        if (DEBUG) {
+            Log.v(TAG, "JSONObject we check for: " + mainObject);
+        }
         JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
         JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
         JSONObject commitObject = revisionObject.getJSONObject(KEY_COMMIT);
@@ -313,7 +331,9 @@ public class JSONCommit {
                 list.add(ChangedFile.parseFromJSONObject(path,
                         filesObject.getJSONObject(path)));
             } catch (JSONException e) {
-                Log.e(TAG, "Failed to parse jsonObject", e);
+                if (DEBUG) {
+                    Log.e(TAG, "Failed to parse jsonObject", e);
+                }
             }
         }
         return list;

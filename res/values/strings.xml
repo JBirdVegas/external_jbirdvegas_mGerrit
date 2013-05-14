@@ -74,4 +74,5 @@
         Some information will be unavailable
     </string>
     <string name="comments_card_title">Comments:</string>
+    <string name="unknown">Unknown</string>
 </resources>

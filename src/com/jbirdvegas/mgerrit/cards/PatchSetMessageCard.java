@@ -37,18 +37,18 @@ public class PatchSetMessageCard extends Card {
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rootView = inflater.inflate(R.layout.patchset_message_card, null);
-        /*
-        --Message Card--
-        Commit subject
-        Last Update timestamp
-        Commit message
-        ----------------
-         */
 
+        // display latest update date
         ((TextView) rootView.findViewById(R.id.message_card_last_update))
                 .setText(mJSONCommit.getLastUpdatedDate());
-        ((TextView) rootView.findViewById(R.id.message_card_message))
-                .setText(mJSONCommit.getMessage());
+        // display message if available (only not available if patch set is a draft)
+        TextView commitMessageTextView = (TextView) rootView.findViewById(R.id.message_card_message);
+        String message = mJSONCommit.getMessage();
+        if (message != null && !message.isEmpty()) {
+            commitMessageTextView.setText(message);
+        } else {
+            commitMessageTextView.setText(context.getString(R.string.current_revision_is_draft_message));
+        }
         return rootView;
     }
 }

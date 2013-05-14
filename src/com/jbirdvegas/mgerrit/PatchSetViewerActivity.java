@@ -92,12 +92,22 @@ public class PatchSetViewerActivity extends Activity {
     }
 
     private void addCards(CardUI ui, JSONCommit jsonCommit) {
+        // Properties card
         Log.d(TAG, "Loading Properties Card...");
         ui.addCard(new PatchSetPropertiesCard(jsonCommit), true);
+
+        // Message card
         Log.d(TAG, "Loading Message Card...");
         ui.addCard(new PatchSetMessageCard(jsonCommit), true);
-        Log.d(TAG, "Loading Changes Card...");
-        ui.addCard(new PatchSetChangesCard(jsonCommit), true);
+
+        // Changed files card
+        if (jsonCommit.getChangedFiles() != null
+                && !jsonCommit.getChangedFiles().isEmpty()) {
+            Log.d(TAG, "Loading Changes Card...");
+            ui.addCard(new PatchSetChangesCard(jsonCommit), true);
+        }
+
+        // Code reviewers card
         if (jsonCommit.getCodeReviewers() != null
                 && !jsonCommit.getCodeReviewers().isEmpty()) {
             Log.d(TAG, "Loading Reviewers Card...");
@@ -105,6 +115,8 @@ public class PatchSetViewerActivity extends Activity {
         } else {
             Log.d(TAG, "No reviewers found! Not adding reviewers card");
         }
+
+        // Comments Card
         if (jsonCommit.getMessagesList() != null
                 && !jsonCommit.getMessagesList().isEmpty()) {
             Log.d(TAG, "Loading Comments Card...");

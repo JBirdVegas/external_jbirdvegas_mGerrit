@@ -8,3 +8,6 @@ out/
 .classpath
 .project
 local.properties
+build-log.xml
+build.log
+
