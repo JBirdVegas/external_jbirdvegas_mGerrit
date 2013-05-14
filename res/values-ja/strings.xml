@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
-  ~  Author: Jon Stanford (JBirdVegas), 2013
+  ~  Author: Dan Aoki (rdgate), 2013
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -27,19 +27,19 @@
     <string name="status_explaination_abandoned">変更はオーナーまたは管理者によって取り下げられました。</string>
     <string name="view_in_browser">ブラウザ</string>
     <string name="moar_info">詳細情報</string>
-    <string name="patchset_labels_code_reviewer_title">コードレビュー</string>
-    <string name="patchset_labels_verified_reviewer_title">検証</string>
+    <string name="patchset_labels_code_reviewer_title">コードレビュー:</string>
+    <string name="patchset_labels_verified_reviewer_title">検証:</string>
     <string name="dash">-</string>
-    <string name="inserted">挿入行</string>
-    <string name="deleted">削除行</string>
+    <string name="inserted">挿入行:</string>
+    <string name="deleted">削除行:</string>
     <string name="none_found">見つかりません</string>
     <string name="please_try_again">戻って再度試してください</string>
     <string name="menu_preferences">設定</string>
     <string name="menu_help">ヘルプ</string>
     <string name="choose_gerrit_instance">Gerritインスタンス選択</string>
-    <string name="commit_committer">コミット</string>
-    <string name="commit_author">作者</string>
-    <string name="commit_owner">オーナー</string>
+    <string name="commit_committer">コミット:</string>
+    <string name="commit_author">作者:</string>
+    <string name="commit_owner">オーナー:</string>
     <string name="failed_to_parse_json_response">解析失敗:</string>
     <string name="ok">ok</string>
     <string name="show_exception">例外を表示</string>
@@ -60,9 +60,14 @@
     <string name="explain_status_title">ステータス説明</string>
     <string name="explain_status_summary">ステータスタブの概要説明</string>
     <string name="menu_gerrit_instance">Gerritインスタンス</string>
-    <string name="owner_gravatar">Owner\'s Gravatar profile image</string>
-    <string name="author_gravatar">Author\'s Gravatar profile image</string>
-    <string name="committer_gravatar">Committer\'s Gravatar profile image</string>
+    <string name="owner_gravatar">オーナーのGravatarプロフィールイメージ</string>
+    <string name="author_gravatar">作者のGravatarプロフィールイメージ</string>
+    <string name="committer_gravatar">コミッターのGravatarプロフィールイメージ</string>
     <string name="koush_url_imageview_helper_title">Koush Dutta\'s UrlImageViewHelper</string>
     <string name="koush_url_imageview_helper_website">https://github.com/koush/UrlImageViewHelper</string>
+    <string name="menu_refresh">リフレッシュ</string>
+    <string name="current_revision_is_draft_message">現在のリビジョンはドラフトです。
+        いくつかの情報は利用できません。
+    </string>
+    <string name="comments_card_title">コメント:</string>
 </resources>
