@@ -164,6 +164,18 @@ public class JSONCommit {
             } catch (JSONException ignored) {
                 // we did not directly query the patch set
             }
+
+            try {
+                // code review labels
+                JSONObject labels = object.getJSONObject(KEY_LABELS);
+                mVerifiedReviewers = getReviewers(
+                        labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
+                mCodeReviewers = getReviewers(
+                        labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
+            } catch (JSONException je) {
+                Log.e(TAG, "Failed to get reviewer labels", je);
+            }
+
             /*
             handle messages that may not exist
 
@@ -188,18 +200,23 @@ public class JSONCommit {
                 mMessagesList = makeMessagesList(object);
                 // we did not directly query the patch set
                 mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
-                mMessage = getMessageFromJSON(object, mCurrentRevision);
-                mChangedFiles = getChangedFilesSet(object, mCurrentRevision);
-                mAuthorObject = getCommitter(mCurrentRevision, KEY_AUTHOR, object);
-                mCommitterObject = getCommitter(mCurrentRevision, KEY_COMMITTER, object);
-                // handle labels
-                JSONObject labels = object.getJSONObject(KEY_LABELS);
+                try {
+                    mMessage = getMessageFromJSON(object, mCurrentRevision);
+                } catch (JSONException je) {
+                    Log.e(TAG, "Failed to get message from commit", je);
+                }
+                try {
+                    mChangedFiles = getChangedFilesSet(object, mCurrentRevision);
+                } catch (JSONException je) {
+                    Log.d(TAG, "Failed to get changed files list", je);
+                }
+                try {
+                    mAuthorObject = getCommitter(mCurrentRevision, KEY_AUTHOR, object);
+                    mCommitterObject = getCommitter(mCurrentRevision, KEY_COMMITTER, object);
+                } catch (JSONException je) {
+                    Log.e(TAG, "Failed to get author/committer objects", je);
+                }
                 mPatchSetNumber = getPatchSetNumberInternal(object, mCurrentRevision);
-                mVerifiedReviewers = getReviewers(
-                        labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
-                mCodeReviewers = getReviewers(
-                        labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
-
             } catch (JSONException ignored) {
                 // string displayed instead of blank information we don't have
                 String draftNotice = context.getString(R.string.current_revision_is_draft_message);
@@ -209,10 +226,6 @@ public class JSONCommit {
                 mAuthorObject = CommitterObject.getInstance(draftNotice, draftNotice, null, null);
                 mCommitterObject = CommitterObject.getInstance(draftNotice, draftNotice, null, null);
                 mPatchSetNumber = -1;
-                mVerifiedReviewers = new ArrayList<Reviewer>(0);
-                mVerifiedReviewers.add(Reviewer.getReviewerInstance("0", draftNotice));
-                mCodeReviewers = new ArrayList<Reviewer>(0);
-                mCodeReviewers.add(Reviewer.getReviewerInstance("0", draftNotice));
             }
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse JSONObject into useful data", e);
@@ -225,7 +238,7 @@ public class JSONCommit {
         for (int i = 0; messagesArray.length() > i; i++) {
             linkedList.add(CommitComment.getInstance(messagesArray.getJSONObject(i)));
         }
-        return linkedList.isEmpty() ? null : linkedList;
+        return linkedList.isEmpty() ? new LinkedList<CommitComment>() : linkedList;
     }
 
     private final JSONObject mRawJSONCommit;
