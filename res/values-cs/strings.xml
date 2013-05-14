@@ -67,4 +67,6 @@
     <string name="current_revision_is_draft_message">Aktuální revize je draft.
         Některé informace nebudou k dispozici
     </string>
+    <string name="comments_card_title">Komentáře:</string>
+    <string name="unknown">Neznámý</string>
 </resources>
