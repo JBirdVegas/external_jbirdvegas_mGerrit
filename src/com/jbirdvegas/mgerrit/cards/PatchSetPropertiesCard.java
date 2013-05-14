@@ -41,7 +41,7 @@ public class PatchSetPropertiesCard extends Card {
         ((TextView) rootView.findViewById(R.id.prop_card_subject))
                 .setText(mJSONCommit.getSubject());
         ((TextView) rootView.findViewById(R.id.prop_card_owner))
-                .setText(mJSONCommit.getOwnerName());
+                .setText(mJSONCommit.getOwnerObject().getName());
         try {
             ((TextView) rootView.findViewById(R.id.prop_card_author))
                     .setText(mJSONCommit.getAuthorObject().getName());

@@ -19,15 +19,24 @@ package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.StaticWebAddress;
+import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
@@ -35,6 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CommitCard extends Card {
+    private static final String TAG = CommitCard.class.getSimpleName();
     private JSONCommit mCommit;
 
     public CommitCard(JSONCommit commit) {
@@ -48,8 +58,40 @@ public class CommitCard extends Card {
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commitCardView = inflater.inflate(R.layout.commit_card, null);
-        ((TextView) commitCardView.findViewById(R.id.commit_card_commit_owner))
-                .setText(mCommit.getOwnerName());
+
+        // I hate UI code so instead of inbedding a LinearLayout for just an
+        // ImageView with an associated TextView we just use the TextView's
+        // built in CompoundDrawablesWithIntrinsicBounds(Drawable, Drawable, Drawable, Drawable)
+        // to handle the layout work. This also has a benefit of better performance!
+        final TextView ownerTextView = (TextView) commitCardView.findViewById(R.id.commit_card_commit_owner);
+        // set the text
+        ownerTextView.setText(mCommit.getOwnerObject().getName());
+        // make a new request queue
+        RequestQueue queue = Volley.newRequestQueue(context);
+        // get the gravatar api URL
+        String gravatarUrl = GravatarHelper.getGravatarUrl(mCommit.getOwnerObject().getEmail());
+        // make and add a new ImageRequest to the queue
+        queue.add(new ImageRequest(gravatarUrl,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap bitmap) {
+                        ownerTextView.setCompoundDrawablePadding(5);
+                        ownerTextView.setCompoundDrawablesWithIntrinsicBounds(new BitmapDrawable(bitmap), null, null, null);
+                        //ownerTextView.refreshDrawableState();
+                    }
+                },
+                80,
+                80,
+                Bitmap.Config.ARGB_8888,
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.e(TAG, "Volley failed to get owners gravatar", volleyError);
+                    }
+                }
+        ));
+        // DO IT!
+        queue.start();
         ((TextView) commitCardView.findViewById(R.id.commit_card_project_name))
                 .setText(mCommit.getProject());
         ((TextView) commitCardView.findViewById(R.id.commit_card_title))
