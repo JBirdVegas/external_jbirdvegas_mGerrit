@@ -36,13 +36,14 @@ public class JSONCommit {
     public static final String KEY_STATUS_OPEN = "open";
     public static final String KEY_STATUS_MERGED = "merged";
     public static final String KEY_STATUS_ABANDONED = "abandoned";
+    public static final String DETAILED_ACCOUNTS_ARG = "&o=DETAILED_ACCOUNTS";
     // used to query commit message
     public static final String CURRENT_PATCHSET_ARGS = new StringBuilder(0)
             .append("&o=CURRENT_REVISION")
             .append("&o=CURRENT_COMMIT")
             .append("&o=CURRENT_FILES")
             .append("&o=DETAILED_LABELS")
-            .append("&o=DETAILED_ACCOUNTS")
+            .append(DETAILED_ACCOUNTS_ARG)
             .append("&o=MESSAGES")
             .toString();
     public static final String KEY_INSERTED = "lines_inserted";
@@ -153,19 +154,10 @@ public class JSONCommit {
             }
             mSortKey = object.getString(KEY_SORT_KEY);
             mCommitNumber = object.getInt(KEY_COMMIT_NUMBER);
-            mOwnerName = getOwnerName(object.getJSONObject(KEY_OWNER));
+            mOwnerObject = CommitterObject.getInstance(object.getJSONObject(KEY_OWNER));
             mWebAddress = String.format("%s#/c/%d/",
                     Prefs.getCurrentGerrit(context),
                     mCommitNumber);
-            // handle owner object that may not exist
-            try {
-                JSONObject ownerJsonObject = object.getJSONObject(KEY_OWNER);
-                mOwnerObject = CommitterObject.getInstance(
-                        ownerJsonObject.getString(KEY_NAME),
-                        ownerJsonObject.getString(KEY_EMAIL));
-            } catch (JSONException ignored) {
-                // we did not directly query the patch set
-            }
 
             try {
                 // code review labels
@@ -270,7 +262,6 @@ public class JSONCommit {
     private boolean mIsMergeable;
     private String mSortKey;
     private int mCommitNumber;
-    private String mOwnerName;
     private String mCurrentRevision;
     private CommitterObject mOwnerObject;
     private CommitterObject mAuthorObject;
@@ -413,10 +404,6 @@ public class JSONCommit {
         return mCommitNumber;
     }
 
-    public String getOwnerName() {
-        return mOwnerName;
-    }
-
     public String getCurrentRevision() {
         return mCurrentRevision;
     }
@@ -478,7 +465,6 @@ public class JSONCommit {
         sb.append(", mIsMergeable=").append(mIsMergeable);
         sb.append(", mSortKey='").append(mSortKey).append('\'');
         sb.append(", mCommitNumber=").append(mCommitNumber);
-        sb.append(", mOwnerName='").append(mOwnerName).append('\'');
         sb.append(", mCurrentRevision='").append(mCurrentRevision).append('\'');
         sb.append(", mOwnerObject=").append(mOwnerObject);
         sb.append(", mAuthorObject=").append(mAuthorObject);

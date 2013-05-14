@@ -102,7 +102,8 @@ public abstract class CardsActivity extends Activity {
         mWebsite = new StringBuilder(0)
                 .append(Prefs.getCurrentGerrit(getApplicationContext()))
                 .append(StaticWebAddress.getStatusQuery())
-                .append(getQuery()).toString();
+                .append(getQuery())
+                .append(JSONCommit.DETAILED_ACCOUNTS_ARG).toString();
         if (savedInstanceState == null) {
             saveCards("");
         }

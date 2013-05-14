@@ -38,8 +38,8 @@
             android:summary="@string/nine_old_androids_website"/>
 
         <Preference
-            android:key="open_source_koush_uri_imageview_helper"
-            android:title="@string/koush_url_imageview_helper_title"
-            android:summary="@string/koush_url_imageview_helper_website"/>
+            android:key="open_source_aosp_volley"
+            android:title="@string/aosp_volley_title"
+            android:summary="@string/aosp_volley_website"/>
     </PreferenceCategory>
 </PreferenceScreen>

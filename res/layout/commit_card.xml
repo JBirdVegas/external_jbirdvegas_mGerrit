@@ -17,76 +17,72 @@
   ~  limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
     <TextView
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_title"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:paddingLeft="8dip"
         android:paddingRight="8dip"
         android:paddingBottom="10dip"
         android:textAppearance="@style/CardTitle"
-        android:textSize="22sp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/commit_card_commit_owner"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/commit_card_title"
-        android:textAppearance="@style/CardText"
-        android:textStyle="bold"/>
+        android:textSize="22sp"
+        android:layout_gravity="center"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_project_name"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/commit_card_commit_owner"
-        android:textAppearance="@style/CardText"/>
+        android:textAppearance="@style/CardText"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/commit_card_commit_owner"
+        android:textAppearance="@style/CardText"
+        android:textStyle="bold"
+        android:layout_gravity="center"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_last_updated"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/commit_card_project_name"
-        android:textAppearance="@style/CardText"/>
+        android:textAppearance="@style/CardText"
+        android:layout_gravity="center"/>
     <TextView
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_commit_status"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/commit_card_last_updated"
         android:paddingBottom="@dimen/commit_card_padding"
         android:textAppearance="@style/CardText"
-        android:textStyle="italic"/>
+        android:textStyle="italic"
+        android:layout_gravity="center"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_message"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/commit_card_commit_status"
         android:paddingTop="10dp"
-        android:textAppearance="@style/CardText"/>
+        android:textAppearance="@style/CardText"
+        android:layout_gravity="center"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_changed_files"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/commit_card_message"
-        android:textAppearance="@style/CardText"/>
+        android:textAppearance="@style/CardText"
+        android:layout_gravity="center"/>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_below="@+id/commit_card_changed_files"
         android:weightSum="10"
-        android:layout_centerInParent="true"
-        android:paddingBottom="8dip">
+        android:paddingBottom="8dip"
+        android:layout_gravity="center">
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -111,4 +107,4 @@
             android:layout_marginRight="10dp"
             android:textColor="@color/card_title_text"/>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

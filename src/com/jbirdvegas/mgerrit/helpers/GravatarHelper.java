@@ -34,6 +34,17 @@ public class GravatarHelper {
         }
     }
 
+    public static String getGravatarUrl(String email) {
+        String emailMd5 = MD5Helper.md5Hex(email.trim().toLowerCase());
+        if (emailMd5 != null) {
+            return String.format("%s%s?s=%s",
+                    GRAVATAR_API,
+                    emailMd5,
+                    DEFAULT_AVATAR_SIZE);
+        }
+        return null;
+    }
+
     private static RequestQueue imageVolleyRequest(final ImageView imageView, String url) {
         RequestQueue imageRequest = Volley.newRequestQueue(imageView.getContext());
         imageRequest.add(new ImageRequest(url, new Response.Listener<Bitmap>() {

@@ -30,7 +30,7 @@ import android.widget.Toast;
 public class Prefs extends PreferenceActivity implements Preference.OnPreferenceClickListener{
     private static final CharSequence CARDS_UI_KEY = "open_source_lib_cards_ui";
     private static final CharSequence NINE_OLD_ANDROIDS_KEY = "open_source_lib_nine_old_androids";
-    private static final CharSequence KOUSH_URL_IMAGEVIEW_HELPER = "open_source_koush_uri_imageview_helper";
+    private static final CharSequence AOSP_VOLLEY = "open_source_aosp_volley";
     private static final String GERRIT_KEY = "gerrit_instances_key";
 
     @Override
@@ -42,7 +42,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
         // View NineOldAndroids website
         findPreference(NINE_OLD_ANDROIDS_KEY).setOnPreferenceClickListener(this);
         // View Koush's website
-        findPreference(KOUSH_URL_IMAGEVIEW_HELPER).setOnPreferenceClickListener(this);
+        findPreference(AOSP_VOLLEY).setOnPreferenceClickListener(this);
         // select gerrit instance
         ListPreference gerritList = (ListPreference) findPreference(GERRIT_KEY);
         gerritList.setSummary(gerritList.getValue());
