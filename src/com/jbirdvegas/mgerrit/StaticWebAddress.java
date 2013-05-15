@@ -41,4 +41,8 @@ public class StaticWebAddress {
     public static String getChangesQuery() {
         return getGERRIT_INSTANCE_WEBSITE() + CHANGES_QUERY;
     }
+
+    public static String getQuery() {
+        return CHANGES_QUERY;
+    }
 }

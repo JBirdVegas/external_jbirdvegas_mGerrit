@@ -41,7 +41,8 @@ public class PatchSetMessageCard extends Card {
 
         // display latest update date
         ((TextView) rootView.findViewById(R.id.message_card_last_update))
-                .setText(mJSONCommit.getLastUpdatedDate());
+                .setText(mJSONCommit.getLastUpdatedDate())
+        ;
         // display message if available (only not available if patch set is a draft)
         TextView commitMessageTextView = (TextView) rootView.findViewById(R.id.message_card_message);
         String message = mJSONCommit.getMessage();

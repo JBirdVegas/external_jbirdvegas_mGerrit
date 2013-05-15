@@ -18,15 +18,18 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
+import com.jbirdvegas.mgerrit.CardsActivity;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.ReviewTab;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
-public class PatchSetPropertiesCard extends Card {
+public class PatchSetPropertiesCard extends Card implements View.OnClickListener {
     private final JSONCommit mJSONCommit;
     private TextView mSubject;
     private TextView mOwner;
@@ -52,11 +55,14 @@ public class PatchSetPropertiesCard extends Card {
         // attach owner's gravatar
         GravatarHelper.attachGravatarToTextView(
                 mOwner, mJSONCommit.getOwnerObject().getEmail());
+        mOwner.setOnClickListener(this);
         try {
             // set text will throw NullPointer if
             // we don't have author/committer objects
             mAuthor.setText(mJSONCommit.getAuthorObject().getName());
+            mAuthor.setOnClickListener(this);
             mCommitter.setText(mJSONCommit.getCommitterObject().getName());
+            mCommitter.setOnClickListener(this);
 
             // attach gravatars (if objects are not null)
             GravatarHelper.attachGravatarToTextView(
@@ -70,5 +76,20 @@ public class PatchSetPropertiesCard extends Card {
                     .setVisibility(View.GONE);
         }
         return rootView;
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent intent = new Intent(view.getContext(), ReviewTab.class);
+        if (view.equals(mOwner)) {
+            intent.putExtra(CardsActivity.KEY_DEVELOPER, mJSONCommit.getAuthorObject().getEmail());
+
+        } else if (view.equals(mAuthor)) {
+            intent.putExtra(CardsActivity.KEY_DEVELOPER, mJSONCommit.getAuthorObject().getEmail());
+        } else if (view.equals(mCommitter)) {
+            intent.putExtra(CardsActivity.KEY_DEVELOPER, mJSONCommit.getAuthorObject().getEmail());
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        view.getContext().startActivity(intent);
     }
 }

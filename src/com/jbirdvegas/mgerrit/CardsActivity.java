@@ -38,6 +38,8 @@ import java.util.List;
 
 public abstract class CardsActivity extends Activity {
     private static final String KEY_STORED_CARDS = "storedCards";
+    public static final String KEY_DEVELOPER = "dev_email";
+    private static final String AT_SYMBOL = "@";
     protected String TAG = getClass().getSimpleName();
     private String mWebsite;
 
@@ -99,11 +101,23 @@ public abstract class CardsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.commit_list);
         mCards = (CardUI) findViewById(R.id.commit_cards);
+        String userEmail = getIntent().getStringExtra(KEY_DEVELOPER);
         mWebsite = new StringBuilder(0)
                 .append(Prefs.getCurrentGerrit(getApplicationContext()))
                 .append(StaticWebAddress.getStatusQuery())
                 .append(getQuery())
                 .append(JSONCommit.DETAILED_ACCOUNTS_ARG).toString();
+        if (userEmail != null
+                && !userEmail.trim().isEmpty()
+                && userEmail.contains(AT_SYMBOL)) {
+            mWebsite = new StringBuilder(0)
+                .append(Prefs.getCurrentGerrit(getApplicationContext()))
+                    .append(StaticWebAddress.getQuery())
+                    .append("owner:")
+                    .append(userEmail)
+                    .toString();
+
+        }
         if (savedInstanceState == null) {
             saveCards("");
         }

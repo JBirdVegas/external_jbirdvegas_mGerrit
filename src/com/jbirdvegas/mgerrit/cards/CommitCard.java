@@ -33,9 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
-import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
-import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.StaticWebAddress;
+import com.jbirdvegas.mgerrit.*;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
@@ -65,33 +63,46 @@ public class CommitCard extends Card {
         // to handle the layout work. This also has a benefit of better performance!
         final TextView ownerTextView = (TextView) commitCardView.findViewById(R.id.commit_card_commit_owner);
         // set the text
-        ownerTextView.setText(mCommit.getOwnerObject().getName());
-        // make a new request queue
-        RequestQueue queue = Volley.newRequestQueue(context);
-        // get the gravatar api URL
-        String gravatarUrl = GravatarHelper.getGravatarUrl(mCommit.getOwnerObject().getEmail());
-        // make and add a new ImageRequest to the queue
-        queue.add(new ImageRequest(gravatarUrl,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap bitmap) {
-                        ownerTextView.setCompoundDrawablePadding(5);
-                        ownerTextView.setCompoundDrawablesWithIntrinsicBounds(new BitmapDrawable(bitmap), null, null, null);
-                        //ownerTextView.refreshDrawableState();
-                    }
-                },
-                80,
-                80,
-                Bitmap.Config.ARGB_8888,
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        Log.e(TAG, "Volley failed to get owners gravatar", volleyError);
-                    }
+        if (mCommit.getOwnerObject() != null) {
+            ownerTextView.setText(mCommit.getOwnerObject().getName());
+            ownerTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(view.getContext(), ReviewTab.class);
+                    intent.putExtra(CardsActivity.KEY_DEVELOPER, mCommit.getOwnerObject().getEmail());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    view.getContext().startActivity(intent);
                 }
-        ));
-        // DO IT!
-        queue.start();
+            });
+
+            // make a new request queue
+            RequestQueue queue = Volley.newRequestQueue(context);
+            // get the gravatar api URL
+            String gravatarUrl = GravatarHelper.getGravatarUrl(mCommit.getOwnerObject().getEmail());
+            // make and add a new ImageRequest to the queue
+            queue.add(new ImageRequest(gravatarUrl,
+                    new Response.Listener<Bitmap>() {
+                        @Override
+                        public void onResponse(Bitmap bitmap) {
+                            ownerTextView.setCompoundDrawablePadding(5);
+                            ownerTextView.setCompoundDrawablesWithIntrinsicBounds(new BitmapDrawable(bitmap), null, null, null);
+                            //ownerTextView.refreshDrawableState();
+                        }
+                    },
+                    80,
+                    80,
+                    Bitmap.Config.ARGB_8888,
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            Log.e(TAG, "Volley failed to get owners gravatar", volleyError);
+                        }
+                    }
+            ));
+
+            // DO IT!
+            queue.start();
+        }
         ((TextView) commitCardView.findViewById(R.id.commit_card_project_name))
                 .setText(mCommit.getProject());
         ((TextView) commitCardView.findViewById(R.id.commit_card_title))

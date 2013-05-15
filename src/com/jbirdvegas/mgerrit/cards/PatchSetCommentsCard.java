@@ -1,6 +1,7 @@
 package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
+import com.jbirdvegas.mgerrit.CardsActivity;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.ReviewTab;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.objects.CommitComment;
@@ -46,11 +49,21 @@ public class PatchSetCommentsCard extends Card {
         return mRootView;
     }
 
-    public View getCommentView(CommitComment comment) {
+    public View getCommentView(final CommitComment comment) {
         View commentView = mInflater.inflate(R.layout.commit_comment, null);
         // set author name
-        ((TextView) commentView.findViewById(R.id.comment_author_name))
-                .setText(comment.getAuthorObject().getName());
+        TextView authorTextView = (TextView) commentView.findViewById(R.id.comment_author_name);
+        authorTextView.setText(comment.getAuthorObject().getName());
+        authorTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), ReviewTab.class);
+                intent.putExtra(CardsActivity.KEY_DEVELOPER, comment.getAuthorObject().getEmail());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                view.getContext().startActivity(intent);
+
+            }
+        });
         // setup styled comments
         TextView commentMessage = (TextView) commentView.findViewById(R.id.comment_message);
         // replace replace emoticons with drawables
