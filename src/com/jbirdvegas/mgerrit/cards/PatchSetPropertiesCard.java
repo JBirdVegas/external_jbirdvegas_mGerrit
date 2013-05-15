@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.cards;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.R;
@@ -29,53 +28,46 @@ import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 public class PatchSetPropertiesCard extends Card {
     private final JSONCommit mJSONCommit;
+    private TextView mSubject;
+    private TextView mOwner;
+    private TextView mAuthor;
+    private TextView mCommitter;
 
     public PatchSetPropertiesCard(JSONCommit commit) {
         this.mJSONCommit = commit;
     }
+
     @Override
     public View getCardContent(Context context) {
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rootView = inflater.inflate(R.layout.properties_card, null);
-        ((TextView) rootView.findViewById(R.id.prop_card_subject))
-                .setText(mJSONCommit.getSubject());
-        ((TextView) rootView.findViewById(R.id.prop_card_owner))
-                .setText(mJSONCommit.getOwnerObject().getName());
+        mSubject = (TextView) rootView.findViewById(R.id.prop_card_subject);
+        mOwner = (TextView) rootView.findViewById(R.id.prop_card_owner);
+        mAuthor = (TextView) rootView.findViewById(R.id.prop_card_author);
+        mCommitter = (TextView) rootView.findViewById(R.id.prop_card_committer);
+
+        mSubject.setText(mJSONCommit.getSubject());
+        mOwner.setText(mJSONCommit.getOwnerObject().getName());
+        // attach owner's gravatar
+        GravatarHelper.attachGravatarToTextView(
+                mOwner, mJSONCommit.getOwnerObject().getEmail());
         try {
-            ((TextView) rootView.findViewById(R.id.prop_card_author))
-                    .setText(mJSONCommit.getAuthorObject().getName());
-            ((TextView) rootView.findViewById(R.id.prop_card_committer))
-                    .setText(mJSONCommit.getCommitterObject().getName());
+            // set text will throw NullPointer if
+            // we don't have author/committer objects
+            mAuthor.setText(mJSONCommit.getAuthorObject().getName());
+            mCommitter.setText(mJSONCommit.getCommitterObject().getName());
+
+            // attach gravatars (if objects are not null)
+            GravatarHelper.attachGravatarToTextView(
+                    mAuthor, mJSONCommit.getAuthorObject().getEmail());
+            GravatarHelper.attachGravatarToTextView(
+                    mCommitter, mJSONCommit.getCommitterObject().getEmail());
         } catch (NullPointerException npe) {
             rootView.findViewById(R.id.prop_card_author)
                     .setVisibility(View.GONE);
             rootView.findViewById(R.id.prop_card_committer)
                     .setVisibility(View.GONE);
-        }
-
-        // use emails to get gravatar profile images
-        GravatarHelper.populateProfilePicture(
-                (ImageView) rootView.findViewById(R.id.prop_card_owner_gravatar),
-                mJSONCommit.getOwnerObject().getEmail());
-        ImageView authorAvatar = (ImageView) rootView.findViewById(R.id.prop_card_author_gravatar);
-        try {
-
-            GravatarHelper.populateProfilePicture(
-                    authorAvatar,
-                    mJSONCommit.getAuthorObject().getEmail());
-        } catch (NullPointerException npe) {
-            // failed to get author email removing avatar
-            authorAvatar.setVisibility(View.GONE);
-        }
-
-        ImageView committerGravatar = (ImageView) rootView.findViewById(R.id.prop_card_committer_gravatar);
-        try {
-            GravatarHelper.populateProfilePicture(
-                    committerGravatar,
-                    mJSONCommit.getCommitterObject().getEmail());
-        } catch (NullPointerException npe) {
-            committerGravatar.setVisibility(View.GONE);
         }
         return rootView;
     }

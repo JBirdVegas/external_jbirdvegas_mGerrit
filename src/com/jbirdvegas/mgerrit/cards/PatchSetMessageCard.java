@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 public class PatchSetMessageCard extends Card {
@@ -45,7 +46,8 @@ public class PatchSetMessageCard extends Card {
         TextView commitMessageTextView = (TextView) rootView.findViewById(R.id.message_card_message);
         String message = mJSONCommit.getMessage();
         if (message != null && !message.isEmpty()) {
-            commitMessageTextView.setText(message);
+            // apply emoticons to patchset messages if present
+            commitMessageTextView.setText(EmoticonSupportHelper.getSmiledText(context, message));
         } else {
             commitMessageTextView.setText(context.getString(R.string.current_revision_is_draft_message));
         }

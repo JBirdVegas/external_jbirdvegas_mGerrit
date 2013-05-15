@@ -1,26 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
-  ~  Author: Jon Stanford (JBirdVegas), 2013
-  ~
-  ~  Licensed under the Apache License, Version 2.0 (the "License");
-  ~  you may not use this file except in compliance with the License.
-  ~  You may obtain a copy of the License at
-  ~
-  ~       http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~  Unless required by applicable law or agreed to in writing, software
-  ~  distributed under the License is distributed on an "AS IS" BASIS,
-  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~  See the License for the specific language governing permissions and
-  ~  limitations under the License.
-  -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:paddingBottom="8dip">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="8dip">
 
     <TextView
         android:gravity="center"
@@ -32,97 +15,76 @@
         android:id="@+id/prop_card_subject"
         android:textAppearance="@style/CardTitle"
         android:textSize="22sp"/>
-
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:paddingTop="8dip">
+        android:layout_width="match_parent" android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/prop_card_owner_gravatar"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/owner_gravatar"
-            android:padding="@dimen/gravatar_image_padding"/>
+            android:layout_gravity="left|center_vertical"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dip"
+                android:paddingRight="5dp"
+                android:text="@string/commit_owner"
+                android:textAppearance="@style/CardText"
+                android:layout_gravity="center_vertical"
+                android:textStyle="bold"
+                android:textAlignment="viewEnd" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dip"
+                android:paddingRight="5dip"
+                android:text="@string/commit_author"
+                android:textAppearance="@style/CardText"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical"
+                android:textAlignment="viewEnd" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="8dip"
+                android:paddingRight="5dp"
+                android:text="@string/commit_committer"
+                android:textAppearance="@style/CardText"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical"
+                android:textAlignment="viewEnd" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="8dip"
-            android:paddingRight="5dp"
-            android:text="@string/commit_owner"
-            android:textAppearance="@style/CardText"
-            android:layout_gravity="center"
-            android:textStyle="bold"/>
+            android:layout_gravity="center_vertical|left">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/prop_card_owner"
+                android:textAppearance="@style/CardText"
+                android:layout_gravity="center_vertical" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/prop_card_author"
+                android:paddingRight="8dip"
+                android:textAppearance="@style/CardText"
+                android:layout_gravity="center_vertical" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/prop_card_owner"
-            android:layout_gravity="center"
-            android:textAppearance="@style/CardText"/>
-    </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content">
-
-        <ImageView
-            android:id="@+id/prop_card_author_gravatar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/author_gravatar"
-            android:padding="@dimen/gravatar_image_padding"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="8dip"
-            android:paddingRight="5dip"
-            android:text="@string/commit_author"
-            android:textAppearance="@style/CardText"
-            android:textStyle="bold"
-            android:layout_gravity="center"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/prop_card_author"
-            android:layout_gravity="center"
-            android:paddingRight="8dip"
-            android:textAppearance="@style/CardText"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content">
-
-        <ImageView
-            android:id="@+id/prop_card_committer_gravatar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/committer_gravatar"
-            android:padding="@dimen/gravatar_image_padding"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="8dip"
-            android:paddingRight="5dp"
-            android:text="@string/commit_committer"
-            android:textAppearance="@style/CardText"
-            android:textStyle="bold"
-            android:layout_gravity="center"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/prop_card_committer"
-            android:layout_gravity="center"
-            android:paddingRight="8dip"
-            android:textAppearance="@style/CardText"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/prop_card_committer"
+                android:paddingRight="8dip"
+                android:textAppearance="@style/CardText"
+                android:layout_gravity="center_vertical" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

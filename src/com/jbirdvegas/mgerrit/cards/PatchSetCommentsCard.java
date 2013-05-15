@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.objects.CommitComment;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
@@ -38,6 +39,7 @@ public class PatchSetCommentsCard extends Card {
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mRootView = (ViewGroup) mInflater.inflate(R.layout.comments_card, null);
         LinkedList<CommitComment> commentsList = (LinkedList<CommitComment>) mJsonCommit.getMessagesList();
+        // make and add a view for each comment
         for (CommitComment comment : commentsList) {
             mRootView.addView(getCommentView(comment));
         }
@@ -46,11 +48,16 @@ public class PatchSetCommentsCard extends Card {
 
     public View getCommentView(CommitComment comment) {
         View commentView = mInflater.inflate(R.layout.commit_comment, null);
+        // set author name
         ((TextView) commentView.findViewById(R.id.comment_author_name))
                 .setText(comment.getAuthorObject().getName());
+        // setup styled comments
         TextView commentMessage = (TextView) commentView.findViewById(R.id.comment_message);
-        commentMessage.setText(comment.getMessage());
+        // replace replace emoticons with drawables
+        commentMessage.setText(EmoticonSupportHelper.getSmiledText(mContext, comment.getMessage()));
+        // use Linkify to automatically linking http/email/addresses
         Linkify.addLinks(commentMessage, Linkify.ALL);
+        // set gravatar icon for commenter
         GravatarHelper.populateProfilePicture(
                 (ImageView) commentView.findViewById(R.id.comment_gravatar),
                 comment.getAuthorObject().getEmail());
