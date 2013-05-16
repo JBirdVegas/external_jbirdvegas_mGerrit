@@ -43,7 +43,9 @@
                 android:textAppearance="@style/CardText"
                 android:textStyle="bold"
                 android:layout_gravity="center_vertical"
-                android:textAlignment="viewEnd" />
+                android:textAlignment="viewEnd"
+                android:paddingTop="5dip"
+                android:paddingBottom="5dip"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,7 +77,9 @@
                 android:id="@+id/prop_card_author"
                 android:paddingRight="8dip"
                 android:textAppearance="@style/CardText"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_vertical"
+                android:paddingBottom="5dip"
+                android:paddingTop="5dip"/>
 
 
             <TextView

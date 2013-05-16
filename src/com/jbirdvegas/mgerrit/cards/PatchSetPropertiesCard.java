@@ -24,20 +24,25 @@ import android.view.View;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.CardsActivity;
+import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.ReviewTab;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
+import com.jbirdvegas.mgerrit.interfaces.OnContextItemSelectedCallback;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 public class PatchSetPropertiesCard extends Card implements View.OnClickListener {
     private final JSONCommit mJSONCommit;
+    private final PatchSetViewerActivity mPatchSetViewerActivity;
     private TextView mSubject;
     private TextView mOwner;
     private TextView mAuthor;
     private TextView mCommitter;
 
-    public PatchSetPropertiesCard(JSONCommit commit) {
+    public PatchSetPropertiesCard(JSONCommit commit, PatchSetViewerActivity activity) {
         this.mJSONCommit = commit;
+        this.mPatchSetViewerActivity = activity;
     }
 
     @Override
@@ -56,6 +61,8 @@ public class PatchSetPropertiesCard extends Card implements View.OnClickListener
         GravatarHelper.attachGravatarToTextView(
                 mOwner, mJSONCommit.getOwnerObject().getEmail());
         mOwner.setOnClickListener(this);
+        mOwner.setTag(mJSONCommit.getOwnerObject());
+        setContextMenu(mOwner);
         try {
             // set text will throw NullPointer if
             // we don't have author/committer objects
@@ -64,6 +71,11 @@ public class PatchSetPropertiesCard extends Card implements View.OnClickListener
             mCommitter.setText(mJSONCommit.getCommitterObject().getName());
             mCommitter.setOnClickListener(this);
 
+            // setup contextmenu click actions
+            mAuthor.setTag(mJSONCommit.getAuthorObject());
+            setContextMenu(mAuthor);
+            mCommitter.setTag(mJSONCommit.getCommitterObject());
+            setContextMenu(mCommitter);
             // attach gravatars (if objects are not null)
             GravatarHelper.attachGravatarToTextView(
                     mAuthor, mJSONCommit.getAuthorObject().getEmail());
@@ -90,5 +102,27 @@ public class PatchSetPropertiesCard extends Card implements View.OnClickListener
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         view.getContext().startActivity(intent);
+    }
+
+    private void setContextMenu(final TextView textView) {
+        mPatchSetViewerActivity.registerViewForContextMenu(textView, new OnContextItemSelectedCallback() {
+            @Override
+            public boolean menuItemSelected(CommitterObject committerObject, int position) {
+                String tab = null;
+                switch (position) {
+                    case CardsActivity.OWNER:
+                        tab = "owner";
+                        break;
+                    case CardsActivity.REVIEWER:
+                        tab = "reviewer";
+                }
+                committerObject.setState(tab);
+                Intent intent = new Intent(textView.getContext(), ReviewTab.class);
+                intent.putExtra(CardsActivity.KEY_DEVELOPER, committerObject);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+                textView.getContext().startActivity(intent);
+                return true;
+            }
+        });
     }
 }
