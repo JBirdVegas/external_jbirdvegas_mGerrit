@@ -23,7 +23,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -36,9 +35,7 @@ import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.*;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.interfaces.OnContextItemSelectedCallback;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.Arrays;
@@ -80,25 +77,7 @@ public class CommitCard extends Card {
                     view.getContext().startActivity(intent);
                 }
             });
-            mCardsActivity.registerViewForContextMenu(ownerTextView, new OnContextItemSelectedCallback() {
-                @Override
-                public boolean menuItemSelected(CommitterObject committerObject, int position) {
-                    String tab = null;
-                    switch (position) {
-                        case CardsActivity.OWNER:
-                            tab = "owner";
-                            break;
-                        case CardsActivity.REVIEWER:
-                            tab = "reviewer";
-                    }
-                    mCommit.getOwnerObject().setState(tab);
-                    Intent intent = new Intent(ownerTextView.getContext(), ReviewTab.class);
-                    intent.putExtra(CardsActivity.KEY_DEVELOPER, committerObject);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    ownerTextView.getContext().startActivity(intent);
-                    return true;
-                }
-            });
+            mCardsActivity.registerViewForContextMenu(ownerTextView);
 
             // make a new request queue
             RequestQueue queue = Volley.newRequestQueue(context);

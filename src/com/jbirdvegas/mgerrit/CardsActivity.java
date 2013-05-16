@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -45,6 +46,8 @@ public abstract class CardsActivity extends Activity {
     private static final String KEY_STORED_CARDS = "storedCards";
     public static final String KEY_DEVELOPER = "dev_email";
     private static final String AT_SYMBOL = "@";
+    static final String KEY_OWNER = "owner";
+    static final String KEY_REVIEWER = "reviewer";
     protected String TAG = getClass().getSimpleName();
     private String mWebsite;
 
@@ -213,15 +216,12 @@ public abstract class CardsActivity extends Activity {
         return PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_STORED_CARDS, "");
     }
 
-    private OnContextItemSelectedCallback itemSelectedCallback = null;
     private CommitterObject committerObject = null;
-    public void registerViewForContextMenu(View view, OnContextItemSelectedCallback callback) {
-        itemSelectedCallback = callback;
+    public void registerViewForContextMenu(View view) {
         registerForContextMenu(view);
     }
 
     public void unregisterViewForContextMenu(View view) {
-        itemSelectedCallback = null;
         unregisterForContextMenu(view);
     }
 
@@ -232,15 +232,27 @@ public abstract class CardsActivity extends Activity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         committerObject = (CommitterObject) v.getTag();
         menu.setHeaderTitle(R.string.developers_role);
-        menu.add(0, v.getId(), OWNER, v.getContext().getString(R.string.context_menu_owner));
-        menu.add(0, v.getId(), REVIEWER, v.getContext().getString(R.string.context_menu_reviewer));
+        menu.add(0, v.getId(), OWNER, getString(R.string.context_menu_owner));
+        menu.add(0, v.getId(), REVIEWER, getString(R.string.context_menu_reviewer));
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if (itemSelectedCallback != null) {
-            return itemSelectedCallback.menuItemSelected(committerObject, item.getOrder());
+        String tab = null;
+        switch (item.getOrder()) {
+            case OWNER:
+                tab = KEY_OWNER;
+                break;
+            case REVIEWER:
+                tab = KEY_REVIEWER;
         }
-        return false;
+        committerObject.setState(tab);
+        Intent intent = new Intent(this, ReviewTab.class);
+        intent.putExtra(KEY_DEVELOPER, committerObject);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
+        return true;
+
+
     }
 }

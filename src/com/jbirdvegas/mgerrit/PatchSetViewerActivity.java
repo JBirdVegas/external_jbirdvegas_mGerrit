@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -202,15 +203,13 @@ public class PatchSetViewerActivity extends Activity {
         return PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(KEY_STORED_PATCHSET, "");
     }
-    private OnContextItemSelectedCallback itemSelectedCallback = null;
+
     private CommitterObject committerObject = null;
-    public void registerViewForContextMenu(View view, OnContextItemSelectedCallback callback) {
-        itemSelectedCallback = callback;
+    public void registerViewForContextMenu(View view) {
         registerForContextMenu(view);
     }
 
     public void unregisterViewForContextMenu(View view) {
-        itemSelectedCallback = null;
         unregisterForContextMenu(view);
     }
 
@@ -227,9 +226,19 @@ public class PatchSetViewerActivity extends Activity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if (itemSelectedCallback != null) {
-            return itemSelectedCallback.menuItemSelected(committerObject, item.getOrder());
+        String tab = null;
+        switch (item.getOrder()) {
+            case OWNER:
+                tab = CardsActivity.KEY_OWNER;
+                break;
+            case REVIEWER:
+                tab = CardsActivity.KEY_REVIEWER;
         }
-        return false;
+        committerObject.setState(tab);
+        Intent intent = new Intent(this, ReviewTab.class);
+        intent.putExtra(CardsActivity.KEY_DEVELOPER, committerObject);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
+        return true;
     }
 }

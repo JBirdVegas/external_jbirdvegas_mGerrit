@@ -28,8 +28,6 @@ import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.ReviewTab;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.interfaces.OnContextItemSelectedCallback;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 public class PatchSetPropertiesCard extends Card implements View.OnClickListener {
@@ -104,25 +102,7 @@ public class PatchSetPropertiesCard extends Card implements View.OnClickListener
         view.getContext().startActivity(intent);
     }
 
-    private void setContextMenu(final TextView textView) {
-        mPatchSetViewerActivity.registerViewForContextMenu(textView, new OnContextItemSelectedCallback() {
-            @Override
-            public boolean menuItemSelected(CommitterObject committerObject, int position) {
-                String tab = null;
-                switch (position) {
-                    case CardsActivity.OWNER:
-                        tab = "owner";
-                        break;
-                    case CardsActivity.REVIEWER:
-                        tab = "reviewer";
-                }
-                committerObject.setState(tab);
-                Intent intent = new Intent(textView.getContext(), ReviewTab.class);
-                intent.putExtra(CardsActivity.KEY_DEVELOPER, committerObject);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
-                textView.getContext().startActivity(intent);
-                return true;
-            }
-        });
+    private void setContextMenu(TextView textView) {
+        mPatchSetViewerActivity.registerViewForContextMenu(textView);
     }
 }

@@ -70,25 +70,7 @@ public class PatchSetCommentsCard extends Card {
             }
         });
         authorTextView.setTag(comment.getAuthorObject());
-        mPatchsetViewerActivity.registerViewForContextMenu(authorTextView, new OnContextItemSelectedCallback() {
-            @Override
-            public boolean menuItemSelected(CommitterObject committerObject, int position) {
-                String tab = null;
-                switch (position) {
-                    case CardsActivity.OWNER:
-                        tab = "owner";
-                        break;
-                    case CardsActivity.REVIEWER:
-                        tab = "reviewer";
-                }
-                committerObject.setState(tab);
-                Intent intent = new Intent(authorTextView.getContext(), ReviewTab.class);
-                intent.putExtra(CardsActivity.KEY_DEVELOPER, committerObject);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
-                authorTextView.getContext().startActivity(intent);
-                return true;
-            }
-        });
+        mPatchsetViewerActivity.registerViewForContextMenu(authorTextView);
         // setup styled comments
         TextView commentMessage = (TextView) commentView.findViewById(R.id.comment_message);
         // replace replace emoticons with drawables
