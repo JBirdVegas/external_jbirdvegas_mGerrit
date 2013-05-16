@@ -10,11 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.CardsActivity;
+import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.ReviewTab;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
+import com.jbirdvegas.mgerrit.interfaces.OnContextItemSelectedCallback;
 import com.jbirdvegas.mgerrit.objects.CommitComment;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.LinkedList;
@@ -27,9 +30,11 @@ import java.util.LinkedList;
 public class PatchSetCommentsCard extends Card {
 
     private JSONCommit mJsonCommit;
+    private final PatchSetViewerActivity mPatchsetViewerActivity;
 
-    public PatchSetCommentsCard(JSONCommit jsonCommit) {
+    public PatchSetCommentsCard(JSONCommit jsonCommit, PatchSetViewerActivity activity) {
         mJsonCommit = jsonCommit;
+        mPatchsetViewerActivity = activity;
     }
 
     private LayoutInflater mInflater;
@@ -52,7 +57,7 @@ public class PatchSetCommentsCard extends Card {
     public View getCommentView(final CommitComment comment) {
         View commentView = mInflater.inflate(R.layout.commit_comment, null);
         // set author name
-        TextView authorTextView = (TextView) commentView.findViewById(R.id.comment_author_name);
+        final TextView authorTextView = (TextView) commentView.findViewById(R.id.comment_author_name);
         authorTextView.setText(comment.getAuthorObject().getName());
         authorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +67,26 @@ public class PatchSetCommentsCard extends Card {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 view.getContext().startActivity(intent);
 
+            }
+        });
+        authorTextView.setTag(comment.getAuthorObject());
+        mPatchsetViewerActivity.registerViewForContextMenu(authorTextView, new OnContextItemSelectedCallback() {
+            @Override
+            public boolean menuItemSelected(CommitterObject committerObject, int position) {
+                String tab = null;
+                switch (position) {
+                    case CardsActivity.OWNER:
+                        tab = "owner";
+                        break;
+                    case CardsActivity.REVIEWER:
+                        tab = "reviewer";
+                }
+                committerObject.setState(tab);
+                Intent intent = new Intent(authorTextView.getContext(), ReviewTab.class);
+                intent.putExtra(CardsActivity.KEY_DEVELOPER, committerObject);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+                authorTextView.getContext().startActivity(intent);
+                return true;
             }
         });
         // setup styled comments

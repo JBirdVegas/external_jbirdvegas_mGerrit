@@ -24,9 +24,13 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
+import com.jbirdvegas.mgerrit.interfaces.OnContextItemSelectedCallback;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
@@ -47,7 +51,7 @@ public abstract class CardsActivity extends Activity {
     // draws a stack of cards
     // Currently not used as the number of cards tends
     // to be so large the stack is impractical to navigate
-    protected void drawCardsFromListToStack(List<CommitCard> cards, final CardUI cardUI) {
+    protected void drawCardsFromListToStack(List<CommitCard> cards, CardUI cardUI) {
         CardStack cardStack = new CardStack();
         for (CommitCard card : cards) {
             cardStack.add(card);
@@ -87,7 +91,7 @@ public abstract class CardsActivity extends Activity {
     }
 
     private CommitCard getCommitCard(JSONObject jsonObject, Context context) {
-        return new CommitCard(new JSONCommit(jsonObject, context));
+        return new CommitCard(new JSONCommit(jsonObject, context), this);
     }
 
     CardUI mCards;
@@ -118,7 +122,8 @@ public abstract class CardsActivity extends Activity {
                 mWebsite = new StringBuilder(0)
                         .append(Prefs.getCurrentGerrit(getApplicationContext()))
                         .append(StaticWebAddress.getQuery())
-                        .append("owner:")
+                        .append(user.getState())
+                        .append(':')
                         .append(userEmail)
                         .append(JSONCommit.DETAILED_ACCOUNTS_ARG)
                         .toString();
@@ -206,5 +211,36 @@ public abstract class CardsActivity extends Activity {
 
     private String getStoredCards() {
         return PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_STORED_CARDS, "");
+    }
+
+    private OnContextItemSelectedCallback itemSelectedCallback = null;
+    private CommitterObject committerObject = null;
+    public void registerViewForContextMenu(View view, OnContextItemSelectedCallback callback) {
+        itemSelectedCallback = callback;
+        registerForContextMenu(view);
+    }
+
+    public void unregisterViewForContextMenu(View view) {
+        itemSelectedCallback = null;
+        unregisterForContextMenu(view);
+    }
+
+    public static final int OWNER = 0;
+    public static final int REVIEWER = 1;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        committerObject = (CommitterObject) v.getTag();
+        menu.setHeaderTitle(R.string.developers_role);
+        menu.add(0, v.getId(), OWNER, v.getContext().getString(R.string.context_menu_owner));
+        menu.add(0, v.getId(), REVIEWER, v.getContext().getString(R.string.context_menu_reviewer));
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (itemSelectedCallback != null) {
+            return itemSelectedCallback.menuItemSelected(committerObject, item.getOrder());
+        }
+        return false;
     }
 }

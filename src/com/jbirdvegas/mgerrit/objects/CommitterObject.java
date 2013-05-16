@@ -23,11 +23,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CommitterObject implements Parcelable {
+    private static final String OWNER = "owner";
     private final String mName;
     private final String mEmail;
     private final String mDate;
     private final String mTimezone;
     private final int mAccountId;
+    // used when object is passed while looking for author specific
+    // commits mState=[owner/author/committer/reviewer];
+    private String mState;
 
     private CommitterObject(String name,
                            String email,
@@ -38,6 +42,7 @@ public class CommitterObject implements Parcelable {
         mDate = date;
         mTimezone = timezone;
         mAccountId = -1;
+        mState = OWNER;
     }
 
     private CommitterObject(String name, String email) {
@@ -50,6 +55,7 @@ public class CommitterObject implements Parcelable {
         mEmail = email;
         mDate = null;
         mTimezone = null;
+        mState = OWNER;
     }
 
     public static CommitterObject getInstance(String name,
@@ -92,16 +98,25 @@ public class CommitterObject implements Parcelable {
         return mAccountId;
     }
 
+    public CommitterObject setState(String state) {
+        this.mState = state;
+        return this;
+    }
+
+    public String getState() {
+        return mState;
+    }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CommitterObject{");
-        sb.append("mName='").append(mName).append('\'');
-        sb.append(", mEmail='").append(mEmail).append('\'');
-        sb.append(", mDate='").append(mDate).append('\'');
-        sb.append(", mTimezone='").append(mTimezone).append('\'');
-        sb.append(", mAccountId=").append(mAccountId);
-        sb.append('}');
-        return sb.toString();
+        return "CommitterObject{" +
+                "mName='" + mName + '\'' +
+                ", mEmail='" + mEmail + '\'' +
+                ", mDate='" + mDate + '\'' +
+                ", mTimezone='" + mTimezone + '\'' +
+                ", mAccountId=" + mAccountId +
+                ", mState='" + mState + '\'' +
+                '}';
     }
 
     // Parcelable implementation
@@ -111,6 +126,7 @@ public class CommitterObject implements Parcelable {
         mDate = parcel.readString();
         mTimezone = parcel.readString();
         mAccountId = parcel.readInt();
+        mState = parcel.readString();
     }
 
     @Override
@@ -125,6 +141,7 @@ public class CommitterObject implements Parcelable {
         parcel.writeString(mDate);
         parcel.writeString(mTimezone);
         parcel.writeInt(mAccountId);
+        parcel.writeString(mState);
     }
 
     public static final Parcelable.Creator<CommitterObject> CREATOR

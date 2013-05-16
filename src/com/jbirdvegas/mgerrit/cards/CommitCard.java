@@ -23,6 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -35,7 +36,9 @@ import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.*;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
+import com.jbirdvegas.mgerrit.interfaces.OnContextItemSelectedCallback;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.Arrays;
@@ -43,9 +46,11 @@ import java.util.List;
 
 public class CommitCard extends Card {
     private static final String TAG = CommitCard.class.getSimpleName();
+    private final CardsActivity mCardsActivity;
     private JSONCommit mCommit;
 
-    public CommitCard(JSONCommit commit) {
+    public CommitCard(JSONCommit commit, CardsActivity activity) {
+        this.mCardsActivity = activity;
         this.mCommit = commit;
     }
 
@@ -65,13 +70,33 @@ public class CommitCard extends Card {
         // set the text
         if (mCommit.getOwnerObject() != null) {
             ownerTextView.setText(mCommit.getOwnerObject().getName());
+            ownerTextView.setTag(mCommit.getOwnerObject());
             ownerTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(view.getContext(), ReviewTab.class);
                     intent.putExtra(CardsActivity.KEY_DEVELOPER, mCommit.getOwnerObject());
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                     view.getContext().startActivity(intent);
+                }
+            });
+            mCardsActivity.registerViewForContextMenu(ownerTextView, new OnContextItemSelectedCallback() {
+                @Override
+                public boolean menuItemSelected(CommitterObject committerObject, int position) {
+                    String tab = null;
+                    switch (position) {
+                        case CardsActivity.OWNER:
+                            tab = "owner";
+                            break;
+                        case CardsActivity.REVIEWER:
+                            tab = "reviewer";
+                    }
+                    mCommit.getOwnerObject().setState(tab);
+                    Intent intent = new Intent(ownerTextView.getContext(), ReviewTab.class);
+                    intent.putExtra(CardsActivity.KEY_DEVELOPER, committerObject);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    ownerTextView.getContext().startActivity(intent);
+                    return true;
                 }
             });
 

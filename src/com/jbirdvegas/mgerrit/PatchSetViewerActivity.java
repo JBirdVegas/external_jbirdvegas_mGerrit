@@ -22,6 +22,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -33,6 +35,8 @@ import com.jbirdvegas.mgerrit.cards.PatchSetCommentsCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetMessageCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetPropertiesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetReviewersCard;
+import com.jbirdvegas.mgerrit.interfaces.OnContextItemSelectedCallback;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import org.json.JSONArray;
@@ -94,7 +98,7 @@ public class PatchSetViewerActivity extends Activity {
     private void addCards(CardUI ui, JSONCommit jsonCommit) {
         // Properties card
         Log.d(TAG, "Loading Properties Card...");
-        ui.addCard(new PatchSetPropertiesCard(jsonCommit), true);
+        ui.addCard(new PatchSetPropertiesCard(jsonCommit, this), true);
 
         // Message card
         Log.d(TAG, "Loading Message Card...");
@@ -120,7 +124,7 @@ public class PatchSetViewerActivity extends Activity {
         if (jsonCommit.getMessagesList() != null
                 && !jsonCommit.getMessagesList().isEmpty()) {
             Log.d(TAG, "Loading Comments Card...");
-            ui.addCard(new PatchSetCommentsCard(jsonCommit), true);
+            ui.addCard(new PatchSetCommentsCard(jsonCommit, this), true);
         } else {
             Log.d(TAG, "No commit comments found! Not adding comments card");
         }
@@ -198,5 +202,34 @@ public class PatchSetViewerActivity extends Activity {
         return PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(KEY_STORED_PATCHSET, "");
     }
+    private OnContextItemSelectedCallback itemSelectedCallback = null;
+    private CommitterObject committerObject = null;
+    public void registerViewForContextMenu(View view, OnContextItemSelectedCallback callback) {
+        itemSelectedCallback = callback;
+        registerForContextMenu(view);
+    }
 
+    public void unregisterViewForContextMenu(View view) {
+        itemSelectedCallback = null;
+        unregisterForContextMenu(view);
+    }
+
+    public static final int OWNER = 0;
+    public static final int REVIEWER = 1;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        committerObject = (CommitterObject) v.getTag();
+        menu.setHeaderTitle(R.string.developers_role);
+        menu.add(0, v.getId(), OWNER, v.getContext().getString(R.string.context_menu_owner));
+        menu.add(0, v.getId(), REVIEWER, v.getContext().getString(R.string.context_menu_reviewer));
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (itemSelectedCallback != null) {
+            return itemSelectedCallback.menuItemSelected(committerObject, item.getOrder());
+        }
+        return false;
+    }
 }
