@@ -36,7 +36,6 @@ import com.jbirdvegas.mgerrit.cards.PatchSetCommentsCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetMessageCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetPropertiesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetReviewersCard;
-import com.jbirdvegas.mgerrit.interfaces.OnContextItemSelectedCallback;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
@@ -109,7 +108,7 @@ public class PatchSetViewerActivity extends Activity {
         if (jsonCommit.getChangedFiles() != null
                 && !jsonCommit.getChangedFiles().isEmpty()) {
             Log.d(TAG, "Loading Changes Card...");
-            ui.addCard(new PatchSetChangesCard(jsonCommit), true);
+            ui.addCard(new PatchSetChangesCard(jsonCommit, this), true);
         }
 
         // Code reviewers card

@@ -17,7 +17,10 @@ package com.jbirdvegas.mgerrit.cards;
  *  limitations under the License.
  */
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -26,8 +29,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
+import com.jbirdvegas.mgerrit.CardsActivity;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.dialogs.DiffDialog;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
@@ -38,9 +43,11 @@ public class PatchSetChangesCard extends Card {
     private static final boolean VERBOSE = false;
     private JSONCommit mCommit;
     private LayoutInflater mInflater;
+    private final Activity mCardsActivity;
 
-    public PatchSetChangesCard(JSONCommit commit) {
+    public PatchSetChangesCard(JSONCommit commit, Activity activity) {
         mCommit = commit;
+        mCardsActivity = activity;
     }
 
     @Override
@@ -107,17 +114,42 @@ public class PatchSetChangesCard extends Card {
         }
         innerRootView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                String base = "%s#/c/%d/%d/%s";
-                Intent browserIntent = new Intent(
-                        Intent.ACTION_VIEW, Uri.parse(String.format(base,
-                        Prefs.getCurrentGerrit(context),
-                        mCommit.getCommitNumber(),
-                        mCommit.getPatchSetNumber(),
-                        changedFile.getPath())));
-                context.startActivity(browserIntent);
+            public void onClick(final View view) {
+                new AlertDialog.Builder(mCardsActivity)
+                        .setTitle(R.string.choose_diff_view)
+                        .setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // http://gerrit.aokp.co/changes/AOKP%2Fexternal_jbirdvegas_mGerrit~master~I0d360472ee328c6cde0f8303b19a35f175869e68/revisions/current/patch
+                                String base = "%schanges/%s/revisions/current/patch";
+                                String url = String.format(base,
+                                        Prefs.getCurrentGerrit(mCardsActivity),
+                                        mCommit.getId());
+                                launchDiffDialog(url, changedFile);
+                            }
+                        })
+                        .setNegativeButton(R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String base = "%s#/c/%d/%d/%s";
+                                Intent browserIntent = new Intent(
+                                        Intent.ACTION_VIEW, Uri.parse(String.format(base,
+                                        Prefs.getCurrentGerrit(context),
+                                        mCommit.getCommitNumber(),
+                                        mCommit.getPatchSetNumber(),
+                                        changedFile.getPath())));
+                                context.startActivity(browserIntent);
+                            }
+                        }).create().show();
             }
         });
+
         return innerRootView;
+    }
+
+    private void launchDiffDialog(String url, ChangedFile changedFile) {
+        Log.d(TAG, "Attempting to contact: " + url);
+        DiffDialog diffDialog = new DiffDialog(mCardsActivity, url, changedFile);
+        diffDialog.create().show();
     }
 }

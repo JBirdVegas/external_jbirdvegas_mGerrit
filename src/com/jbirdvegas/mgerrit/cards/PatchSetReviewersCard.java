@@ -21,11 +21,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
+import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.PatchSetReviewersAdapter;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
-import com.fima.cardsui.objects.Card;
 
 import static com.jbirdvegas.mgerrit.PatchSetViewerActivity.setListViewHeightBasedOnChildren;
 

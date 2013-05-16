@@ -79,4 +79,7 @@
     <string name="commit_reviewer">Commit Reviewer</string>
     <string name="context_menu_reviewer">Changes in review query.</string>
     <string name="context_menu_owner">Changes originally submitted.</string>
+    <string name="context_menu_view_diff_dialog">View diff in dialog</string>
+    <string name="context_menu_diff_view_in_browser">View diff in browser</string>
+    <string name="choose_diff_view">How would you like to view the diff?</string>
 </resources>

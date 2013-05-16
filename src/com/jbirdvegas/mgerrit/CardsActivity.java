@@ -31,7 +31,6 @@ import android.view.View;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
-import com.jbirdvegas.mgerrit.interfaces.OnContextItemSelectedCallback;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
@@ -227,13 +226,17 @@ public abstract class CardsActivity extends Activity {
 
     public static final int OWNER = 0;
     public static final int REVIEWER = 1;
+    public static final int BROWSER_DIFF_VIEW = 2;
+    public static final int DIALOG_DIFF_VIEW = 3;
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        committerObject = (CommitterObject) v.getTag();
-        menu.setHeaderTitle(R.string.developers_role);
-        menu.add(0, v.getId(), OWNER, getString(R.string.context_menu_owner));
-        menu.add(0, v.getId(), REVIEWER, getString(R.string.context_menu_reviewer));
+        if (v.getTag() instanceof CommitterObject) {
+            committerObject = (CommitterObject) v.getTag();
+            menu.setHeaderTitle(R.string.developers_role);
+            menu.add(0, v.getId(), OWNER, getString(R.string.context_menu_owner));
+            menu.add(0, v.getId(), REVIEWER, getString(R.string.context_menu_reviewer));
+        }
     }
 
     @Override
@@ -253,6 +256,10 @@ public abstract class CardsActivity extends Activity {
         startActivity(intent);
         return true;
 
+
+    }
+
+    public void registerViewForDiffViewContextMenu(View innerRootView) {
 
     }
 }

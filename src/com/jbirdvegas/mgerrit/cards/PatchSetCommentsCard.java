@@ -15,9 +15,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.ReviewTab;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.interfaces.OnContextItemSelectedCallback;
 import com.jbirdvegas.mgerrit.objects.CommitComment;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.LinkedList;
@@ -57,7 +55,7 @@ public class PatchSetCommentsCard extends Card {
     public View getCommentView(final CommitComment comment) {
         View commentView = mInflater.inflate(R.layout.commit_comment, null);
         // set author name
-        final TextView authorTextView = (TextView) commentView.findViewById(R.id.comment_author_name);
+        TextView authorTextView = (TextView) commentView.findViewById(R.id.comment_author_name);
         authorTextView.setText(comment.getAuthorObject().getName());
         authorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
