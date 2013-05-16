@@ -1,5 +1,7 @@
 package com.jbirdvegas.mgerrit.objects;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,11 +11,11 @@ import org.json.JSONObject;
  * User: jbird
  * Date: 5/13/13 12:59 AM
  */
-public class CommitComment {
+public class CommitComment implements Parcelable {
     private static final String KEY_REVISION_NUMBER = "_revision_number";
     private static final boolean DEBUG = false;
     private static final String TAG = CommitComment.class.getSimpleName();
-    private final JSONObject mJsonObject;
+    private JSONObject mJsonObject;
     private int mRevisionNumber;
     private String mMessage;
     private String mDate;
@@ -66,5 +68,33 @@ public class CommitComment {
 
     public String getId() {
         return mId;
+    }
+
+    public CommitComment(Parcel parcel) {
+        try {
+            mJsonObject = new JSONObject(parcel.readString());
+            mId = parcel.readString();
+            mAuthorObject = parcel.readParcelable(CommitterObject.class.getClassLoader());
+            mDate = parcel.readString();
+            mMessage = parcel.readString();
+            mRevisionNumber = parcel.readInt();
+        } catch (JSONException e) {
+            Log.e(TAG, "Failed to create object from Parcel!", e);
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mJsonObject.toString());
+        parcel.writeString(mId);
+        parcel.writeParcelable(mAuthorObject, 0);
+        parcel.writeString(mDate);
+        parcel.writeString(mMessage);
+        parcel.writeInt(mRevisionNumber);
     }
 }

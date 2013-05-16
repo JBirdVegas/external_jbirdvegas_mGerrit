@@ -82,12 +82,11 @@ public class PatchSetPropertiesCard extends Card implements View.OnClickListener
     public void onClick(View view) {
         Intent intent = new Intent(view.getContext(), ReviewTab.class);
         if (view.equals(mOwner)) {
-            intent.putExtra(CardsActivity.KEY_DEVELOPER, mJSONCommit.getOwnerObject().getEmail());
-
+            intent.putExtra(CardsActivity.KEY_DEVELOPER, mJSONCommit.getOwnerObject());
         } else if (view.equals(mAuthor)) {
-            intent.putExtra(CardsActivity.KEY_DEVELOPER, mJSONCommit.getAuthorObject().getEmail());
+            intent.putExtra(CardsActivity.KEY_DEVELOPER, mJSONCommit.getAuthorObject());
         } else if (view.equals(mCommitter)) {
-            intent.putExtra(CardsActivity.KEY_DEVELOPER, mJSONCommit.getCommitterObject().getEmail());
+            intent.putExtra(CardsActivity.KEY_DEVELOPER, mJSONCommit.getCommitterObject());
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         view.getContext().startActivity(intent);
