@@ -17,7 +17,10 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
-public class Reviewer {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Reviewer implements Parcelable {
     public static final String NO_SCORE = "No score";
     public static final String CODE_REVIEW_PLUS_TWO = "Looks good to me, approved";
     public static final String CODE_REVIEW_PLUS_ONE = "Looks good to me, but someone else must approve";
@@ -48,11 +51,27 @@ public class Reviewer {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(0);
         sb.append("Reviewer");
         sb.append("{value='").append(value).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append('}');
         return sb.toString();
+    }
+
+    public Reviewer(Parcel parcel) {
+        value = parcel.readString();
+        name = parcel.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(value);
+        parcel.writeString(name);
     }
 }

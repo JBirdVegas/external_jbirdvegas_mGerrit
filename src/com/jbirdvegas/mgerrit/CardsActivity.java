@@ -27,6 +27,7 @@ import android.util.Log;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import org.json.JSONArray;
@@ -101,23 +102,33 @@ public abstract class CardsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.commit_list);
         mCards = (CardUI) findViewById(R.id.commit_cards);
-        String userEmail = getIntent().getStringExtra(KEY_DEVELOPER);
+        // default to non author specific view
         mWebsite = new StringBuilder(0)
                 .append(Prefs.getCurrentGerrit(getApplicationContext()))
                 .append(StaticWebAddress.getStatusQuery())
                 .append(getQuery())
                 .append(JSONCommit.DETAILED_ACCOUNTS_ARG).toString();
-        if (userEmail != null
-                && !userEmail.trim().isEmpty()
-                && userEmail.contains(AT_SYMBOL)) {
-            mWebsite = new StringBuilder(0)
-                .append(Prefs.getCurrentGerrit(getApplicationContext()))
-                    .append(StaticWebAddress.getQuery())
-                    .append("owner:")
-                    .append(userEmail)
-                    .toString();
-
+        try {
+            CommitterObject user =
+                    (CommitterObject) getIntent().getExtras().getParcelable(KEY_DEVELOPER);
+            String userEmail = user.getEmail();
+            if (userEmail != null
+                    && !userEmail.trim().isEmpty()
+                    && userEmail.contains(AT_SYMBOL)) {
+                mWebsite = new StringBuilder(0)
+                        .append(Prefs.getCurrentGerrit(getApplicationContext()))
+                        .append(StaticWebAddress.getQuery())
+                        .append("owner:")
+                        .append(userEmail)
+                        .append(JSONCommit.DETAILED_ACCOUNTS_ARG)
+                        .toString();
+            }
+        } catch (NullPointerException npe) {
+            // non author specific view
+            // use default website
         }
+
+
         if (savedInstanceState == null) {
             saveCards("");
         }

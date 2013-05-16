@@ -18,6 +18,8 @@ package com.jbirdvegas.mgerrit.objects;
  */
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class JSONCommit {
+public class JSONCommit implements Parcelable{
     private static final String TAG = JSONCommit.class.getSimpleName();
 
     // public
@@ -82,7 +84,7 @@ public class JSONCommit {
     private static final String KEY_REVISIONS = "revisions";
     private static final String KEY_COMMIT = "commit";
     private static final String KEY_TIMEZONE = "tz";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     public List<CommitComment> getMessagesList() {
         return mMessagesList;
@@ -447,6 +449,66 @@ public class JSONCommit {
 
     public int getPatchSetNumber() {
         return mPatchSetNumber;
+    }
+
+    // Parcelable implementation
+    public JSONCommit(Parcel parcel) {
+        mRawJSONCommit = null;
+        mKind = parcel.readString();
+        mId  = parcel.readString();
+        mProject = parcel.readString();
+        mBranch = parcel.readString();
+        mChangeId = parcel.readString();
+        mSubject = parcel.readString();
+        mStatus = Status.valueOf(parcel.readString());
+        mCreatedDate = parcel.readString();
+        mLastUpdatedDate = parcel.readString();
+        mIsMergeable = parcel.readByte() == 1;
+        mSortKey = parcel.readString();
+        mCommitNumber = parcel.readInt();
+        mCurrentRevision = parcel.readString();
+        mOwnerObject = parcel.readParcelable(CommitterObject.class.getClassLoader());
+        mAuthorObject = parcel.readParcelable(CommitterObject.class.getClassLoader());
+        mCommitterObject = parcel.readParcelable(CommitterObject.class.getClassLoader());
+        mMessage = parcel.readString();
+        mChangedFiles = parcel.readArrayList(ChangedFile.class.getClassLoader());
+        mWebAddress = parcel.readString();
+        mVerifiedReviewers = parcel.readArrayList(ChangedFile.class.getClassLoader());
+        mCodeReviewers = parcel.readArrayList(ChangedFile.class.getClassLoader());
+        mPatchSetNumber = parcel.readInt();
+        mMessagesList = parcel.readArrayList(CommitComment.class.getClassLoader());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mKind);
+        parcel.writeString(mId);
+        parcel.writeString(mProject);
+        parcel.writeString(mBranch);
+        parcel.writeString(mChangeId);
+        parcel.writeString(mSubject);
+        parcel.writeString(mStatus.name());
+        parcel.writeString(mCreatedDate);
+        parcel.writeString(mLastUpdatedDate);
+        parcel.writeByte((byte) (mIsMergeable ? 1 : 0));
+        parcel.writeString(mSortKey);
+        parcel.writeInt(mCommitNumber);
+        parcel.writeString(mCurrentRevision);
+        parcel.writeParcelable(mOwnerObject, 0);
+        parcel.writeParcelable(mAuthorObject, 0);
+        parcel.writeParcelable(mCommitterObject, 0);
+        parcel.writeString(mMessage);
+        parcel.writeTypedList(mChangedFiles);
+        parcel.writeString(mWebAddress);
+        parcel.writeTypedList(mVerifiedReviewers);
+        parcel.writeTypedList(mCodeReviewers);
+        parcel.writeInt(mPatchSetNumber);
+        parcel.writeTypedList(mMessagesList);
     }
 
     @Override

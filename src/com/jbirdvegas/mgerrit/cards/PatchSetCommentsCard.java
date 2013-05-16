@@ -58,7 +58,7 @@ public class PatchSetCommentsCard extends Card {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), ReviewTab.class);
-                intent.putExtra(CardsActivity.KEY_DEVELOPER, comment.getAuthorObject().getEmail());
+                intent.putExtra(CardsActivity.KEY_DEVELOPER, comment.getAuthorObject());
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 view.getContext().startActivity(intent);
 

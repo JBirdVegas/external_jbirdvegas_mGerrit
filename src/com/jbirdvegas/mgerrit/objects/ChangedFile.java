@@ -17,10 +17,12 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ChangedFile {
+public class ChangedFile implements Parcelable {
     private String path;
     private int inserted;
     private int deleted;
@@ -74,4 +76,32 @@ public class ChangedFile {
         return sb.toString();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(path);
+        parcel.writeInt(inserted);
+        parcel.writeInt(deleted);
+    }
+
+    public ChangedFile(Parcel parcel) {
+        path = parcel.readString();
+        inserted = parcel.readInt();
+        deleted = parcel.readInt();
+    }
+
+    public static final Parcelable.Creator<ChangedFile> CREATOR
+            = new Parcelable.Creator<ChangedFile>() {
+        public ChangedFile createFromParcel(Parcel in) {
+            return new ChangedFile(in);
+        }
+
+        public ChangedFile[] newArray(int size) {
+            return new ChangedFile[size];
+        }
+    };
 }

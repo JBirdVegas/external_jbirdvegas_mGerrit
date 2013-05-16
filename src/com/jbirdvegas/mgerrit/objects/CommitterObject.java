@@ -17,10 +17,12 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CommitterObject {
+public class CommitterObject implements Parcelable {
     private final String mName;
     private final String mEmail;
     private final String mDate;
@@ -101,4 +103,38 @@ public class CommitterObject {
         sb.append('}');
         return sb.toString();
     }
+
+    // Parcelable implementation
+    public CommitterObject(Parcel parcel) {
+        mName = parcel.readString();
+        mEmail = parcel.readString();
+        mDate = parcel.readString();
+        mTimezone = parcel.readString();
+        mAccountId = parcel.readInt();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(mName);
+        parcel.writeString(mEmail);
+        parcel.writeString(mDate);
+        parcel.writeString(mTimezone);
+        parcel.writeInt(mAccountId);
+    }
+
+    public static final Parcelable.Creator<CommitterObject> CREATOR
+            = new Parcelable.Creator<CommitterObject>() {
+        public CommitterObject createFromParcel(Parcel in) {
+            return new CommitterObject(in);
+        }
+
+        public CommitterObject[] newArray(int size) {
+            return new CommitterObject[size];
+        }
+    };
 }

@@ -69,7 +69,7 @@ public class CommitCard extends Card {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(view.getContext(), ReviewTab.class);
-                    intent.putExtra(CardsActivity.KEY_DEVELOPER, mCommit.getOwnerObject().getEmail());
+                    intent.putExtra(CardsActivity.KEY_DEVELOPER, mCommit.getOwnerObject());
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     view.getContext().startActivity(intent);
                 }
@@ -131,7 +131,8 @@ public class CommitCard extends Card {
                 // example website
                 // http://gerrit.aokp.co/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
                 intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
-                        .append(StaticWebAddress.getChangesQuery())
+                        .append(Prefs.getCurrentGerrit(context))
+                        .append(StaticWebAddress.getQuery())
                         .append(mCommit.getCommitNumber())
                         .append(JSONCommit.CURRENT_PATCHSET_ARGS).toString());
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
