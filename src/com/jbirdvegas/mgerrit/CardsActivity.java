@@ -220,14 +220,8 @@ public abstract class CardsActivity extends Activity {
         registerForContextMenu(view);
     }
 
-    public void unregisterViewForContextMenu(View view) {
-        unregisterForContextMenu(view);
-    }
-
     public static final int OWNER = 0;
     public static final int REVIEWER = 1;
-    public static final int BROWSER_DIFF_VIEW = 2;
-    public static final int DIALOG_DIFF_VIEW = 3;
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -256,10 +250,6 @@ public abstract class CardsActivity extends Activity {
         startActivity(intent);
         return true;
 
-
-    }
-
-    public void registerViewForDiffViewContextMenu(View innerRootView) {
 
     }
 }

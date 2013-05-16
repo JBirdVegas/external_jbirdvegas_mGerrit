@@ -84,7 +84,7 @@ public class JSONCommit implements Parcelable{
     private static final String KEY_REVISIONS = "revisions";
     private static final String KEY_COMMIT = "commit";
     private static final String KEY_TIMEZONE = "tz";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     public List<CommitComment> getMessagesList() {
         return mMessagesList;

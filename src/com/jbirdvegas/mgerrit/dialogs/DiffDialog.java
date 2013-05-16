@@ -52,7 +52,6 @@ public class DiffDialog extends AlertDialog.Builder {
                     while ((line = reader.readLine()) != null) {
                         builder.append(line);
                     }
-                    Log.d(TAG, "returned String: " + builder.toString());
                     return  builder.toString();
                 } catch (EOFException eof) {
                     Log.e(TAG, "Url returned blank!", eof);
@@ -86,7 +85,6 @@ public class DiffDialog extends AlertDialog.Builder {
         String split = System.getProperty("line.separator");
         for (String change : filesChanged) {
             String concat;
-            Log.d(TAG, "changeText: " + change);
             try {
                 concat = change.substring(1, change.lastIndexOf(mChangedFile.getPath())).trim();
                 concat = concat.split(" ")[0];
@@ -94,25 +92,16 @@ public class DiffDialog extends AlertDialog.Builder {
                 Log.d(TAG, notFound.getMessage());
                 continue;
             }
-            Log.d(TAG, "Trying to match a{" + concat + "} to b{" + mChangedFile.getPath() + '}');
             if (concat.equals(mChangedFile.getPath())) {
-                Log.d(TAG, "Match!!! " + "a{" + concat + "} to b{" + mChangedFile.getPath() + '}');
                 builder.append(DIFF);
                 change.replaceAll("\n", split);
                 builder.append(change);
             }
         }
-        // rebuild text; required to respect the \n
-        String[] singleChange = builder.toString().split("\\n");
-        StringBuilder formattedChange = new StringBuilder(0);
-        for (String line : singleChange) {
-            formattedChange.append(line)
-                .append(split);
-        }
-        if (formattedChange.length() == 0) {
+        if (builder.length() == 0) {
             builder.append("Diff not found!");
         }
-        String finalText = formattedChange.toString().replaceAll("\\\\n", "\\\n").trim();
-        textView.setText(finalText);
+        // rebuild text; required to respect the \n
+        textView.setText(builder.toString().replaceAll("\\\\n", "\\\n").trim());
     }
 }
