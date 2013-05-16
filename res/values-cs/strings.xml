@@ -69,4 +69,9 @@
     </string>
     <string name="comments_card_title">Komentáře:</string>
     <string name="unknown">Neznámý</string>
+    <string name="aosp_volley_title">AOSP Volley</string>
+    <string name="developers_role">Zvolit roli vývojáře k zobrazení</string>
+    <string name="commit_reviewer">Revident požadavku</string>
+    <string name="context_menu_reviewer">Změnový revident ve frontě.</string>
+    <string name="context_menu_owner">Původní odesilatel změny.</string>
 </resources>
