@@ -70,5 +70,13 @@
     <string name="comments_card_title">コメント:</string>
     <string name="unknown">不明</string>
     <string name="aosp_volley_website">https://android.googlesource.com/platform/frameworks/volley/</string>
-    <string name="aosp_volley_title">AOSP\'s Volley</string>
+    <string name="aosp_volley_title">AOSP Volley</string>
+    <string name="developers_role">参照する変更を選択</string>
+    <string name="commit_reviewer">コミットレビュアー</string>
+    <string name="context_menu_reviewer">ユーザーがレビューした変更</string>
+    <string name="context_menu_owner">ユーザーが提出した変更</string>
+    <string name="context_menu_view_diff_dialog">ダイアログ</string>
+    <string name="context_menu_diff_view_in_browser">ブラウザ</string>
+    <string name="choose_diff_view">diff参照方法を選択</string>
+    <string name="new_text">新規テキスト</string>
 </resources>
