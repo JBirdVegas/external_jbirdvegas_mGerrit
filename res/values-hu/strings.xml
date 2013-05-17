@@ -76,5 +76,5 @@
     <string name="developers_role">Válassz fejlesztőt\ket teendők megtekintéséhez</string>
     <string name="commit_reviewer">Tag Ismertető</string>
     <string name="context_menu_reviewer">Változások a vizsgálat sorrendjében.</string>
-    <string name="context_menu_owner">Változások benyújtása eredetileg.</string>
+    <string name="context_menu_owner">Változások benyújtása eredetileg</string>
 </resources>
