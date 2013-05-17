@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
+  ~  Author: Jon Stanford (JBirdVegas), 2013
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">mGerrit</string>
+    <string name="reviewable">Áttekintés</string>
+    <string name="merged">Hozzáadott</string>
+    <string name="abandoned">Elavult</string>
+    <string name="status_explaination_new">Változások legyenek felül.</string>
+    <string name="status_explaination_submitted">Változtatások benyújtása és hozzáadása sorrendjében. Lehet várni kell jóváhagyásra.
+    </string>
+    <string name="status_explaination_merged">Változás hozzáadva az ághoz.</string>
+    <string name="status_explaination_abandoned">Változás elavult a tulajdonosnak vagy a rendszergazdának.</string>
+    <string name="view_in_browser">Böngésző</string>
+    <string name="moar_info">Több Info!</string>
+    <string name="patchset_labels_code_reviewer_title">Code-Bírálók:</string>
+    <string name="patchset_labels_verified_reviewer_title">Ellenörző:</string>
+    <string name="dash">-</string>
+    <string name="inserted">Beszúrt sorok:</string>
+    <string name="deleted">Törölt sorok:</string>
+    <string name="none_found">Semmit nem talál</string>
+    <string name="please_try_again">Kérlek lépj vissza és próbáld újra</string>
+    <string name="menu_preferences">Tulajdonságok</string>
+    <string name="menu_help">Segítség</string>
+    <string name="choose_gerrit_instance">Válassz Gerrit Csapatot</string>
+    <string name="commit_committer">Tag:</string>
+    <string name="commit_author">Szerző:</string>
+    <string name="commit_owner">Tulajdonos:</string>
+    <string name="failed_to_parse_json_response">Sikertelen válasz</string>
+    <string name="ok">ok</string>
+    <string name="show_exception">Kivétel megjelenítése</string>
+    <string name="exit">Kilépés</string>
+    <string name="gerrit_call_failed">Nem kapott választ a Gerrit-től, ellenőrizd a kapcsolatot és próbáld újra.
+    </string>
+    <string name="establishing_connection">Kapcsolat létrehozása...</string>
+    <string name="transfering">JSON kódolt adat átvitel...</string>
+    <string name="downloading_status" formatted="false">%d of %d bájt letöltve\t%d%% kész</string>
+    <string name="connection_established">Kapcsolat létrehozva</string>
+    <string name="initializing_data_transfer">Adat átvitel inicializálása...</string>
+    <string name="communications_error">Kapcsolat HIBA!!!</string>
+    <string name="transfering_json_data">JSON kódolt adat átvitele...</string>
+    <string name="open_source_libs">Nyílt Forrású Könyvtárak</string>
+    <string name="cards_ui">CardsUI</string>
+    <string name="cards_ui_website">http://www.androidviews.net/2012/12/cardsui/</string>
+    <string name="nine_old_androids">NineOldAndroids</string>
+    <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
+    <string name="explain_status_title">Magyarázó állapotok</string>
+    <string name="explain_status_summary">Rövid magyarázatok a Státusz lapok jelentéséhez</string>
+    <string name="menu_gerrit_instance">Gerrit Felűgyelők</string>
+    <string name="owner_gravatar">Tulajdonos\ok Gravatar profil képe</string>
+    <string name="author_gravatar">Szerző\k Gravatar profil képe</string>
+    <string name="committer_gravatar">Tag\ok Gravatar profil képe</string>
+    <string name="menu_refresh">Frissítés</string>
+    <string name="current_revision_is_draft_message">Az aktuális verzió tervezett még.
+        Néhány információ nem érhető el
+    </string>
+    <string name="comments_card_title">Megjegyzés:</string>
+    <string name="unknown">Ismeretlen</string>
+    <string name="aosp_volley_website">https://android.googlesource.com/platform/frameworks/volley/</string>
+    <string name="aosp_volley_title">AOSP\'s Volley</string>
+    <string name="developers_role">Válassz fejlesztőt\ket teendők megtekintéséhez</string>
+    <string name="commit_reviewer">Tag Ismertető</string>
+    <string name="context_menu_reviewer">Változások a vizsgálat sorrendjében.</string>
+    <string name="context_menu_owner">Változások benyújtása eredetileg.</string>
+</resources>
