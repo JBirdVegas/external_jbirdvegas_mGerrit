@@ -82,4 +82,5 @@
     <string name="context_menu_view_diff_dialog">View diff in dialog</string>
     <string name="context_menu_diff_view_in_browser">View diff in browser</string>
     <string name="choose_diff_view">How would you like to view the diff?</string>
+    <string name="new_text">New Text</string>
 </resources>

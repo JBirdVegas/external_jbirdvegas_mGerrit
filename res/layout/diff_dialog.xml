@@ -18,7 +18,7 @@
             android:padding="@dimen/default_left_card_start"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="New Text"
+            android:text="@string/new_text"
             android:id="@+id/diff_view_diff"
             android:layout_gravity="left|center_vertical"/>
     </ScrollView>
