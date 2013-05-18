@@ -3,23 +3,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        android:layout_margin="@dimen/default_left_card_start"
-        android:paddingTop="@dimen/default_left_card_start"
         android:id="@+id/scrollView">
 
         <TextView
             android:paddingTop="@dimen/diff_view_padding_top"
             android:padding="@dimen/default_left_card_start"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/new_text"
+            android:layout_height="match_parent"
             android:id="@+id/diff_view_diff"
-            android:layout_gravity="left|center_vertical"/>
+            android:layout_gravity="left"/>
     </ScrollView>
 </LinearLayout>
