@@ -31,11 +31,13 @@
     <string name="moar_info">更多信息！</string>
     <string name="patchset_labels_code_reviewer_title">代码评审者</string>
     <string name="patchset_labels_verified_reviewer_title">已审核</string>
+
     <string name="inserted">插入行</string>
     <string name="deleted">删除行</string>
     <string name="none_found">找不到</string>
     <string name="please_try_again">请返回并重试</string>
     <string name="menu_preferences">偏好</string>
+    <string name="menu_help">帮助</string>
     <string name="choose_gerrit_instance">选择团队Gerrit实例</string>
     <string name="commit_committer">提交者</string>
     <string name="commit_author">作者</string>
@@ -49,12 +51,36 @@
     </string>
     <string name="establishing_connection">正在建立连接……</string>
     <string name="transfering">正在传输JSON格式数据……</string>
-    <string name="downloading_status" formatted="false">%d of %d bytes downloaded\t%d%% completed</string>
+    <string name="downloading_status" formatted="false">%d / %d 字节 已下载\t%d%% 已完成</string>
     <string name="connection_established">已建立连接</string>
     <string name="initializing_data_transfer">初始化数据传输……</string>
     <string name="communications_error">通讯错误！！！</string>
     <string name="transfering_json_data">正在传输JSON格式数据……</string>
     <string name="open_source_libs">开源引用库</string>
+
+
+
+
     <string name="explain_status_title">状态解释</string>
     <string name="explain_status_summary">简要说明状态标签的含义</string>
+    <string name="menu_gerrit_instance">Gerrit实例</string>
+    <string name="owner_gravatar">所有者的头像图片</string>
+    <string name="author_gravatar">作者的头像图片</string>
+    <string name="committer_gravatar">提交者的头像图片</string>
+    <string name="menu_refresh">刷新</string>
+    <string name="current_revision_is_draft_message">当前版本是开发版。一些信息将不可用。</string>
+
+
+    <string name="comments_card_title">评论：</string>
+    <string name="unknown">未知</string>
+
+    <string name="aosp_volley_title">AOSP\'s Volley</string>
+    <string name="developers_role">选择开发者角色用于查看</string>
+    <string name="commit_reviewer">提交审核者</string>
+    <string name="context_menu_reviewer">更改审核查询。</string>
+    <string name="context_menu_owner">更改原始提交。</string>
+    <string name="context_menu_view_diff_dialog">在对话框中查看差异</string>
+    <string name="context_menu_diff_view_in_browser">在浏览器中查看差异</string>
+    <string name="choose_diff_view">你想要查看差异吗？</string>
+    <string name="new_text">新文本</string>
 </resources>
