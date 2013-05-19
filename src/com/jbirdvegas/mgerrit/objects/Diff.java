@@ -145,8 +145,8 @@ public class Diff {
                             end,
                             0);
                 }
-// test line with trailing whitespaces ->
-// Here are 3 tabs ->	-	-	<- this line ends with four whitespaces ->
+// test line with trailing whitespaces ->        
+// Here are 3 tabs ->	-	-	<- this line ends with four whitespaces ->    
             }
             charCounter += string.length();
         }
