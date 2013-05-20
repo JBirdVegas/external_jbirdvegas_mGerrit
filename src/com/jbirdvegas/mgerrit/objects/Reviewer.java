@@ -29,17 +29,23 @@ public class Reviewer implements Parcelable {
     public static final String VERIFIED_PLUS_ONE = "Verified";
     public static final String VERIFIED_MINUS_ONE = "Fails";
 
-    private Reviewer(String val, String _name) {
+    private Reviewer(String val, String _name, String _email) {
         value = val;
         name = _name;
+        email = _email;
     }
 
-    public static Reviewer getReviewerInstance(String val, String name) {
-        return new Reviewer(val, name);
+    public static Reviewer getReviewerInstance(String val, String name, String email) {
+        return new Reviewer(val, name, email);
+    }
+
+    public CommitterObject getCommiterObject() {
+        return CommitterObject.getInstance(name, email);
     }
 
     private String value;
     private String name;
+    private String email;
 
     public String getValue() {
         return value;
@@ -51,12 +57,11 @@ public class Reviewer implements Parcelable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder(0);
-        sb.append("Reviewer");
-        sb.append("{value='").append(value).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "Reviewer{" +
+                "value='" + value + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 
     public Reviewer(Parcel parcel) {
@@ -73,5 +78,9 @@ public class Reviewer implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(value);
         parcel.writeString(name);
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

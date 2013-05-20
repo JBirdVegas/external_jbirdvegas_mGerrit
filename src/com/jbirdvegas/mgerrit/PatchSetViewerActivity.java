@@ -115,7 +115,7 @@ public class PatchSetViewerActivity extends Activity {
         if (jsonCommit.getCodeReviewers() != null
                 && !jsonCommit.getCodeReviewers().isEmpty()) {
             Log.d(TAG, "Loading Reviewers Card...");
-            ui.addCard(new PatchSetReviewersCard(jsonCommit), true);
+            ui.addCard(new PatchSetReviewersCard(jsonCommit, this), true);
         } else {
             Log.d(TAG, "No reviewers found! Not adding reviewers card");
         }

@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
-import com.jbirdvegas.mgerrit.CardsActivity;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.dialogs.DiffDialog;
@@ -63,7 +62,10 @@ public class PatchSetChangesCard extends Card {
         } else {
             for (ChangedFile changedFile : changedFileList) {
                 // generate and add the Changed File Views
-                rootView.addView(generateChangedFileView(changedFile, context));
+                if (rootView != null) {
+                    rootView.addView(generateChangedFileView(changedFile, context));
+                }
+
             }
         }
         return rootView;
@@ -117,16 +119,15 @@ public class PatchSetChangesCard extends Card {
             public void onClick(final View view) {
                 AlertDialog.Builder ad = new AlertDialog.Builder(mCardsActivity)
                         .setTitle(R.string.choose_diff_view);
-                // avoid new api till we can use across all instances
-                // DiffApi is very young and changing constantly
-                if (Prefs.getCurrentGerrit(context).equals(
-                        context.getResources().getStringArray(R.array.gerrit_webaddresses)[0])) {
+                // bug will be fixed don't abandon hope quite yet
+                //if (Prefs.getCurrentGerrit(context).equals(
+                //        context.getResources().getStringArray(R.array.gerrit_webaddresses)[0])) {
                     ad.setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             // http://gerrit.aokp.co/changes/AOKP%2Fexternal_jbirdvegas_mGerrit~master~I0d360472ee328c6cde0f8303b19a35f175869e68/revisions/current/patch
                             // or
-                            // after v2.8 goes stable
+                            // after v2.8 goes stable (returns Base64 encoded String)
                             // curl https://gerrit-review.googlesource.com/changes/gerrit~master~Idc97af3d01999889d9b1a818fbd1bbe0b274dcf3/revisions/77e974c7070e274aaca3f2413a3fb53031d0f50e/files/ReleaseNotes%2fReleaseNotes-2.5.3.txt/content
                             String base = "%schanges/%s/revisions/current/patch";
                             String url = String.format(base,
@@ -135,7 +136,7 @@ public class PatchSetChangesCard extends Card {
                             launchDiffDialog(url, changedFile);
                         }
                     });
-                }
+                //}
                 ad.setNegativeButton(
                         R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
                     @Override

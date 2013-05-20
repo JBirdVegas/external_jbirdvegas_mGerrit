@@ -62,7 +62,7 @@ public class JSONCommit implements Parcelable{
 
     // internal
     private static final String KEY_KIND = "kind";
-    private static final String KEY_PROJECT = "project";
+    public static final String KEY_PROJECT = "project";
     private static final String KEY_BRANCH = "branch";
     private static final String KEY_CHANGE_ID = "change_id";
     private static final String KEY_SUBJECT = "subject";
@@ -339,11 +339,14 @@ public class JSONCommit implements Parcelable{
             JSONObject object = jsonArray.getJSONObject(i);
             try {
                 list.add(Reviewer.getReviewerInstance(object.getString(KEY_VALUE),
-                        object.getString(KEY_NAME)));
+                        object.getString(KEY_NAME),
+                        object.getString(KEY_EMAIL)));
             } catch (JSONException je) {
                 list.add(Reviewer.getReviewerInstance(null,
-                        object.getString(KEY_NAME)));
+                        object.getString(KEY_NAME),
+                        object.getString(KEY_EMAIL)));
             }
+            if (DEBUG) Log.v(TAG, "Found Reviewer: " + list.get(i).toString());
         }
         return list;
     }

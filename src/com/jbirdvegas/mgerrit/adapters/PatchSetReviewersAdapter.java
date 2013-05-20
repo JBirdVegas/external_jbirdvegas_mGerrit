@@ -17,6 +17,7 @@ package com.jbirdvegas.mgerrit.adapters;
  *  limitations under the License.
  */
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,20 +26,21 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
+import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 
 import java.util.List;
 
-
 public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
     private static final String TAG = PatchSetReviewersAdapter.class.getSimpleName();
-    private static final boolean DEBUG = false;
-    private final Context context;
+    private static final boolean DEBUG = true;
+    private final Activity activity;
     private final List<Reviewer> values;
 
-    public PatchSetReviewersAdapter(Context context, List<Reviewer> values) {
-        super(context, R.layout.patchset_labels_list_item, values);
-        this.context = context;
+    public PatchSetReviewersAdapter(Activity activity, List<Reviewer> values) {
+        super(activity, R.layout.patchset_labels_list_item, values);
+        this.activity = activity;
         this.values = values;
     }
 
@@ -47,11 +49,16 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
         View root = convertView;
         if (root == null) {
             LayoutInflater inflater = (LayoutInflater)
-                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             root = inflater.inflate(R.layout.patchset_labels_list_item, null);
         }
         TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);
         TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
+        name.setOnClickListener(
+                new TrackingClickListener (
+                        activity,
+                        values.get(position).getCommiterObject()));
+        GravatarHelper.attachGravatarToTextView(name, values.get(position).getEmail());
         Reviewer reviewer = values.get(position);
         if (DEBUG) {
             Log.d(TAG, new StringBuilder(0)

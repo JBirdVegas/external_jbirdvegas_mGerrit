@@ -27,26 +27,53 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TabHost;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 
 public class GerritControllerActivity extends TabActivity {
     private static final String TAG = GerritControllerActivity.class.getSimpleName();
     private TabHost mTabHost;
+    private CommitterObject mCommitterObject;
+    private String mProject;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        try {
+            mCommitterObject = getIntent()
+                    .getExtras()
+                    .getParcelable(CardsActivity.KEY_DEVELOPER);
+        } catch (NullPointerException npe) {
+            // non author specific view
+            // use default
+        }
+
+        try {
+            mProject = getIntent().getStringExtra(JSONCommit.KEY_PROJECT);
+        } catch (NullPointerException npe) {
+            // not following one project
+        }
         // Setup tabs //
         mTabHost = getTabHost();
         addTabs();
     }
 
     private void addTabs() {
+        Intent base = new Intent();
+        base.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // if we are stalking one user pass the user information
+        // along to all the tabs
+        if (mCommitterObject != null) {
+            base.putExtra(CardsActivity.KEY_DEVELOPER, mCommitterObject);
+        }
+        if (mProject != null) {
+            base.putExtra(JSONCommit.KEY_PROJECT, mProject);
+        }
         // Review tab
-        Intent intentReview = new Intent()
-                .setClass(this, ReviewTab.class)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intentReview = new Intent(base)
+                .setClass(this, ReviewTab.class);
         TabHost.TabSpec tabSpecReview = mTabHost
                 .newTabSpec(getString(R.string.reviewable))
                 .setContent(intentReview)
@@ -54,9 +81,8 @@ public class GerritControllerActivity extends TabActivity {
         mTabHost.addTab(tabSpecReview);
 
         // Merged tab
-        Intent intentMerged = new Intent()
-                .setClass(this, MergedTab.class)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intentMerged = new Intent(base)
+                .setClass(this, MergedTab.class);
         TabHost.TabSpec tabSpecMerged = mTabHost
                 .newTabSpec(getString(R.string.merged))
                 .setContent(intentMerged)
@@ -64,9 +90,8 @@ public class GerritControllerActivity extends TabActivity {
         mTabHost.addTab(tabSpecMerged);
 
         // Abandon tab
-        Intent intentAbandon = new Intent()
-                .setClass(this, AbandonedTab.class)
-                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intentAbandon = new Intent(base)
+                .setClass(this, AbandonedTab.class);
         TabHost.TabSpec tabSpecAbandon = mTabHost
                 .newTabSpec(getString(R.string.abandoned))
                 .setContent(intentAbandon)

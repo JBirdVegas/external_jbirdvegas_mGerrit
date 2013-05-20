@@ -1,7 +1,6 @@
 package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
-import com.jbirdvegas.mgerrit.CardsActivity;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.ReviewTab;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
+import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
 import com.jbirdvegas.mgerrit.objects.CommitComment;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
@@ -57,16 +55,10 @@ public class PatchSetCommentsCard extends Card {
         // set author name
         TextView authorTextView = (TextView) commentView.findViewById(R.id.comment_author_name);
         authorTextView.setText(comment.getAuthorObject().getName());
-        authorTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), ReviewTab.class);
-                intent.putExtra(CardsActivity.KEY_DEVELOPER, comment.getAuthorObject());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                view.getContext().startActivity(intent);
+        authorTextView.setOnClickListener(
+                new TrackingClickListener(mPatchsetViewerActivity,
+                        comment.getAuthorObject()));
 
-            }
-        });
         authorTextView.setTag(comment.getAuthorObject());
         mPatchsetViewerActivity.registerViewForContextMenu(authorTextView);
         // setup styled comments

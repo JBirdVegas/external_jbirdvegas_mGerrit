@@ -16,11 +16,11 @@ import android.widget.FrameLayout;
 import android.widget.Space;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import com.jbirdvegas.mgerrit.R;
 import com.fima.cardsui.StackAdapter;
 import com.fima.cardsui.objects.AbstractCard;
 import com.fima.cardsui.objects.Card;
 import com.fima.cardsui.objects.CardStack;
+import com.jbirdvegas.mgerrit.R;
 
 import java.util.ArrayList;
 

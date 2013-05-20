@@ -27,16 +27,16 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.PatchSetReviewersAdapter;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
-import static com.jbirdvegas.mgerrit.PatchSetViewerActivity.setListViewHeightBasedOnChildren;
-
 public class PatchSetReviewersCard extends Card {
     private static final String TAG = PatchSetReviewersAdapter.class.getSimpleName();
+    private final PatchSetViewerActivity mPatchSetViewActiviy;
     private JSONCommit mJSONCommit;
     private ListView mReviewersList;
     private ListView mVerifiedList;
 
-    public PatchSetReviewersCard(JSONCommit commit) {
+    public PatchSetReviewersCard(JSONCommit commit, PatchSetViewerActivity patchSetViewerActivity) {
         mJSONCommit = commit;
+        mPatchSetViewActiviy = patchSetViewerActivity;
     }
 
     @Override
@@ -55,20 +55,21 @@ public class PatchSetReviewersCard extends Card {
             view.setVisibility(View.GONE);
             return view;
         } else {
-            mReviewersList.setAdapter(new PatchSetReviewersAdapter(context,
+            mReviewersList.setAdapter(new PatchSetReviewersAdapter(mPatchSetViewActiviy,
                     mJSONCommit.getCodeReviewers()));
         }
         // don't try to set from null values
         if (mJSONCommit.getVerifiedReviewers() == null) {
             PatchSetViewerActivity.setNotFoundListView(context, mVerifiedList);
         } else {
-            mVerifiedList.setAdapter(new PatchSetReviewersAdapter(context,
-                    mJSONCommit.getVerifiedReviewers()));
+            mVerifiedList.setAdapter(
+                    new PatchSetReviewersAdapter(mPatchSetViewActiviy,
+                            mJSONCommit.getVerifiedReviewers()));
         }
         // static import of
         // PatchSetViewerActivity.setListViewHeightBasedOnChildren(ListView)
         // handles setting ListView height correctly
-        setListViewHeightBasedOnChildren(mReviewersList, mVerifiedList);
+        //setListViewHeightBasedOnChildren(mReviewersList, mVerifiedList);
         return view;
     }
 

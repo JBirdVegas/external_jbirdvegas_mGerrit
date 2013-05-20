@@ -81,31 +81,20 @@
         android:orientation="horizontal"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:weightSum="10"
         android:paddingBottom="8dip"
-        android:layout_gravity="center">
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/view_in_browser"
+        android:layout_gravity="right"
+        android:gravity="end">
+        <ImageView
+            android:src="@drawable/ic_menu_view"
             android:id="@+id/commit_card_view_in_browser"
-            android:layout_marginTop="20dp"
-            android:layout_weight="5"
-            android:singleLine="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/card_title_text"/>
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/moar_info"
+            style="@style/ActionViewsStyle"/>
+        <ImageView
+            android:src="@drawable/ic_menu_share"
+            android:id="@+id/commit_card_share_info"
+            style="@style/ActionViewsStyle"/>
+        <ImageView
             android:id="@+id/commit_card_moar_info"
-            android:layout_marginTop="20dp"
-            android:layout_weight="5"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:textColor="@color/card_title_text"/>
+            android:src="@drawable/ic_dialog_info"
+            style="@style/ActionViewsStyle"/>
     </LinearLayout>
 </LinearLayout>

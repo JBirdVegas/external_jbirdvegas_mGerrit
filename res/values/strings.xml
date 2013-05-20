@@ -17,7 +17,7 @@
   -->
 
 <resources>
-    <string name="app_name">mGerrit</string>
+    <string name="app_name" translatable="false">mGerrit</string>
     <string name="reviewable">Review</string>
     <string name="merged">Merged</string>
     <string name="abandoned">Abandoned</string>
@@ -27,8 +27,6 @@
     </string>
     <string name="status_explaination_merged">Change has been merged to its branch.</string>
     <string name="status_explaination_abandoned">Change was abandoned by its owner or administrator.</string>
-    <string name="view_in_browser">Browser</string>
-    <string name="moar_info">Moar Info!</string>
     <string name="patchset_labels_code_reviewer_title">Code-Reviewers:</string>
     <string name="patchset_labels_verified_reviewer_title">Verified:</string>
     <string name="dash">-</string>
@@ -49,16 +47,16 @@
     <string name="gerrit_call_failed">Failed to get useful response from Gerrit instance please check your connection
         and try again.
     </string>
-    <string name="establishing_connection">Establishing connection...</string>
-    <string name="transfering">Transferring JSON encoded data...</string>
+    <string name="establishing_connection">Establishing connection…</string>
+    <string name="transfering">Transferring JSON encoded data…</string>
     <string name="downloading_status" formatted="false">%d of %d bytes downloaded\t%d%% completed</string>
     <string name="connection_established">Connection established</string>
-    <string name="initializing_data_transfer">Initializing data transfer...</string>
+    <string name="initializing_data_transfer">Initializing data transfer…</string>
     <string name="communications_error">Communication ERROR!!!</string>
-    <string name="transfering_json_data">Transferring JSON encoded data...</string>
+    <string name="transfering_json_data">Transferring JSON encoded data…</string>
     <string name="open_source_libs">Open Source Libraries</string>
     <string name="cards_ui">CardsUI</string>
-    <string name="cards_ui_website">http://www.androidviews.net/2012/12/cardsui/</string>
+    <string name="cards_ui_website" translatable="false">http://www.androidviews.net/2012/12/cardsui/</string>
     <string name="nine_old_androids">NineOldAndroids</string>
     <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
     <string name="explain_status_title">Explain statuses</string>
@@ -73,7 +71,7 @@
     </string>
     <string name="comments_card_title">Comments:</string>
     <string name="unknown">Unknown</string>
-    <string name="aosp_volley_website">https://android.googlesource.com/platform/frameworks/volley/</string>
+    <string name="aosp_volley_website" translatable="false">https://android.googlesource.com/platform/frameworks/volley/</string>
     <string name="aosp_volley_title">AOSP\'s Volley</string>
     <string name="developers_role">Choose developer\'s role to view</string>
     <string name="commit_reviewer">Commit Reviewer</string>
@@ -82,5 +80,8 @@
     <string name="context_menu_view_diff_dialog">View diff in dialog</string>
     <string name="context_menu_diff_view_in_browser">View diff in browser</string>
     <string name="choose_diff_view">How would you like to view the diff?</string>
-    <string name="new_text">New Text</string>
+    <string name="stalker_mode_toast">Now stalking user:</string>
+    <string name="share">Share</string>
+    <string name="commit_shared_from_mgerrit" formatted="false">Commit %s shared from mGerrit!</string>
+    <string name="found_cards_toast" formatted="false"><![CDATA[Found %d commits in %d seconds]]></string>
 </resources>

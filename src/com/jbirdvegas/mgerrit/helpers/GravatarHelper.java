@@ -57,8 +57,8 @@ public class GravatarHelper {
                 imageView.setImageBitmap(bitmap);
             }
         },
-                80,
-                80,
+                1028,
+                1028,
                 Bitmap.Config.ARGB_8888,
                 new Response.ErrorListener() {
                     @Override

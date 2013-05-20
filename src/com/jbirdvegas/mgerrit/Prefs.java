@@ -26,6 +26,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
 public class Prefs extends PreferenceActivity implements Preference.OnPreferenceClickListener{
     private static final CharSequence CARDS_UI_KEY = "open_source_lib_cards_ui";
@@ -91,5 +92,18 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
         launchWebsite.setData(Uri.parse((String) pref.getSummary()));
         startActivity(launchWebsite);
         return true;
+    }
+
+    public static Intent getStalkerIntent(Context activity, CommitterObject committerObject) {
+        return new Intent()
+                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+                .putExtra(CardsActivity.KEY_DEVELOPER, committerObject)
+                .setClass(activity, GerritControllerActivity.class);
+    }
+
+    public static Intent getStalkerIntent(Context activity) {
+        return new Intent()
+                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
+                .setClass(activity, GerritControllerActivity.class);
     }
 }

@@ -16,7 +16,8 @@
         android:textAppearance="@style/CardTitle"
         android:textSize="22sp"/>
     <LinearLayout
-        android:layout_width="match_parent" android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -32,8 +33,7 @@
                 android:text="@string/commit_owner"
                 android:textAppearance="@style/CardText"
                 android:layout_gravity="center_vertical"
-                android:textStyle="bold"
-                android:textAlignment="viewEnd" />
+                android:textStyle="bold"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,7 +43,6 @@
                 android:textAppearance="@style/CardText"
                 android:textStyle="bold"
                 android:layout_gravity="center_vertical"
-                android:textAlignment="viewEnd"
                 android:paddingTop="5dip"
                 android:paddingBottom="5dip"/>
             <TextView
@@ -54,8 +53,7 @@
                 android:text="@string/commit_committer"
                 android:textAppearance="@style/CardText"
                 android:textStyle="bold"
-                android:layout_gravity="center_vertical"
-                android:textAlignment="viewEnd" />
+                android:layout_gravity="center_vertical"/>
 
 
         </LinearLayout>
@@ -65,12 +63,14 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|left">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/prop_card_owner"
                 android:textAppearance="@style/CardText"
                 android:layout_gravity="center_vertical" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -81,7 +81,6 @@
                 android:paddingBottom="5dip"
                 android:paddingTop="5dip"/>
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,5 +89,21 @@
                 android:textAppearance="@style/CardText"
                 android:layout_gravity="center_vertical" />
         </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:gravity="right">
+        <ImageView
+            android:src="@drawable/ic_menu_view"
+            android:id="@+id/properties_card_view_in_browser"
+            style="@style/ActionViewsStyle"/>
+
+        <ImageView
+            android:src="@drawable/ic_menu_share"
+            android:id="@+id/properties_card_share_info"
+            style="@style/ActionViewsStyle"/>
     </LinearLayout>
 </LinearLayout>
