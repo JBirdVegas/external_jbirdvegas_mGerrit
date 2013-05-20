@@ -159,6 +159,10 @@ public class Diff {
                     ints - 1,
                     ints + 1,
                     Spanned.SPAN_INTERMEDIATE);
+            spannableString.setSpan(new ForegroundColorSpan(Color.WHITE),
+                    ints - 1,
+                    ints + 1,
+                    Spanned.SPAN_INTERMEDIATE);
         }
     }
 
@@ -195,4 +199,3 @@ public class Diff {
         return sb.toString();
     }
 }
-

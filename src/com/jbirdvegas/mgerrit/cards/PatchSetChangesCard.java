@@ -115,35 +115,44 @@ public class PatchSetChangesCard extends Card {
         innerRootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                new AlertDialog.Builder(mCardsActivity)
-                        .setTitle(R.string.choose_diff_view)
-                        .setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                // http://gerrit.aokp.co/changes/AOKP%2Fexternal_jbirdvegas_mGerrit~master~I0d360472ee328c6cde0f8303b19a35f175869e68/revisions/current/patch
-                                String base = "%schanges/%s/revisions/current/patch";
-                                String url = String.format(base,
-                                        Prefs.getCurrentGerrit(mCardsActivity),
-                                        mCommit.getId());
-                                launchDiffDialog(url, changedFile);
-                            }
-                        })
-                        .setNegativeButton(R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String base = "%s#/c/%d/%d/%s";
-                                Intent browserIntent = new Intent(
-                                        Intent.ACTION_VIEW, Uri.parse(String.format(base,
-                                        Prefs.getCurrentGerrit(context),
-                                        mCommit.getCommitNumber(),
-                                        mCommit.getPatchSetNumber(),
-                                        changedFile.getPath())));
-                                context.startActivity(browserIntent);
-                            }
-                        }).create().show();
+                AlertDialog.Builder ad = new AlertDialog.Builder(mCardsActivity)
+                        .setTitle(R.string.choose_diff_view);
+                // avoid new api till we can use across all instances
+                // DiffApi is very young and changing constantly
+                if (Prefs.getCurrentGerrit(context).equals(
+                        context.getResources().getStringArray(R.array.gerrit_webaddresses)[0])) {
+                    ad.setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // http://gerrit.aokp.co/changes/AOKP%2Fexternal_jbirdvegas_mGerrit~master~I0d360472ee328c6cde0f8303b19a35f175869e68/revisions/current/patch
+                            // or
+                            // after v2.8 goes stable
+                            // curl https://gerrit-review.googlesource.com/changes/gerrit~master~Idc97af3d01999889d9b1a818fbd1bbe0b274dcf3/revisions/77e974c7070e274aaca3f2413a3fb53031d0f50e/files/ReleaseNotes%2fReleaseNotes-2.5.3.txt/content
+                            String base = "%schanges/%s/revisions/current/patch";
+                            String url = String.format(base,
+                                    Prefs.getCurrentGerrit(mCardsActivity),
+                                    mCommit.getId());
+                            launchDiffDialog(url, changedFile);
+                        }
+                    });
+                }
+                ad.setNegativeButton(
+                        R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String base = "%s#/c/%d/%d/%s";
+                        Intent browserIntent = new Intent(
+                                Intent.ACTION_VIEW, Uri.parse(String.format(base,
+                                Prefs.getCurrentGerrit(context),
+                                mCommit.getCommitNumber(),
+                                mCommit.getPatchSetNumber(),
+                                changedFile.getPath())));
+                        context.startActivity(browserIntent);
+                    }
+                });
+                ad.create().show();
             }
         });
-
         return innerRootView;
     }
 

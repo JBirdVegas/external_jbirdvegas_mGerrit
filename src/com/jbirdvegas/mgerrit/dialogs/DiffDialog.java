@@ -4,10 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.text.*;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,7 +81,13 @@ public class DiffDialog extends AlertDialog.Builder {
         if (builder.length() == 0) {
             builder.append("Diff not found!");
         }
+        textView.setTypeface(Typeface.MONOSPACE);
         // rebuild text; required to respect the \n
-        textView.setText(currentDiff.getColorizedSpan(), TextView.BufferType.SPANNABLE);
+        SpannableString spannableString = currentDiff.getColorizedSpan();
+        if (spannableString != null) {
+            textView.setText(currentDiff.getColorizedSpan(), TextView.BufferType.SPANNABLE);
+        } else {
+            textView.setText("Failed to load diff :(");
+        }
     }
 }
