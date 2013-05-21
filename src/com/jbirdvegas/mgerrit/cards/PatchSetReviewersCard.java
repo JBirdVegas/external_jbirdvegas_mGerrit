@@ -21,6 +21,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
+import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
@@ -30,13 +31,15 @@ import com.jbirdvegas.mgerrit.objects.JSONCommit;
 public class PatchSetReviewersCard extends Card {
     private static final String TAG = PatchSetReviewersAdapter.class.getSimpleName();
     private final PatchSetViewerActivity mPatchSetViewActiviy;
+    private final RequestQueue mRequestQueue;
     private JSONCommit mJSONCommit;
     private ListView mReviewersList;
     private ListView mVerifiedList;
 
-    public PatchSetReviewersCard(JSONCommit commit, PatchSetViewerActivity patchSetViewerActivity) {
+    public PatchSetReviewersCard(JSONCommit commit, PatchSetViewerActivity patchSetViewerActivity, RequestQueue requestQueue) {
         mJSONCommit = commit;
         mPatchSetViewActiviy = patchSetViewerActivity;
+        mRequestQueue = requestQueue;
     }
 
     @Override
@@ -56,7 +59,8 @@ public class PatchSetReviewersCard extends Card {
             return view;
         } else {
             mReviewersList.setAdapter(new PatchSetReviewersAdapter(mPatchSetViewActiviy,
-                    mJSONCommit.getCodeReviewers()));
+                    mJSONCommit.getCodeReviewers(),
+                    mRequestQueue));
         }
         // don't try to set from null values
         if (mJSONCommit.getVerifiedReviewers() == null) {
@@ -64,7 +68,8 @@ public class PatchSetReviewersCard extends Card {
         } else {
             mVerifiedList.setAdapter(
                     new PatchSetReviewersAdapter(mPatchSetViewActiviy,
-                            mJSONCommit.getVerifiedReviewers()));
+                            mJSONCommit.getVerifiedReviewers(),
+                            mRequestQueue));
         }
         // static import of
         // PatchSetViewerActivity.setListViewHeightBasedOnChildren(ListView)

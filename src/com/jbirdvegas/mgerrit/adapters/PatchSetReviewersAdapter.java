@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
@@ -37,11 +38,13 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
     private static final boolean DEBUG = true;
     private final Activity activity;
     private final List<Reviewer> values;
+    private final RequestQueue mRequestQueue;
 
-    public PatchSetReviewersAdapter(Activity activity, List<Reviewer> values) {
+    public PatchSetReviewersAdapter(Activity activity, List<Reviewer> values, RequestQueue requestQueue) {
         super(activity, R.layout.patchset_labels_list_item, values);
         this.activity = activity;
         this.values = values;
+        this.mRequestQueue = requestQueue;
     }
 
     @Override
@@ -58,7 +61,9 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
                 new TrackingClickListener (
                         activity,
                         values.get(position).getCommiterObject()));
-        GravatarHelper.attachGravatarToTextView(name, values.get(position).getEmail());
+        GravatarHelper.attachGravatarToTextView(name,
+                values.get(position).getEmail(),
+                mRequestQueue);
         Reviewer reviewer = values.get(position);
         if (DEBUG) {
             Log.d(TAG, new StringBuilder(0)

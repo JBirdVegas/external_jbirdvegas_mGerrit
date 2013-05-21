@@ -24,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.CardsActivity;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
@@ -43,15 +45,18 @@ public class CommitCard extends Card {
     private static final String TAG = CommitCard.class.getSimpleName();
     private final CardsActivity mCardsActivity;
     private final CommitterObject mCommitterObject;
+    private final RequestQueue mRequestQuery;
     private JSONCommit mCommit;
     private TextView mProjectTextView;
 
     public CommitCard(JSONCommit commit,
                       CardsActivity activity,
-                      CommitterObject committerObject) {
+                      CommitterObject committerObject,
+                      RequestQueue requestQueue) {
         this.mCardsActivity = activity;
         this.mCommit = commit;
         this.mCommitterObject = committerObject;
+        this.mRequestQuery = requestQueue;
     }
 
     @Override
@@ -77,7 +82,8 @@ public class CommitCard extends Card {
                             mCommit.getOwnerObject()));
 
             GravatarHelper.attachGravatarToTextView(ownerTextView,
-                    mCommit.getOwnerObject().getEmail());
+                    mCommit.getOwnerObject().getEmail(),
+                    mRequestQuery);
         }
         mProjectTextView = (TextView) commitCardView.findViewById(R.id.commit_card_project_name);
         mProjectTextView.setText(mCommit.getProject());

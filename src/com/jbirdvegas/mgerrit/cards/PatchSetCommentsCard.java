@@ -7,9 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.caches.BitmapLruCache;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
@@ -27,10 +32,12 @@ public class PatchSetCommentsCard extends Card {
 
     private JSONCommit mJsonCommit;
     private final PatchSetViewerActivity mPatchsetViewerActivity;
+    private RequestQueue mRequestQuery;
 
-    public PatchSetCommentsCard(JSONCommit jsonCommit, PatchSetViewerActivity activity) {
+    public PatchSetCommentsCard(JSONCommit jsonCommit, PatchSetViewerActivity activity, RequestQueue requestQueue) {
         mJsonCommit = jsonCommit;
         mPatchsetViewerActivity = activity;
+        mRequestQuery = requestQueue;
     }
 
     private LayoutInflater mInflater;
@@ -39,6 +46,7 @@ public class PatchSetCommentsCard extends Card {
 
     @Override
     public View getCardContent(Context context) {
+        mRequestQuery = Volley.newRequestQueue(context);
         mContext = context;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mRootView = (ViewGroup) mInflater.inflate(R.layout.comments_card, null);
@@ -70,7 +78,12 @@ public class PatchSetCommentsCard extends Card {
         // set gravatar icon for commenter
         GravatarHelper.populateProfilePicture(
                 (ImageView) commentView.findViewById(R.id.comment_gravatar),
-                comment.getAuthorObject().getEmail());
+                comment.getAuthorObject().getEmail(),
+                mRequestQuery);
+        NetworkImageView gravatar = (NetworkImageView) commentView.findViewById(R.id.comment_gravatar);
+
+        gravatar.setImageUrl(GravatarHelper.getGravatarUrl(comment.getAuthorObject().getEmail()),
+                new ImageLoader(mRequestQuery, new BitmapLruCache(mPatchsetViewerActivity)));
         return commentView;
     }
 }

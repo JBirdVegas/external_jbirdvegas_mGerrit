@@ -25,6 +25,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
@@ -51,6 +53,7 @@ public abstract class CardsActivity extends Activity {
     private String mWebsite;
     private long mTimerStart;
     private CommitterObject mCommitterObject = null;
+    private RequestQueue mRequestQueue;
 
     // draws a stack of cards
     // Currently not used as the number of cards tends
@@ -100,7 +103,7 @@ public abstract class CardsActivity extends Activity {
     }
 
     private CommitCard getCommitCard(JSONObject jsonObject, Context context) {
-        return new CommitCard(new JSONCommit(jsonObject, context), this, mCommitterObject);
+        return new CommitCard(new JSONCommit(jsonObject, context), this, mCommitterObject, mRequestQueue);
     }
 
     CardUI mCards;
@@ -116,6 +119,7 @@ public abstract class CardsActivity extends Activity {
         setContentView(R.layout.commit_list);
         mTimerStart = System.currentTimeMillis();
         mCards = (CardUI) findViewById(R.id.commit_cards);
+        mRequestQueue = Volley.newRequestQueue(this);
         // default to non author specific view
         mWebsite = new StringBuilder(0)
                 .append(Prefs.getCurrentGerrit(getApplicationContext()))
@@ -158,7 +162,7 @@ public abstract class CardsActivity extends Activity {
                         String.format("%s %s", getString(R.string.stalker_mode_toast), user.getName()),
                         Toast.LENGTH_LONG).show();
             }
-            mCards.addCard(new ImageCard(user.getName(), user), true);
+            mCards.addCard(new ImageCard(mRequestQueue, user.getName(), user), true);
         } catch (NullPointerException npe) {
             // non author specific view
             // use default website

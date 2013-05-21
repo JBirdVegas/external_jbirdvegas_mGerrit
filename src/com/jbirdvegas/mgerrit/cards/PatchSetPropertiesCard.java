@@ -24,6 +24,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
@@ -34,14 +37,18 @@ import com.jbirdvegas.mgerrit.objects.JSONCommit;
 public class PatchSetPropertiesCard extends Card {
     private final JSONCommit mJSONCommit;
     private final PatchSetViewerActivity mPatchSetViewerActivity;
+    private final RequestQueue mRequestQuery;
     private TextView mSubject;
     private TextView mOwner;
     private TextView mAuthor;
     private TextView mCommitter;
 
-    public PatchSetPropertiesCard(JSONCommit commit, PatchSetViewerActivity activity) {
+    public PatchSetPropertiesCard(JSONCommit commit,
+                                  PatchSetViewerActivity activity,
+                                  RequestQueue requestQueue) {
         this.mJSONCommit = commit;
         this.mPatchSetViewerActivity = activity;
+        this.mRequestQuery = requestQueue;
     }
 
     @Override
@@ -58,7 +65,9 @@ public class PatchSetPropertiesCard extends Card {
         mOwner.setText(mJSONCommit.getOwnerObject().getName());
         // attach owner's gravatar
         GravatarHelper.attachGravatarToTextView(
-                mOwner, mJSONCommit.getOwnerObject().getEmail());
+                mOwner,
+                mJSONCommit.getOwnerObject().getEmail(),
+                mRequestQuery);
         mOwner.setOnClickListener(new TrackingClickListener(
                 mPatchSetViewerActivity,
                 mJSONCommit.getOwnerObject()
@@ -88,9 +97,13 @@ public class PatchSetPropertiesCard extends Card {
             setContextMenu(mCommitter);
             // attach gravatars (if objects are not null)
             GravatarHelper.attachGravatarToTextView(
-                    mAuthor, mJSONCommit.getAuthorObject().getEmail());
+                    mAuthor,
+                    mJSONCommit.getAuthorObject().getEmail(),
+                    mRequestQuery);
             GravatarHelper.attachGravatarToTextView(
-                    mCommitter, mJSONCommit.getCommitterObject().getEmail());
+                    mCommitter,
+                    mJSONCommit.getCommitterObject().getEmail(),
+                    mRequestQuery);
         } catch (NullPointerException npe) {
             rootView.findViewById(R.id.prop_card_author)
                     .setVisibility(View.GONE);

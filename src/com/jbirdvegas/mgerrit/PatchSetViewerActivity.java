@@ -30,6 +30,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetCommentsCard;
@@ -52,11 +54,13 @@ public class PatchSetViewerActivity extends Activity {
     private static final String TAG = PatchSetViewerActivity.class.getSimpleName();
     private static final String KEY_STORED_PATCHSET = "storedPatchset";
     private CardUI mCardsUI;
+    private RequestQueue mRequestQueue;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.commit_list);
+        mRequestQueue = Volley.newRequestQueue(this);
         String query = getIntent().getStringExtra(JSONCommit.KEY_WEBSITE);
         Log.d(TAG, "Website to query: " + query);
         mCardsUI = (CardUI) findViewById(R.id.commit_cards);
@@ -98,7 +102,7 @@ public class PatchSetViewerActivity extends Activity {
     private void addCards(CardUI ui, JSONCommit jsonCommit) {
         // Properties card
         Log.d(TAG, "Loading Properties Card...");
-        ui.addCard(new PatchSetPropertiesCard(jsonCommit, this), true);
+        ui.addCard(new PatchSetPropertiesCard(jsonCommit, this, mRequestQueue), true);
 
         // Message card
         Log.d(TAG, "Loading Message Card...");
@@ -115,7 +119,7 @@ public class PatchSetViewerActivity extends Activity {
         if (jsonCommit.getCodeReviewers() != null
                 && !jsonCommit.getCodeReviewers().isEmpty()) {
             Log.d(TAG, "Loading Reviewers Card...");
-            ui.addCard(new PatchSetReviewersCard(jsonCommit, this), true);
+            ui.addCard(new PatchSetReviewersCard(jsonCommit, this, mRequestQueue), true);
         } else {
             Log.d(TAG, "No reviewers found! Not adding reviewers card");
         }
@@ -124,7 +128,7 @@ public class PatchSetViewerActivity extends Activity {
         if (jsonCommit.getMessagesList() != null
                 && !jsonCommit.getMessagesList().isEmpty()) {
             Log.d(TAG, "Loading Comments Card...");
-            ui.addCard(new PatchSetCommentsCard(jsonCommit, this), true);
+            ui.addCard(new PatchSetCommentsCard(jsonCommit, this, mRequestQueue), true);
         } else {
             Log.d(TAG, "No commit comments found! Not adding comments card");
         }

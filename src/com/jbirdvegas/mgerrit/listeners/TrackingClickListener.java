@@ -67,8 +67,6 @@ public class TrackingClickListener implements View.OnClickListener {
 
     @Override
     public void onClick(final View view) {
-        final Intent[] requestIntent = {new Intent()};
-
         // Show content of a single user
         if (mCommitterObject != null && mProjectPath == null) {
             // ask which content we are interested in
@@ -104,12 +102,6 @@ public class TrackingClickListener implements View.OnClickListener {
         } else if (mCommitterObject != null && mProjectPath != null) {
             view.getContext().startActivity(Prefs.getStalkerIntent(mCallerActivity, mCommitterObject)
                     .putExtra(JSONCommit.KEY_PROJECT, mProjectPath));
-        }
-        if (requestIntent[0] == null) {
-            view.getContext().startActivity(requestIntent[0]);
-        } else {
-
-            Log.e(TAG, "Intent was still null!!! here is what we know: " + this.toString());
         }
     }
 
