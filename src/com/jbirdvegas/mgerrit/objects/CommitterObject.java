@@ -34,9 +34,9 @@ public class CommitterObject implements Parcelable {
     private String mState;
 
     private CommitterObject(String name,
-                           String email,
-                           String date,
-                           String timezone) {
+                            String email,
+                            String date,
+                            String timezone) {
         mName = name;
         mEmail = email;
         mDate = date;
@@ -59,9 +59,9 @@ public class CommitterObject implements Parcelable {
     }
 
     public static CommitterObject getInstance(String name,
-                              String email,
-                              String date,
-                              String timezone) {
+                                              String email,
+                                              String date,
+                                              String timezone) {
         return new CommitterObject(name, email, date, timezone);
     }
 

@@ -25,7 +25,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.CardsActivity;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
@@ -135,7 +134,7 @@ public class CommitCard extends Card {
         shareView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(android.content.Intent.ACTION_SEND);
+                Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("text/plain");
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                 intent.putExtra(Intent.EXTRA_SUBJECT, String.format(context.getString(R.string.commit_shared_from_mgerrit), mCommit.getChangeId()));

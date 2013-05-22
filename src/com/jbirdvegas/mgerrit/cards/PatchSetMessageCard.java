@@ -33,6 +33,7 @@ public class PatchSetMessageCard extends Card {
     public PatchSetMessageCard(JSONCommit commit) {
         this.mJSONCommit = commit;
     }
+
     @Override
     public View getCardContent(Context context) {
         LayoutInflater inflater = (LayoutInflater)

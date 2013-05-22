@@ -11,7 +11,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.R;
 
 /**
@@ -32,7 +31,7 @@ public class GravatarHelper {
                     emailMd5,
                     DEFAULT_AVATAR_SIZE);
             Log.d(TAG, "Gravatar url called: " + url);
-            imageVolleyRequest(imageView, url,  imageRequest).start();
+            imageVolleyRequest(imageView, url, imageRequest).start();
         } else {
             imageView.setVisibility(View.GONE);
         }

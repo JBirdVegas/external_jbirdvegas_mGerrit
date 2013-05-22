@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 /**
  * Injects emoticons into textviews
- *
+ * <p/>
  * Class based on code from StackOverflow
  * answer: http://stackoverflow.com/a/4302199/873237
  */

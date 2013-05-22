@@ -27,7 +27,7 @@
         android:layout_marginBottom="3dip"
         android:background="@color/stroke" />
 
-    <ImageView
+    <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/card_picture_image"
         android:layout_width="154dp"
         android:layout_height="127dp"

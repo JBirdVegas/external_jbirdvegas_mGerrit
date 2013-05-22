@@ -25,8 +25,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;

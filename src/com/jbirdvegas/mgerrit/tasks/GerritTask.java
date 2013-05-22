@@ -77,15 +77,20 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
             mCurrentFileLength = connection.getContentLength();
             boolean isFirstLine = true;
             while ((line = reader.readLine()) != null) {
-                if (!isFirstLine) {
+                if (isFirstLine) {
+                    isFirstLine = false;
                     byteProgressCounter += line.getBytes().length;
-                    stringBuilder.append(line + lineEnding);
+                    if (line.contains(")]}'")) {
+                        // remove magic chars
+                        stringBuilder.append(line.substring(4));
+                    } else {
+                        // if no magic we are getting a literal
+                        stringBuilder.append(line);
+                    }
                     publishProgress(byteProgressCounter);
                 } else {
-                    isFirstLine = false;
-                    String subString = line.substring(4);
-                    byteProgressCounter += subString.getBytes().length;
-                    stringBuilder.append(subString);
+                    byteProgressCounter += line.getBytes().length;
+                    stringBuilder.append(line + lineEnding);
                     publishProgress(byteProgressCounter);
                 }
             }
@@ -174,7 +179,7 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
     static int findPercent(long progress, long totalSize) {
         try {
             Log.d(TAG, "progress: " + progress + " totalSize: " + totalSize +
-                    " as percent:" +  safeLongToInt(progress * 100 / totalSize));
+                    " as percent:" + safeLongToInt(progress * 100 / totalSize));
             // use a safe casting method
             return safeLongToInt(progress * 100 / totalSize);
             // handle division by zero just in case
