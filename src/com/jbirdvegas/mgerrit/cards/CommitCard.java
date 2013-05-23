@@ -75,11 +75,12 @@ public class CommitCard extends Card {
         if (mCommit.getOwnerObject() != null) {
             ownerTextView.setText(mCommit.getOwnerObject().getName());
             ownerTextView.setTag(mCommit.getOwnerObject());
-            ownerTextView.setOnClickListener(
-                    new TrackingClickListener(
-                            mCardsActivity, // calling context
-                            mCommit.getOwnerObject()));
-
+            TrackingClickListener trackingClickListener =
+                    new TrackingClickListener(mCardsActivity, mCommit.getOwnerObject());
+            if (mCardsActivity.inProject) {
+                trackingClickListener.addProjectToStalk(mCommit.getProject());
+            }
+            ownerTextView.setOnClickListener(trackingClickListener);
             GravatarHelper.attachGravatarToTextView(ownerTextView,
                     mCommit.getOwnerObject().getEmail(),
                     mRequestQuery);

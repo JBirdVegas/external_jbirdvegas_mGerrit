@@ -61,7 +61,7 @@ public class JSONCommit implements Parcelable {
     public static final String KEY_NAME = "name";
 
     // internal
-    private static final String KEY_KIND = "kind";
+    public static final String KEY_KIND = "kind";
     public static final String KEY_PROJECT = "project";
     private static final String KEY_BRANCH = "branch";
     private static final String KEY_CHANGE_ID = "change_id";

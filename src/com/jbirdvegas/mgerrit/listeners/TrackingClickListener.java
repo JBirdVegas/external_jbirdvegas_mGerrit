@@ -73,7 +73,7 @@ public class TrackingClickListener implements View.OnClickListener {
             AlertDialog.Builder builder = new AlertDialog.Builder(mCallerActivity);
             builder.setTitle(R.string.context_menu_view_diff_dialog);
 
-            builder.setPositiveButton(R.string.context_menu_owner,
+            builder.setNegativeButton(R.string.context_menu_owner,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
@@ -84,7 +84,7 @@ public class TrackingClickListener implements View.OnClickListener {
                         }
                     });
 
-            builder.setNegativeButton(R.string.context_menu_reviewer,
+            builder.setPositiveButton(R.string.context_menu_reviewer,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {

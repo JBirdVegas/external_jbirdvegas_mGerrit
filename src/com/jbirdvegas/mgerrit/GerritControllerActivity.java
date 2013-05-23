@@ -17,8 +17,10 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
+import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.TabActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,9 +28,22 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TabHost;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.objects.Project;
+import com.jbirdvegas.mgerrit.tasks.GerritTask;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class GerritControllerActivity extends TabActivity {
@@ -106,6 +121,7 @@ public class GerritControllerActivity extends TabActivity {
         return true;
     }
 
+    private AlertDialog alertDialog = null;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -125,13 +141,106 @@ public class GerritControllerActivity extends TabActivity {
                 builder.show();
                 return true;
             case R.id.menu_refresh:
-                int currentTab = getTabHost().getCurrentTab();
-                mTabHost.clearAllTabs();
-                addTabs();
-                mTabHost.setCurrentTab(currentTab);
+                refreshScreen(true);
+                return true;
+            case R.id.menu_team_instance:
+                Builder teamBuilder = new Builder(this);
+                teamBuilder.setTitle(R.string.menu_gerrit_instance);
+                ListView instances = new ListView(this);
+                String[] teams = getResources().getStringArray(R.array.gerrit_names);
+                final String[] urls = getResources().getStringArray(R.array.gerrit_webaddresses);
+                ArrayAdapter<String> instanceAdapter = new ArrayAdapter<String>(
+                        this,
+                        android.R.layout.simple_list_item_1,
+                        Arrays.asList(teams));
+                instances.setAdapter(instanceAdapter);
+                instances.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Prefs.setCurrentGerrit(view.getContext(), urls[i]);
+                        // refresh the screen and go straight to default "Review tab"
+                        refreshScreen(true);
+                        if (GerritControllerActivity.this.alertDialog != null) {
+                            GerritControllerActivity.this.alertDialog.dismiss();
+                            GerritControllerActivity.this.alertDialog = null;
+                        }
+                    }
+                });
+                teamBuilder.setView(instances);
+                teamBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                this.alertDialog = teamBuilder.create();
+                this.alertDialog.show();
+                return true;
+            case R.id.menu_projects:
+                new GerritTask(this) {
+                    @Override
+                    public void onJSONResult(String jsonString) {
+                        try {
+                            JSONObject projectsJson = new JSONObject(jsonString);
+                            Iterator stringIterator = projectsJson.keys();
+                            List<Project> projectLinkedList
+                                    = new LinkedList<Project>();
+                            while (stringIterator.hasNext()) {
+                                String path = (String) stringIterator.next();
+                                JSONObject projJson = projectsJson.getJSONObject(path);
+                                String kind = projJson.getString(JSONCommit.KEY_KIND);
+                                String id = projJson.getString(JSONCommit.KEY_ID);
+                                projectLinkedList.add(Project.getInstance(path, kind, id));
+                            }
+                            Collections.sort(projectLinkedList);
+                            ListView projectsList = new ListView(getThis());
+                            projectsList.setAdapter(new ArrayAdapter<Object>(getThis(),
+                                    android.R.layout.simple_list_item_single_choice,
+                                    projectLinkedList.toArray()));
+                            projectsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    Project project = (Project) adapterView.getItemAtPosition(i);
+                                    mProject = project.getmPath();
+                                    if (GerritControllerActivity.this.alertDialog != null) {
+                                        GerritControllerActivity.this.alertDialog.dismiss();
+                                        GerritControllerActivity.this.alertDialog = null;
+                                    }
+                                    refreshScreen(true);
+                                }
+                            });
+                            Builder projectsBuilder = new Builder(getThis());
+                            projectsBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                            projectsBuilder.setView(projectsList);
+                            AlertDialog alertDialog1 = projectsBuilder.create();
+                            GerritControllerActivity.this.alertDialog = alertDialog1;
+                            alertDialog1.show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.execute(Prefs.getCurrentGerrit(this) + "projects/?d");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private GerritControllerActivity getThis() {
+        return this;
+    }
+
+    private void refreshScreen(boolean keepTabPosition) {
+        int currentTab = getTabHost().getCurrentTab();
+        mTabHost.clearAllTabs();
+        addTabs();
+        if (keepTabPosition) {
+            mTabHost.setCurrentTab(currentTab);
         }
     }
 }

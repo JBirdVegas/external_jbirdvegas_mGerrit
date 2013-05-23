@@ -84,4 +84,6 @@
     <string name="share">Share</string>
     <string name="commit_shared_from_mgerrit" formatted="false">Commit %s shared from mGerrit!</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[Found %d commits in %d seconds]]></string>
+    <string name="cancel">Cancel</string>
+    <string name="menu_projects">View by project</string>
 </resources>
