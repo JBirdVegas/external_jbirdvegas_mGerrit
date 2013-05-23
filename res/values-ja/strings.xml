@@ -17,7 +17,6 @@
   -->
 
 <resources>
-    <string name="app_name">mGerrit</string>
     <string name="reviewable">Review</string>
     <string name="merged">Merged</string>
     <string name="abandoned">Abandoned</string>
@@ -25,8 +24,6 @@
     <string name="status_explaination_submitted">変更は提出されてマージ中です。ひとつ以上の依存関係が解消されるのを待っています。</string>
     <string name="status_explaination_merged">変更はブランチにマージされました。</string>
     <string name="status_explaination_abandoned">変更はオーナーまたは管理者によって取り下げられました。</string>
-    <string name="view_in_browser">ブラウザ</string>
-    <string name="moar_info">詳細情報</string>
     <string name="patchset_labels_code_reviewer_title">コードレビュー:</string>
     <string name="patchset_labels_verified_reviewer_title">検証:</string>
     <string name="dash">-</string>
@@ -54,7 +51,6 @@
     <string name="transfering_json_data">JSONデータ変換中...</string>
     <string name="open_source_libs">オープンソースライブラリー</string>
     <string name="cards_ui">CardsUI</string>
-    <string name="cards_ui_website">http://www.androidviews.net/2012/12/cardsui/</string>
     <string name="nine_old_androids">NineOldAndroids</string>
     <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
     <string name="explain_status_title">ステータス説明</string>
@@ -69,14 +65,25 @@
     </string>
     <string name="comments_card_title">コメント:</string>
     <string name="unknown">不明</string>
-    <string name="aosp_volley_website">https://android.googlesource.com/platform/frameworks/volley/</string>
     <string name="aosp_volley_title">AOSP Volley</string>
     <string name="developers_role">参照する変更を選択</string>
     <string name="commit_reviewer">コミットレビュアー</string>
-    <string name="context_menu_reviewer">ユーザーがレビューした変更</string>
-    <string name="context_menu_owner">ユーザーが提出した変更</string>
+    <string name="context_menu_reviewer">レビューした変更</string>
+    <string name="context_menu_owner">提出した変更</string>
     <string name="context_menu_view_diff_dialog">ダイアログ</string>
     <string name="context_menu_diff_view_in_browser">ブラウザ</string>
     <string name="choose_diff_view">diff参照方法を選択</string>
-    <string name="new_text">新規テキスト</string>
+    <string name="stalker_mode_toast">ユーザー追跡中:</string>
+    <string name="share">共有</string>
+    <string name="commit_shared_from_mgerrit" formatted="false">コミット %s mGerritから共有!</string>
+    <string name="found_cards_toast" formatted="false"><![CDATA[%dコミットを %d秒で見つけました]]></string>
+    <string name="cancel">キャンセル</string>
+    <string name="menu_projects">プロジェクト一覧</string>
+    <string name="aokp_changelog">AOKP変更履歴</string>
+    <string name="download_update">ダウンロード</string>
+    <string name="cyanogenmod_warning">CyanogenModのGerritインスタンスには必要なAPIがすべて含まれているわけではありません。
+        残念ながらいくつかの情報は利用できません。
+    </string>
+    <string name="please_select_update_for_range">変更履歴を参照するファイルを選択してください</string>
+    <string name="download_rom_zip">ROM zipをダウンロード</string>
 </resources>
