@@ -57,6 +57,7 @@ public abstract class CardsActivity extends Activity {
     private long mTimerStart;
     private CommitterObject mCommitterObject = null;
     private RequestQueue mRequestQueue;
+    public boolean inProject;
 
     // draws a stack of cards
     // Currently not used as the number of cards tends
@@ -136,7 +137,7 @@ public abstract class CardsActivity extends Activity {
                 .append(JSONCommit.DETAILED_ACCOUNTS_ARG).toString();
         // track if we are in project
         String project = getIntent().getStringExtra(JSONCommit.KEY_PROJECT);
-        boolean inProject = false;
+        inProject = false;
         boolean followingUser = false;
         try {
             if (project != null && !project.trim().isEmpty()) {
@@ -144,7 +145,7 @@ public abstract class CardsActivity extends Activity {
             }
         } catch (NullPointerException npe) {
             // not looking at one project
-            followingUser = false;
+            inProject = false;
         }
         CommitterObject user = null;
         try {

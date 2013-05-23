@@ -73,7 +73,9 @@ public class StackAdapter extends BaseAdapter {
     }
 
     public void setItems(CardStack cardStack, int position) {
-        mStacks.set(position, cardStack);
+        if (mStacks.size() > position) {
+            mStacks.set(position, cardStack);
+        }
     }
 
 }

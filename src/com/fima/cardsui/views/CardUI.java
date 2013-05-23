@@ -199,7 +199,7 @@ public class CardUI extends FrameLayout {
                     TranslateAnimation anim = new TranslateAnimation(0, 0,
                             translationY, translationY);
                     anim.setFillAfter(true);
-                    anim.setDuration(0);
+                    anim.setDuration(10);
                     mQuickReturnView.startAnimation(anim);
                 } else {
                     mQuickReturnView.setTranslationY(translationY);

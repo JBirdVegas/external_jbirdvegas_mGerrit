@@ -94,7 +94,7 @@
             style="@style/ActionViewsStyle"/>
         <ImageView
             android:id="@+id/commit_card_moar_info"
-            android:src="@drawable/ic_dialog_info"
+            android:src="@android:drawable/ic_menu_info_details"
             style="@style/ActionViewsStyle"/>
     </LinearLayout>
 </LinearLayout>

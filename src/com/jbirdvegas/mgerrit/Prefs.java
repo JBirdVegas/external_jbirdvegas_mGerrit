@@ -51,7 +51,6 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 preference.setSummary((CharSequence) o);
-                StaticWebAddress.setGERRIT_INSTANCE_WEBSITE((String) o);
                 Toast.makeText(getApplicationContext(), "Using Gerrit: " + o, Toast.LENGTH_LONG).show();
                 return true;
             }
@@ -67,6 +66,13 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
     public static String getCurrentGerrit(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(GERRIT_KEY, StaticWebAddress.HTTP_GERRIT_AOKP_CO);
+    }
+
+    public static void setCurrentGerrit(Context context, String gerritInstanceUrl) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putString(GERRIT_KEY, gerritInstanceUrl)
+                .commit();
     }
 
     /**
