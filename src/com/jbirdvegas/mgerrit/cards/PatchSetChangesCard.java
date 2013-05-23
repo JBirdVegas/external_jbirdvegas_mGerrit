@@ -35,6 +35,7 @@ import com.jbirdvegas.mgerrit.dialogs.DiffDialog;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
+import java.net.URLEncoder;
 import java.util.List;
 
 public class PatchSetChangesCard extends Card {
@@ -73,6 +74,7 @@ public class PatchSetChangesCard extends Card {
 
     private View generateChangedFileView(final ChangedFile changedFile, final Context context) {
         View innerRootView = mInflater.inflate(R.layout.patchset_file_changed_list_item, null);
+        innerRootView.setTag(changedFile);
         TextView path = (TextView)
                 innerRootView.findViewById(R.id.changed_file_path);
         TextView inserted = (TextView)
@@ -122,20 +124,24 @@ public class PatchSetChangesCard extends Card {
                 // bug will be fixed don't abandon hope quite yet
                 //if (Prefs.getCurrentGerrit(context).equals(
                 //        context.getResources().getStringArray(R.array.gerrit_webaddresses)[0])) {
-                    ad.setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // http://gerrit.aokp.co/changes/AOKP%2Fexternal_jbirdvegas_mGerrit~master~I0d360472ee328c6cde0f8303b19a35f175869e68/revisions/current/patch
-                            // or
-                            // after v2.8 goes stable (returns Base64 encoded String)
-                            // curl https://gerrit-review.googlesource.com/changes/gerrit~master~Idc97af3d01999889d9b1a818fbd1bbe0b274dcf3/revisions/77e974c7070e274aaca3f2413a3fb53031d0f50e/files/ReleaseNotes%2fReleaseNotes-2.5.3.txt/content
-                            String base = "%schanges/%s/revisions/current/patch";
-                            String url = String.format(base,
-                                    Prefs.getCurrentGerrit(mCardsActivity),
-                                    mCommit.getId());
-                            launchDiffDialog(url, changedFile);
-                        }
-                    });
+                ad.setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // http://gerrit.aokp.co/changes/AOKP%2Fexternal_jbirdvegas_mGerrit~master~I0d360472ee328c6cde0f8303b19a35f175869e68/revisions/current/patch
+                        // or
+                        // after v2.8 goes stable (returns Base64 encoded String)
+// curl https://gerrit-review.googlesource.com/changes/gerrit~master~Idc97af3d01999889d9b1a818fbd1bbe0b274dcf3/revisions/77e974c7070e274aaca3f2413a3fb53031d0f50e/files/ReleaseNotes%2fReleaseNotes-2.5.3.txt/content
+                        ///changes/{change-id}/revisions/{revision-id}/files/{file-id}/content
+                        String base = "%schanges/%s/revisions/current/patch";
+                        String base64 = "%schanges/%s/revisions/%s/files/%s/content";
+                        String url = String.format(base64,
+                                Prefs.getCurrentGerrit(mCardsActivity),
+                                mCommit.getId(),
+                                mCommit.getCurrentRevision(),
+                                URLEncoder.encode(((ChangedFile) view.getTag()).getPath()));
+                        launchDiffDialog(url, changedFile);
+                    }
+                });
                 //}
                 ad.setNegativeButton(
                         R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {

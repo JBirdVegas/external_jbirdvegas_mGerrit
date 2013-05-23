@@ -3,8 +3,6 @@ package com.jbirdvegas.mgerrit.listeners;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import com.jbirdvegas.mgerrit.CardsActivity;
 import com.jbirdvegas.mgerrit.Prefs;
@@ -24,7 +22,8 @@ public class TrackingClickListener implements View.OnClickListener {
      * Generate an AlertDialog asking if requesting original content
      * selected user has submitted (status:owner) or if all commits
      * user is tagged in as a Reviewer
-     * @param activity Calling Activity
+     *
+     * @param activity        Calling Activity
      * @param committerObject User selected to follow (stalk)
      */
     public TrackingClickListener(Activity activity, CommitterObject committerObject) {
@@ -34,6 +33,7 @@ public class TrackingClickListener implements View.OnClickListener {
 
     /**
      * Shows all commits to a specific project
+     *
      * @param projectPath
      */
     public TrackingClickListener(Activity activity, String projectPath) {

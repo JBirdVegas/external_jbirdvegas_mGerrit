@@ -93,8 +93,8 @@ public class Diff {
                         charCounter - 1,
                         end,
                         0);
-            // highlight removed code with red background
-            // do not highlight file diffs
+                // highlight removed code with red background
+                // do not highlight file diffs
             } else if (trimmed.startsWith("-") && !trimmed.startsWith("---")) {
                 spannableString.setSpan(new BackgroundColorSpan(resources.getColor(R.color.text_red)),
                         charCounter - 1,
@@ -102,22 +102,22 @@ public class Diff {
                         0);
             } else if (trimmed.startsWith("@@")) {
                 spannableString.setSpan(new ForegroundColorSpan(resources.getColor(android.R.color.holo_purple)),
-                        charCounter -1,
+                        charCounter - 1,
                         end,
                         0);
             } else if (trimmed.startsWith("---")) {
                 spannableString.setSpan(new ForegroundColorSpan(resources.getColor(R.color.text_brown)),
-                        charCounter -1,
+                        charCounter - 1,
                         end,
                         0);
             } else if (trimmed.startsWith("+++")) {
                 spannableString.setSpan(new ForegroundColorSpan(Color.BLUE),
-                        charCounter -1,
+                        charCounter - 1,
                         end,
                         0);
             } else if (trimmed.startsWith("a/")) {
                 spannableString.setSpan(new ForegroundColorSpan(resources.getColor(R.color.text_orange)),
-                        charCounter -1,
+                        charCounter - 1,
                         end,
                         0);
             }
@@ -168,6 +168,7 @@ public class Diff {
 
     // used to track index of tab chars
     LinkedList<Integer> tabs = new LinkedList<Integer>();
+
     private String unescape(String s) {
         int i = 0, len = s.length(), realCounter = 0;
         char c;

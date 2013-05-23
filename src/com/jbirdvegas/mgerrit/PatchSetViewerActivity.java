@@ -208,6 +208,7 @@ public class PatchSetViewerActivity extends Activity {
     }
 
     private CommitterObject committerObject = null;
+
     public void registerViewForContextMenu(View view) {
         registerForContextMenu(view);
     }

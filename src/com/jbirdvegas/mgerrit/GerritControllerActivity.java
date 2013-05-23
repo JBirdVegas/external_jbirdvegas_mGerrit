@@ -108,7 +108,7 @@ public class GerritControllerActivity extends TabActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.menu_save:
                 Intent intent = new Intent(this, Prefs.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

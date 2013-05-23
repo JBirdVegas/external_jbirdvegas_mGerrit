@@ -28,7 +28,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
-public class Prefs extends PreferenceActivity implements Preference.OnPreferenceClickListener{
+public class Prefs extends PreferenceActivity implements Preference.OnPreferenceClickListener {
     private static final CharSequence CARDS_UI_KEY = "open_source_lib_cards_ui";
     private static final CharSequence NINE_OLD_ANDROIDS_KEY = "open_source_lib_nine_old_androids";
     private static final CharSequence AOSP_VOLLEY = "open_source_aosp_volley";
@@ -60,6 +60,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
 
     /**
      * Used to get current gerrit instance base url
+     *
      * @param context needed for SharedPreferences
      * @return url of preferred gerrit instance
      */
@@ -70,6 +71,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
 
     /**
      * handles onClick of open source libraries
+     *
      * @param preference library user selected
      * @return true if handled
      */
@@ -80,6 +82,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
 
     /**
      * reads Preference#getSummary() to launch url in browser
+     *
      * @param pref selected library preference
      * @return true if launch was successful
      */

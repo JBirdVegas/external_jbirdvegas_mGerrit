@@ -58,7 +58,7 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
         TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);
         TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
         name.setOnClickListener(
-                new TrackingClickListener (
+                new TrackingClickListener(
                         activity,
                         values.get(position).getCommiterObject()));
         GravatarHelper.attachGravatarToTextView(name,

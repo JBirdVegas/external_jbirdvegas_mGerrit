@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * MD5Helper was adapted from Gravatar's documentation
- *
+ * <p/>
  * Please see https://en.gravatar.com/site/implement/images/java/
  * for original code
  */

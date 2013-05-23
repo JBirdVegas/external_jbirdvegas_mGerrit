@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class JSONCommit implements Parcelable{
+public class JSONCommit implements Parcelable {
     private static final String TAG = JSONCommit.class.getSimpleName();
 
     // public
@@ -122,7 +122,7 @@ public class JSONCommit implements Parcelable{
          * @param c Context of caller to access resources
          * @return human/user readable status explanation
          */
-        public String getExplaination(Context c){
+        public String getExplaination(Context c) {
             return null;
         }
 
@@ -318,7 +318,7 @@ public class JSONCommit implements Parcelable{
         JSONObject filesObject = revisionObject.getJSONObject(KEY_CHANGED_FILES);
         List<ChangedFile> list = new ArrayList<ChangedFile>(0);
         JSONArray keysArray = filesObject.names();
-        for (int i = 0; keysArray.length()> i; i++) {
+        for (int i = 0; keysArray.length() > i; i++) {
             try {
                 String path = (String) keysArray.get(i);
                 list.add(ChangedFile.parseFromJSONObject(path,
@@ -458,7 +458,7 @@ public class JSONCommit implements Parcelable{
     public JSONCommit(Parcel parcel) {
         mRawJSONCommit = null;
         mKind = parcel.readString();
-        mId  = parcel.readString();
+        mId = parcel.readString();
         mProject = parcel.readString();
         mBranch = parcel.readString();
         mChangeId = parcel.readString();
