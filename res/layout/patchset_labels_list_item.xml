@@ -20,6 +20,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:paddingLeft="@dimen/reviewer_padding_left_indent"
+    android:paddingTop="@dimen/reviewer_padding_top"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="left">
     <TextView

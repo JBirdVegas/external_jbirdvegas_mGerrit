@@ -18,23 +18,30 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.PatchSetReviewersAdapter;
+import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
+import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.objects.Reviewer;
+
+import java.util.List;
 
 public class PatchSetReviewersCard extends Card {
     private static final String TAG = PatchSetReviewersAdapter.class.getSimpleName();
+    private static final boolean DEBUG = true;
     private final PatchSetViewerActivity mPatchSetViewActiviy;
     private final RequestQueue mRequestQueue;
     private JSONCommit mJSONCommit;
-    private ListView mReviewersList;
-    private ListView mVerifiedList;
+    private LayoutInflater mLayoutInflater;
 
     public PatchSetReviewersCard(JSONCommit commit, PatchSetViewerActivity patchSetViewerActivity, RequestQueue requestQueue) {
         mJSONCommit = commit;
@@ -44,38 +51,79 @@ public class PatchSetReviewersCard extends Card {
 
     @Override
     public View getCardContent(Context context) {
-        LayoutInflater layoutInflater = (LayoutInflater)
+        mLayoutInflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.patchset_labels_card, null);
-        mReviewersList = (ListView)
-                view.findViewById(R.id.patchset_labels_code_reviewers);
-        mVerifiedList = (ListView)
-                view.findViewById(R.id.patchset_labels_verified_reviewers);
-        // don't try to set from null values
-        if (mJSONCommit.getCodeReviewers() == null) {
-            // *hopefully* the only reason this would be null is if user is
-            // viewing ABANDONED tab so just remove the card
-            view.setVisibility(View.GONE);
-            return view;
+        LinearLayout rootView =
+                (LinearLayout) mLayoutInflater.inflate(R.layout.patchset_labels_card, null);
+        LinearLayout codeReviewersContainer =
+                (LinearLayout) rootView.findViewById(R.id.patchset_lables_reviewers);
+        LinearLayout verifyReviewersContainer =
+                (LinearLayout) rootView.findViewById(R.id.patchset_lables_verifier);
+        TextView reviewerLabel = (TextView) rootView.findViewById(R.id.patchset_labels_code_reviewer_title);
+        TextView verifierLabel = (TextView) rootView.findViewById(R.id.patchset_labels_verified_reviewer_title);
+        List<Reviewer> reviewerList = mJSONCommit.getCodeReviewers();
+        List<Reviewer> verifierList = mJSONCommit.getVerifiedReviewers();
+
+        if (reviewerList != null) {
+            for (Reviewer reviewer : mJSONCommit.getCodeReviewers()) {
+                codeReviewersContainer.addView(getReviewerView(reviewer));
+            }
         } else {
-            mReviewersList.setAdapter(new PatchSetReviewersAdapter(mPatchSetViewActiviy,
-                    mJSONCommit.getCodeReviewers(),
-                    mRequestQueue));
+            codeReviewersContainer.setVisibility(View.GONE);
+            reviewerLabel.setVisibility(View.GONE);
         }
-        // don't try to set from null values
-        if (mJSONCommit.getVerifiedReviewers() == null) {
-            PatchSetViewerActivity.setNotFoundListView(context, mVerifiedList);
+
+        if (verifierList != null) {
+            for (Reviewer reviewer : mJSONCommit.getVerifiedReviewers()) {
+                verifyReviewersContainer.addView(getReviewerView(reviewer));
+            }
         } else {
-            mVerifiedList.setAdapter(
-                    new PatchSetReviewersAdapter(mPatchSetViewActiviy,
-                            mJSONCommit.getVerifiedReviewers(),
-                            mRequestQueue));
+            verifyReviewersContainer.setVisibility(View.GONE);
+            verifierLabel.setVisibility(View.GONE);
         }
-        // static import of
-        // PatchSetViewerActivity.setListViewHeightBasedOnChildren(ListView)
-        // handles setting ListView height correctly
-        //setListViewHeightBasedOnChildren(mReviewersList, mVerifiedList);
-        return view;
+        return rootView;
+    }
+    public View getReviewerView(Reviewer reviewer) {
+        View root = mLayoutInflater.inflate(R.layout.patchset_labels_list_item, null);
+        TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);
+        TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
+        name.setOnClickListener(
+                new TrackingClickListener(
+                        mPatchSetViewActiviy,
+                        reviewer.getCommiterObject()));
+        GravatarHelper.attachGravatarToTextView(name,
+                reviewer.getEmail(),
+                mRequestQueue);
+        if (DEBUG) {
+            Log.d(TAG, new StringBuilder(0)
+                    .append("Found Reviewer: ")
+                    .append(reviewer.toString()).toString());
+        }
+        setColoredApproval(reviewer.getValue(), approval);
+        name.setText(reviewer.getName());
+        return root;
     }
 
+    private void setColoredApproval(String value, TextView approval) {
+        int mGreen = mPatchSetViewActiviy.getResources().getColor(R.color.text_green);
+        int mRed = mPatchSetViewActiviy.getResources().getColor(R.color.text_red);
+        int plusStatus;
+        if (value == null) {
+            value = "0";
+        }
+        try {
+            plusStatus = Integer.parseInt(value);
+            if (plusStatus >= 1) {
+                approval.setText('+' + value);
+                approval.setTextColor(mGreen);
+            } else if (plusStatus <= -1) {
+                approval.setText(value);
+                approval.setTextColor(mRed);
+            } else {
+                approval.setText(Reviewer.NO_SCORE);
+            }
+        } catch (NumberFormatException nfe) {
+            Log.e(TAG, "Failed to grab reviewers approval");
+        }
+    }
 }
