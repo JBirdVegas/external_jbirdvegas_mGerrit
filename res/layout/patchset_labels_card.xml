@@ -31,12 +31,11 @@
         android:textAppearance="@style/CardTitle"
         android:textSize="20sp"/>
 
-    <ListView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/patchset_labels_code_reviewers"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"/>
+        android:id="@+id/patchset_lables_reviewers"/>
 
     <TextView
         android:layout_height="wrap_content"
@@ -49,11 +48,9 @@
         android:textAppearance="@style/CardTitle"
         android:textSize="20sp"/>
 
-    <ListView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/patchset_labels_verified_reviewers"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"/>
-
+        android:id="@+id/patchset_lables_verifier"/>
 </LinearLayout>
