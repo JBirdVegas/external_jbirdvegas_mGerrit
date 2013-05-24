@@ -3,10 +3,12 @@ package com.jbirdvegas.mgerrit.listeners;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
 import com.jbirdvegas.mgerrit.CardsActivity;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
@@ -17,6 +19,7 @@ public class TrackingClickListener implements View.OnClickListener {
     private String mProjectPath = null;
     private Activity mCallerActivity = null;
     private CommitterObject mCommitterObject = null;
+    private ChangeLogRange mChangeLogRange = null;
 
     /**
      * Generate an AlertDialog asking if requesting original content
@@ -45,6 +48,12 @@ public class TrackingClickListener implements View.OnClickListener {
         mReviewer = reviewer;
     }
 
+    public TrackingClickListener(CardsActivity mCardsActivity, String project, ChangeLogRange changeLogRange) {
+        mCallerActivity = mCardsActivity;
+        mProjectPath = project;
+        mChangeLogRange = changeLogRange;
+    }
+
     public TrackingClickListener addUserToStalk(CommitterObject committerObject) {
         mCommitterObject = committerObject;
         return this;
@@ -68,8 +77,9 @@ public class TrackingClickListener implements View.OnClickListener {
     @Override
     public void onClick(final View view) {
         // Show content of a single user
-        if (mCommitterObject != null && mProjectPath == null) {
+        if (mCommitterObject != null && mProjectPath == null && mChangeLogRange == null) {
             // ask which content we are interested in
+            CardsActivity.mSkipStalking = false;
             AlertDialog.Builder builder = new AlertDialog.Builder(mCallerActivity);
             builder.setTitle(R.string.context_menu_view_diff_dialog);
 
@@ -95,13 +105,19 @@ public class TrackingClickListener implements View.OnClickListener {
                         }
                     });
             builder.create().show();
-        } else if (mProjectPath != null && mCommitterObject == null) {
+        } else if (mProjectPath != null && mCommitterObject == null && mChangeLogRange == null) {
             // Show content of an entire project relative to our current status
             view.getContext().startActivity(Prefs.getStalkerIntent(mCallerActivity)
                     .putExtra(JSONCommit.KEY_PROJECT, mProjectPath));
-        } else if (mCommitterObject != null && mProjectPath != null) {
+        } else if (mCommitterObject != null && mProjectPath != null && mChangeLogRange == null) {
+            CardsActivity.mSkipStalking = false;
             view.getContext().startActivity(Prefs.getStalkerIntent(mCallerActivity, mCommitterObject)
                     .putExtra(JSONCommit.KEY_PROJECT, mProjectPath));
+        } else if (mCommitterObject != null && mProjectPath != null && mChangeLogRange != null) {
+            Intent changelogStalker = Prefs.getStalkerIntent(mCallerActivity, mCommitterObject)
+                    .putExtra(JSONCommit.KEY_PROJECT, mProjectPath)
+                    .putExtra(ChangeLogRange.KEY, mChangeLogRange);
+            view.getContext().startActivity(changelogStalker);
         }
     }
 

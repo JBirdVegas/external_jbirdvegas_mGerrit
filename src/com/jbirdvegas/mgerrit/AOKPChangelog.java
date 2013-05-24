@@ -30,6 +30,7 @@ public class AOKPChangelog extends Activity {
     private static final String TAG = AOKPChangelog.class.getSimpleName();
     public static final String KEY_CHANGELOG_START = "changelog_start";
     public static final String KEY_CHANGELOG_STOP = "changelog_stop";
+    public static String KEY_CHANGELOG = "changelog_range";
     private RequestQueue mRequestQueue;
     private String query = "http://goo.im/json2&path=/devs/aokp/" + Build.DEVICE + "/nightly";
     private long mDate;

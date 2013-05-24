@@ -34,8 +34,8 @@ import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.ImageCard;
+import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
-import com.jbirdvegas.mgerrit.objects.GooFileObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import org.json.JSONArray;
@@ -55,7 +55,7 @@ public abstract class CardsActivity extends Activity {
     public static final String AT_SYMBOL = "@";
     public static final String KEY_OWNER = "owner";
     public static final String KEY_REVIEWER = "reviewer";
-    private boolean mSkipStalking;
+    public static boolean mSkipStalking;
     private static final boolean DEBUG = true;
     private static final boolean CHATTY = false;
     protected String TAG = getClass().getSimpleName();
@@ -64,6 +64,7 @@ public abstract class CardsActivity extends Activity {
     private CommitterObject mCommitterObject = null;
     private RequestQueue mRequestQueue;
     public boolean inProject;
+    private ChangeLogRange mChangelogRange;
 
     // draws a stack of cards
     // Currently not used as the number of cards tends
@@ -80,8 +81,6 @@ public abstract class CardsActivity extends Activity {
 
     // renders each card separately
     protected void drawCardsFromList(List<CommitCard> cards, CardUI cardUI) {
-        // reset our stalking switch
-        mSkipStalking = false;
         int count = 0;
         for (int i = 0; cards.size() > i; i++) {
             cardUI.addCard(cards.get(i));
@@ -158,17 +157,18 @@ public abstract class CardsActivity extends Activity {
             inProject = false;
         }
         final CommitterObject[] user = {null};
-        try {
-            user[0] = getIntent().getExtras().getParcelable(KEY_DEVELOPER);
-            mCommitterObject = user[0];
-            // throws null if not user
-            user[0].getEmail();
-            followingUser = true;
-        } catch (NullPointerException npe) {
-            // not looking at one user
-            followingUser = false;
-        }
         if (!mSkipStalking) {
+            try {
+                user[0] = getIntent().getExtras().getParcelable(KEY_DEVELOPER);
+                mCommitterObject = user[0];
+                // throws null if not user
+                user[0].getEmail();
+                followingUser = true;
+            } catch (NullPointerException npe) {
+                // not looking at one user
+                followingUser = false;
+            }
+
             try {
                 mCommitterObject = user[0];
                 String userEmail = user[0].getEmail();
@@ -239,7 +239,7 @@ public abstract class CardsActivity extends Activity {
                         .append("project:")
                         .append(URLEncoder.encode(project));
 
-                if (followingUser) {
+                if (followingUser && !mSkipStalking) {
                     builder.append("+owner:" + mCommitterObject.getEmail());
                 }
                 builder.append(')')
@@ -254,15 +254,11 @@ public abstract class CardsActivity extends Activity {
         }
 
         try {
-            GooFileObject gooFileStart = getIntent()
+            mChangelogRange= getIntent()
                     .getExtras()
-                    .getParcelable(AOKPChangelog.KEY_CHANGELOG_START);
-            GooFileObject gooFileStop = getIntent()
-                    .getExtras()
-                    .getParcelable(AOKPChangelog.KEY_CHANGELOG_STOP);
-            if (gooFileStart != null
-                    && gooFileStop != null) {
-                loadChangeLog(gooFileStart, gooFileStop);
+                    .getParcelable(AOKPChangelog.KEY_CHANGELOG);
+            if (mChangelogRange != null) {
+                loadChangeLog(mChangelogRange, user[0], project);
                 return;
             }
         } catch (NullPointerException npe) {
@@ -276,33 +272,28 @@ public abstract class CardsActivity extends Activity {
         loadScreen();
     }
 
-    private void loadChangeLog(final GooFileObject gooFileStart,
-                               final GooFileObject gooFileStop) {
+    private void loadChangeLog(final ChangeLogRange logRange, CommitterObject committerObject, String project) {
         new GerritTask(this) {
             @Override
             public void onJSONResult(String s) {
                 saveCards(s);
                 drawCardsFromList(
                         generateChangeLog(
-                                gooFileStart,
-                                gooFileStop, s),
+                                logRange, s),
                         mCards);
             }
         }.execute(mWebsite);
     }
 
-    private List<CommitCard> generateChangeLog(GooFileObject gooFileStart,
-                                               GooFileObject gooFileStop,
+    private List<CommitCard> generateChangeLog(ChangeLogRange logRange,
                                                String result) {
         List<CommitCard> commitCardList = new LinkedList<CommitCard>();
         try {
-            Log.d(TAG, "makeing changelog from GooFileObject: "+ gooFileStart);
+            Log.d(TAG, "makeing changelog from ChangeLogRange: "+ logRange);
             JSONArray jsonArray = new JSONArray(result);
             int arraySize = jsonArray.length();
             CommitCard commitCard = null;
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            Date startDate = new Date();
-            Date stopDate = new Date();
             for (int i = 0; arraySize > i; i++) {
                 commitCard = getCommitCard(jsonArray.getJSONObject(i),
                         getApplicationContext());
@@ -312,14 +303,12 @@ public abstract class CardsActivity extends Activity {
                     String subStringDate = formattedDate
                             .substring(0, formattedDate.length() - 10);
                     Date commitDate  = sdf.parse(subStringDate);
-                    startDate.setTime(gooFileStart.getModified());
-                    stopDate.setTime(gooFileStop.getModified());
                     if (CHATTY) {
                         Log.d(TAG, String.format("min: %s max: %s finding: %s",
-                                startDate, stopDate, commitDate));
+                                mChangelogRange.startTime(), mChangelogRange.endTime(), commitDate));
                     }
-                    if (startDate.before(commitDate)
-                            && commitDate.before(stopDate)) {
+                    if (mChangelogRange.isInRange(commitDate.getTime())) {
+                        commitCard.setChangeLogRange(mChangelogRange);
                         commitCardList.add(commitCard);
                         if (CHATTY) {
                             Log.d(TAG, "Commit included in changelog! "
