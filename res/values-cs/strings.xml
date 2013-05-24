@@ -77,4 +77,11 @@
     <string name="share">Sdílet</string>
     <string name="commit_shared_from_mgerrit" formatted="false">Požadavek %s sdílen přes mGerrit!</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[Nalezeno %d požadavů za %d sekund]]></string>
+    <string name="cancel">Zrušit</string>
+    <string name="menu_projects">Zobrazit podle projektu</string>
+    <string name="aokp_changelog">AOKP seznam změn</string>
+    <string name="download_update">Stáhnout</string>
+    <string name="cyanogenmod_warning">Gerrit CyanogenModu neobsahuje všechna potřebná API. Některé informace nebudou dostupné, je nám líto.</string>
+    <string name="please_select_update_for_range">Pro zobrazení změn je třeba vybrat soubor</string>
+    <string name="download_rom_zip">Stáhnout zip s ROM</string>
 </resources>
