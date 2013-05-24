@@ -18,7 +18,6 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.Base64Coder;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
 import com.jbirdvegas.mgerrit.objects.Diff;
-import com.jbirdvegas.mgerrit.tasks.GerritTask;
 
 import java.util.regex.Pattern;
 
@@ -30,30 +29,32 @@ public class DiffDialog extends AlertDialog.Builder {
     private static final String DIFF = "\n\nDIFF\n\n";
     private static final boolean DIFF_DEBUG = false;
     private final String mUrl;
+    private final RequestQueue mRequestQueue;
     private View mRootView;
     private final ChangedFile mChangedFile;
     private String mLineSplit = System.getProperty("line.separator");
     private LayoutInflater mInflater;
+    private TextView mDiffTextView;
 
-    public DiffDialog(final Context context, String website, ChangedFile changedFile) {
+    public DiffDialog(Context context, String website, ChangedFile changedFile) {
         super(context);
+        mRequestQueue = Volley.newRequestQueue(context);
         mUrl = website;
         mChangedFile = changedFile;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mRootView = mInflater.inflate(R.layout.diff_dialog, null);
         setView(mRootView);
-        Log.d(TAG, "Calling url: " + mUrl + "/b");
+        mDiffTextView = (TextView) mRootView.findViewById(R.id.diff_view_diff);
+        Log.d(TAG, "Calling url: " + mUrl); //+ "/b");
         if (DIFF_DEBUG) {
             debugRestDiffApi(context, mUrl, mChangedFile);
         }
-        new GerritTask(context) {
-            @Override
-            public void onJSONResult(String base64) {
-                String results = Base64Coder.decodeString(base64);
-                Log.d(TAG, "decoded base64: " + results);
-                setTextView((TextView) mRootView.findViewById(R.id.diff_view_diff), results);
-            }
-        }.execute(mUrl);
+        // we can use volley here because we return
+        // does not contain the magic number on the
+        // first line. return is just the Base64 formatted
+        // return
+        mRequestQueue.add(getBase64gRequest(mUrl, "/b"));
+        mRequestQueue.start();
     }
 
     private void debugRestDiffApi(Context context, String mUrl, ChangedFile mChangedFile) {
@@ -67,6 +68,9 @@ public class DiffDialog extends AlertDialog.Builder {
     }
 
     private Request getDebugRequest(String url, String arg) {
+        // seems a bug prevents the args from being respected???
+        // See here:
+        // https://groups.google.com/forum/?fromgroups#!topic/repo-discuss/xmFCHbD4Z0Q
         String limiter = "&o=context:2";
 
         final String args = arg + limiter;
@@ -97,10 +101,45 @@ public class DiffDialog extends AlertDialog.Builder {
         return debugRequest;
     }
 
-    private void setTextView(TextView textView, String result) {
-        textView.setText(result);
-        return;
-        /*
+    private Request getBase64gRequest(String url, String arg) {
+        // seems a bug prevents the args from being respected???
+        // See here:
+        // https://groups.google.com/forum/?fromgroups#!topic/repo-discuss/xmFCHbD4Z0Q
+        String limitContextLines = "&o=context:2";
+        final String args = arg + limitContextLines;
+        final String weburl = url + args;
+        Request debugRequest =
+                new StringRequest(weburl,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String s) {
+                                if (DIFF_DEBUG) {
+                                    Log.d(TAG, "[DEBUG-MODE]\n" +
+                                            "Decoded Response for args {" + args + '}'
+                                            + "\n"
+                                            + "url: " + weburl
+                                            + "\n==================================="
+                                            + Base64Coder.decodeString(s)
+                                            + "===================================="
+                                    );
+                                }
+                                setTextView(Base64Coder.decodeString(s));
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                Log.e(TAG, "Failed to download the diff", volleyError);
+                            }
+                        }
+                );
+        return debugRequest;
+    }
+
+    private void setTextView(String result) {
+        //textView.setText(result);
+        // return;
+
         Pattern pattern = Pattern.compile("\\Qdiff --git \\E");
         String[] filesChanged = pattern.split(result);
         StringBuilder builder = new StringBuilder(0);
@@ -124,14 +163,14 @@ public class DiffDialog extends AlertDialog.Builder {
         if (builder.length() == 0) {
             builder.append("Diff not found!");
         }
-        textView.setTypeface(Typeface.MONOSPACE);
+        mDiffTextView.setTypeface(Typeface.MONOSPACE);
         // rebuild text; required to respect the \n
         SpannableString spannableString = currentDiff.getColorizedSpan();
         if (spannableString != null) {
-            textView.setText(currentDiff.getColorizedSpan(), TextView.BufferType.SPANNABLE);
+            mDiffTextView.setText(currentDiff.getColorizedSpan(), TextView.BufferType.SPANNABLE);
         } else {
-            textView.setText("Failed to load diff :(");
+            mDiffTextView.setText("Failed to load diff :(");
         }
-        */
+
     }
 }
