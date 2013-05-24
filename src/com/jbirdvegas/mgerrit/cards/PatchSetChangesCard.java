@@ -35,7 +35,6 @@ import com.jbirdvegas.mgerrit.dialogs.DiffDialog;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
-import java.net.URLEncoder;
 import java.util.List;
 
 public class PatchSetChangesCard extends Card {
@@ -124,6 +123,7 @@ public class PatchSetChangesCard extends Card {
                 // bug will be fixed don't abandon hope quite yet
                 //if (Prefs.getCurrentGerrit(context).equals(
                 //        context.getResources().getStringArray(R.array.gerrit_webaddresses)[0])) {
+                /*
                 ad.setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -142,7 +142,7 @@ public class PatchSetChangesCard extends Card {
                         launchDiffDialog(url, changedFile);
                     }
                 });
-                //}
+                */
                 ad.setNegativeButton(
                         R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
                     @Override

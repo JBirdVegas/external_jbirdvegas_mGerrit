@@ -35,6 +35,7 @@ import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.ImageCard;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
+import com.jbirdvegas.mgerrit.objects.GooFileObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import org.json.JSONArray;
@@ -42,6 +43,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,7 +55,9 @@ public abstract class CardsActivity extends Activity {
     public static final String AT_SYMBOL = "@";
     public static final String KEY_OWNER = "owner";
     public static final String KEY_REVIEWER = "reviewer";
+    private boolean mSkipStalking;
     private static final boolean DEBUG = true;
+    private static final boolean CHATTY = false;
     protected String TAG = getClass().getSimpleName();
     private String mWebsite;
     private long mTimerStart;
@@ -74,16 +80,16 @@ public abstract class CardsActivity extends Activity {
 
     // renders each card separately
     protected void drawCardsFromList(List<CommitCard> cards, CardUI cardUI) {
-        // don't count position 0 else
-        // we get an off by one bug :(
+        // reset our stalking switch
+        mSkipStalking = false;
         int count = 0;
         for (int i = 0; cards.size() > i; i++) {
             cardUI.addCard(cards.get(i));
-            count = i;
+            count++;
         }
         Toast.makeText(getApplicationContext(),
                 String.format(getString(R.string.found_cards_toast,
-                        count + 1,
+                        count,
                         (System.currentTimeMillis() - mTimerStart) / 1000)),
                 Toast.LENGTH_LONG).show();
         cardUI.refresh();
@@ -111,7 +117,11 @@ public abstract class CardsActivity extends Activity {
     }
 
     private CommitCard getCommitCard(JSONObject jsonObject, Context context) {
-        return new CommitCard(new JSONCommit(jsonObject, context), this, mCommitterObject, mRequestQueue);
+        return new CommitCard(
+                new JSONCommit(jsonObject, context),
+                this,
+                mCommitterObject,
+                mRequestQueue);
     }
 
     CardUI mCards;
@@ -147,68 +157,74 @@ public abstract class CardsActivity extends Activity {
             // not looking at one project
             inProject = false;
         }
-        CommitterObject user = null;
+        final CommitterObject[] user = {null};
         try {
-            user = getIntent().getExtras().getParcelable(KEY_DEVELOPER);
-            mCommitterObject = user;
+            user[0] = getIntent().getExtras().getParcelable(KEY_DEVELOPER);
+            mCommitterObject = user[0];
             // throws null if not user
-            user.getEmail();
+            user[0].getEmail();
             followingUser = true;
         } catch (NullPointerException npe) {
             // not looking at one user
             followingUser = false;
         }
-        try {
-            mCommitterObject = user;
-            String userEmail = user.getEmail();
-            if (userEmail != null
-                    && !userEmail.trim().isEmpty()
-                    && userEmail.contains(AT_SYMBOL)) {
-                followingUser = true;
-                // http://gerrit.aokp.co/changes/?q=(owner:android@championswimmer.tk+status:open)&o=DETAILED_ACCOUNTS
-                StringBuilder builder = new StringBuilder(0)
-                        .append(Prefs.getCurrentGerrit(getApplicationContext()))
-                        .append("changes/?q=(")
-                        .append(user.getState())
-                        .append(':')
-                        .append(userEmail)
-                        .append('+')
-                        .append("status:")
-                        .append(getQuery());
-                try {
-                    if (project != null && !project.trim().isEmpty()) {
-                        builder.append('+')
-                                .append("project:")
-                                .append(URLEncoder.encode(project));
-                        inProject = true;
+        if (!mSkipStalking) {
+            try {
+                mCommitterObject = user[0];
+                String userEmail = user[0].getEmail();
+                if (userEmail != null
+                        && !userEmail.trim().isEmpty()
+                        && userEmail.contains(AT_SYMBOL)) {
+                    followingUser = true;
+                    // http://gerrit.aokp.co/changes/?q=(owner:android@championswimmer.tk+status:open)&o=DETAILED_ACCOUNTS
+                    StringBuilder builder = new StringBuilder(0)
+                            .append(Prefs.getCurrentGerrit(getApplicationContext()))
+                            .append("changes/?q=(")
+                            .append(user[0].getState())
+                            .append(':')
+                            .append(userEmail)
+                            .append('+')
+                            .append("status:")
+                            .append(getQuery());
+                    try {
+                        if (project != null && !project.trim().isEmpty()) {
+                            builder.append('+')
+                                    .append("project:")
+                                    .append(URLEncoder.encode(project));
+                            inProject = true;
+                        }
+                    } catch (NullPointerException npe) {
+                        // not looking at one project
                     }
-                } catch (NullPointerException npe) {
-                    // not looking at one project
+                    mWebsite = builder.append(')')
+                            .append(JSONCommit.DETAILED_ACCOUNTS_ARG)
+                            .toString();
+                    Toast.makeText(getApplicationContext(),
+                            // format string with a space
+                            String.format("%s %s",
+                                    getString(R.string.stalker_mode_toast),
+                                    user[0].getName()),
+                            Toast.LENGTH_LONG).show();
                 }
-                mWebsite = builder.append(')')
-                        .append(JSONCommit.DETAILED_ACCOUNTS_ARG)
-                        .toString();
-                Toast.makeText(getApplicationContext(),
-                        // format string with a space
-                        String.format("%s %s", getString(R.string.stalker_mode_toast), user.getName()),
-                        Toast.LENGTH_LONG).show();
+
+                // now add a project card if
+                // we are looking at a single project
+                ImageCard userImageCard = new ImageCard(mRequestQueue, user[0].getName(), user[0]);
+                userImageCard.setOnCardSwipedListener(new Card.OnCardSwiped() {
+                    @Override
+                    public void onCardSwiped(Card card, View layout) {
+                        mCommitterObject = null;
+                        user[0] = null;
+                        mSkipStalking = true;
+                        getIntent().getExtras().putParcelable(KEY_DEVELOPER, mCommitterObject);
+                        onCreate(null);
+                    }
+                });
+                mCards.addCard(userImageCard, true);
+            } catch (NullPointerException npe) {
+                // non author specific view
+                // use default website
             }
-
-            // now add a project card if
-            // we are looking at a single project
-
-            ImageCard userImageCard = new ImageCard(mRequestQueue, user.getName(), user);
-            userImageCard.setOnCardSwipedListener(new Card.OnCardSwiped() {
-                @Override
-                public void onCardSwiped(Card card, View layout) {
-                    mCommitterObject = null;
-                    finish();
-                }
-            });
-            mCards.addCard(userImageCard, true);
-        } catch (NullPointerException npe) {
-            // non author specific view
-            // use default website
         }
         // handle if project was clicked
         try {
@@ -237,10 +253,98 @@ public abstract class CardsActivity extends Activity {
             if (DEBUG) Log.e(TAG, "Project key not found in intent!");
         }
 
+        try {
+            GooFileObject gooFileStart = getIntent()
+                    .getExtras()
+                    .getParcelable(AOKPChangelog.KEY_CHANGELOG_START);
+            GooFileObject gooFileStop = getIntent()
+                    .getExtras()
+                    .getParcelable(AOKPChangelog.KEY_CHANGELOG_STOP);
+            if (gooFileStart != null
+                    && gooFileStop != null) {
+                loadChangeLog(gooFileStart, gooFileStop);
+                return;
+            }
+        } catch (NullPointerException npe) {
+            // not making a changelog
+            if (DEBUG) Log.e(TAG, "Not making changelog");
+        }
+
         if (savedInstanceState == null) {
             saveCards("");
         }
         loadScreen();
+    }
+
+    private void loadChangeLog(final GooFileObject gooFileStart,
+                               final GooFileObject gooFileStop) {
+        new GerritTask(this) {
+            @Override
+            public void onJSONResult(String s) {
+                saveCards(s);
+                drawCardsFromList(
+                        generateChangeLog(
+                                gooFileStart,
+                                gooFileStop, s),
+                        mCards);
+            }
+        }.execute(mWebsite);
+    }
+
+    private List<CommitCard> generateChangeLog(GooFileObject gooFileStart,
+                                               GooFileObject gooFileStop,
+                                               String result) {
+        List<CommitCard> commitCardList = new LinkedList<CommitCard>();
+        try {
+            Log.d(TAG, "makeing changelog from GooFileObject: "+ gooFileStart);
+            JSONArray jsonArray = new JSONArray(result);
+            int arraySize = jsonArray.length();
+            CommitCard commitCard = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            Date startDate = new Date();
+            Date stopDate = new Date();
+            for (int i = 0; arraySize > i; i++) {
+                commitCard = getCommitCard(jsonArray.getJSONObject(i),
+                        getApplicationContext());
+                try {
+                    String formattedDate = commitCard
+                            .getJsonCommit().getLastUpdatedDate();
+                    String subStringDate = formattedDate
+                            .substring(0, formattedDate.length() - 10);
+                    Date commitDate  = sdf.parse(subStringDate);
+                    startDate.setTime(gooFileStart.getModified());
+                    stopDate.setTime(gooFileStop.getModified());
+                    if (CHATTY) {
+                        Log.d(TAG, String.format("min: %s max: %s finding: %s",
+                                startDate, stopDate, commitDate));
+                    }
+                    if (startDate.before(commitDate)
+                            && commitDate.before(stopDate)) {
+                        commitCardList.add(commitCard);
+                        if (CHATTY) {
+                            Log.d(TAG, "Commit included in changelog! "
+                                    + commitCard.getJsonCommit().getSubject());
+                        }
+                    } else {
+                        if (CHATTY) {
+                            Log.d(TAG, "Commit Excluded from changelog! "
+                                    + commitCard.getJsonCommit().getSubject());
+                        }
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (JSONException e) {
+            Log.d(TAG, new StringBuilder(0)
+                    .append(getString(R.string.failed_to_parse_json_response))
+                    .append(' ')
+                    .append(mWebsite)
+                    .append('\n')
+                    .append(result).toString(), e);
+            showErrorDialog(e, false);
+        }
+        return commitCardList;
     }
 
     private Card getProjectCard(final String project) {
@@ -258,7 +362,7 @@ public abstract class CardsActivity extends Activity {
             @Override
             public void onCardSwiped(Card card, View layout) {
                 getIntent().putExtra(JSONCommit.KEY_PROJECT, "");
-                finish();
+                onCreate(null);
             }
         });
         card.setSwipableCard(true);
@@ -331,10 +435,14 @@ public abstract class CardsActivity extends Activity {
     }
 
     private void saveCards(String jsonCards) {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putString(KEY_STORED_CARDS, jsonCards).commit();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(KEY_STORED_CARDS, jsonCards)
+                .commit();
     }
 
     private String getStoredCards() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_STORED_CARDS, "");
+        return PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(KEY_STORED_CARDS, "");
     }
 }

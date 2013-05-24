@@ -23,6 +23,7 @@ import android.app.TabActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +34,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TabHost;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
+import com.jbirdvegas.mgerrit.objects.GooFileObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Project;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
@@ -51,11 +53,14 @@ public class GerritControllerActivity extends TabActivity {
     private TabHost mTabHost;
     private CommitterObject mCommitterObject;
     private String mProject;
+    private GooFileObject mChangeLogStart;
+    private GooFileObject mChangeLogStop;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        mTabHost = getTabHost();
         try {
             mCommitterObject = getIntent()
                     .getExtras()
@@ -70,14 +75,35 @@ public class GerritControllerActivity extends TabActivity {
         } catch (NullPointerException npe) {
             // not following one project
         }
+
+        try {
+            mChangeLogStart = getIntent()
+                    .getExtras()
+                    .getParcelable(AOKPChangelog.KEY_CHANGELOG_START);
+            mChangeLogStop = getIntent()
+                    .getExtras()
+                    .getParcelable(AOKPChangelog.KEY_CHANGELOG_STOP);
+        } catch (NullPointerException npe) {
+            Log.d(TAG, "Changelog was null");
+        }
         // Setup tabs //
-        mTabHost = getTabHost();
         addTabs();
     }
 
     private void addTabs() {
         Intent base = new Intent();
-        base.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        base.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+            | Intent.FLAG_ACTIVITY_NO_HISTORY
+            | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (mChangeLogStart != null
+                && mChangeLogStop != null) {
+            Log.d(TAG, "Changelog in GerritControlerActivity: " + mChangeLogStart);
+            base.putExtra(AOKPChangelog.KEY_CHANGELOG_START, mChangeLogStart);
+            base.putExtra(AOKPChangelog.KEY_CHANGELOG_STOP, mChangeLogStop);
+            base.setClass(this, MergedTab.class);
+            this.startActivity(base);
+            return;
+        }
         // if we are stalking one user pass the user information
         // along to all the tabs
         if (mCommitterObject != null) {
@@ -226,6 +252,11 @@ public class GerritControllerActivity extends TabActivity {
                     }
                 }.execute(Prefs.getCurrentGerrit(this) + "projects/?d");
                 return true;
+            case R.id.menu_changelog:
+                Intent changelog = new Intent(this,
+                        AOKPChangelog.class);
+                changelog.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(changelog);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -235,7 +266,7 @@ public class GerritControllerActivity extends TabActivity {
         return this;
     }
 
-    private void refreshScreen(boolean keepTabPosition) {
+    public void refreshScreen(boolean keepTabPosition) {
         int currentTab = getTabHost().getCurrentTab();
         mTabHost.clearAllTabs();
         addTabs();

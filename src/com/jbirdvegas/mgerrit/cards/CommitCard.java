@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.CardsActivity;
@@ -123,11 +124,22 @@ public class CommitCard extends Card {
                 Intent intent = new Intent(context, PatchSetViewerActivity.class);
                 // example website
                 // http://gerrit.aokp.co/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
-                intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
-                        .append(Prefs.getCurrentGerrit(context))
-                        .append(StaticWebAddress.getQuery())
-                        .append(mCommit.getCommitNumber())
-                        .append(JSONCommit.CURRENT_PATCHSET_ARGS).toString());
+
+                // place a note for CM Viewers
+                if (Prefs.getCurrentGerrit(context).contains("cyanogenmod")) {
+                    intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
+                            .append(Prefs.getCurrentGerrit(context))
+                            .append(StaticWebAddress.getQuery())
+                            .append(mCommit.getCommitNumber())
+                            .append(JSONCommit.CURRENT_CM_ARGS).toString());
+                    Toast.makeText(context, R.string.cyanogenmod_warning, Toast.LENGTH_LONG).show();
+                } else {
+                    intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
+                            .append(Prefs.getCurrentGerrit(context))
+                            .append(StaticWebAddress.getQuery())
+                            .append(mCommit.getCommitNumber())
+                            .append(JSONCommit.CURRENT_PATCHSET_ARGS).toString());
+                }
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 context.startActivity(intent);
             }
@@ -165,6 +177,10 @@ public class CommitCard extends Card {
 
     public void update(JSONCommit commit) {
         this.mCommit = commit;
+    }
+
+    public JSONCommit getJsonCommit() {
+        return mCommit;
     }
 
     /**
