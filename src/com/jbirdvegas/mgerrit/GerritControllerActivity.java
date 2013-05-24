@@ -33,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TabHost;
+import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
@@ -61,13 +62,15 @@ public class GerritControllerActivity extends TabActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         mTabHost = getTabHost();
-        try {
-            mCommitterObject = getIntent()
-                    .getExtras()
-                    .getParcelable(CardsActivity.KEY_DEVELOPER);
-        } catch (NullPointerException npe) {
-            // non author specific view
-            // use default
+        if (!CardsActivity.mSkipStalking) {
+            try {
+                mCommitterObject = getIntent()
+                        .getExtras()
+                        .getParcelable(CardsActivity.KEY_DEVELOPER);
+            } catch (NullPointerException npe) {
+                // non author specific view
+                // use default
+            }
         }
 
         try {
@@ -98,15 +101,15 @@ public class GerritControllerActivity extends TabActivity {
         if (mChangeLogStart != null
                 && mChangeLogStop != null) {
             Log.d(TAG, "Changelog in GerritControlerActivity: " + mChangeLogStart);
-            base.putExtra(AOKPChangelog.KEY_CHANGELOG_START, mChangeLogStart);
-            base.putExtra(AOKPChangelog.KEY_CHANGELOG_STOP, mChangeLogStop);
+            base.putExtra(AOKPChangelog.KEY_CHANGELOG,
+                    new ChangeLogRange(mChangeLogStart, mChangeLogStop));
             base.setClass(this, MergedTab.class);
             this.startActivity(base);
             return;
         }
         // if we are stalking one user pass the user information
         // along to all the tabs
-        if (mCommitterObject != null) {
+        if (mCommitterObject != null && !CardsActivity.mSkipStalking) {
             base.putExtra(CardsActivity.KEY_DEVELOPER, mCommitterObject);
         }
         if (mProject != null) {

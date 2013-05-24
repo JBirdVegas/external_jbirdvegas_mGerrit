@@ -34,6 +34,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.StaticWebAddress;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
+import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
@@ -48,6 +49,7 @@ public class CommitCard extends Card {
     private final RequestQueue mRequestQuery;
     private JSONCommit mCommit;
     private TextView mProjectTextView;
+    private ChangeLogRange mChangeLogRange;
 
     public CommitCard(JSONCommit commit,
                       CardsActivity activity,
@@ -90,7 +92,7 @@ public class CommitCard extends Card {
         mProjectTextView.setText(mCommit.getProject());
         mProjectTextView.setTextSize(18f);
         TrackingClickListener trackingClickListener =
-                new TrackingClickListener(mCardsActivity, mCommit.getProject());
+                new TrackingClickListener(mCardsActivity, mCommit.getProject(), mChangeLogRange);
         if (mCommitterObject != null) {
             trackingClickListener.addUserToStalk(mCommitterObject);
         }
@@ -173,6 +175,11 @@ public class CommitCard extends Card {
             changedFilesTv.setVisibility(View.GONE);
         }
         return commitCardView;
+    }
+
+    public CommitCard setChangeLogRange(ChangeLogRange logRange) {
+        mChangeLogRange = logRange;
+        return this;
     }
 
     public void update(JSONCommit commit) {
