@@ -343,7 +343,6 @@ public class CardStack extends AbstractCard {
 
                 Card card = cardStack.remove(index);
                 cardStack.add(card);
-
                 mAdapter.setItems(cardStack, cardStack.getPosition());
 
                 // refresh();

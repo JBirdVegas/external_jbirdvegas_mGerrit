@@ -123,7 +123,7 @@ public class PatchSetChangesCard extends Card {
                 // bug will be fixed don't abandon hope quite yet
                 //if (Prefs.getCurrentGerrit(context).equals(
                 //        context.getResources().getStringArray(R.array.gerrit_webaddresses)[0])) {
-                /*
+
                 ad.setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -134,15 +134,15 @@ public class PatchSetChangesCard extends Card {
                         ///changes/{change-id}/revisions/{revision-id}/files/{file-id}/content
                         String base = "%schanges/%s/revisions/current/patch";
                         String base64 = "%schanges/%s/revisions/%s/files/%s/content";
-                        String url = String.format(base64,
+                        String url = String.format(base,
                                 Prefs.getCurrentGerrit(mCardsActivity),
-                                mCommit.getId(),
-                                mCommit.getCurrentRevision(),
-                                URLEncoder.encode(((ChangedFile) view.getTag()).getPath()));
+                                mCommit.getId());
+                                //mCommit.getCurrentRevision(),
+                                //URLEncoder.encode(((ChangedFile) view.getTag()).getPath()));
                         launchDiffDialog(url, changedFile);
                     }
                 });
-                */
+
                 ad.setNegativeButton(
                         R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
                     @Override
