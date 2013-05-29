@@ -8,9 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -105,9 +102,6 @@ public class CardUI extends FrameLayout {
         LayoutInflater inflater = LayoutInflater.from(context);
         mStacks = new ArrayList<AbstractCard>();
 
-        // add Google Now style animation
-        Animation anim = AnimationUtils.loadAnimation(context, R.anim.cards_incoming_anim);
-        LayoutAnimationController controller = new LayoutAnimationController(anim, 0.5f);
         //inflate a different layout, depending on the number of columns
         if (mColumnNumber == 1) {
             inflater.inflate(R.layout.cards_view, this);
@@ -119,9 +113,6 @@ public class CardUI extends FrameLayout {
             inflater.inflate(R.layout.cards_view_multicolumn, this);
             mTableLayout = (TableLayout) findViewById(R.id.tableLayout);
         }
-        // mListView.setCallbacks(this);
-        // set animation
-        mListView.setLayoutAnimation(controller);
 
         mHeader = inflater.inflate(R.layout.header, null);
         mQuickReturnView = (ViewGroup) findViewById(R.id.sticky);
