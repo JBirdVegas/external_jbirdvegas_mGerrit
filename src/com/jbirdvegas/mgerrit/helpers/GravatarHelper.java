@@ -73,7 +73,7 @@ public class GravatarHelper {
         imageRequest.add(new ImageRequest(url, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap bitmap) {
-                textView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                textView.setCompoundDrawablesWithIntrinsicBounds(
                         new BitmapDrawable(bitmap),
                         null,
                         null,

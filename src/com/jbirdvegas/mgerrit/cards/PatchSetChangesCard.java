@@ -120,17 +120,14 @@ public class PatchSetChangesCard extends Card {
             public void onClick(final View view) {
                 AlertDialog.Builder ad = new AlertDialog.Builder(mCardsActivity)
                         .setTitle(R.string.choose_diff_view);
-                // bug will be fixed don't abandon hope quite yet
-                //if (Prefs.getCurrentGerrit(context).equals(
-                //        context.getResources().getStringArray(R.array.gerrit_webaddresses)[0])) {
-
+                // TODO XXX ABANDONED till APIs are stable on Google's side :(
                 ad.setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // http://gerrit.aokp.co/changes/AOKP%2Fexternal_jbirdvegas_mGerrit~master~I0d360472ee328c6cde0f8303b19a35f175869e68/revisions/current/patch
                         // or
                         // after v2.8 goes stable (returns Base64 encoded String)
-// curl https://gerrit-review.googlesource.com/changes/gerrit~master~Idc97af3d01999889d9b1a818fbd1bbe0b274dcf3/revisions/77e974c7070e274aaca3f2413a3fb53031d0f50e/files/ReleaseNotes%2fReleaseNotes-2.5.3.txt/content
+                        // curl https://gerrit-review.googlesource.com/changes/gerrit~master~Idc97af3d01999889d9b1a818fbd1bbe0b274dcf3/revisions/77e974c7070e274aaca3f2413a3fb53031d0f50e/files/ReleaseNotes%2fReleaseNotes-2.5.3.txt/content
                         ///changes/{change-id}/revisions/{revision-id}/files/{file-id}/content
                         String base = "%schanges/%s/revisions/current/patch";
                         String base64 = "%schanges/%s/revisions/%s/files/%s/content";
@@ -147,6 +144,7 @@ public class PatchSetChangesCard extends Card {
                         R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        // launch in webbrowser
                         String base = "%s#/c/%d/%d/%s";
                         Intent browserIntent = new Intent(
                                 Intent.ACTION_VIEW, Uri.parse(String.format(base,
@@ -163,6 +161,7 @@ public class PatchSetChangesCard extends Card {
         return innerRootView;
     }
 
+    // creates the Diff viewer dialog
     private void launchDiffDialog(String url, ChangedFile changedFile) {
         Log.d(TAG, "Attempting to contact: " + url);
         DiffDialog diffDialog = new DiffDialog(mCardsActivity, url, changedFile);

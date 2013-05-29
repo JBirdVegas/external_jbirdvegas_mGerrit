@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:id="@+id/scrollView">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
-    <ScrollView
+    <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:id="@+id/scrollView">
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
 
         <TextView
             android:paddingTop="@dimen/diff_view_padding_top"
             android:padding="@dimen/default_left_card_start"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/diff_view_diff"
             android:layout_gravity="left"/>
-    </ScrollView>
-</LinearLayout>
+    </HorizontalScrollView>
+</ScrollView>

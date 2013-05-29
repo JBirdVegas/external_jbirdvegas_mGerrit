@@ -32,6 +32,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
     private static final CharSequence CARDS_UI_KEY = "open_source_lib_cards_ui";
     private static final CharSequence NINE_OLD_ANDROIDS_KEY = "open_source_lib_nine_old_androids";
     private static final CharSequence AOSP_VOLLEY = "open_source_aosp_volley";
+    private static final CharSequence APACHE_COMMONS_KEY = "open_source_apache_commons";
     private static final String GERRIT_KEY = "gerrit_instances_key";
 
     @Override
@@ -42,8 +43,10 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
         findPreference(CARDS_UI_KEY).setOnPreferenceClickListener(this);
         // View NineOldAndroids website
         findPreference(NINE_OLD_ANDROIDS_KEY).setOnPreferenceClickListener(this);
-        // View Koush's website
+        // View AOSP's Volley website
         findPreference(AOSP_VOLLEY).setOnPreferenceClickListener(this);
+        // View Apache Commons Codec
+        findPreference(APACHE_COMMONS_KEY).setOnPreferenceClickListener(this);
         // select gerrit instance
         ListPreference gerritList = (ListPreference) findPreference(GERRIT_KEY);
         gerritList.setSummary(gerritList.getValue());

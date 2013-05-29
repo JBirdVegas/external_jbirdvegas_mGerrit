@@ -41,5 +41,10 @@
             android:key="open_source_aosp_volley"
             android:title="@string/aosp_volley_title"
             android:summary="@string/aosp_volley_website"/>
+
+        <Preference
+            android:key="open_source_apache_commons"
+            android:title="@string/apache_commons_title"
+            android:summary="@string/apache_commons_website"/>
     </PreferenceCategory>
 </PreferenceScreen>
