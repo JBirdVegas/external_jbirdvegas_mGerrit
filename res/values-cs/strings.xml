@@ -84,4 +84,8 @@
     <string name="cyanogenmod_warning">Gerrit CyanogenModu neobsahuje všechna potřebná API. Některé informace nebudou dostupné, je nám líto.</string>
     <string name="please_select_update_for_range">Pro zobrazení změn je třeba vybrat soubor</string>
     <string name="download_rom_zip">Stáhnout zip s ROM</string>
+    <string name="failed_to_decode_base64">Chyba při dekódování Base64 odpovědi.</string>
+    <string name="return_was_null">Odpověď byla nulová... Je třeba zobrazit v prohlížeči</string>
+    <string name="apache_commons_title">Apache Commons Codec v1.8</string>
+    <string name="apache_commons_website">http://commons.apache.org/proper/commons-codec/</string>
 </resources>
