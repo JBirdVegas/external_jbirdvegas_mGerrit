@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.fima.cardsui.StackAdapter;
@@ -82,7 +84,7 @@ public class CardStack extends AbstractCard {
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
 
             int topPx = 0;
-
+            Animation anim = AnimationUtils.loadAnimation(context, R.anim.cards_incoming_anim);
             if (lastCardPosition == i) {
                 // last card
                 cardView = card.getViewLast(context);
@@ -97,10 +99,10 @@ public class CardStack extends AbstractCard {
                     cardView = card.getView(context);
 
                 }
-
                 cardView.setOnClickListener(getClickListener(this, container, i));
-
             }
+            // add Google Now style animation
+            cardView.startAnimation(anim);
 
             if (i > 0) {
                 float dp = (_45F * i) - _12F;

@@ -71,10 +71,10 @@ public class PatchSetCommentsCard extends Card {
         mPatchsetViewerActivity.registerViewForContextMenu(authorTextView);
         // setup styled comments
         TextView commentMessage = (TextView) commentView.findViewById(R.id.comment_message);
-        // replace replace emoticons with drawables
-        commentMessage.setText(EmoticonSupportHelper.getSmiledText(mContext, comment.getMessage()));
         // use Linkify to automatically linking http/email/addresses
         Linkify.addLinks(commentMessage, Linkify.ALL);
+        // replace replace emoticons with drawables
+        commentMessage.setText(EmoticonSupportHelper.getSmiledText(mContext, comment.getMessage()));
         // set gravatar icon for commenter
         GravatarHelper.populateProfilePicture(
                 (ImageView) commentView.findViewById(R.id.comment_gravatar),
