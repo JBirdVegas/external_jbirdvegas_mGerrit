@@ -86,4 +86,9 @@
     </string>
     <string name="please_select_update_for_range">変更履歴を参照するファイルを選択してください</string>
     <string name="download_rom_zip">ROM zipをダウンロード</string>
+    <string name="failed_to_decode_base64">Base64デコードに失敗しました</string>
+    <string name="return_was_null">空応答でした... ブラウザで参照してください</string>
+    <string name="apache_commons_title">Apache Commons Codec v1.8</string>
+    <string name="apache_commons_website">http://commons.apache.org/proper/commons-codec/</string>
+
 </resources>
