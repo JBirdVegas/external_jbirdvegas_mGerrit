@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
-  ~  Author: Jon Stanford (JBirdVegas), 2013
+  ~  Author: 俞亮 (YULIANGMAX), 2013
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
   -->
 
 <resources>
-    <string name="app_name">mGerrit</string>
+
     <string name="reviewable">评审</string>
     <string name="merged">合并</string>
     <string name="abandoned">废弃</string>
@@ -27,8 +27,6 @@
     </string>
     <string name="status_explaination_merged">更改已合并到其分支。</string>
     <string name="status_explaination_abandoned">更改被其所有者或管理员废弃。</string>
-    <string name="view_in_browser">浏览器</string>
-    <string name="moar_info">更多信息！</string>
     <string name="patchset_labels_code_reviewer_title">代码评审者</string>
     <string name="patchset_labels_verified_reviewer_title">已审核</string>
 
@@ -68,9 +66,9 @@
     <string name="author_gravatar">作者的头像图片</string>
     <string name="committer_gravatar">提交者的头像图片</string>
     <string name="menu_refresh">刷新</string>
-    <string name="current_revision_is_draft_message">当前版本是开发版。一些信息将不可用。</string>
-
-
+    <string name="current_revision_is_draft_message">当前版本是开发版。
+        一些信息将不可用。
+    </string>
     <string name="comments_card_title">评论：</string>
     <string name="unknown">未知</string>
 
@@ -82,5 +80,21 @@
     <string name="context_menu_view_diff_dialog">在对话框中查看差异</string>
     <string name="context_menu_diff_view_in_browser">在浏览器中查看差异</string>
     <string name="choose_diff_view">你想要查看差异吗？</string>
-    <string name="new_text">新文本</string>
+    <string name="stalker_mode_toast">现在跟踪用户：</string>
+    <string name="share">分享</string>
+    <string name="commit_shared_from_mgerrit" formatted="false">分享提交 %s 来自mGerrit！</string>
+    <string name="found_cards_toast" formatted="false"><![CDATA[找到 %d 提交耗时 %d 秒]]></string>
+    <string name="cancel">取消</string>
+    <string name="menu_projects">按项目查看</string>
+    <string name="aokp_changelog">AOKP 更新日志</string>
+    <string name="download_update">下载</string>
+    <string name="cyanogenmod_warning">CyanogenMod的Gerrit实例不包含所有必须的API。
+        一些信息将不可用，抱歉。
+    </string>
+    <string name="please_select_update_for_range">请选择文件查看更新日志</string>
+    <string name="download_rom_zip">下载zip格式ROM</string>
+    <string name="failed_to_decode_base64">解码Base64响应失败。</string>
+    <string name="return_was_null">响应为空……请在浏览器中查看</string>
+
+
 </resources>
