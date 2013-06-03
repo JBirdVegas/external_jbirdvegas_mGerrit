@@ -197,5 +197,5 @@
     <dimen name="reviewer_padding_top">2dip</dimen>
     <dimen name="reviewer_padding_left_indent">15dip</dimen>
     <dimen name="diff_view_padding_top">12dip</dimen>
-    <dimen name="goo_im_download_rom_ic_padding">12dip</dimen>
+    <dimen name="goo_im_download_rom_ic_padding">12dip</dimen><dimen name="add_gerrit_textviews_padding">8dp</dimen>
 </resources>

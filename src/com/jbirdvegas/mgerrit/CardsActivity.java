@@ -18,9 +18,7 @@ package com.jbirdvegas.mgerrit;
  */
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -110,7 +108,6 @@ public abstract class CardsActivity extends Activity {
                     .append(mWebsite)
                     .append('\n')
                     .append(result).toString(), e);
-            showErrorDialog(e, false);
         }
         return commitCardList;
     }
@@ -258,7 +255,7 @@ public abstract class CardsActivity extends Activity {
                     .getExtras()
                     .getParcelable(AOKPChangelog.KEY_CHANGELOG);
             if (mChangelogRange != null) {
-                loadChangeLog(mChangelogRange, user[0], project);
+                loadChangeLog(mChangelogRange);
                 return;
             }
         } catch (NullPointerException npe) {
@@ -272,7 +269,7 @@ public abstract class CardsActivity extends Activity {
         loadScreen();
     }
 
-    private void loadChangeLog(final ChangeLogRange logRange, CommitterObject committerObject, String project) {
+    private void loadChangeLog(final ChangeLogRange logRange) {
         new GerritTask(this) {
             @Override
             public void onJSONResult(String s) {
@@ -331,7 +328,6 @@ public abstract class CardsActivity extends Activity {
                     .append(mWebsite)
                     .append('\n')
                     .append(result).toString(), e);
-            showErrorDialog(e, false);
         }
         return commitCardList;
     }
@@ -379,48 +375,8 @@ public abstract class CardsActivity extends Activity {
      */
     abstract String getQuery();
 
-    private void showErrorDialog(final Exception exception, boolean showException) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(
-                this);
-        builder.setCancelable(true)
-                .setTitle(R.string.failed_to_parse_json_response)
-                .setInverseBackgroundForced(true)
-                .setPositiveButton(R.string.exit,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                                dialog.dismiss();
-                                gameOver();
-                            }
-                        });
-        if (showException) {
-            builder.setMessage(stackTraceToString(exception));
-        } else {
-            builder.setMessage(R.string.gerrit_call_failed)
-                    .setNegativeButton(R.string.show_exception,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int which) {
-                                    showErrorDialog(exception, true);
-                                }
-                            });
-        }
-        builder.create().show();
-    }
-
     private void gameOver() {
         finish();
-    }
-
-    public static String stackTraceToString(Throwable e) {
-        StringBuilder sb = new StringBuilder(0);
-        for (StackTraceElement element : e.getStackTrace()) {
-            sb.append(element.toString());
-            sb.append('\n');
-        }
-        return sb.toString();
     }
 
     private void saveCards(String jsonCards) {

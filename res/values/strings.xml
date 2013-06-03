@@ -101,4 +101,13 @@
     <string name="google_now_style_animations_title">Animate cards</string>
     <string name="google_now_style_animations_summary">Enable Google Now style animations while drawing cards</string>
     <string name="loading">Loading diff\u2026</string>
+    <string name="add_gerrit_team">New Gerrit</string>
+    <string name="please_enter_gerrit_name">Please enter the Gerrit instance\'s name</string>
+    <string name="please_enter_gerrit_url">Please enter the Gerrit url</string>
+    <string name="add_team_url">New Gerrit team URL.</string>
+    <string name="add_gerrit_url">New Gerrit team name</string>
+    <string name="save">Save</string>
+    <string name="handshake_fail_message">Failed handshake try installing provider\'s certificite on your device.
+    </string>
+    <string name="caused_by">Caused by:</string>
 </resources>

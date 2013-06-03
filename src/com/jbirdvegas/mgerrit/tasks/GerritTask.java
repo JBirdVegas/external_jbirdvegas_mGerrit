@@ -24,7 +24,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,18 +36,31 @@ import java.net.URLConnection;
 
 @SuppressWarnings("AccessOfSystemProperties")
 public abstract class GerritTask extends AsyncTask<String, Long, String> {
+    private Exception mGerritException;
+
+    public interface FailedGerritCallback {
+        public void deliverCaughtException(Exception failedGerritTaskException);
+    }
+
     private static final String TAG = GerritTask.class.getSimpleName();
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final long CONNECTION_ESTABLISHED = -1000;
     private static final long INITIALIZING_DATA_TRANSFER = -1001;
     private static final long ERROR_DURING_CONNECTION = -1002;
+    private static final long HANDSHAKE_ERROR = -1003;
     private ProgressDialog mProgressDialog;
     private Context mContext;
     private long mCurrentFileLength;
     private String mCurrentUrl;
+    private FailedGerritCallback mFailedGerritCallback;
 
     public GerritTask(Context context) {
         mContext = context;
+    }
+
+    public GerritTask(Context context, FailedGerritCallback failedGerritCallback) {
+        mContext = context;
+        mFailedGerritCallback = failedGerritCallback;
     }
 
     @Override
@@ -94,10 +109,18 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
                     publishProgress(byteProgressCounter);
                 }
             }
+        } catch (SSLHandshakeException ssl) {
+            mGerritException = ssl;
+            publishProgress(HANDSHAKE_ERROR);
         } catch (MalformedURLException e) {
+            if (DEBUG) Log.e(TAG, "MalformedURL", e);
+            mGerritException = e;
             publishProgress(ERROR_DURING_CONNECTION);
         } catch (IOException e) {
+            if (DEBUG) Log.e(TAG, "Gathering data threw IO", e);
+            mGerritException = e;
             publishProgress(ERROR_DURING_CONNECTION);
+
         } finally {
             if (reader != null)
                 try {
@@ -148,16 +171,22 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
                     return;
                 case (int) ERROR_DURING_CONNECTION:
                     Log.d(TAG, mContext.getString(R.string.communications_error));
-                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                        Toast.makeText(mContext,
-                                String.format("%s with webaddress: %s", mContext.getString(
-                                        R.string.communications_error),
-                                        mCurrentUrl),
-                                Toast.LENGTH_LONG).show();
-                        mProgressDialog.cancel();
-                        mProgressDialog.dismiss();
-                    }
-                    this.cancel(true);
+                    Toast.makeText(mContext,
+                            String.format("%s with webaddress: %s", mContext.getString(
+                                    R.string.communications_error),
+                                    mCurrentUrl),
+                            Toast.LENGTH_LONG).show();
+                    Tools.showErrorDialog(mContext, mGerritException);
+                    closeUpShop();
+                    return;
+                case (int) HANDSHAKE_ERROR:
+                    String errorMessage = mContext.getString(R.string.handshake_fail_message);
+                    // Log the exception
+                    Log.d(TAG, errorMessage);
+                    Toast.makeText(mContext, errorMessage, Toast.LENGTH_LONG).show();
+                    Tools.showErrorDialog(mContext, mGerritException);
+                    // close up the dialogs and end GerritTask
+                    closeUpShop();
                     return;
             }
         } catch (NumberFormatException e) {
@@ -174,6 +203,14 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
         } else {
             mProgressDialog.setMessage(mContext.getString(R.string.transfering_json_data));
         }
+    }
+
+    private void closeUpShop() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.cancel();
+            mProgressDialog.dismiss();
+        }
+        this.cancel(true);
     }
 
     static int findPercent(long progress, long totalSize) {
