@@ -340,7 +340,10 @@ public class CardUI extends FrameLayout {
         this.onRenderedListener = onRenderedListener;
     }
 
-    private class TableRowsWorkerThread extends AsyncTask<Void, Void, TableRow> {
+    /**
+     * Generate cards in a worker thread.
+     */
+    private class TableRowsWorkerThread extends AsyncTask<Void, Void, Void> {
         TableRow mTableRow = null;
 
         @Override
@@ -350,7 +353,7 @@ public class CardUI extends FrameLayout {
         }
 
         @Override
-        protected TableRow doInBackground(Void... unused) {
+        protected Void doInBackground(Void... unused) {
             for (int i = 0; i < mAdapter.getCount(); i += mColumnNumber) {
                 //add a new table row with the current context
                 mTableRow = (TableRow) new TableRow(mTableLayout.getContext());
@@ -376,30 +379,25 @@ public class CardUI extends FrameLayout {
                     }
                 }
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(TableRow tableRow) {
-            super.onPostExecute(tableRow);
-            mTableLayout.addView(tableRow);
-            if (tableRow != null) {
+            mTableLayout.addView(mTableRow);
+            if (mTableRow != null) {
                 //fill the empty space with spacers
                 for (int j = mAdapter.getCount() % mColumnNumber; j > 0; j--) {
                     View space = null;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                        space = new Space(tableRow.getContext());
+                        space = new Space(mTableRow.getContext());
                     } else {
-                        space = new View(tableRow.getContext());
+                        space = new View(mTableRow.getContext());
                     }
                     space.setLayoutParams(
                             new TableRow.LayoutParams(
                                     TableRow.LayoutParams.MATCH_PARENT,
                                     TableRow.LayoutParams.WRAP_CONTENT, 1f));
-                    tableRow.addView(space);
+                    mTableRow.addView(space);
                 }
-                mTableLayout.addView(tableRow);
+                mTableLayout.addView(mTableRow);
             }
+            return null;
         }
     }
 }

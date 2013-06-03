@@ -94,7 +94,10 @@
     <string name="please_select_update_for_range">Please select file to view changelog</string>
     <string name="download_rom_zip">Download ROM zip</string>
     <string name="failed_to_decode_base64">Failed to decode the Base64 response.</string>
-    <string name="return_was_null">Responce was null... Please view in browser</string>
+    <string name="return_was_null">Responce was null… Please view in browser</string>
     <string name="apache_commons_title">Apache Commons Codec v1.8</string>
     <string name="apache_commons_website">http://commons.apache.org/proper/commons-codec/</string>
+    <string name="using_gerrit_toast">Using Gerrit:</string>
+    <string name="google_now_style_animations_title">Animate cards</string>
+    <string name="google_now_style_animations_summary">Enable Google Now style animations while drawing cards</string>
 </resources>

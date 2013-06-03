@@ -15,6 +15,7 @@ import com.fima.cardsui.StackAdapter;
 import com.fima.cardsui.SwipeDismissTouchListener;
 import com.fima.cardsui.SwipeDismissTouchListener.OnDismissCallback;
 import com.fima.cardsui.Utils;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
@@ -101,8 +102,12 @@ public class CardStack extends AbstractCard {
                 }
                 cardView.setOnClickListener(getClickListener(this, container, i));
             }
-            // add Google Now style animation
-            cardView.startAnimation(anim);
+
+            // if user wants animations
+            if (Prefs.getAnimationPreference(context)) {
+                // add Google Now style animation
+                cardView.startAnimation(anim);
+            }
 
             if (i > 0) {
                 float dp = (_45F * i) - _12F;

@@ -7,12 +7,15 @@
         android:fromYDelta="50%p"
         android:toYDelta="0%"
         android:duration="350"
-        android:zAdjustment="bottom" />
-
+        android:zAdjustment="bottom"
+        android:fillBefore="true"/>
+<!--
     <alpha
         android:fromAlpha="0.0"
         android:toAlpha="1.0"
         android:duration="350" />
+-->
+
     <rotate
         android:interpolator="@android:anim/anticipate_overshoot_interpolator"
         android:fromDegrees="45"
@@ -20,5 +23,4 @@
         android:duration="350"
         android:pivotX="-25%p"
         android:pivotY="-50%" />
-
 </set>

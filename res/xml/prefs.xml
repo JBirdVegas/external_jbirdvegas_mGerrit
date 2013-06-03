@@ -24,6 +24,11 @@
         android:entryValues="@array/gerrit_webaddresses"
         android:title="@string/choose_gerrit_instance"/>
 
+    <CheckBoxPreference
+        android:key="animation_key"
+        android:title="@string/google_now_style_animations_title"
+        android:summary="@string/google_now_style_animations_summary"/>
+
     <PreferenceCategory
         android:title="@string/open_source_libs">
 

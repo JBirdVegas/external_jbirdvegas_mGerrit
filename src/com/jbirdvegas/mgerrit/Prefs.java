@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -34,6 +35,8 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
     private static final CharSequence AOSP_VOLLEY = "open_source_aosp_volley";
     private static final CharSequence APACHE_COMMONS_KEY = "open_source_apache_commons";
     private static final String GERRIT_KEY = "gerrit_instances_key";
+    private static final String ANIMATION_KEY = "animation_key";
+    private CheckBoxPreference mAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +57,19 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 preference.setSummary((CharSequence) o);
-                Toast.makeText(getApplicationContext(), "Using Gerrit: " + o, Toast.LENGTH_LONG).show();
+                Toast.makeText(preference.getContext(),
+                        new StringBuilder(0)
+                                .append(getString(R.string.using_gerrit_toast))
+                                .append(' ')
+                                .append(o)
+                                .toString(),
+                        Toast.LENGTH_LONG).show();
                 return true;
             }
         });
+        // Allow disabling of Google Now style animations
+        ((CheckBoxPreference) findPreference(ANIMATION_KEY))
+                .setChecked(getAnimationPreference(getApplicationContext()));
     }
 
     /**
@@ -117,5 +129,16 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
         return new Intent()
                 .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
                 .setClass(activity, GerritControllerActivity.class);
+    }
+
+    /**
+     * Google Now style animation removal
+     * @param context used to access shared preferences
+     * @return if true to show animations false disables
+     *         animations
+     */
+    public static boolean getAnimationPreference(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(ANIMATION_KEY, true);
     }
 }
