@@ -2,6 +2,7 @@ package com.fima.cardsui.views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -304,58 +305,22 @@ public class CardUI extends FrameLayout {
     //suppress this error message to be able to use spaces in higher api levels
     @SuppressLint("NewApi")
     public void refresh() {
-
         if (mAdapter == null) {
             mAdapter = new StackAdapter(mContext, mStacks, mSwipeable);
             if (mListView != null) {
                 mListView.setAdapter(mAdapter);
             } else if (mTableLayout != null) {
-                TableRow tr = null;
-                for (int i = 0; i < mAdapter.getCount(); i += mColumnNumber) {
-                    //add a new table row with the current context
-                    tr = (TableRow) new TableRow(mTableLayout.getContext());
-                    tr.setOrientation(TableRow.HORIZONTAL);
-                    tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
-                            TableRow.LayoutParams.WRAP_CONTENT));
-                    //add as many cards as the number of columns indicates per row
-                    for (int j = 0; j < mColumnNumber; j++) {
-                        if (i + j < mAdapter.getCount()) {
-                            View card = mAdapter.getView(i + j, null, tr);
-                            if (card.getLayoutParams() != null) {
-                                card.setLayoutParams(new TableRow.LayoutParams(card.getLayoutParams().width, card.getLayoutParams().height, 1f));
-                            } else {
-                                card.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
-                            }
-                            tr.addView(card);
-                        }
-                    }
-                    mTableLayout.addView(tr);
-                }
-                if (tr != null) {
-                    //fill the empty space with spacers
-                    for (int j = mAdapter.getCount() % mColumnNumber; j > 0; j--) {
-                        View space = null;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                            space = new Space(tr.getContext());
-                        } else {
-                            space = new View(tr.getContext());
-                        }
-                        space.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT, 1f));
-                        tr.addView(space);
-                    }
-                }
-
+                //add as many cards as the number of columns indicates per row
+                new TableRowsWorkerThread().execute();
             }
         } else {
             mAdapter.setSwipeable(mSwipeable); // in case swipeable changed;
             mAdapter.setItems(mStacks);
-
         }
-
     }
 
     public void clearCards() {
-        mStacks = new ArrayList<AbstractCard>();
+        mStacks = new ArrayList<AbstractCard>(0);
         renderedCardsStacks = 0;
         refresh();
     }
@@ -375,4 +340,66 @@ public class CardUI extends FrameLayout {
         this.onRenderedListener = onRenderedListener;
     }
 
+    private class TableRowsWorkerThread extends AsyncTask<Void, Void, TableRow> {
+        TableRow mTableRow = null;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected TableRow doInBackground(Void... unused) {
+            for (int i = 0; i < mAdapter.getCount(); i += mColumnNumber) {
+                //add a new table row with the current context
+                mTableRow = (TableRow) new TableRow(mTableLayout.getContext());
+                mTableRow.setOrientation(TableRow.HORIZONTAL);
+                mTableRow.setLayoutParams(
+                        new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,
+                                TableRow.LayoutParams.WRAP_CONTENT));
+                for (int j = 0; j < mColumnNumber; j++) {
+                    if (i + j < mAdapter.getCount()) {
+                        View card = mAdapter.getView(i + j, null, mTableRow);
+                        if (card.getLayoutParams() != null) {
+                            card.setLayoutParams(
+                                    new TableRow.LayoutParams(
+                                            card.getLayoutParams().width,
+                                            card.getLayoutParams().height, 1f));
+                        } else {
+                            card.setLayoutParams(
+                                    new TableRow.LayoutParams(
+                                            TableRow.LayoutParams.MATCH_PARENT,
+                                            TableRow.LayoutParams.WRAP_CONTENT, 1f));
+                        }
+                        mTableRow.addView(card);
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(TableRow tableRow) {
+            super.onPostExecute(tableRow);
+            mTableLayout.addView(tableRow);
+            if (tableRow != null) {
+                //fill the empty space with spacers
+                for (int j = mAdapter.getCount() % mColumnNumber; j > 0; j--) {
+                    View space = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        space = new Space(tableRow.getContext());
+                    } else {
+                        space = new View(tableRow.getContext());
+                    }
+                    space.setLayoutParams(
+                            new TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT, 1f));
+                    tableRow.addView(space);
+                }
+                mTableLayout.addView(tableRow);
+            }
+        }
+    }
 }
