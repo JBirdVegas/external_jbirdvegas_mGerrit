@@ -88,4 +88,7 @@
     <string name="return_was_null">Odpověď byla nulová... Je třeba zobrazit v prohlížeči</string>
     <string name="apache_commons_title">Apache Commons Codec v1.8</string>
     <string name="apache_commons_website">http://commons.apache.org/proper/commons-codec/</string>
+    <string name="using_gerrit_toast">Používání Gerritu:</string>
+    <string name="google_now_style_animations_title">Animovat karty</string>
+    <string name="google_now_style_animations_summary">Zapnout Google Now styl animací při vykreslování karet</string>
 </resources>
