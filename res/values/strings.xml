@@ -100,4 +100,5 @@
     <string name="using_gerrit_toast">Using Gerrit:</string>
     <string name="google_now_style_animations_title">Animate cards</string>
     <string name="google_now_style_animations_summary">Enable Google Now style animations while drawing cards</string>
+    <string name="loading">Loading diff\u2026</string>
 </resources>

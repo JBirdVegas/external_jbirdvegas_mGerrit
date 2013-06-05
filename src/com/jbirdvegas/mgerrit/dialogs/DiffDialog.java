@@ -47,6 +47,8 @@ public class DiffDialog extends AlertDialog.Builder {
         mRootView = mInflater.inflate(R.layout.diff_dialog, null);
         setView(mRootView);
         mDiffTextView = (TextView) mRootView.findViewById(R.id.diff_view_diff);
+        mDiffTextView.setText(R.string.loading);
+        mDiffTextView.setTextSize(18f);
         Log.d(TAG, "Calling url: " + mUrl);
         if (DIFF_DEBUG) {
             debugRestDiffApi(context, mUrl, mChangedFile);
@@ -131,6 +133,8 @@ public class DiffDialog extends AlertDialog.Builder {
         if (builder.length() == 0) {
             builder.append("Diff not found!");
         }
+        // reset text size to default
+        mDiffTextView.setTextAppearance(getContext(), android.R.style.TextAppearance_DeviceDefault_Small);
         mDiffTextView.setTypeface(Typeface.MONOSPACE);
         // rebuild text; required to respect the \n
         SpannableString spannableString = currentDiff.getColorizedSpan();
