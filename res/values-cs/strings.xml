@@ -91,4 +91,5 @@
     <string name="using_gerrit_toast">Používání Gerritu:</string>
     <string name="google_now_style_animations_title">Animovat karty</string>
     <string name="google_now_style_animations_summary">Zapnout Google Now styl animací při vykreslování karet</string>
+    <string name="loading">Načítání rozdílů\u2026</string>
 </resources>
