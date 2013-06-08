@@ -71,7 +71,6 @@
     </string>
     <string name="comments_card_title">댓글:</string>
     <string name="unknown">Unknown</string>
-    <string name="aosp_volley_website" translatable="false">https://android.googlesource.com/platform/frameworks/volley/</string>
     <string name="aosp_volley_title">AOSP\'s Volley</string>
     <string name="developers_role">Choose developer\'s role to view</string>
     <string name="commit_reviewer">커밋 리뷰어</string>
@@ -101,5 +100,4 @@
     <string name="google_now_style_animations_title">Animate cards</string>
     <string name="google_now_style_animations_summary">카드를 드로잉 할 때 구글나우 애니메이션 활성화</string>
     <string name="loading">diff 로딩\u2026</string>
-</resources>
 </resources>
