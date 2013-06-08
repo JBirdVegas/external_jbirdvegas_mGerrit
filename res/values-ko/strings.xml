@@ -18,9 +18,9 @@
 
 <resources>
     <string name="app_name">mGerrit</string>
-    <string name="reviewable">Review</string>
-    <string name="merged">Merged</string>
-    <string name="abandoned">Abandoned</string>
+    <string name="reviewable">리뷰</string>
+    <string name="merged">병합</string>
+    <string name="abandoned">포기</string>
     <string name="status_explaination_new">여전히 검토중.</string>
     <string name="status_explaination_submitted">Change has been submitted and is in the merge queue. It may be waiting
         for one or more dependencies.
@@ -29,7 +29,7 @@
     <string name="status_explaination_abandoned">Change was abandoned by its owner or administrator.</string>
     <string name="view_in_browser">브라우저</string>
     <string name="moar_info">추가 정보</string>
-    <string name="patchset_labels_code_reviewer_title">코드 컴토자</string>
+    <string name="patchset_labels_code_reviewer_title">코드 검토자</string>
     <string name="patchset_labels_verified_reviewer_title">검증</string>
     <string name="inserted">삽입 된 행</string>
     <string name="deleted">삭제 된 행</string>
@@ -61,4 +61,45 @@
     <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
     <string name="explain_status_title">상태 설명</string>
     <string name="explain_status_summary">상태 탭의 의미에 대한 간단한 설명</string>
+    <string name="menu_gerrit_instance">Gerrit Instance</string>
+    <string name="owner_gravatar">소유자의 가바타 프로필 이미지</string>
+    <string name="author_gravatar">저자의 가바타 프로필 이미지</string>
+    <string name="committer_gravatar">커밋터의 가바타 프로필 이미지</string>
+    <string name="menu_refresh">새로고침</string>
+    <string name="current_revision_is_draft_message">Current revision is a draft.
+        Some information will be unavailable
+    </string>
+    <string name="comments_card_title">댓글:</string>
+    <string name="unknown">Unknown</string>
+    <string name="aosp_volley_website" translatable="false">https://android.googlesource.com/platform/frameworks/volley/</string>
+    <string name="aosp_volley_title">AOSP\'s Volley</string>
+    <string name="developers_role">Choose developer\'s role to view</string>
+    <string name="commit_reviewer">커밋 리뷰어</string>
+    <string name="context_menu_reviewer">Changes in review query.</string>
+    <string name="context_menu_owner">Changes originally submitted.</string>
+    <string name="context_menu_view_diff_dialog">다이얼로그로 보기</string>
+    <string name="context_menu_diff_view_in_browser">브라우저로 보기</string>
+    <string name="choose_diff_view">어떤 방식으로 diff 를 보길 원합니까?</string>
+    <string name="stalker_mode_toast">Now stalking user:</string>
+    <string name="share">공유</string>
+    <string name="commit_shared_from_mgerrit" formatted="false">Commit %s shared from mGerrit!</string>
+    <string name="found_cards_toast" formatted="false"><![CDATA[Found %d commits in %d seconds]]></string>
+    <string name="cancel">취소</string>
+    <string name="menu_projects">프로젝트보기</string>
+    <string name="aokp_changelog">AOKP 체인지로그</string>
+    <string name="download_update">다운로드</string>
+    <string name="cyanogenmod_warning">CyanogenMod\'s Gerrit instance doesn\'t contain all the needed APIs. Some
+        information will be unavailable, Sorry.
+    </string>
+    <string name="please_select_update_for_range">체인지로그를 볼 파일을 선택하세요.</string>
+    <string name="download_rom_zip">ROM 다운로드</string>
+    <string name="failed_to_decode_base64">Failed to decode the Base64 response.</string>
+    <string name="return_was_null">Responce was null… Please view in browser</string>
+    <string name="apache_commons_title">Apache Commons Codec v1.8</string>
+    <string name="apache_commons_website">http://commons.apache.org/proper/commons-codec/</string>
+    <string name="using_gerrit_toast">Using Gerrit:</string>
+    <string name="google_now_style_animations_title">Animate cards</string>
+    <string name="google_now_style_animations_summary">카드를 드로잉 할 때 구글나우 애니메이션 활성화</string>
+    <string name="loading">diff 로딩\u2026</string>
+</resources>
 </resources>
