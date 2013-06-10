@@ -296,7 +296,7 @@ public abstract class CardsActivity extends Activity {
                         getApplicationContext());
                 try {
                     String formattedDate = commitCard
-                            .getJsonCommit().getLastUpdatedDate();
+                            .getJsonCommit().getLastUpdatedDate(getApplicationContext());
                     String subStringDate = formattedDate
                             .substring(0, formattedDate.length() - 10);
                     Date commitDate  = sdf.parse(subStringDate);

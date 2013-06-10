@@ -29,6 +29,9 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
+import java.util.LinkedList;
+import java.util.TimeZone;
+
 public class Prefs extends PreferenceActivity implements Preference.OnPreferenceClickListener {
     private static final CharSequence CARDS_UI_KEY = "open_source_lib_cards_ui";
     private static final CharSequence NINE_OLD_ANDROIDS_KEY = "open_source_lib_nine_old_androids";
@@ -37,6 +40,8 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
     private static final String GERRIT_KEY = "gerrit_instances_key";
     private static final String ANIMATION_KEY = "animation_key";
     private static final String SAVED_GERRIT_INSTANCES_KEY = "saved_gerrit_instances";
+    private static final String SERVER_TIMEZONE_KEY = "server_timezone";
+    private static final String LOCAL_TIMEZONE_KEY = "local_timezone";
     private CheckBoxPreference mAnimation;
 
     @Override
@@ -71,6 +76,21 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
         // Allow disabling of Google Now style animations
         ((CheckBoxPreference) findPreference(ANIMATION_KEY))
                 .setChecked(getAnimationPreference(getApplicationContext()));
+        ListPreference serverTimeZoneList = (ListPreference) findPreference(SERVER_TIMEZONE_KEY);
+        // Allow changing assumed TimeZone for server
+        serverTimeZoneList.setEntryValues(TimeZone.getAvailableIDs());
+        LinkedList<CharSequence> timeZones = new LinkedList<CharSequence>();
+        for (String tz : TimeZone.getAvailableIDs()) {
+            timeZones.add(TimeZone.getTimeZone(tz).getID());
+        }
+        CharSequence[] zoneEntries = new CharSequence[timeZones.size()];
+        serverTimeZoneList.setEntries(timeZones.toArray(zoneEntries));
+        // the local timezone may be inaccurate as provided by TimeZone.getDefault()
+        // to account for this inconsistency we allow users the change from the device
+        // provided localization to user provided localization
+        ListPreference localTimeZoneList = (ListPreference) findPreference(LOCAL_TIMEZONE_KEY);
+        localTimeZoneList.setEntries(TimeZone.getAvailableIDs());
+        localTimeZoneList.setEntryValues(zoneEntries);
     }
 
     /**
@@ -141,5 +161,15 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
     public static boolean getAnimationPreference(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(ANIMATION_KEY, true);
+    }
+
+    public static TimeZone getServerTimeZone(Context context) {
+        return TimeZone.getTimeZone(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(SERVER_TIMEZONE_KEY, "PST"));
+    }
+
+    public static TimeZone getLocalTimeZone(Context context) {
+        return TimeZone.getTimeZone(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(LOCAL_TIMEZONE_KEY, TimeZone.getDefault().getID()));
     }
 }

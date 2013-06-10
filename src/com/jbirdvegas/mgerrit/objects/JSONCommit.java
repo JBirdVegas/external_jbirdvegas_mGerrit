@@ -27,12 +27,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class JSONCommit implements Parcelable {
     private static final String TAG = JSONCommit.class.getSimpleName();
@@ -66,10 +68,10 @@ public class JSONCommit implements Parcelable {
     public static final String KEY_DATE = "date";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_NAME = "name";
-
-    // internal
     public static final String KEY_KIND = "kind";
     public static final String KEY_PROJECT = "project";
+
+    // internal
     private static final String KEY_BRANCH = "branch";
     private static final String KEY_CHANGE_ID = "change_id";
     private static final String KEY_SUBJECT = "subject";
@@ -92,6 +94,10 @@ public class JSONCommit implements Parcelable {
     private static final String KEY_COMMIT = "commit";
     private static final String KEY_TIMEZONE = "tz";
     private static final boolean DEBUG = false;
+    private static final String GERRIT_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss.SSSSSSSSSS";
+    private static final String HUMAN_READABLE_DATE_FORMAT = "MMMM dd, yyyy '%s' hh:mm:ss aa";
+    private TimeZone mServerTimeZone;
+    private TimeZone mLocalTimeZone;
 
     public List<CommitComment> getMessagesList() {
         return mMessagesList;
@@ -143,6 +149,8 @@ public class JSONCommit implements Parcelable {
      */
     @SuppressWarnings("NestedTryStatement")
     public JSONCommit(JSONObject object, Context context) {
+        mServerTimeZone = Prefs.getServerTimeZone(context);
+        mLocalTimeZone = Prefs.getLocalTimeZone(context);
         mRawJSONCommit = object;
         try {
             mKind = object.getString(KEY_KIND);
@@ -412,18 +420,30 @@ public class JSONCommit implements Parcelable {
      * Google so we just handle oddities
      * downstream :(
      * from "2013-06-09 19:47:40.000000000"
-     * to January 09, 2013 07:47 PM
+     * to Jun 09, 2013 07:47 40ms PM
      *
      * @return String representation of the date
-     *         example: January 09, 2013 07:47 PM
+     *         example: Jun 09, 2013 07:47 40ms PM
      */
-    public String getLastUpdatedDate() {
+    @SuppressWarnings("SimpleDateFormatWithoutLocale")
+    public String getLastUpdatedDate(Context context) {
         try {
-            SimpleDateFormat currentFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-            Date dateObj = currentFormat.parse(mLastUpdatedDate);
-            SimpleDateFormat humanFormat = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
-            return humanFormat.format(dateObj);
+            SimpleDateFormat currentDateFormat
+                    = new SimpleDateFormat(GERRIT_DATE_FORMAT, Locale.US);
+            DateFormat humanDateFormat = new SimpleDateFormat(
+                    String.format(HUMAN_READABLE_DATE_FORMAT,
+                            context.getString(R.string.at)),
+                    Locale.getDefault());
+            // location of server
+            currentDateFormat.setTimeZone(mServerTimeZone);
+            // local location
+            humanDateFormat.setTimeZone(mLocalTimeZone);
+            Log.d(TAG, String.format("Local timezone: %s | Server timezone: %s",
+                    mLocalTimeZone.getDisplayName(),
+                    mServerTimeZone.getDisplayName()));
+            return humanDateFormat.format(currentDateFormat.parse(mLastUpdatedDate));
         } catch (ParseException e) {
+            e.printStackTrace();
             return mLastUpdatedDate;
         }
     }

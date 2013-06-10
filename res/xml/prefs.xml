@@ -30,6 +30,21 @@
         android:summary="@string/google_now_style_animations_summary"/>
 
     <PreferenceCategory
+        android:title="@string/locales">
+
+        <ListPreference
+            android:key="server_timezone"
+            android:title="@string/server_timezone_title"
+            android:summary="@string/server_timezone_summary"/>
+
+        <ListPreference
+            android:key="local_timezone"
+            android:title="@string/local_timezone_title"
+            android:summary="@string/local_timezone_summary"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/open_source_libs">
 
         <Preference
