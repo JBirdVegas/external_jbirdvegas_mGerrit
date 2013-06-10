@@ -92,4 +92,12 @@
     <string name="google_now_style_animations_title">Animovat karty</string>
     <string name="google_now_style_animations_summary">Zapnout Google Now styl animací při vykreslování karet</string>
     <string name="loading">Načítání rozdílů\u2026</string>
+    <string name="add_gerrit_team">Nový Gerrit</string>
+    <string name="please_enter_gerrit_name">Vložit jméno nové Gerrit instance</string>
+    <string name="please_enter_gerrit_url">Vložit url adresu Gerritu</string>
+    <string name="add_team_url">Adresa nového Gerrti týmu.</string>.
+    <string name="add_gerrit_url">Jméno nového Gerrit týmu</string>
+    <string name="save">Uložit</string>
+    <string name="handshake_fail_message">Chyba načtení, není potřeba nainstalovat na zařízení certifikát?</string>
+    <string name="caused_by">Způsobeno:</string>
 </resources>
