@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_team_name"
+        android:padding="@dimen/add_gerrit_textviews_padding"
+        android:singleLine="true"
+        android:textColor="@color/card_title_text"
+        android:text="@string/add_gerrit_url"
+        android:textAppearance="@style/CardTitleBold"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_team_name_edittext"
+        android:layout_gravity="center"
+        android:windowSoftInputMode="adjustResize"
+        android:inputType="textUri">
+        <requestFocus/>
+    </EditText>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_team_url"
+        android:padding="@dimen/add_gerrit_textviews_padding"
+        android:singleLine="true"
+        android:textColor="@color/card_title_text"
+        android:text="@string/add_team_url"
+        android:textAppearance="@style/CardTitleBold"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_team_url_edittext"
+        android:layout_gravity="center"
+        android:windowSoftInputMode="adjustResize"
+        android:inputType="textUri"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        android:id="@+id/add_team_save"/>
+</LinearLayout>

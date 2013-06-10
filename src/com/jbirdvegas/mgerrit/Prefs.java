@@ -36,6 +36,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
     private static final CharSequence APACHE_COMMONS_KEY = "open_source_apache_commons";
     private static final String GERRIT_KEY = "gerrit_instances_key";
     private static final String ANIMATION_KEY = "animation_key";
+    private static final String SAVED_GERRIT_INSTANCES_KEY = "saved_gerrit_instances";
     private CheckBoxPreference mAnimation;
 
     @Override
@@ -133,7 +134,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
 
     /**
      * Google Now style animation removal
-     * @param context used to access shared preferences
+     * @param context used to access SharedPreferences
      * @return if true to show animations false disables
      *         animations
      */
