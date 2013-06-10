@@ -110,4 +110,12 @@
     <string name="handshake_fail_message">Failed handshake try installing provider\'s certificite on your device.
     </string>
     <string name="caused_by">Caused by:</string>
+    <string name="at">at</string>
+    <string name="locales">TimeZone localization</string>
+    <string name="server_timezone_title">Server TimeZone</string>
+    <string name="local_timezone_title">Local TimeZone</string>
+    <string name="server_timezone_summary">Local TimeZone where Gerrit server is located.</string>
+    <string name="local_timezone_summary">The TimeZone provided as default may be inaccurate. Use this to override the
+        default local TimeZone.
+    </string>
 </resources>

@@ -101,7 +101,7 @@ public class CommitCard extends Card {
         ((TextView) commitCardView.findViewById(R.id.commit_card_title))
                 .setText(mCommit.getSubject());
         ((TextView) commitCardView.findViewById(R.id.commit_card_last_updated))
-                .setText(mCommit.getLastUpdatedDate());
+                .setText(mCommit.getLastUpdatedDate(context));
         ((TextView) commitCardView.findViewById(R.id.commit_card_commit_status))
                 .setText(mCommit.getStatus().toString());
         if (mCommit.getStatus().toString() == "MERGED") {
