@@ -27,7 +27,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -397,8 +400,32 @@ public class JSONCommit implements Parcelable {
         return mCreatedDate;
     }
 
+    /**
+     * PrettyPrint the Gerrit provided timestamp
+     * format into a more human readable format
+     *
+     * I have no clue what the ten zeros
+     * after the seconds are good for as
+     * the exact same ten zeros are in all
+     * databases regardless of the stamp's
+     * time or timezone... it comes from
+     * Google so we just handle oddities
+     * downstream :(
+     * from "2013-06-09 19:47:40.000000000"
+     * to January 09, 2013 07:47 PM
+     *
+     * @return String representation of the date
+     *         example: January 09, 2013 07:47 PM
+     */
     public String getLastUpdatedDate() {
-        return mLastUpdatedDate;
+        try {
+            SimpleDateFormat currentFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+            Date dateObj = currentFormat.parse(mLastUpdatedDate);
+            SimpleDateFormat humanFormat = new SimpleDateFormat("MMMM dd, yyyy hh:mm aa");
+            return humanFormat.format(dateObj);
+        } catch (ParseException e) {
+            return mLastUpdatedDate;
+        }
     }
 
     public boolean isIsMergeable() {
