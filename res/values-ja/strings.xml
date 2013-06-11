@@ -94,4 +94,19 @@
     <string name="google_now_style_animations_title">カードアニメーション</string>
     <string name="google_now_style_animations_summary">カードを表示するときGoogle Nowスタイルのアニメーションを有効にする</string>
     <string name="loading">diffロード中\u2026</string>
+    <string name="add_gerrit_team">新しいGerrit</string>
+    <string name="please_enter_gerrit_name">Gerritインスタンス名を入力してください</string>
+    <string name="please_enter_gerrit_url">Gerrit URLを入力して下さい</string>
+    <string name="add_team_url">GerritチームURL</string>
+    <string name="add_gerrit_url">Gerritチーム名</string>
+    <string name="save">保存</string>
+    <string name="handshake_fail_message">認証に失敗しました。プロバイダの証明書を端末にインストールしてみてください。</string>
+    <string name="caused_by">原因:</string>
+    <string name="at">-</string>
+    <string name="locales">タイムゾーン変更</string>
+    <string name="server_timezone_title">サーバータイムゾーン</string>
+    <string name="local_timezone_title">ローカルタイムゾーン</string>
+    <string name="server_timezone_summary">Gerritサーバーが設置されている場所のタイムゾーン</string>
+    <string name="local_timezone_summary">デフォルトで提供されるタイムゾーンが不正確な場合は、ローカルタイムゾーンを設定してください
+    </string>
 </resources>
