@@ -17,7 +17,6 @@
   -->
 
 <resources>
-
     <string name="reviewable">评审</string>
     <string name="merged">合并</string>
     <string name="abandoned">废弃</string>
@@ -29,7 +28,6 @@
     <string name="status_explaination_abandoned">更改被其所有者或管理员废弃。</string>
     <string name="patchset_labels_code_reviewer_title">代码评审者</string>
     <string name="patchset_labels_verified_reviewer_title">已审核</string>
-
     <string name="inserted">插入行</string>
     <string name="deleted">删除行</string>
     <string name="none_found">找不到</string>
@@ -55,10 +53,6 @@
     <string name="communications_error">通讯错误！！！</string>
     <string name="transfering_json_data">正在传输JSON格式数据……</string>
     <string name="open_source_libs">开源引用库</string>
-
-
-
-
     <string name="explain_status_title">状态解释</string>
     <string name="explain_status_summary">简要说明状态标签的含义</string>
     <string name="menu_gerrit_instance">Gerrit实例</string>
@@ -88,15 +82,10 @@
     <string name="menu_projects">按项目查看</string>
     <string name="aokp_changelog">AOKP 更新日志</string>
     <string name="download_update">下载</string>
-    <string name="cyanogenmod_warning">CyanogenMod的Gerrit实例不包含所有必须的API。
-        一些信息将不可用，抱歉。
-    </string>
     <string name="please_select_update_for_range">请选择文件查看更新日志</string>
     <string name="download_rom_zip">下载zip格式ROM</string>
     <string name="failed_to_decode_base64">解码Base64响应失败。</string>
     <string name="return_was_null">响应为空……请在浏览器中查看</string>
-
-
     <string name="using_gerrit_toast">正在使用Gerrit：</string>
     <string name="google_now_style_animations_title">动画卡片</string>
     <string name="google_now_style_animations_summary">显示卡片时使用 Google Now 风格动画</string>

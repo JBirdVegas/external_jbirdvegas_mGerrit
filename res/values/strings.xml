@@ -88,9 +88,6 @@
     <string name="menu_projects">View by project</string>
     <string name="aokp_changelog">AOKP Changelog</string>
     <string name="download_update">Download</string>
-    <string name="cyanogenmod_warning">CyanogenMod\'s Gerrit instance doesn\'t contain all the needed APIs. Some
-        information will be unavailable, Sorry.
-    </string>
     <string name="please_select_update_for_range">Please select file to view changelog</string>
     <string name="download_rom_zip">Download ROM zip</string>
     <string name="failed_to_decode_base64">Failed to decode the Base64 response.</string>

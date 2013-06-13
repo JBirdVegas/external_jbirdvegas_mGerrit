@@ -176,8 +176,12 @@ public class JSONCommit implements Parcelable {
                     Prefs.getCurrentGerrit(context),
                     mCommitNumber);
 
+            // TODO: labels are not available >2.6
             try {
                 // code review labels
+                // v2.5 labels only include the expected values -2, -1, 0, 1, 2
+                // v2.6 labels include verifiers and code reviewers
+                //      with their associated values
                 JSONObject labels = object.getJSONObject(KEY_LABELS);
                 mVerifiedReviewers = getReviewers(
                         labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
@@ -211,9 +215,21 @@ public class JSONCommit implements Parcelable {
             // string displayed instead of blank information we don't have
             String draftNotice = context.getString(R.string.current_revision_is_draft_message);
             try {
-                mMessagesList = makeMessagesList(object);
+                try {
+                    mMessagesList = makeMessagesList(object);
+                } catch(JSONException je) {
+                    if (DEBUG)
+                        Log.d(TAG, "could not find messages!", je);
+                }
                 // we did not directly query the patch set
-                mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
+                try {
+                    mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
+                } catch (JSONException je) {
+                    if (DEBUG)
+                        Log.d(TAG, "current_revision was a fail lets try looking for revision",
+                                je);
+                    mCurrentRevision = object.getString(KEY_REVISIONS);
+                }
 
                 try {
                     mMessage = getMessageFromJSON(object, mCurrentRevision);

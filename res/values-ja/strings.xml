@@ -81,9 +81,6 @@
     <string name="menu_projects">プロジェクト一覧</string>
     <string name="aokp_changelog">AOKP変更履歴</string>
     <string name="download_update">ダウンロード</string>
-    <string name="cyanogenmod_warning">CyanogenModのGerritインスタンスには必要なAPIがすべて含まれているわけではありません。
-        残念ながらいくつかの情報は利用できません。
-    </string>
     <string name="please_select_update_for_range">変更履歴を参照するファイルを選択してください</string>
     <string name="download_rom_zip">ROM zipをダウンロード</string>
     <string name="failed_to_decode_base64">Base64デコードに失敗しました</string>

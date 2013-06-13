@@ -37,6 +37,11 @@ public class DiffDialog extends AlertDialog.Builder {
     private String mLineSplit = System.getProperty("line.separator");
     private LayoutInflater mInflater;
     private TextView mDiffTextView;
+    private DiffFailCallback mDiffFailCallback;
+
+    public interface DiffFailCallback {
+        public void killDialogAndErrorOut(Exception e);
+    }
 
     public DiffDialog(Context context, String website, ChangedFile changedFile) {
         super(context);
@@ -61,6 +66,11 @@ public class DiffDialog extends AlertDialog.Builder {
         mRequestQueue.start();
     }
 
+    public DiffDialog addExceptionCallback(DiffFailCallback failCallback) {
+        mDiffFailCallback = failCallback;
+        return this;
+    }
+
     private StringRequest getBase64StringRequest(final String weburl) {
         return new StringRequest(weburl,
                 new Response.Listener<String>() {
@@ -81,6 +91,9 @@ public class DiffDialog extends AlertDialog.Builder {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         Log.e(TAG, "Failed to download the diff", volleyError);
+                        if (mDiffFailCallback != null) {
+                            mDiffFailCallback.killDialogAndErrorOut(volleyError);
+                        }
                     }
                 }
         );

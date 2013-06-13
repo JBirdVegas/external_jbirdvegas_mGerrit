@@ -24,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.CardsActivity;
@@ -134,7 +133,6 @@ public class CommitCard extends Card {
                             .append(StaticWebAddress.getQuery())
                             .append(mCommit.getCommitNumber())
                             .append(JSONCommit.CURRENT_CM_ARGS).toString());
-                    Toast.makeText(context, R.string.cyanogenmod_warning, Toast.LENGTH_LONG).show();
                 } else {
                     intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
                             .append(Prefs.getCurrentGerrit(context))

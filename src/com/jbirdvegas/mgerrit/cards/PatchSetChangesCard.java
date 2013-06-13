@@ -32,6 +32,7 @@ import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.dialogs.DiffDialog;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
@@ -43,6 +44,7 @@ public class PatchSetChangesCard extends Card {
     private JSONCommit mCommit;
     private LayoutInflater mInflater;
     private final Activity mCardsActivity;
+    private AlertDialog mAlertDialog;
 
     public PatchSetChangesCard(JSONCommit commit, Activity activity) {
         mCommit = commit;
@@ -165,6 +167,16 @@ public class PatchSetChangesCard extends Card {
     private void launchDiffDialog(String url, ChangedFile changedFile) {
         Log.d(TAG, "Attempting to contact: " + url);
         DiffDialog diffDialog = new DiffDialog(mCardsActivity, url, changedFile);
-        diffDialog.create().show();
+        diffDialog.addExceptionCallback(new DiffDialog.DiffFailCallback() {
+            @Override
+            public void killDialogAndErrorOut(Exception e) {
+                if (mAlertDialog != null) {
+                    mAlertDialog.cancel();
+                }
+                Tools.showErrorDialog(mCardsActivity, e);
+            }
+        });
+        mAlertDialog = diffDialog.create();
+        mAlertDialog.show();
     }
 }
