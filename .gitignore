@@ -1,3 +1,6 @@
+# Use Glob syntax
+syntax: glob
+
 idea_out/
 build.properties
 bin/
@@ -10,4 +13,6 @@ out/
 local.properties
 build-log.xml
 build.log
+build/
+.gradle/
 
