@@ -61,7 +61,7 @@ public abstract class CardsActivity extends Activity {
     private long mTimerStart;
     private CommitterObject mCommitterObject = null;
     private RequestQueue mRequestQueue;
-    public boolean inProject;
+    public static boolean inProject;
     private ChangeLogRange mChangelogRange;
 
     // draws a stack of cards
@@ -84,7 +84,7 @@ public abstract class CardsActivity extends Activity {
             cardUI.addCard(cards.get(i));
             count++;
         }
-        Toast.makeText(getApplicationContext(),
+        Toast.makeText(this,
                 String.format(getString(R.string.found_cards_toast,
                         count,
                         (System.currentTimeMillis() - mTimerStart) / 1000)),
@@ -130,6 +130,15 @@ public abstract class CardsActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // ensure we don't load projects after we are no longer interested in them
+        final Bundle extras = getIntent().getExtras();
+        if (savedInstanceState == null) {
+            if (extras != null) {
+                extras.putString(JSONCommit.KEY_PROJECT, "");
+            }
+            inProject = false;
+        }
+
         setContentView(R.layout.commit_list);
         mTimerStart = System.currentTimeMillis();
         mCards = (CardUI) findViewById(R.id.commit_cards);
@@ -142,11 +151,11 @@ public abstract class CardsActivity extends Activity {
                 .append(getQuery())
                 .append(JSONCommit.DETAILED_ACCOUNTS_ARG).toString();
         // track if we are in project
-        String project = getIntent().getStringExtra(JSONCommit.KEY_PROJECT);
+        String project = Prefs.getCurrentProject(this);
         inProject = false;
         boolean followingUser = false;
         try {
-            if (project != null && !project.trim().isEmpty()) {
+            if (!"".equals(project)) {
                 inProject = true;
             }
         } catch (NullPointerException npe) {
@@ -156,7 +165,7 @@ public abstract class CardsActivity extends Activity {
         final CommitterObject[] user = {null};
         if (!mSkipStalking) {
             try {
-                user[0] = getIntent().getExtras().getParcelable(KEY_DEVELOPER);
+                user[0] = extras.getParcelable(KEY_DEVELOPER);
                 mCommitterObject = user[0];
                 // throws null if not user
                 user[0].getEmail();
@@ -184,11 +193,10 @@ public abstract class CardsActivity extends Activity {
                             .append("status:")
                             .append(getQuery());
                     try {
-                        if (project != null && !project.trim().isEmpty()) {
+                        if (inProject) {
                             builder.append('+')
                                     .append("project:")
                                     .append(URLEncoder.encode(project));
-                            inProject = true;
                         }
                     } catch (NullPointerException npe) {
                         // not looking at one project
@@ -213,7 +221,7 @@ public abstract class CardsActivity extends Activity {
                         mCommitterObject = null;
                         user[0] = null;
                         mSkipStalking = true;
-                        getIntent().getExtras().putParcelable(KEY_DEVELOPER, mCommitterObject);
+                        extras.putParcelable(KEY_DEVELOPER, mCommitterObject);
                         onCreate(null);
                     }
                 });
@@ -226,7 +234,6 @@ public abstract class CardsActivity extends Activity {
         // handle if project was clicked
         try {
             if (inProject) {
-                //mWebsite = new StringBuilder(0)
                 StringBuilder builder = new StringBuilder(0)
                         .append(Prefs.getCurrentGerrit(getApplicationContext()))
                         .append("changes/?q=(")
@@ -235,7 +242,6 @@ public abstract class CardsActivity extends Activity {
                         .append('+')
                         .append("project:")
                         .append(URLEncoder.encode(project));
-
                 if (followingUser && !mSkipStalking) {
                     builder.append("+owner:" + mCommitterObject.getEmail());
                 }
@@ -251,8 +257,7 @@ public abstract class CardsActivity extends Activity {
         }
 
         try {
-            mChangelogRange= getIntent()
-                    .getExtras()
+            mChangelogRange = extras
                     .getParcelable(AOKPChangelog.KEY_CHANGELOG);
             if (mChangelogRange != null) {
                 loadChangeLog(mChangelogRange);
@@ -346,7 +351,7 @@ public abstract class CardsActivity extends Activity {
         card.setOnCardSwipedListener(new Card.OnCardSwiped() {
             @Override
             public void onCardSwiped(Card card, View layout) {
-                getIntent().putExtra(JSONCommit.KEY_PROJECT, "");
+                Prefs.setCurrentProject(getApplicationContext(), "");
                 onCreate(null);
             }
         });

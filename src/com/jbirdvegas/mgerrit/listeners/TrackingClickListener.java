@@ -107,6 +107,7 @@ public class TrackingClickListener implements View.OnClickListener {
             builder.create().show();
         } else if (mProjectPath != null && mCommitterObject == null && mChangeLogRange == null) {
             // Show content of an entire project relative to our current status
+            Prefs.setCurrentProject(mCallerActivity, mProjectPath);
             view.getContext().startActivity(Prefs.getStalkerIntent(mCallerActivity)
                     .putExtra(JSONCommit.KEY_PROJECT, mProjectPath));
         } else if (mCommitterObject != null && mProjectPath != null && mChangeLogRange == null) {

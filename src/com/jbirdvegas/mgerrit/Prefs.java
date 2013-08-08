@@ -42,6 +42,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
     private static final String SAVED_GERRIT_INSTANCES_KEY = "saved_gerrit_instances";
     private static final String SERVER_TIMEZONE_KEY = "server_timezone";
     private static final String LOCAL_TIMEZONE_KEY = "local_timezone";
+    private static final String CURRENT_PROJECT = "current_project";
     private CheckBoxPreference mAnimation;
 
     @Override
@@ -171,5 +172,13 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
     public static TimeZone getLocalTimeZone(Context context) {
         return TimeZone.getTimeZone(PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(LOCAL_TIMEZONE_KEY, TimeZone.getDefault().getID()));
+    }
+
+    public static void setCurrentProject(Context context, String project) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(CURRENT_PROJECT, project).commit();
+    }
+
+    public static String getCurrentProject(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(CURRENT_PROJECT, "");
     }
 }

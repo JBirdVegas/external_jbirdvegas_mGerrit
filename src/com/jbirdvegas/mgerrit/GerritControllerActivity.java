@@ -77,11 +77,11 @@ public class GerritControllerActivity extends TabActivity {
                 // use default
             }
         }
-
-        try {
-            mProject = getIntent().getStringExtra(JSONCommit.KEY_PROJECT);
-        } catch (NullPointerException npe) {
-            // not following one project
+        // find our current project
+        mProject = Prefs.getCurrentProject(this);
+        // ensure we are not tracking a project unintentionally
+        if (CardsActivity.inProject) {
+            mProject = null;
         }
 
         try {
@@ -117,7 +117,9 @@ public class GerritControllerActivity extends TabActivity {
         if (mCommitterObject != null && !CardsActivity.mSkipStalking) {
             base.putExtra(CardsActivity.KEY_DEVELOPER, mCommitterObject);
         }
-        if (mProject != null) {
+        if (mProject != null && !"".equals(mProject)) {
+            String project = getIntent().getStringExtra(JSONCommit.KEY_PROJECT);
+            Log.d(TAG, "Tracking project: " + mProject);
             base.putExtra(JSONCommit.KEY_PROJECT, mProject);
         }
         // Review tab
