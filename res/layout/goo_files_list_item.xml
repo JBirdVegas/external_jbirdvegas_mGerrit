@@ -31,7 +31,7 @@
         android:padding="@dimen/goo_im_download_rom_ic_padding"
         android:text="@string/download_update"
         android:id="@+id/goo_download_zip_button"
-        android:src="@android:drawable/ic_menu_save"
+        android:src="@drawable/ic_content_save"
         android:layout_gravity="center_vertical|right"
         android:contentDescription="@string/download_rom_zip"
         android:layout_weight="2"/>
