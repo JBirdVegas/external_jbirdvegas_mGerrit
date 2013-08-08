@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -19,6 +20,8 @@ import com.jbirdvegas.mgerrit.adapters.GooFileArrayAdapter;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import android.support.v4.app.NavUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +41,10 @@ public class AOKPChangelog extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Action bar Up affordance
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         mRequestQueue = Volley.newRequestQueue(this);
         Prefs.setCurrentGerrit(this, getResources().getStringArray(R.array.gerrit_webaddresses)[0]);
         findDates();
@@ -88,6 +95,17 @@ public class AOKPChangelog extends Activity {
             }
         });
         return updatesList;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     class gooImResponseListener implements Response.Listener<JSONObject> {

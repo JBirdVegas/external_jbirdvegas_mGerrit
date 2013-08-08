@@ -26,6 +26,8 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 import android.widget.Toast;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
@@ -57,6 +59,10 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
         findPreference(AOSP_VOLLEY).setOnPreferenceClickListener(this);
         // View Apache Commons Codec
         findPreference(APACHE_COMMONS_KEY).setOnPreferenceClickListener(this);
+
+        // Action bar Up affordance
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         // select gerrit instance
         ListPreference gerritList = (ListPreference) findPreference(GERRIT_KEY);
         gerritList.setSummary(gerritList.getValue());
@@ -180,5 +186,16 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
 
     public static String getCurrentProject(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(CURRENT_PROJECT, "");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
