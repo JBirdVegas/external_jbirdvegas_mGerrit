@@ -50,15 +50,12 @@
     <string name="open_source_libs">Open Source knihovny</string>
     <string name="cards_ui">CardsUI</string>
     <string name="nine_old_androids">NineOldAndroids</string>
-    <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
     <string name="explain_status_title">Vysvětlení stavů</string>
     <string name="explain_status_summary">Jednoduché vysvětlení, co znamenají stavy na záložkách</string>
     <string name="menu_gerrit_instance">Instance gerritu</string>
     <string name="owner_gravatar">Gravatar profilu vlastníka</string>
     <string name="author_gravatar">Gravatar profilu autora</string>
     <string name="committer_gravatar">Gravatar profilu odesilatele</string>
-    <string name="koush_url_imageview_helper_title">Koush Duttův UrlImageViewHelper</string>
-    <string name="koush_url_imageview_helper_website">https://github.com/koush/UrlImageViewHelper</string>
     <string name="menu_refresh">Obnovit</string>
     <string name="current_revision_is_draft_message">Aktuální revize je draft.
         Některé informace nebudou k dispozici
@@ -86,7 +83,6 @@
     <string name="failed_to_decode_base64">Chyba při dekódování Base64 odpovědi.</string>
     <string name="return_was_null">Odpověď byla nulová... Je třeba zobrazit v prohlížeči</string>
     <string name="apache_commons_title">Apache Commons Codec v1.8</string>
-    <string name="apache_commons_website">http://commons.apache.org/proper/commons-codec/</string>
     <string name="using_gerrit_toast">Používání Gerritu:</string>
     <string name="google_now_style_animations_title">Animovat karty</string>
     <string name="google_now_style_animations_summary">Zapnout Google Now styl animací při vykreslování karet</string>

@@ -26,7 +26,6 @@
     <string name="status_explaination_abandoned">変更はオーナーまたは管理者によって取り下げられました。</string>
     <string name="patchset_labels_code_reviewer_title">コードレビュー:</string>
     <string name="patchset_labels_verified_reviewer_title">検証:</string>
-    <string name="dash">-</string>
     <string name="inserted">挿入行:</string>
     <string name="deleted">削除行:</string>
     <string name="none_found">見つかりません</string>
@@ -52,7 +51,6 @@
     <string name="open_source_libs">オープンソースライブラリー</string>
     <string name="cards_ui">CardsUI</string>
     <string name="nine_old_androids">NineOldAndroids</string>
-    <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
     <string name="explain_status_title">ステータス説明</string>
     <string name="explain_status_summary">ステータスタブの概要説明</string>
     <string name="menu_gerrit_instance">Gerritインスタンス</string>
@@ -86,7 +84,6 @@
     <string name="failed_to_decode_base64">Base64デコードに失敗しました</string>
     <string name="return_was_null">空応答でした… ブラウザで参照してください</string>
     <string name="apache_commons_title">Apache Commons Codec v1.8</string>
-    <string name="apache_commons_website">http://commons.apache.org/proper/commons-codec/</string>
     <string name="using_gerrit_toast">使用するGerrit:</string>
     <string name="google_now_style_animations_title">カードアニメーション</string>
     <string name="google_now_style_animations_summary">カードを表示するときGoogle Nowスタイルのアニメーションを有効にする</string>

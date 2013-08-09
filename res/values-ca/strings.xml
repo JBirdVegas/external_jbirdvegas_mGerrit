@@ -51,12 +51,9 @@
     <string name="transfering_json_data">S\'està transferint les dades codificades JSON...</string>
     <string name="open_source_libs">Biblioteques de codi obert</string>
     <string name="cards_ui">CardsUI</string>
-    <string name="cards_ui_website">http://www.androidviews.net/2012/12/cardsui/</string>
     <string name="nine_old_androids">NineOldAndroids</string>
-    <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
     <string name="explain_status_title">Explicació dels estats</string>
     <string name="explain_status_summary">Explicació breu dels significats de les pestanyes d\'estat</string>
-    <string name="dash">-</string>
     <string name="menu_help">Ajuda</string>
     <string name="menu_gerrit_instance">Instància Gerrit</string>
     <string name="owner_gravatar">Imatge del perfil Gravatar del propietari</string>

@@ -29,7 +29,7 @@
     <string name="status_explaination_abandoned">Change was abandoned by its owner or administrator.</string>
     <string name="patchset_labels_code_reviewer_title">Code-Reviewers:</string>
     <string name="patchset_labels_verified_reviewer_title">Verified:</string>
-    <string name="dash">-</string>
+    <string name="dash" translatable="false">-</string>
     <string name="inserted">Inserted Lines:</string>
     <string name="deleted">Deleted Lines:</string>
     <string name="none_found">None Found</string>
@@ -58,7 +58,7 @@
     <string name="cards_ui">CardsUI</string>
     <string name="cards_ui_website" translatable="false">http://www.androidviews.net/2012/12/cardsui/</string>
     <string name="nine_old_androids">NineOldAndroids</string>
-    <string name="nine_old_androids_website">http://nineoldandroids.com/</string>
+    <string name="nine_old_androids_website" translatable="false">http://nineoldandroids.com/</string>
     <string name="explain_status_title">Explain statuses</string>
     <string name="explain_status_summary">Brief explanation of the Status tabs meanings</string>
     <string name="menu_gerrit_instance">Gerrit Instance</string>
@@ -93,7 +93,7 @@
     <string name="failed_to_decode_base64">Failed to decode the Base64 response.</string>
     <string name="return_was_null">Responce was null… Please view in browser</string>
     <string name="apache_commons_title">Apache Commons Codec v1.8</string>
-    <string name="apache_commons_website">http://commons.apache.org/proper/commons-codec/</string>
+    <string name="apache_commons_website" translatable="false">http://commons.apache.org/proper/commons-codec/</string>
     <string name="using_gerrit_toast">Using Gerrit:</string>
     <string name="google_now_style_animations_title">Animate cards</string>
     <string name="google_now_style_animations_summary">Enable Google Now style animations while drawing cards</string>
