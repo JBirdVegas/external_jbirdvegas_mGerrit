@@ -33,24 +33,26 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 
 @SuppressWarnings("AccessOfSystemProperties")
-public abstract class GerritTask extends AsyncTask<String, Long, String> {
+public abstract class GerritTask extends AsyncTask<String, String, String> {
+    private final boolean CONNECTION_DEBUGGING = false;
     private Exception mGerritException;
 
     public interface FailedGerritCallback {
         public void deliverCaughtException(Exception failedGerritTaskException);
     }
 
-    private static final String TAG = GerritTask.class.getSimpleName();
-    private static final boolean DEBUG = true;
-    private static final long CONNECTION_ESTABLISHED = -1000;
-    private static final long INITIALIZING_DATA_TRANSFER = -1001;
-    private static final long ERROR_DURING_CONNECTION = -1002;
-    private static final long HANDSHAKE_ERROR = -1003;
+    public static final String TAG = GerritTask.class.getSimpleName();
+    private final boolean DEBUG = true;
+    private final long CONNECTION_ESTABLISHED = -1000;
+    private final long INITIALIZING_DATA_TRANSFER = -1001;
+    private final long ERROR_DURING_CONNECTION = -1002;
+    private final long HANDSHAKE_ERROR = -1003;
     private ProgressDialog mProgressDialog;
     private Context mContext;
-    private long mCurrentFileLength;
+    private long mCurrentFileLength = -1;
     private String mCurrentUrl;
     private FailedGerritCallback mFailedGerritCallback;
 
@@ -67,7 +69,7 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
     protected void onPreExecute() {
         super.onPreExecute();
         mProgressDialog = new ProgressDialog(mContext);
-        //mProgressDialog.setTitle(R.string.initializing_connection);
+        mProgressDialog.setTitle(R.string.transfering_json_data);
         mProgressDialog.setMessage(mContext.getString(R.string.establishing_connection));
         mProgressDialog.show();
     }
@@ -80,15 +82,18 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
         try {
             URL url = new URL(strings[0]);
             URLConnection connection = url.openConnection();
+            // By default Android will (transparently) attempt to gzip the content
+            // passing identity as the encoding will disable compression.
+            connection.setRequestProperty("Accept-Encoding", "identity");
             connection.connect();
-            publishProgress(CONNECTION_ESTABLISHED);
+            handleComputationsOffUIThread(CONNECTION_ESTABLISHED);
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             stringBuilder = new StringBuilder(0);
             String line;
             String lineEnding = System.getProperty("line.separator");
             long byteProgressCounter = 0;
-            publishProgress(INITIALIZING_DATA_TRANSFER);
-            // will most likely be -1 :(
+            handleComputationsOffUIThread(INITIALIZING_DATA_TRANSFER);
+            // Grab the current length to use for calculations
             mCurrentFileLength = connection.getContentLength();
             boolean isFirstLine = true;
             while ((line = reader.readLine()) != null) {
@@ -102,24 +107,25 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
                         // if no magic we are getting a literal
                         stringBuilder.append(line);
                     }
-                    publishProgress(byteProgressCounter);
+                    handleComputationsOffUIThread(byteProgressCounter);
                 } else {
                     byteProgressCounter += line.getBytes().length;
-                    stringBuilder.append(line + lineEnding);
-                    publishProgress(byteProgressCounter);
+                    stringBuilder.append(line)
+                            .append(lineEnding);
+                    handleComputationsOffUIThread(byteProgressCounter);
                 }
             }
         } catch (SSLHandshakeException ssl) {
             mGerritException = ssl;
-            publishProgress(HANDSHAKE_ERROR);
+            handleComputationsOffUIThread(HANDSHAKE_ERROR);
         } catch (MalformedURLException e) {
             if (DEBUG) Log.e(TAG, "MalformedURL", e);
             mGerritException = e;
-            publishProgress(ERROR_DURING_CONNECTION);
+            handleComputationsOffUIThread(ERROR_DURING_CONNECTION);
         } catch (IOException e) {
             if (DEBUG) Log.e(TAG, "Gathering data threw IO", e);
             mGerritException = e;
-            publishProgress(ERROR_DURING_CONNECTION);
+            handleComputationsOffUIThread(ERROR_DURING_CONNECTION);
 
         } finally {
             if (reader != null)
@@ -148,26 +154,26 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
     public abstract void onJSONResult(String jsonString);
 
     @Override
-    protected void onProgressUpdate(Long... values) {
+    protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
         if (mProgressDialog == null || !mProgressDialog.isShowing()) {
             return;
         }
-        mProgressDialog.setTitle(R.string.deleted);
-        // handle our special messages
+        mProgressDialog.setMessage(values[0]);
+    }
+
+    private void handleComputationsOffUIThread(Long... values) {
         try {
             int switchable = Integer.parseInt(String.valueOf(values[0]));
             // TODO make text display notices
             switch (switchable) {
                 case (int) CONNECTION_ESTABLISHED:
                     Log.d(TAG, mContext.getString(R.string.connection_established));
-                    mProgressDialog.setMessage(
-                            mContext.getString(R.string.connection_established));
+                    publishProgress(mContext.getString(R.string.connection_established));
                     return;
                 case (int) INITIALIZING_DATA_TRANSFER:
                     Log.d(TAG, mContext.getString(R.string.initializing_data_transfer));
-                    mProgressDialog.setMessage(
-                            mContext.getString(R.string.initializing_data_transfer));
+                    publishProgress(mContext.getString(R.string.initializing_data_transfer));
                     return;
                 case (int) ERROR_DURING_CONNECTION:
                     Log.d(TAG, mContext.getString(R.string.communications_error));
@@ -195,13 +201,13 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
         // if we are still here then we just display the progress of download
         // display either generic message or progress % (if available)
         if (mCurrentFileLength != -1) {
-            mProgressDialog.setMessage(
+            publishProgress(
                     String.format(mContext.getString(R.string.downloading_status),
                             values[0], // progress
                             mCurrentFileLength, // total transfer size
                             findPercent(values[0], mCurrentFileLength))); // percent complete
         } else {
-            mProgressDialog.setMessage(mContext.getString(R.string.transfering_json_data));
+            publishProgress(mContext.getString(R.string.transfering_json_data));
         }
     }
 
@@ -213,10 +219,12 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
         this.cancel(true);
     }
 
-    static int findPercent(long progress, long totalSize) {
+    private int findPercent(long progress, long totalSize) {
         try {
-            Log.d(TAG, "progress: " + progress + " totalSize: " + totalSize +
-                    " as percent:" + safeLongToInt(progress * 100 / totalSize));
+            if (CONNECTION_DEBUGGING) {
+                Log.d(TAG, "progress: " + progress + " totalSize: " + totalSize +
+                        " as percent:" + safeLongToInt(progress * 100 / totalSize));
+            }
             // use a safe casting method
             return safeLongToInt(progress * 100 / totalSize);
             // handle division by zero just in case
@@ -231,7 +239,7 @@ public abstract class GerritTask extends AsyncTask<String, Long, String> {
      * @param l long to be transformed
      * @return int value of l
      */
-    public static int safeLongToInt(long l) {
+    private int safeLongToInt(long l) {
         if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
             throw new IllegalArgumentException
                     (l + " cannot be cast to int without changing its value.");
