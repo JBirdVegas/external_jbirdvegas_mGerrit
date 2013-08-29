@@ -20,13 +20,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_team_instance"
-        android:icon="@android:drawable/ic_menu_myplaces"
+        android:icon="@drawable/ic_menu_source"
         android:showAsAction="always"/>
 
     <item android:id="@+id/menu_projects"
           android:title="@string/menu_projects"
           android:showAsAction="always"
-          android:icon="@android:drawable/ic_menu_sort_by_size"/>
+          android:icon="@drawable/ic_menu_project"/>
 
     <item
         android:id="@+id/menu_refresh"
