@@ -17,6 +17,7 @@ package com.jbirdvegas.mgerrit.cards;
  *  limitations under the License.
  */
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,7 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
-import com.jbirdvegas.mgerrit.CardsActivity;
+import com.jbirdvegas.mgerrit.CardsFragment;
 import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
@@ -43,21 +44,24 @@ import java.util.List;
 
 public class CommitCard extends Card {
     private static final String TAG = CommitCard.class.getSimpleName();
-    private final CardsActivity mCardsActivity;
+
     private final CommitterObject mCommitterObject;
     private final RequestQueue mRequestQuery;
     private JSONCommit mCommit;
     private TextView mProjectTextView;
     private ChangeLogRange mChangeLogRange;
+    private CardsFragment mCardsFragment;
 
     public CommitCard(JSONCommit commit,
-                      CardsActivity activity,
+                      Activity activity,
                       CommitterObject committerObject,
-                      RequestQueue requestQueue) {
-        this.mCardsActivity = activity;
+                      RequestQueue requestQueue,
+                      CardsFragment cardsFragment) {
+        //this.mActivity = activity;
         this.mCommit = commit;
         this.mCommitterObject = committerObject;
         this.mRequestQuery = requestQueue;
+        this.mCardsFragment = cardsFragment;
     }
 
     @Override
@@ -78,8 +82,8 @@ public class CommitCard extends Card {
             ownerTextView.setText(mCommit.getOwnerObject().getName());
             ownerTextView.setTag(mCommit.getOwnerObject());
             TrackingClickListener trackingClickListener =
-                    new TrackingClickListener(mCardsActivity, mCommit.getOwnerObject());
-            if (mCardsActivity.inProject) {
+                    new TrackingClickListener(context, mCommit.getOwnerObject());
+            if (mCardsFragment.inProject) {
                 trackingClickListener.addProjectToStalk(mCommit.getProject());
             }
             ownerTextView.setOnClickListener(trackingClickListener);
@@ -91,7 +95,7 @@ public class CommitCard extends Card {
         mProjectTextView.setText(mCommit.getProject());
         mProjectTextView.setTextSize(18f);
         TrackingClickListener trackingClickListener =
-                new TrackingClickListener(mCardsActivity, mCommit.getProject(), mChangeLogRange);
+                new TrackingClickListener(context, mCommit.getProject(), mChangeLogRange);
         if (mCommitterObject != null) {
             trackingClickListener.addUserToStalk(mCommitterObject);
         }

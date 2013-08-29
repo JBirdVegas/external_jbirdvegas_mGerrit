@@ -19,7 +19,8 @@ package com.jbirdvegas.mgerrit;
 
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
-public class AbandonedTab extends CardsActivity {
+public class AbandonedTab extends CardsFragment
+{
     @Override
     String getQuery() {
         return JSONCommit.KEY_STATUS_ABANDONED;

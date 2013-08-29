@@ -238,14 +238,14 @@ public class PatchSetViewerActivity extends Activity {
         String tab = null;
         switch (item.getOrder()) {
             case OWNER:
-                tab = CardsActivity.KEY_OWNER;
+                tab = CardsFragment.KEY_OWNER;
                 break;
             case REVIEWER:
-                tab = CardsActivity.KEY_REVIEWER;
+                tab = CardsFragment.KEY_REVIEWER;
         }
         committerObject.setState(tab);
         Intent intent = new Intent(this, ReviewTab.class);
-        intent.putExtra(CardsActivity.KEY_DEVELOPER, committerObject);
+        intent.putExtra(CardsFragment.KEY_DEVELOPER, committerObject);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
         return true;

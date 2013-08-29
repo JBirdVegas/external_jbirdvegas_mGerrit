@@ -17,12 +17,14 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.RequestQueue;
@@ -40,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,22 +50,26 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class CardsActivity extends Activity {
+public abstract class CardsFragment extends Fragment {
     private static final String KEY_STORED_CARDS = "storedCards";
     public static final String KEY_DEVELOPER = "committer_object";
     public static final String AT_SYMBOL = "@";
     public static final String KEY_OWNER = "owner";
     public static final String KEY_REVIEWER = "reviewer";
+
+    // TODO: Could take this out and put it in GerritControllerActivity
     public static boolean mSkipStalking;
     private static final boolean DEBUG = true;
     private static final boolean CHATTY = false;
-    protected String TAG = getClass().getSimpleName();
-    private String mWebsite;
+    protected String TAG = CardsFragment.class.getSimpleName();
+    private String mUrlParams;
     private long mTimerStart;
-    private CommitterObject mCommitterObject = null;
+
     private RequestQueue mRequestQueue;
     public static boolean inProject;
     private ChangeLogRange mChangelogRange;
+    private GerritControllerActivity mParent;
+    private View mCurrentFragment;
 
     // draws a stack of cards
     // Currently not used as the number of cards tends
@@ -84,12 +91,35 @@ public abstract class CardsActivity extends Activity {
             cardUI.addCard(cards.get(i));
             count++;
         }
-        Toast.makeText(this,
+
+        Toast.makeText(mParent,
                 String.format(getString(R.string.found_cards_toast,
                         count,
                         (System.currentTimeMillis() - mTimerStart) / 1000)),
                 Toast.LENGTH_LONG).show();
         cardUI.refresh();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
+
+        mParent = (GerritControllerActivity) this.getActivity();
+        mCurrentFragment = this.getView();
+
+        mTimerStart = System.currentTimeMillis();
+        mCards = (CardUI) mCurrentFragment.findViewById(R.id.commit_cards);
+        mCards.setSwipeable(true);
+        mRequestQueue = Volley.newRequestQueue(mParent);
+        // default to non author specific view
+        mUrlParams = new StringBuilder(0)
+                .append(StaticWebAddress.getStatusQuery())
+                .append(getQuery())
+                .append(JSONCommit.DETAILED_ACCOUNTS_ARG).toString();
+
+        if (savedInstanceState == null) saveCards("");
+        setup();
     }
 
     protected List<CommitCard> generateCardsList(String result) {
@@ -99,13 +129,14 @@ public abstract class CardsActivity extends Activity {
             int arraySize = jsonArray.length();
             for (int i = 0; arraySize > i; i++) {
                 commitCardList.add(getCommitCard(jsonArray.getJSONObject(i),
-                        getApplicationContext()));
+                        mParent.getApplicationContext()));
             }
         } catch (JSONException e) {
+            String url = mParent.getGerritWebsite() + mUrlParams;
             Log.d(TAG, new StringBuilder(0)
                     .append(getString(R.string.failed_to_parse_json_response))
                     .append(' ')
-                    .append(mWebsite)
+                    .append(url)
                     .append('\n')
                     .append(result).toString(), e);
         }
@@ -115,149 +146,121 @@ public abstract class CardsActivity extends Activity {
     private CommitCard getCommitCard(JSONObject jsonObject, Context context) {
         return new CommitCard(
                 new JSONCommit(jsonObject, context),
-                this,
-                mCommitterObject,
-                mRequestQueue);
+                mParent,
+                mParent.getCommitterObject(),
+                mRequestQueue,
+                this);
     }
 
     CardUI mCards;
 
-    /**
-     * This class handles the boilerplate code for those that inherit
-     *
-     * @param savedInstanceState bundle containing state
-     */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // ensure we don't load projects after we are no longer interested in them
-        final Bundle extras = getIntent().getExtras();
-        if (savedInstanceState == null) {
-            if (extras != null) {
-                extras.putString(JSONCommit.KEY_PROJECT, "");
-            }
-            inProject = false;
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.commit_list, container, false);
+    }
 
-        setContentView(R.layout.commit_list);
-        mTimerStart = System.currentTimeMillis();
-        mCards = (CardUI) findViewById(R.id.commit_cards);
-        mCards.setSwipeable(true);
-        mRequestQueue = Volley.newRequestQueue(this);
-        // default to non author specific view
-        mWebsite = new StringBuilder(0)
-                .append(Prefs.getCurrentGerrit(getApplicationContext()))
-                .append(StaticWebAddress.getStatusQuery())
+    private void setProject(String project, boolean followingUser, CommitterObject committer)
+    {
+        StringBuilder builder = new StringBuilder(0)
+                .append("changes/?q=(")
+                .append("status:")
                 .append(getQuery())
-                .append(JSONCommit.DETAILED_ACCOUNTS_ARG).toString();
-        // track if we are in project
-        String project = Prefs.getCurrentProject(this);
-        inProject = false;
-        boolean followingUser = false;
-        try {
-            if (!"".equals(project)) {
-                inProject = true;
-            }
-        } catch (NullPointerException npe) {
-            // not looking at one project
-            inProject = false;
-        }
-        final CommitterObject[] user = {null};
-        if (!mSkipStalking) {
-            try {
-                user[0] = extras.getParcelable(KEY_DEVELOPER);
-                mCommitterObject = user[0];
-                // throws null if not user
-                user[0].getEmail();
-                followingUser = true;
-            } catch (NullPointerException npe) {
-                // not looking at one user
-                followingUser = false;
-            }
+                .append('+')
+                .append("project:")
+                .append(URLEncoder.encode(project));
 
-            try {
-                mCommitterObject = user[0];
-                String userEmail = user[0].getEmail();
-                if (userEmail != null
-                        && !userEmail.trim().isEmpty()
-                        && userEmail.contains(AT_SYMBOL)) {
-                    followingUser = true;
-                    // http://gerrit.aokp.co/changes/?q=(owner:android@championswimmer.tk+status:open)&o=DETAILED_ACCOUNTS
-                    StringBuilder builder = new StringBuilder(0)
-                            .append(Prefs.getCurrentGerrit(getApplicationContext()))
-                            .append("changes/?q=(")
-                            .append(user[0].getState())
-                            .append(':')
-                            .append(userEmail)
-                            .append('+')
-                            .append("status:")
-                            .append(getQuery());
-                    try {
-                        if (inProject) {
-                            builder.append('+')
-                                    .append("project:")
-                                    .append(URLEncoder.encode(project));
-                        }
-                    } catch (NullPointerException npe) {
-                        // not looking at one project
-                    }
-                    mWebsite = builder.append(')')
-                            .append(JSONCommit.DETAILED_ACCOUNTS_ARG)
-                            .toString();
-                    Toast.makeText(getApplicationContext(),
-                            // format string with a space
-                            String.format("%s %s",
-                                    getString(R.string.stalker_mode_toast),
-                                    user[0].getName()),
-                            Toast.LENGTH_LONG).show();
-                }
-
-                // now add a project card if
-                // we are looking at a single project
-                ImageCard userImageCard = new ImageCard(mRequestQueue, user[0].getName(), user[0]);
-                userImageCard.setOnCardSwipedListener(new Card.OnCardSwiped() {
-                    @Override
-                    public void onCardSwiped(Card card, View layout) {
-                        mCommitterObject = null;
-                        user[0] = null;
-                        mSkipStalking = true;
-                        extras.putParcelable(KEY_DEVELOPER, mCommitterObject);
-                        onCreate(null);
-                    }
-                });
-                mCards.addCard(userImageCard, true);
-            } catch (NullPointerException npe) {
-                // non author specific view
-                // use default website
-            }
+        if (followingUser && !mSkipStalking) {
+            builder.append("+owner:").append(committer.getEmail());
         }
-        // handle if project was clicked
-        try {
-            if (inProject) {
-                StringBuilder builder = new StringBuilder(0)
-                        .append(Prefs.getCurrentGerrit(getApplicationContext()))
-                        .append("changes/?q=(")
-                        .append("status:")
-                        .append(getQuery())
-                        .append('+')
+        builder.append(')')
+                .append(JSONCommit.DETAILED_ACCOUNTS_ARG);
+        mUrlParams = builder.toString();
+    }
+
+    private ImageCard stalkUser(String project, final CommitterObject committerObject)
+    {
+        String userEmail = committerObject.getEmail();
+
+        // http://gerrit.aokp.co/changes/?q=(owner:android@championswimmer.tk+status:open)&o=DETAILED_ACCOUNTS
+        StringBuilder builder = new StringBuilder(0)
+                .append("changes/?q=(")
+                .append(committerObject.getState())
+                .append(':')
+                .append(userEmail)
+                .append('+')
+                .append("status:")
+                .append(getQuery());
+
+        if (project != null && !project.trim().isEmpty()) {
+            try {
+                builder.append('+')
                         .append("project:")
-                        .append(URLEncoder.encode(project));
-                if (followingUser && !mSkipStalking) {
-                    builder.append("+owner:" + mCommitterObject.getEmail());
-                }
-                builder.append(')')
-                        .append(JSONCommit.DETAILED_ACCOUNTS_ARG);
-                mWebsite = builder.toString();
-                mCards.addCard(getProjectCard(project), true);
-            } else {
-                if (DEBUG) Log.d(TAG, "project key was null or empty: " + project);
+                        .append(URLEncoder.encode(project, "UTF-8"));
+            } catch (UnsupportedEncodingException uee) {
+                // Should not occur
             }
-        } catch (NullPointerException npe) {
-            if (DEBUG) Log.e(TAG, "Project key not found in intent!");
+            inProject = true;
+        }
+
+        mUrlParams = builder.append(')')
+                .append(JSONCommit.DETAILED_ACCOUNTS_ARG)
+                .toString();
+        Toast.makeText(mParent.getApplicationContext(),
+                // format string with a space
+                String.format("%s %s",
+                        getString(R.string.stalker_mode_toast),
+                        committerObject.getName()),
+                Toast.LENGTH_LONG).show();
+
+        // now add a project card if
+        // we are looking at a single project
+        ImageCard userImageCard = new ImageCard(mRequestQueue, committerObject.getName(),
+                committerObject);
+        userImageCard.setOnCardSwipedListener(new Card.OnCardSwiped() {
+            @Override
+            public void onCardSwiped(Card card, View layout) {
+                mParent.clearCommitterObject();
+                mSkipStalking = true;
+                refresh();
+            }
+        });
+        return userImageCard;
+    }
+
+    private void setup()
+    {
+        // track if we are in project
+        String project = mParent.getProject();
+        boolean followingUser = false;
+
+        inProject = false;
+        if (project != null && !project.trim().isEmpty()) inProject = true;
+
+        CommitterObject user = mParent.getCommitterObject();
+        if (!mSkipStalking) {
+            String userEmail = "";
+
+            if (user == null) followingUser = false;
+            else userEmail = user.getEmail();
+            if (userEmail != null
+                    && !userEmail.trim().isEmpty()
+                    && userEmail.contains(AT_SYMBOL)) {
+
+                mCards.addCard(stalkUser(project, user));
+            }
+        }
+
+        // handle if project was clicked
+        if (inProject)
+        {
+            setProject(project, followingUser, user);
+            mCards.addCard(getProjectCard(project), true);
         }
 
         try {
-            mChangelogRange = extras
+            mChangelogRange = mParent.getIntent()
+                    .getExtras()
                     .getParcelable(AOKPChangelog.KEY_CHANGELOG);
             if (mChangelogRange != null) {
                 loadChangeLog(mChangelogRange);
@@ -268,14 +271,12 @@ public abstract class CardsActivity extends Activity {
             if (DEBUG) Log.e(TAG, "Not making changelog");
         }
 
-        if (savedInstanceState == null) {
-            saveCards("");
-        }
         loadScreen();
     }
 
     private void loadChangeLog(final ChangeLogRange logRange) {
-        new GerritTask(this) {
+        String url = mParent.getGerritWebsite() + mUrlParams;
+        new GerritTask(mParent) {
             @Override
             public void onJSONResult(String s) {
                 saveCards(s);
@@ -284,7 +285,7 @@ public abstract class CardsActivity extends Activity {
                                 logRange, s),
                         mCards);
             }
-        }.execute(mWebsite);
+        }.execute(url);
     }
 
     private List<CommitCard> generateChangeLog(ChangeLogRange logRange,
@@ -298,10 +299,10 @@ public abstract class CardsActivity extends Activity {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             for (int i = 0; arraySize > i; i++) {
                 commitCard = getCommitCard(jsonArray.getJSONObject(i),
-                        getApplicationContext());
+                        mParent.getApplicationContext());
                 try {
                     String formattedDate = commitCard
-                            .getJsonCommit().getLastUpdatedDate(getApplicationContext());
+                            .getJsonCommit().getLastUpdatedDate(mParent.getApplicationContext());
                     String subStringDate = formattedDate
                             .substring(0, formattedDate.length() - 10);
                     Date commitDate  = sdf.parse(subStringDate);
@@ -327,10 +328,11 @@ public abstract class CardsActivity extends Activity {
                 }
             }
         } catch (JSONException e) {
+            String url = mParent.getGerritWebsite() + mUrlParams;
             Log.d(TAG, new StringBuilder(0)
                     .append(getString(R.string.failed_to_parse_json_response))
                     .append(' ')
-                    .append(mWebsite)
+                    .append(url)
                     .append('\n')
                     .append(result).toString(), e);
         }
@@ -351,7 +353,7 @@ public abstract class CardsActivity extends Activity {
         card.setOnCardSwipedListener(new Card.OnCardSwiped() {
             @Override
             public void onCardSwiped(Card card, View layout) {
-                Prefs.setCurrentProject(getApplicationContext(), "");
+                mParent.clearProject();
                 onCreate(null);
             }
         });
@@ -360,17 +362,25 @@ public abstract class CardsActivity extends Activity {
     }
 
     private void loadScreen() {
-        Log.d(TAG, "Calling mgerrit: " + mWebsite);
+        mTimerStart = System.currentTimeMillis();
+        String url = mParent.getGerritWebsite() + mUrlParams;
+        Log.d(TAG, "Calling mgerrit: " + url);
         if (getStoredCards().equals(""))
-            new GerritTask(this) {
+            new GerritTask(mParent) {
                 @Override
                 public void onJSONResult(String s) {
                     saveCards(s);
                     drawCardsFromList(generateCardsList(s), mCards);
                 }
-            }.execute(mWebsite);
+            }.execute(url);
         else
             drawCardsFromList(generateCardsList(getStoredCards()), mCards);
+    }
+
+    public void refresh()
+    {
+        mCards.clearCards();
+        setup();
     }
 
     /**
@@ -380,19 +390,19 @@ public abstract class CardsActivity extends Activity {
      */
     abstract String getQuery();
 
-    private void gameOver() {
-        finish();
-    }
-
     private void saveCards(String jsonCards) {
-        PreferenceManager.getDefaultSharedPreferences(this)
+        PreferenceManager.getDefaultSharedPreferences(mParent)
                 .edit()
                 .putString(KEY_STORED_CARDS, jsonCards)
                 .commit();
     }
 
     private String getStoredCards() {
-        return PreferenceManager.getDefaultSharedPreferences(this)
+        return PreferenceManager.getDefaultSharedPreferences(mParent)
                 .getString(KEY_STORED_CARDS, "");
+    }
+
+    public void setInProject(boolean inProject) {
+        this.inProject = inProject;
     }
 }

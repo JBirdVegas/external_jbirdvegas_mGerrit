@@ -261,6 +261,9 @@ public class JSONCommit implements Parcelable {
 
                 mPatchSetNumber = getPatchSetNumberInternal(object, mCurrentRevision);
             } catch (JSONException ignored) {
+                /* TODO: No code nested in this try block is outside of its own nested try block
+                 *  therefore, this catch block should never get executed.
+                 */
                 mPatchSetNumber = -1;
                 String unknown = context.getString(R.string.unknown);
                 mAuthorObject = CommitterObject.getInstance(unknown, unknown, null, null);

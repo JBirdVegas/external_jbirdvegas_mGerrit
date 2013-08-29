@@ -2,10 +2,11 @@ package com.jbirdvegas.mgerrit.listeners;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
-import com.jbirdvegas.mgerrit.CardsActivity;
+import com.jbirdvegas.mgerrit.CardsFragment;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
@@ -17,7 +18,7 @@ public class TrackingClickListener implements View.OnClickListener {
     private static final String TAG = TrackingClickListener.class.getSimpleName();
     private Reviewer mReviewer;
     private String mProjectPath = null;
-    private Activity mCallerActivity = null;
+    private Context mContext = null;
     private CommitterObject mCommitterObject = null;
     private ChangeLogRange mChangeLogRange = null;
 
@@ -29,8 +30,8 @@ public class TrackingClickListener implements View.OnClickListener {
      * @param activity        Calling Activity
      * @param committerObject User selected to follow (stalk)
      */
-    public TrackingClickListener(Activity activity, CommitterObject committerObject) {
-        mCallerActivity = activity;
+    public TrackingClickListener(Context activity, CommitterObject committerObject) {
+        mContext = activity;
         mCommitterObject = committerObject;
     }
 
@@ -39,8 +40,8 @@ public class TrackingClickListener implements View.OnClickListener {
      *
      * @param projectPath
      */
-    public TrackingClickListener(Activity activity, String projectPath) {
-        mCallerActivity = activity;
+    public TrackingClickListener(Context activity, String projectPath) {
+        mContext = activity;
         mProjectPath = projectPath;
     }
 
@@ -48,8 +49,8 @@ public class TrackingClickListener implements View.OnClickListener {
         mReviewer = reviewer;
     }
 
-    public TrackingClickListener(CardsActivity mCardsActivity, String project, ChangeLogRange changeLogRange) {
-        mCallerActivity = mCardsActivity;
+    public TrackingClickListener(Context activity, String project, ChangeLogRange changeLogRange) {
+        mContext = activity;
         mProjectPath = project;
         mChangeLogRange = changeLogRange;
     }
@@ -79,8 +80,8 @@ public class TrackingClickListener implements View.OnClickListener {
         // Show content of a single user
         if (mCommitterObject != null && mProjectPath == null && mChangeLogRange == null) {
             // ask which content we are interested in
-            CardsActivity.mSkipStalking = false;
-            AlertDialog.Builder builder = new AlertDialog.Builder(mCallerActivity);
+            CardsFragment.mSkipStalking = false;
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setTitle(R.string.context_menu_view_diff_dialog);
 
             builder.setNegativeButton(R.string.context_menu_owner,
@@ -88,9 +89,9 @@ public class TrackingClickListener implements View.OnClickListener {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
                             // notify the object what we want
-                            mCommitterObject.setState(CardsActivity.KEY_OWNER);
+                            mCommitterObject.setState(CardsFragment.KEY_OWNER);
                             view.getContext().startActivity(
-                                    Prefs.getStalkerIntent(mCallerActivity, mCommitterObject));
+                                    Prefs.getStalkerIntent(mContext, mCommitterObject));
                         }
                     });
 
@@ -99,23 +100,23 @@ public class TrackingClickListener implements View.OnClickListener {
                         @Override
                         public void onClick(DialogInterface dialog, int whichButton) {
                             // notify the object what we want
-                            mCommitterObject.setState(CardsActivity.KEY_REVIEWER);
+                            mCommitterObject.setState(CardsFragment.KEY_REVIEWER);
                             view.getContext().startActivity(
-                                    Prefs.getStalkerIntent(mCallerActivity, mCommitterObject));
+                                    Prefs.getStalkerIntent(mContext, mCommitterObject));
                         }
                     });
             builder.create().show();
         } else if (mProjectPath != null && mCommitterObject == null && mChangeLogRange == null) {
             // Show content of an entire project relative to our current status
-            Prefs.setCurrentProject(mCallerActivity, mProjectPath);
-            view.getContext().startActivity(Prefs.getStalkerIntent(mCallerActivity)
+            Prefs.setCurrentProject(mContext, mProjectPath);
+            view.getContext().startActivity(Prefs.getStalkerIntent(mContext)
                     .putExtra(JSONCommit.KEY_PROJECT, mProjectPath));
         } else if (mCommitterObject != null && mProjectPath != null && mChangeLogRange == null) {
-            CardsActivity.mSkipStalking = false;
-            view.getContext().startActivity(Prefs.getStalkerIntent(mCallerActivity, mCommitterObject)
+            CardsFragment.mSkipStalking = false;
+            view.getContext().startActivity(Prefs.getStalkerIntent(mContext, mCommitterObject)
                     .putExtra(JSONCommit.KEY_PROJECT, mProjectPath));
         } else if (mCommitterObject != null && mProjectPath != null && mChangeLogRange != null) {
-            Intent changelogStalker = Prefs.getStalkerIntent(mCallerActivity, mCommitterObject)
+            Intent changelogStalker = Prefs.getStalkerIntent(mContext, mCommitterObject)
                     .putExtra(JSONCommit.KEY_PROJECT, mProjectPath)
                     .putExtra(ChangeLogRange.KEY, mChangeLogRange);
             view.getContext().startActivity(changelogStalker);
@@ -127,7 +128,7 @@ public class TrackingClickListener implements View.OnClickListener {
         return "StalkerModeClickListener{" +
                 "mReviewer=" + mReviewer +
                 ", mProjectPath='" + mProjectPath + '\'' +
-                ", mCallerActivity=" + mCallerActivity +
+                ", mCallerActivity=" + mContext +
                 ", mCommitterObject=" + mCommitterObject +
                 '}';
     }

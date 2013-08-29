@@ -36,9 +36,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ReviewTab"/>
-        <activity android:name=".MergedTab"/>
-        <activity android:name=".AbandonedTab"/>
         <activity android:name=".PatchSetViewerActivity"
                   android:label="@string/app_name"
                   android:parentActivityName=".GerritControllerActivity"

@@ -19,7 +19,8 @@ package com.jbirdvegas.mgerrit;
 
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
-public class ReviewTab extends CardsActivity {
+public class ReviewTab extends CardsFragment
+{
     @Override
     String getQuery() {
         return JSONCommit.KEY_STATUS_OPEN;
