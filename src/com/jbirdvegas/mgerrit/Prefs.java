@@ -24,17 +24,16 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
 import java.util.LinkedList;
 import java.util.TimeZone;
 
-public class Prefs extends PreferenceActivity implements Preference.OnPreferenceClickListener {
+public class Prefs extends PreferenceFragment implements Preference.OnPreferenceClickListener {
     private static final CharSequence CARDS_UI_KEY = "open_source_lib_cards_ui";
     private static final CharSequence NINE_OLD_ANDROIDS_KEY = "open_source_lib_nine_old_androids";
     private static final CharSequence AOSP_VOLLEY = "open_source_aosp_volley";
@@ -48,7 +47,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
     private CheckBoxPreference mAnimation;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.prefs);
         // View CardsUI website
@@ -59,9 +58,6 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
         findPreference(AOSP_VOLLEY).setOnPreferenceClickListener(this);
         // View Apache Commons Codec
         findPreference(APACHE_COMMONS_KEY).setOnPreferenceClickListener(this);
-
-        // Action bar Up affordance
-        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         // select gerrit instance
         ListPreference gerritList = (ListPreference) findPreference(GERRIT_KEY);
@@ -82,7 +78,7 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
         });
         // Allow disabling of Google Now style animations
         ((CheckBoxPreference) findPreference(ANIMATION_KEY))
-                .setChecked(getAnimationPreference(getApplicationContext()));
+                .setChecked(getAnimationPreference(this.getActivity()));
         ListPreference serverTimeZoneList = (ListPreference) findPreference(SERVER_TIMEZONE_KEY);
         // Allow changing assumed TimeZone for server
         serverTimeZoneList.setEntryValues(TimeZone.getAvailableIDs());
@@ -186,16 +182,5 @@ public class Prefs extends PreferenceActivity implements Preference.OnPreference
 
     public static String getCurrentProject(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(CURRENT_PROJECT, "");
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

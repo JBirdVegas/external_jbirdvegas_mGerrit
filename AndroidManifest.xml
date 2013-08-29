@@ -40,7 +40,7 @@
                   android:label="@string/app_name"
                   android:parentActivityName=".GerritControllerActivity"
                   android:icon="@drawable/ic_launcher"/>
-        <activity android:name=".Prefs"
+        <activity android:name=".PrefsActivity"
                   android:label="@string/app_name"
                   android:parentActivityName=".GerritControllerActivity"
                   android:icon="@drawable/ic_launcher"/>
