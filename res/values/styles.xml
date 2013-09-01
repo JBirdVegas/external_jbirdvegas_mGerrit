@@ -40,12 +40,19 @@
         <item name="android:textColor">@color/card_light_text</item>
     </style>
 
+    <style name="CardText.Committer">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="CardTitle" parent="@style/CardText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/card_large_text</item>
         <item name="android:textColor">@color/card_title_text</item>
-        <!-- <item name="android:fontFamily">sans-serif-light</item> -->
+        <item name="android:textStyle">italic</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
     </style>
 
     <style name="CardTitleBold" parent="@style/CardText">
@@ -53,7 +60,6 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/card_large_text</item>
         <item name="android:textColor">@color/card_title_text</item>
-        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="StackTitle" parent="@style/CardText">
@@ -62,7 +68,6 @@
         <item name="android:textSize">27sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/card_title_text</item>
-        <item name="android:fontFamily">sans-serif</item>
     </style>
 
     <style name="Item">
@@ -80,7 +85,6 @@
         <item name="android:gravity">center</item>
         <item name="android:textAppearance">?android:textAppearanceLarge</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@color/text_sticky</item>
     </style>
 
@@ -97,5 +101,23 @@
         <item name="android:layout_marginRight">4dp</item>
         <item name="android:layout_marginLeft">4dp</item>
     </style>
+
+    <style name="CardText.CommitOwnerText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">8dip</item>
+        <item name="android:paddingRight">5dip</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CardText.CommitOwnerDetails">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">8dip</item>
+        <item name="android:paddingRight">8dip</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <style name="CardText.Normal"></style>
 
 </resources>

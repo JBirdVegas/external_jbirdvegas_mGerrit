@@ -20,41 +20,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center">
     <TextView
+        style="@style/CardTitle"
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_title"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingBottom="10dip"
-        android:textAppearance="@style/CardTitle"
-        android:textSize="22sp"
-        android:layout_gravity="center"/>
+        android:paddingBottom="10dip"/>
 
     <TextView
+        style="@style/CardText.Committer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_commit_owner"
-        android:textAppearance="@style/CardText"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:textSize="16sp"/>
+        android:textStyle="bold"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_project_name"
-        android:textAppearance="@style/CardText"
-        android:layout_gravity="center"/>
+        android:textAppearance="@style/CardText"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_last_updated"
-        android:textAppearance="@style/CardText"
-        android:layout_gravity="center"/>
+        android:textAppearance="@style/CardText"/>
+
     <TextView
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
@@ -62,39 +57,41 @@
         android:id="@+id/commit_card_commit_status"
         android:paddingBottom="@dimen/commit_card_padding"
         android:textAppearance="@style/CardText"
-        android:textStyle="italic"
-        android:layout_gravity="center"/>
+        android:textStyle="italic"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_message"
         android:paddingTop="10dp"
-        android:textAppearance="@style/CardText"
-        android:layout_gravity="center"/>
+        android:textAppearance="@style/CardText"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_changed_files"
-        android:textAppearance="@style/CardText"
-        android:layout_gravity="center"/>
-    <LinearLayout
-        android:orientation="horizontal"
+        android:textAppearance="@style/CardText"/>
+
+    <RelativeLayout
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:paddingBottom="8dip"
         android:layout_gravity="right"
         android:gravity="end">
         <ImageView
-            android:src="@drawable/ic_menu_view"
-            android:id="@+id/commit_card_view_in_browser"
-            style="@style/ActionViewsStyle"/>
+            android:id="@+id/commit_card_moar_info"
+            android:src="@drawable/ic_action_about"
+            style="@style/ActionViewsStyle"
+            android:layout_alignParentRight="true"/>
         <ImageView
             android:src="@drawable/ic_menu_share"
             android:id="@+id/commit_card_share_info"
-            style="@style/ActionViewsStyle"/>
+            style="@style/ActionViewsStyle"
+            android:layout_toLeftOf="@+id/commit_card_moar_info"/>
         <ImageView
-            android:id="@+id/commit_card_moar_info"
-            android:src="@drawable/ic_action_about"
-            style="@style/ActionViewsStyle"/>
-    </LinearLayout>
+            android:src="@drawable/ic_menu_view"
+            android:id="@+id/commit_card_view_in_browser"
+            style="@style/ActionViewsStyle"
+            android:layout_toLeftOf="@+id/commit_card_share_info"/>
+    </RelativeLayout>
 </LinearLayout>

@@ -24,6 +24,7 @@
               android:paddingBottom="8dip">
 
     <TextView
+        style="@style/CardText.Normal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/changed_file_path"
@@ -31,24 +32,24 @@
         android:paddingLeft="8dip"
         android:paddingRight="8dip"
         android:paddingBottom="8dip"
-        android:textAppearance="@style/CardText"
-        android:textStyle="bold"/>
+        android:textSize="16sp"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+            style="@style/CardText"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="@string/inserted"
             android:id="@+id/inserted_text"
             android:paddingLeft="8dip"
             android:paddingRight="8dip"
-            android:textAppearance="@style/CardText"
             android:textSize="13sp"/>
 
         <TextView
+            style="@style/CardText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/changed_file_inserted"
@@ -56,14 +57,11 @@
             android:layout_gravity="right"
             android:paddingLeft="8dip"
             android:paddingRight="8dip"
-            android:textAppearance="@style/CardText"
-            android:textSize="13sp"/>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_gravity="right"
-        android:layout_height="wrap_content">
+            android:textSize="14sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/inserted_text"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,7 +70,8 @@
             android:paddingLeft="8dip"
             android:paddingRight="8dip"
             android:textAppearance="@style/CardText"
-            android:textSize="13sp"/>
+            android:textSize="13sp"
+            android:layout_below="@id/inserted_text"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -83,6 +82,9 @@
             android:paddingLeft="8dip"
             android:paddingRight="8dip"
             android:textAppearance="@style/CardText"
-            android:textSize="13sp"/>
-    </LinearLayout>
+            android:textSize="13sp"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/deleted_text"
+            android:layout_below="@id/inserted_text"/>
+    </RelativeLayout>
 </LinearLayout>

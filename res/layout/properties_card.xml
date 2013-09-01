@@ -15,81 +15,56 @@
         android:id="@+id/prop_card_subject"
         android:textAppearance="@style/CardTitle"
         android:textSize="22sp"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
-            android:orientation="vertical">
+            android:paddingTop="10dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="8dip"
-                android:paddingRight="5dp"
-                android:text="@string/commit_owner"
-                android:textAppearance="@style/CardText"
-                android:layout_gravity="center_vertical"
-                android:textStyle="bold"/>
+                style="@style/CardText.CommitOwnerText"
+                android:id="@+id/commit_owner_text"
+                android:layout_alignParentTop="true"
+                android:text="@string/commit_owner"/>
+
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="8dip"
-                android:paddingRight="5dip"
+                style="@style/CardText.CommitOwnerText"
+                android:id="@+id/commit_author_text"
+                android:layout_below="@+id/commit_owner_text"
                 android:text="@string/commit_author"
-                android:textAppearance="@style/CardText"
-                android:textStyle="bold"
-                android:layout_gravity="center_vertical"
                 android:paddingTop="5dip"
                 android:paddingBottom="5dip"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="8dip"
-                android:paddingRight="5dp"
-                android:text="@string/commit_committer"
-                android:textAppearance="@style/CardText"
-                android:textStyle="bold"
-                android:layout_gravity="center_vertical"/>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/CardText.CommitOwnerText"
+                android:id="@+id/commit_committer_text"
+                android:layout_below="@+id/commit_author_text"
+                android:text="@string/commit_committer"/>
+
+            <TextView
+                style="@style/CardText.CommitOwnerDetails"
                 android:id="@+id/prop_card_owner"
-                android:textAppearance="@style/CardText"
-                android:layout_gravity="center_vertical" />
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/commit_owner_text"
+                android:layout_alignLeft="@id/prop_card_committer"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/CardText.CommitOwnerDetails"
                 android:id="@+id/prop_card_author"
-                android:paddingRight="8dip"
-                android:textAppearance="@style/CardText"
-                android:layout_gravity="center_vertical"
+                android:layout_toRightOf="@+id/commit_author_text"
+                android:layout_alignLeft="@id/prop_card_committer"
+                android:layout_below="@+id/prop_card_owner"
                 android:paddingBottom="5dip"
-                android:paddingTop="5dip"/>
+                android:paddingTop="5dip" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/CardText.CommitOwnerDetails"
                 android:id="@+id/prop_card_committer"
-                android:paddingRight="8dip"
-                android:textAppearance="@style/CardText"
-                android:layout_gravity="center_vertical" />
-        </LinearLayout>
-    </LinearLayout>
+                android:layout_toRightOf="@+id/commit_committer_text"
+                android:layout_below="@+id/prop_card_author"/>
+        </RelativeLayout>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"

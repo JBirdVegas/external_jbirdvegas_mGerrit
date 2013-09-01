@@ -1,52 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:paddingLeft="@dimen/standard_padding"
     android:paddingRight="@dimen/standard_padding"
-    android:paddingTop="@dimen/standard_padding">
+    android:paddingTop="@dimen/standard_padding"
+    android:background="#f0f0f0">
 
     <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:background="#f0f0f0">
+        android:orientation="horizontal">
 
-        <LinearLayout
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/comment_gravatar"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.android.volley.toolbox.NetworkImageView
-                android:id="@+id/comment_gravatar"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:contentDescription="@string/author_gravatar"
-                android:padding="@dimen/standard_padding"/>
-
-            <TextView
-                android:id="@+id/comment_author_name"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:textAppearance="@style/CardText"
-                android:textStyle="bold"
-                android:paddingRight="@dimen/standard_padding"
-                android:paddingTop="@dimen/standard_padding"
-                android:paddingBottom="@dimen/standard_padding"
-                android:gravity="center"
-                android:layout_gravity="center"/>
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/comment_message"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:textAppearance="@style/CardText"
+            android:contentDescription="@string/author_gravatar"
             android:padding="@dimen/standard_padding"/>
 
+        <TextView
+            style="@style/CardText.Committer"
+            android:id="@+id/comment_author_name"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:paddingRight="@dimen/standard_padding"
+            android:paddingTop="@dimen/standard_padding"
+            android:paddingBottom="@dimen/standard_padding"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/comment_message"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textAppearance="@style/CardText"
+        android:textSize="@dimen/card_medium_text"
+        android:padding="@dimen/standard_padding"/>
 
 </LinearLayout>
 
