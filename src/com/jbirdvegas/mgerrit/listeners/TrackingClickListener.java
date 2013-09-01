@@ -1,11 +1,11 @@
 package com.jbirdvegas.mgerrit.listeners;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
+
 import com.jbirdvegas.mgerrit.CardsFragment;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
@@ -109,12 +109,8 @@ public class TrackingClickListener implements View.OnClickListener {
         } else if (mProjectPath != null && mCommitterObject == null && mChangeLogRange == null) {
             // Show content of an entire project relative to our current status
             Prefs.setCurrentProject(mContext, mProjectPath);
-            view.getContext().startActivity(Prefs.getStalkerIntent(mContext)
-                    .putExtra(JSONCommit.KEY_PROJECT, mProjectPath));
         } else if (mCommitterObject != null && mProjectPath != null && mChangeLogRange == null) {
             CardsFragment.mSkipStalking = false;
-            view.getContext().startActivity(Prefs.getStalkerIntent(mContext, mCommitterObject)
-                    .putExtra(JSONCommit.KEY_PROJECT, mProjectPath));
         } else if (mCommitterObject != null && mProjectPath != null && mChangeLogRange != null) {
             Intent changelogStalker = Prefs.getStalkerIntent(mContext, mCommitterObject)
                     .putExtra(JSONCommit.KEY_PROJECT, mProjectPath)

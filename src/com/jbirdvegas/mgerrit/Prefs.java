@@ -43,7 +43,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     private static final String SAVED_GERRIT_INSTANCES_KEY = "saved_gerrit_instances";
     private static final String SERVER_TIMEZONE_KEY = "server_timezone";
     private static final String LOCAL_TIMEZONE_KEY = "local_timezone";
-    private static final String CURRENT_PROJECT = "current_project";
+    public static final String CURRENT_PROJECT = "current_project";
     private CheckBoxPreference mAnimation;
 
     @Override

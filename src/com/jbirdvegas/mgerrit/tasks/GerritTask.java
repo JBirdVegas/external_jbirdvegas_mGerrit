@@ -211,7 +211,7 @@ public abstract class GerritTask extends AsyncTask<String, String, String> {
         }
     }
 
-    private void closeUpShop() {
+    public void closeUpShop() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.cancel();
             mProgressDialog.dismiss();

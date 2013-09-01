@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.CardsFragment;
@@ -50,18 +51,14 @@ public class CommitCard extends Card {
     private JSONCommit mCommit;
     private TextView mProjectTextView;
     private ChangeLogRange mChangeLogRange;
-    private CardsFragment mCardsFragment;
 
     public CommitCard(JSONCommit commit,
-                      Activity activity,
                       CommitterObject committerObject,
                       RequestQueue requestQueue,
                       CardsFragment cardsFragment) {
-        //this.mActivity = activity;
         this.mCommit = commit;
         this.mCommitterObject = committerObject;
         this.mRequestQuery = requestQueue;
-        this.mCardsFragment = cardsFragment;
     }
 
     @Override
@@ -83,7 +80,7 @@ public class CommitCard extends Card {
             ownerTextView.setTag(mCommit.getOwnerObject());
             TrackingClickListener trackingClickListener =
                     new TrackingClickListener(context, mCommit.getOwnerObject());
-            if (mCardsFragment.inProject) {
+            if (CardsFragment.inProject) {
                 trackingClickListener.addProjectToStalk(mCommit.getProject());
             }
             ownerTextView.setOnClickListener(trackingClickListener);
@@ -130,20 +127,20 @@ public class CommitCard extends Card {
                 // example website
                 // http://gerrit.aokp.co/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
 
+                StringBuilder builder = new StringBuilder(0)
+                        .append(Prefs.getCurrentGerrit(context))
+                        .append(StaticWebAddress.getQuery())
+                        .append(mCommit.getCommitNumber());
+
                 // place a note for CM Viewers
                 if (Prefs.getCurrentGerrit(context).contains("cyanogenmod")) {
-                    intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
-                            .append(Prefs.getCurrentGerrit(context))
-                            .append(StaticWebAddress.getQuery())
-                            .append(mCommit.getCommitNumber())
-                            .append(JSONCommit.CURRENT_CM_ARGS).toString());
+                    builder.append(JSONCommit.CURRENT_CM_ARGS);
                 } else {
-                    intent.putExtra(JSONCommit.KEY_WEBSITE, new StringBuilder(0)
-                            .append(Prefs.getCurrentGerrit(context))
-                            .append(StaticWebAddress.getQuery())
-                            .append(mCommit.getCommitNumber())
-                            .append(JSONCommit.CURRENT_PATCHSET_ARGS).toString());
+                    builder.append(JSONCommit.CURRENT_PATCHSET_ARGS);
                 }
+
+                intent.putExtra(JSONCommit.KEY_WEBSITE, builder.toString());
+
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 context.startActivity(intent);
             }
