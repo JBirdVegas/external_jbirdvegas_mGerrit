@@ -132,12 +132,7 @@ public class CommitCard extends Card {
                         .append(StaticWebAddress.getQuery())
                         .append(mCommit.getCommitNumber());
 
-                // place a note for CM Viewers
-                if (Prefs.getCurrentGerrit(context).contains("cyanogenmod")) {
-                    builder.append(JSONCommit.CURRENT_CM_ARGS);
-                } else {
-                    builder.append(JSONCommit.CURRENT_PATCHSET_ARGS);
-                }
+                builder.append(JSONCommit.CURRENT_PATCHSET_ARGS);
 
                 intent.putExtra(JSONCommit.KEY_WEBSITE, builder.toString());
 
