@@ -240,7 +240,7 @@ public abstract class CardsFragment extends Fragment {
             }
         } catch (NullPointerException npe) {
             // not making a changelog
-            if (DEBUG) Log.e(TAG, "Not making changelog");
+            if (DEBUG) Log.w(TAG, "Not making changelog");
         }
 
         loadScreen();
@@ -350,6 +350,12 @@ public abstract class CardsFragment extends Fragment {
         }
         else
             drawCardsFromList(generateCardsList(getStoredCards()), mCards);
+
+        if (mIsDirty)
+        {
+            mParent.getAdapter().notifyDataSetChanged();
+            mIsDirty = false;
+        }
     }
 
     /**
@@ -378,7 +384,7 @@ public abstract class CardsFragment extends Fragment {
         saveCards("");
 
         if (inProject) mCards.addCard(getProjectCard());
-        mIsDirty = false;
+        //mIsDirty = false;
         loadScreen();
     }
 

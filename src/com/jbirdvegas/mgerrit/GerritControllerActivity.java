@@ -472,14 +472,11 @@ public class GerritControllerActivity extends FragmentActivity {
     }
 
     /**
-     * A {@link android.support.v4.app.FragmentPagerAdapter} that returns a fragment
-     * corresponding to one of the sections/tabs/pages.
-     *
-     * Class not used.
+     * A {@link android.support.v4.app.FragmentStatePagerAdapter} that returns a
+     *  fragment corresponding to one of the sections/tabs/pages.
      */
     class SectionsPagerAdapter extends FragmentStatePagerAdapter
     {
-        int mPosition;
         public int mPageCount = 3;
 
         ReviewTab mReviewTab = null;
@@ -491,10 +488,10 @@ public class GerritControllerActivity extends FragmentActivity {
         }
 
         @Override
-        /** Called to instantiate the fragment for the given page. */
+        /** Called to instantiate the fragment for the given page.
+         * IMPORTANT: Do not use this to monitor the currently selected page as it is used
+         *  to load neighbouring tabs that may not be selected. */
         public Fragment getItem(int position) {
-
-            mPosition = position;
             CardsFragment fragment;
 
             switch (position)
@@ -517,9 +514,13 @@ public class GerritControllerActivity extends FragmentActivity {
             return fragment;
         }
 
+        // The ViewPager monitors the current tab position so we can get the
+        //  ViewPager from the enclosing class and use the fragment recording
+        //  to get the current fragment
         public CardsFragment getCurrentFragment()
         {
-            switch (mPosition)
+            int pos = GerritControllerActivity.this.mViewPager.getCurrentItem();
+            switch (pos)
             {
                 case 0: return mReviewTab;
                 case 1: return mMergedTab;
@@ -550,5 +551,12 @@ public class GerritControllerActivity extends FragmentActivity {
             if (mAbandonedTab != null) mAbandonedTab.markDirty();
             getCurrentFragment().resume();
         }
+    }
+
+    /**
+     * Returns the Tab Pager adapter
+     */
+    public SectionsPagerAdapter getAdapter() {
+        return mSectionsPagerAdapter;
     }
 }
