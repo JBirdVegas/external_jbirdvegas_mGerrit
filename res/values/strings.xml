@@ -115,4 +115,5 @@
     <string name="local_timezone_summary">The TimeZone provided as default may be inaccurate. Use this to override the
         default local TimeZone.
     </string>
+    <string name="patchset_labels_change_diff">Change Differences</string>
 </resources>
