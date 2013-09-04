@@ -187,7 +187,7 @@ public class GerritControllerActivity extends FragmentActivity {
                     public void onPageSelected(int position)
                     {
                         mActionBar.setSelectedNavigationItem(position);
-                        mSectionsPagerAdapter.getCurrentFragment().resume();
+                        mSectionsPagerAdapter.getFragment(position).refresh();
                     }
                 });
 
@@ -471,6 +471,11 @@ public class GerritControllerActivity extends FragmentActivity {
         mGerritTasks = null;
     }
 
+    protected FragmentStatePagerAdapter getAdapter() {
+        return mSectionsPagerAdapter;
+    }
+
+
     /**
      * A {@link android.support.v4.app.FragmentStatePagerAdapter} that returns a
      *  fragment corresponding to one of the sections/tabs/pages.
@@ -520,6 +525,11 @@ public class GerritControllerActivity extends FragmentActivity {
         public CardsFragment getCurrentFragment()
         {
             int pos = GerritControllerActivity.this.mViewPager.getCurrentItem();
+            return getFragment(pos);
+        }
+
+        public CardsFragment getFragment(int pos)
+        {
             switch (pos)
             {
                 case 0: return mReviewTab;
@@ -549,14 +559,7 @@ public class GerritControllerActivity extends FragmentActivity {
             if (mReviewTab != null) mReviewTab.markDirty();
             if (mMergedTab != null) mMergedTab.markDirty();
             if (mAbandonedTab != null) mAbandonedTab.markDirty();
-            getCurrentFragment().resume();
+            getCurrentFragment().refresh();
         }
-    }
-
-    /**
-     * Returns the Tab Pager adapter
-     */
-    public SectionsPagerAdapter getAdapter() {
-        return mSectionsPagerAdapter;
     }
 }

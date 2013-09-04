@@ -350,12 +350,6 @@ public abstract class CardsFragment extends Fragment {
         }
         else
             drawCardsFromList(generateCardsList(getStoredCards()), mCards);
-
-        if (mIsDirty)
-        {
-            mParent.getAdapter().notifyDataSetChanged();
-            mIsDirty = false;
-        }
     }
 
     /**
@@ -366,36 +360,38 @@ public abstract class CardsFragment extends Fragment {
     abstract String getQuery();
 
     private void saveCards(String jsonCards) {
-        PreferenceManager.getDefaultSharedPreferences(mParent)
+        /**
+         * This method needs some work as this saves the results for the current tab.
+         *  When either a new query is made (changing projects, (un)stalking a user, changing
+         *  Gerrit, switching tabs) these results can either expire or should not be used.
+         *
+         *  What needs to happen if caching is to be done like this is that the result of EVERY
+         *   different query performed needs to be saved and restored only if the current query matches
+         *   EXACTLY. Since there will likely be changes to the results, this option is not a
+         *   viable solution.
+         *
+         *   In the meantime, disable caching completely.
+         */
+        /*PreferenceManager.getDefaultSharedPreferences(mParent)
                 .edit()
                 .putString(KEY_STORED_CARDS, jsonCards)
-                .commit();
+                .commit();*/
     }
 
     private String getStoredCards() {
-        return PreferenceManager.getDefaultSharedPreferences(mParent)
-                .getString(KEY_STORED_CARDS, "");
+        return "";
+        /* return PreferenceManager.getDefaultSharedPreferences(mParent)
+                .getString(KEY_STORED_CARDS, ""); */
     }
 
     protected void refresh()
     {
-        // Clear the cards and empty the card cache
+        if (!mIsDirty) return;
         mCards.clearCards();
-        saveCards("");
 
         if (inProject) mCards.addCard(getProjectCard());
-        //mIsDirty = false;
+        mIsDirty = false;
         loadScreen();
-    }
-
-    // Refresh this fragment
-    public void resume() { if (mIsDirty) refresh(); }
-
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        resume();
     }
 
     public void markDirty() { mIsDirty = true; }
