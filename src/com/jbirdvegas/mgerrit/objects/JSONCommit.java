@@ -21,10 +21,8 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

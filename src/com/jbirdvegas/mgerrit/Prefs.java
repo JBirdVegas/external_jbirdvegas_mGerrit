@@ -27,7 +27,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
-
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
 import java.util.LinkedList;

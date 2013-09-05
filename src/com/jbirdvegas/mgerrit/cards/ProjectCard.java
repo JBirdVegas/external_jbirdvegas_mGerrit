@@ -1,15 +1,5 @@
 package com.jbirdvegas.mgerrit.cards;
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import com.fima.cardsui.objects.Card;
-import com.jbirdvegas.mgerrit.GerritControllerActivity;
-import com.jbirdvegas.mgerrit.Prefs;
-import com.jbirdvegas.mgerrit.R;
-
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
  *  Author: Jon Stanford (JBirdVegas), 2013
@@ -26,6 +16,17 @@ import com.jbirdvegas.mgerrit.R;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.fima.cardsui.objects.Card;
+import com.jbirdvegas.mgerrit.GerritControllerActivity;
+import com.jbirdvegas.mgerrit.Prefs;
+import com.jbirdvegas.mgerrit.R;
+
 public class ProjectCard extends Card {
 
     private GerritControllerActivity mGerritControllerActivity;
