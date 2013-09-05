@@ -1,50 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp" >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:id="@+id/vertical_layout">
 
         <TextView
             android:id="@+id/card_picture_title"
             style="@style/CardTitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp" />
 
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="3dip"
+            android:layout_marginBottom="3dip"
+            android:background="@color/stroke" />
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/card_picture_image"
+            android:layout_width="154dp"
+            android:layout_height="127dp"
+            android:adjustViewBounds="true"
+            android:baselineAlignBottom="true"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            android:id="@+id/card_picture_user"
+            style="@style/CardText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dip"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dip"/>
     </LinearLayout>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="3dip"
-        android:layout_marginBottom="3dip"
-        android:background="@color/stroke" />
-
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/card_picture_image"
-        android:layout_width="154dp"
-        android:layout_height="127dp"
-        android:adjustViewBounds="true"
-        android:baselineAlignBottom="true"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"/>
-
-    <TextView
-        android:id="@+id/card_picture_user"
-        style="@style/CardText"
+    <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="8dip"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="8dip"/>
-
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:id="@+id/remove_content"
+        android:src="@drawable/ic_content_remove"
+        android:layout_alignRight="@+id/vertical_layout"
+        android:layout_alignTop="@+id/vertical_layout"
+        android:contentDescription="@string/remove_content"/>
+</RelativeLayout>

@@ -35,6 +35,7 @@ import com.fima.cardsui.objects.CardStack;
 import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.ImageCard;
+import com.jbirdvegas.mgerrit.cards.ProjectCard;
 import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
@@ -172,7 +173,10 @@ public abstract class CardsFragment extends Fragment {
 
         // now add a project card if
         // we are looking at a single project
-        ImageCard userImageCard = new ImageCard(mRequestQueue, committerObject.getName(),
+        ImageCard userImageCard = new ImageCard(mRequestQueue,
+                mParent,
+                this,
+                committerObject.getName(),
                 committerObject);
         userImageCard.setOnCardSwipedListener(new Card.OnCardSwiped() {
             @Override
@@ -313,25 +317,7 @@ public abstract class CardsFragment extends Fragment {
     }
 
     private Card getProjectCard() {
-        final String project = Prefs.getCurrentProject(mParent);
-        Card card = new Card(project) {
-            @Override
-            public View getCardContent(Context context) {
-                TextView projectView = new TextView(context);
-                projectView.setText(project);
-                projectView.setPadding(5, 0, 0, 10);
-                projectView.setTextAppearance(context, R.style.CardTitle);
-                return projectView;
-            }
-        };
-        card.setOnCardSwipedListener(new Card.OnCardSwiped() {
-            @Override
-            public void onCardSwiped(Card card, View layout) {
-                Prefs.setCurrentProject(mParent, null);
-            }
-        });
-        card.setSwipableCard(true);
-        return card;
+        return new ProjectCard(mParent, Prefs.getCurrentProject(mParent));
     }
 
     private void loadScreen() {

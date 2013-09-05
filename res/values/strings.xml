@@ -116,4 +116,5 @@
         default local TimeZone.
     </string>
     <string name="patchset_labels_change_diff">Change Differences</string>
+    <string name="remove_content">Remove this content</string>
 </resources>
