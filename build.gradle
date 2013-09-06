@@ -35,5 +35,32 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+
+    signingConfigs {
+        release { }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
 }
 
+def Properties props = new Properties()
+def File signingFile = new File('signing.properties')
+
+if (signingFile.exists()) {
+    props.load(new FileInputStream(signingFile))
+}
+if (props..containsKey('storeFile') &&
+        props.containsKey('storePassword') &&
+        props.containsKey('keyAlias') &&
+        props.containsKey('keyPassword')) {
+    android.signingConfigs.release.storeFile = file(props['storeFile'])
+    android.signingConfigs.release.storePassword = props['storePassword']
+    android.signingConfigs.release.keyAlias = props['keyAlias']
+    android.signingConfigs.release.keyPassword = props['keyPassword']
+} else {
+    android.buildTypes.release.signingConfig = null
+}

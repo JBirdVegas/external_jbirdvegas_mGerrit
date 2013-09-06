@@ -15,4 +15,5 @@ build-log.xml
 build.log
 build/
 .gradle/
-
+mGerrit_release.keystore
+signing.properties
