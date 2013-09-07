@@ -49,6 +49,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
@@ -58,6 +60,8 @@ import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.objects.Project;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import com.jbirdvegas.mgerrit.widgets.AddTeamView;
 import org.json.JSONException;
@@ -69,6 +73,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public class GerritControllerActivity extends FragmentActivity {
@@ -137,7 +143,7 @@ public class GerritControllerActivity extends FragmentActivity {
         mGerritWebsite = Prefs.getCurrentGerrit(this);
         mGerritTasks = new HashSet<GerritTask>();
 
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mListener = new SharedPreferences.OnSharedPreferenceChangeListener()
         {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
@@ -430,6 +436,8 @@ public class GerritControllerActivity extends FragmentActivity {
                         .toString(),
                 Toast.LENGTH_LONG).show();
         GerritURL.setGerrit(newGerrit);
+
+        DatabaseFactory.changeGerrit(this, newGerrit);
         refreshTabs();
     }
 

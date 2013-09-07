@@ -48,5 +48,10 @@
                   android:label="@string/app_name"
                   android:parentActivityName=".GerritControllerActivity"
                   android:icon="@drawable/ic_launcher"/>
+        <provider
+            android:name=".database.DatabaseFactory"
+            android:authorities="com.jbirdvegas.provider.mgerrit"
+            android:exported="false">
+        </provider>
     </application>
 </manifest>

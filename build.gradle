@@ -53,7 +53,7 @@ def File signingFile = new File('signing.properties')
 if (signingFile.exists()) {
     props.load(new FileInputStream(signingFile))
 }
-if (props..containsKey('storeFile') &&
+if (props.containsKey('storeFile') &&
         props.containsKey('storePassword') &&
         props.containsKey('keyAlias') &&
         props.containsKey('keyPassword')) {
