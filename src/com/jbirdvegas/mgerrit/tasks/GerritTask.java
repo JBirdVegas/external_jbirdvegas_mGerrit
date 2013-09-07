@@ -23,10 +23,18 @@ import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.message.ConnectionEstablished;
+import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
+import com.jbirdvegas.mgerrit.message.EstablishingConnection;
+import com.jbirdvegas.mgerrit.message.Finished;
+import com.jbirdvegas.mgerrit.message.HandshakeError;
+import com.jbirdvegas.mgerrit.message.InitializingDataTransfer;
+import com.jbirdvegas.mgerrit.message.ProgressUpdate;
+import com.jbirdvegas.mgerrit.objects.GerritMessage;
 
-import javax.net.ssl.SSLHandshakeException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,6 +42,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import javax.net.ssl.SSLHandshakeException;
+
+// Probably need to change this from an AsyncTask as it is not always called on the UI thread.
 @SuppressWarnings("AccessOfSystemProperties")
 public abstract class GerritTask extends AsyncTask<String, String, String> {
     private final boolean CONNECTION_DEBUGGING = false;
@@ -49,7 +60,6 @@ public abstract class GerritTask extends AsyncTask<String, String, String> {
     private final long INITIALIZING_DATA_TRANSFER = -1001;
     private final long ERROR_DURING_CONNECTION = -1002;
     private final long HANDSHAKE_ERROR = -1003;
-    private ProgressDialog mProgressDialog;
     private Context mContext;
     private long mCurrentFileLength = -1;
     private String mCurrentUrl;
@@ -67,10 +77,8 @@ public abstract class GerritTask extends AsyncTask<String, String, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mProgressDialog = new ProgressDialog(mContext);
-        mProgressDialog.setTitle(R.string.transfering_json_data);
-        mProgressDialog.setMessage(mContext.getString(R.string.establishing_connection));
-        mProgressDialog.show();
+
+        new EstablishingConnection(mContext).sendUpdateMessage();
     }
 
     @Override
@@ -139,8 +147,9 @@ public abstract class GerritTask extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        mProgressDialog.cancel();
-        mProgressDialog.dismiss();
+
+        new Finished(mContext, s, mCurrentUrl).sendUpdateMessage();
+
         // check if we are in production code or debugging mode
         boolean isDebuggable = 0 != (mContext.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
         // if we are debugging then dump the response to logcat
@@ -155,42 +164,26 @@ public abstract class GerritTask extends AsyncTask<String, String, String> {
     @Override
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
-        if (mProgressDialog == null || !mProgressDialog.isShowing()) {
-            return;
-        }
-        mProgressDialog.setMessage(values[0]);
     }
 
     private void handleComputationsOffUIThread(Long... values) {
+
         try {
             int switchable = Integer.parseInt(String.valueOf(values[0]));
             // TODO make text display notices
             switch (switchable) {
                 case (int) CONNECTION_ESTABLISHED:
-                    Log.d(TAG, mContext.getString(R.string.connection_established));
-                    publishProgress(mContext.getString(R.string.connection_established));
+                    new ConnectionEstablished(mContext, mCurrentUrl).sendUpdateMessage();
                     return;
                 case (int) INITIALIZING_DATA_TRANSFER:
-                    Log.d(TAG, mContext.getString(R.string.initializing_data_transfer));
-                    publishProgress(mContext.getString(R.string.initializing_data_transfer));
+                    new InitializingDataTransfer(mContext, mCurrentUrl).sendUpdateMessage();
                     return;
                 case (int) ERROR_DURING_CONNECTION:
-                    Log.d(TAG, mContext.getString(R.string.communications_error));
-                    Toast.makeText(mContext,
-                            String.format("%s with webaddress: %s", mContext.getString(
-                                    R.string.communications_error),
-                                    mCurrentUrl),
-                            Toast.LENGTH_LONG).show();
-                    Tools.showErrorDialog(mContext, mGerritException);
+                    new ErrorDuringConnection(mContext, mGerritException, mCurrentUrl).sendUpdateMessage();
                     closeUpShop();
                     return;
                 case (int) HANDSHAKE_ERROR:
-                    String errorMessage = mContext.getString(R.string.handshake_fail_message);
-                    // Log the exception
-                    Log.d(TAG, errorMessage);
-                    Toast.makeText(mContext, errorMessage, Toast.LENGTH_LONG).show();
-                    Tools.showErrorDialog(mContext, mGerritException);
-                    // close up the dialogs and end GerritTask
+                    new HandshakeError(mContext, mGerritException, mCurrentUrl).sendUpdateMessage();
                     closeUpShop();
                     return;
             }
@@ -200,36 +193,17 @@ public abstract class GerritTask extends AsyncTask<String, String, String> {
         // if we are still here then we just display the progress of download
         // display either generic message or progress % (if available)
         if (mCurrentFileLength != -1) {
-            publishProgress(
-                    String.format(mContext.getString(R.string.downloading_status),
-                            values[0], // progress
-                            mCurrentFileLength, // total transfer size
-                            findPercent(values[0], mCurrentFileLength))); // percent complete
-        } else {
-            publishProgress(mContext.getString(R.string.transfering_json_data));
-        }
-    }
-
-    public void closeUpShop() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.cancel();
-            mProgressDialog.dismiss();
-        }
-        this.cancel(true);
-    }
-
-    private int findPercent(long progress, long totalSize) {
-        try {
+            new ProgressUpdate(mContext, mCurrentUrl, values[0], mCurrentFileLength).sendUpdateMessage();
             if (CONNECTION_DEBUGGING) {
-                Log.d(TAG, "progress: " + progress + " totalSize: " + totalSize +
-                        " as percent:" + safeLongToInt(progress * 100 / totalSize));
+                Log.d(TAG, "progress: " + values[0] + " totalSize: " + mCurrentFileLength +
+                        " as percent:" + safeLongToInt(values[0] * 100 / mCurrentFileLength));
             }
-            // use a safe casting method
-            return safeLongToInt(progress * 100 / totalSize);
-            // handle division by zero just in case
-        } catch (ArithmeticException ae) {
-            return -1;
         }
+    }
+
+    // close up the dialogs and end GerritTask
+    private void closeUpShop() {
+        this.cancel(true);
     }
 
     /**
