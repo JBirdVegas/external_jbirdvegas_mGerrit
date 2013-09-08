@@ -17,6 +17,7 @@ package com.jbirdvegas.mgerrit.listeners;
  *  limitations under the License.
  */
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
@@ -43,41 +45,44 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultGerritReceivers {
 
-    private ProgressDialog mProgressDialog;
-    Context mContext;
+    private Activity mActivity;
+
+    // TODO: Add checks to make sure this is always >= 0
+    private AtomicInteger mRequestsRunning;
 
     /**
      * Allows access to the default Gerrit receivers
-     * @param mContext An activity context (associated directly with a view).
-     *                 Note: Must NOT be the Application context.
+     * @param activity An activity context (associated directly with a view).
      */
-    public DefaultGerritReceivers(Context mContext) {
-        this.mContext = mContext;
+    public DefaultGerritReceivers(Activity activity) {
+        mActivity = activity;
+        mRequestsRunning = new AtomicInteger(0);
     }
 
     private final BroadcastReceiver startReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             // Get extra data included in the Intent
             String message = intent.getStringExtra(GerritMessage.MESSAGE);
 
-            /* Note the application context is passed in, we need a specific view or
-             *  activity context, so use mContext instead. */
-            mProgressDialog = new ProgressDialog(mContext);
-            mProgressDialog.setTitle(R.string.transfering_json_data);
-            mProgressDialog.setMessage(message);
-            mProgressDialog.show();
+            if (mRequestsRunning.get() < 0) mRequestsRunning.set(0);
+            if (mRequestsRunning.getAndIncrement() == 0) {
+                mActivity.setProgressBarIndeterminateVisibility(true);
+            }
         }
     };
 
     private final BroadcastReceiver finishedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            dismissProgressDialog();
+            if (mRequestsRunning.decrementAndGet() <= 0) {
+                mActivity.setProgressBarIndeterminateVisibility(false);
+            }
+            if (mRequestsRunning.get() < 0) mRequestsRunning.set(0);
         }
     };
 
@@ -86,13 +91,11 @@ public class DefaultGerritReceivers {
         public void onReceive(Context context, Intent intent) {
 
             String message = intent.getStringExtra(GerritMessage.MESSAGE);
-
-            if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.setMessage(message);
-            }
+            Log.d("Gerrit Receiver", message);
         }
     };
 
+    // Not used.
     private final BroadcastReceiver updateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -102,12 +105,8 @@ public class DefaultGerritReceivers {
             Long progress = intent.getLongExtra(GerritMessage.FILE_LENGTH, 0);
 
             if (fileLength != -1) {
-                message = String.format(message, progress, fileLength,
-                    findPercent(progress, fileLength)); // percent complete
-            }
-
-            if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.setMessage(message);
+                mActivity.setProgressBarIndeterminate(false);
+                mActivity.setProgress(findPercent(progress, fileLength));
             }
         }
 
@@ -150,7 +149,10 @@ public class DefaultGerritReceivers {
                     Toast.LENGTH_LONG).show();
             Tools.showErrorDialog(context, exception);
 
-            dismissProgressDialog();
+            if (mRequestsRunning.decrementAndGet() <= 0) {
+                mActivity.setProgressBarIndeterminateVisibility(false);
+            }
+            if (mRequestsRunning.get() < 0) mRequestsRunning.set(0);
         }
     };
 
@@ -179,7 +181,7 @@ public class DefaultGerritReceivers {
             String type = receiver.getKey();
 
             if (l.contains(receiver.getKey())) {
-                LocalBroadcastManager.getInstance(mContext).registerReceiver(receiver.getValue(),
+                LocalBroadcastManager.getInstance(mActivity).registerReceiver(receiver.getValue(),
                         new IntentFilter(type));
                 l.remove(type);
             }
@@ -194,17 +196,10 @@ public class DefaultGerritReceivers {
 
         for (BroadcastReceiver receiver : receivers) {
             // This should ignore receivers that are not registered
-            LocalBroadcastManager.getInstance(mContext).unregisterReceiver(receiver);
+            LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(receiver);
         }
 
-        // Ensure that the progress dialog is closed.
-        if (mProgressDialog != null) mProgressDialog.dismiss();
-    }
-
-    public void dismissProgressDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog.cancel();
-            mProgressDialog.dismiss();
-        }
+        mRequestsRunning.set(0);
+        mActivity.setProgressBarIndeterminateVisibility(false);
     }
 }

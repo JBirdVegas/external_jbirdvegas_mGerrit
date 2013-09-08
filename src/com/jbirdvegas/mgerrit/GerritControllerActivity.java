@@ -44,6 +44,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -102,6 +103,8 @@ public class GerritControllerActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main);
 
         if (!CardsFragment.mSkipStalking) {
@@ -172,13 +175,6 @@ public class GerritControllerActivity extends FragmentActivity {
                 HandshakeError.TYPE,
                 ErrorDuringConnection.TYPE);
 
-    }
-
-    // Unregister all the receivers that were registerd in registerReceivers
-    private void unregisterReceivers() {
-
-        receivers.unregisterReceivers();
-        receivers.dismissProgressDialog();
     }
 
     /** MUST BE CALLED ON MAIN THREAD */
@@ -464,7 +460,7 @@ public class GerritControllerActivity extends FragmentActivity {
     {
         super.onPause();
         mPrefs.unregisterOnSharedPreferenceChangeListener(mListener);
-        unregisterReceivers();
+        receivers.unregisterReceivers();
 
         Iterator<GerritTask> it = mGerritTasks.iterator();
         while (it.hasNext())

@@ -1,22 +1,5 @@
 package com.jbirdvegas.mgerrit.objects;
 
-/*
- * Copyright (C) 2013 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (p4r4n01d), 2013
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
 import com.jbirdvegas.mgerrit.StaticWebAddress;
 
 import java.io.UnsupportedEncodingException;
@@ -35,6 +18,7 @@ public class GerritURL
     private String mEmail = "";
     private String mCommitterState = "";
     private boolean mRequestDetailedAccounts = false;
+    private boolean mListProjects = false;
 
     public static void setGerrit(String mGerritBase) {
         GerritURL.sGerritBase = mGerritBase;
@@ -64,6 +48,11 @@ public class GerritURL
         mRequestDetailedAccounts = requestDetailedAccounts;
     }
 
+    // Setting this will ignore all change related parts of the query URL
+    public void listProjects() {
+        mListProjects = true;
+    }
+
     @Override
     public String toString()
     {
@@ -74,10 +63,17 @@ public class GerritURL
             throw new NullPointerException("Base Gerrit URL is null, did you forget to set one?");
         }
 
+        if (mListProjects) {
+            return new StringBuilder(0)
+                    .append(sGerritBase)
+                    .append("projects/?d")
+                    .toString();
+        }
+
         StringBuilder builder = new StringBuilder(0)
-                .append(sGerritBase)
-                .append(StaticWebAddress.getQuery())
-                .append("(");
+            .append(sGerritBase)
+            .append(StaticWebAddress.getQuery())
+            .append("(");
 
         if (!"".equals(mStatus))
         {
@@ -91,8 +87,8 @@ public class GerritURL
         {
             if (addPlus) builder.append('+');
             builder.append(mCommitterState)
-                    .append(':')
-                    .append(mEmail);
+                .append(':')
+                .append(mEmail);
             addPlus = true;
         }
 
@@ -101,8 +97,8 @@ public class GerritURL
             {
                 if (addPlus) builder.append('+');
                 builder.append(JSONCommit.KEY_PROJECT)
-                        .append(":")
-                        .append(URLEncoder.encode(sProject, "UTF-8"));
+                    .append(":")
+                    .append(URLEncoder.encode(sProject, "UTF-8"));
                 addPlus = true;
             }
         } catch (UnsupportedEncodingException e) {
@@ -116,5 +112,9 @@ public class GerritURL
         }
 
         return builder.toString();
+    }
+
+    public boolean equals(String str) {
+        return this.toString().equals(str);
     }
 }
