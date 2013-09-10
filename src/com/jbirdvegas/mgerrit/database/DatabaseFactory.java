@@ -41,8 +41,7 @@ import java.util.Map;
  *  This is a singleton class, we can have only one DBHelper (it is also a
  *   singleton) and we only need one instance of a wdb as we should only
  *   have one database file open at a time. */
-public class DatabaseFactory extends ContentProvider
-{
+public class DatabaseFactory extends ContentProvider {
     private static DBHelper dbHelper;
     private static SQLiteDatabase wdb;
 
@@ -73,8 +72,7 @@ public class DatabaseFactory extends ContentProvider
     static {
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
-        for (Class<? extends DatabaseTable> table : DatabaseTable.tables)
-        {
+        for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
             try {
                 Method method = table.getDeclaredMethod("addURIMatches", UriMatcher.class);
                 method.invoke(null, URI_MATCHER);
@@ -173,10 +171,8 @@ public class DatabaseFactory extends ContentProvider
         int result = URI_MATCHER.match(uri);
 
         String retval = DatabaseTable.sContentTypeMap.get(result);
-        if (retval != null)
-            return retval;
-        else
-            throw new IllegalArgumentException("Unsupported URI: " + uri);
+        if (retval != null) return retval;
+        else throw new IllegalArgumentException("Unsupported URI: " + uri);
     }
 
     @Override
@@ -191,10 +187,10 @@ public class DatabaseFactory extends ContentProvider
         Map<String, Integer> params = DBParams.getParameters(uri);
         Integer conflictAlgorithm = params.get(DBParams.TAG_CONFLICT);
 
-        if (conflictAlgorithm == null)
-            id = this.wdb.insert(table, null, values);
-        else
+        if (conflictAlgorithm == null) id = this.wdb.insert(table, null, values);
+        else {
             id = this.wdb.insertWithOnConflict(table, null, values, conflictAlgorithm);
+        }
 
         if (id > 0)
         {
@@ -216,8 +212,9 @@ public class DatabaseFactory extends ContentProvider
         String table = getUriTable(uri);
         int rows = this.wdb.delete(table, selection, selectionArgs);
 
-        if (rows > 0)
+        if (rows > 0) {
             getContext().getContentResolver().notifyChange(uri, null);
+        }
 
         return rows;
     }
@@ -232,8 +229,9 @@ public class DatabaseFactory extends ContentProvider
         String tableName = getUriTable(uri);
         updateCount = wdb.update(tableName, values, selection, selectionArgs);
 
-        if (updateCount > 0)
+        if (updateCount > 0) {
             getContext().getContentResolver().notifyChange(uri, null);
+        }
 
         return updateCount;
     }
@@ -248,10 +246,8 @@ public class DatabaseFactory extends ContentProvider
         int numInserted = 0;
 
         this.wdb.beginTransaction();
-        try
-        {
-            for (ContentValues cv : values)
-            {
+        try {
+            for (ContentValues cv : values) {
                 numInserted = (insert(table, cv, conflictAlgorithm, update) == true) ?
                         numInserted + 1 : numInserted;
             }
@@ -276,10 +272,12 @@ public class DatabaseFactory extends ContentProvider
         long id = -1;
         if (table == null) return false;
 
-        if (conflictAlgorithm == null)
+        if (conflictAlgorithm == null) {
             id = this.wdb.insert(table, null, values);
-        else
+        }
+        else {
             id = this.wdb.insertWithOnConflict(table, null, values, conflictAlgorithm);
+        }
 
         return id > 0;
     }
@@ -295,8 +293,9 @@ public class DatabaseFactory extends ContentProvider
 
         String tableName = DatabaseTable.sTableMap.get(result);
         if (tableName != null) return tableName;
-        else
+        else {
             throw new IllegalArgumentException("Could not resolve URI data location: " + uri);
+        }
     }
 
     private boolean isUriList(Uri uri) {
@@ -309,8 +308,9 @@ public class DatabaseFactory extends ContentProvider
     }
 
     private String handleID(Uri _uri, String _selection) {
-        if (!TextUtils.isEmpty(_selection))
+        if (!TextUtils.isEmpty(_selection)) {
             return _selection + " AND ROWID = " + _uri.getLastPathSegment();
+        }
         else return "ROWID = " + _uri.getLastPathSegment();
     }
 }

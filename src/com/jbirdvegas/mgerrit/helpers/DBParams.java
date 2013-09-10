@@ -60,14 +60,12 @@ public class DBParams {
 
     private static Integer getConflictParameter(Uri uri) {
         String conflictAlgorithm = uri.getQueryParameter(TAG_CONFLICT);
-        if (conflictAlgorithm == null)
-            return null;
-        else if (conflictAlgorithm.equals("REPLACE"))
+        if (conflictAlgorithm == null) return null;
+        else if (conflictAlgorithm.equals("REPLACE")) {
             return SQLiteDatabase.CONFLICT_REPLACE;
-        else if (conflictAlgorithm.equals("IGNORE"))
+        } else if (conflictAlgorithm.equals("IGNORE")) {
             return SQLiteDatabase.CONFLICT_IGNORE;
-        else
-        {
+        } else {
             Log.w(DBParams.class.getSimpleName(),
                     "The conflict algorithm '" + conflictAlgorithm + "' is not supported");
             return null;

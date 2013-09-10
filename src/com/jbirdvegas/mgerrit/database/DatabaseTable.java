@@ -25,14 +25,13 @@ import java.util.ArrayList;
 /**
  * Base class using reflection to get fields out of the database
  */
-public abstract class DatabaseTable
-{
+public abstract class DatabaseTable {
     /**
      * Executes an SQL script to instanciate its database table
      * @param TAG For logging purposes
      * @param db An open writable database instance
      */
-	public abstract void create(String TAG, SQLiteDatabase db);
+    public abstract void create(String TAG, SQLiteDatabase db);
 
     /* Each subclass MUST implement this static method to facilitate construction
      *  of its database table. Obviously it cannot be declared abstract as it
@@ -40,10 +39,9 @@ public abstract class DatabaseTable
     //public static ProjectsTable getInstance();
 
     // Add an element for the List and ID MIME types for each table
-	enum UriType
-	{
-		ProjectsList, ProjectsID
-	};
+    enum UriType {
+        ProjectsList, ProjectsID
+    };
 
     // Add each DatabaseTable class here
     public static ArrayList<Class<? extends DatabaseTable>> tables;
@@ -60,8 +58,7 @@ public abstract class DatabaseTable
     static {
         sContentTypeMap = new SparseArray<String>();
 
-        for (Class<? extends DatabaseTable> table : DatabaseTable.tables)
-        {
+        for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
             try {
                 // Pass nulls in as these are static fields
                 int key = table.getField("ITEM_LIST").getInt(null);
@@ -87,8 +84,7 @@ public abstract class DatabaseTable
     static {
         sTableMap = new SparseArray<String>();
 
-        for (Class<? extends DatabaseTable> table : DatabaseTable.tables)
-        {
+        for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
             try {
                 // Pass nulls in as these are static fields
                 int key = table.getField("ITEM_LIST").getInt(null);

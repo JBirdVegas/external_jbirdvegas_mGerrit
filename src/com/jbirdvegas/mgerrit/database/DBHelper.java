@@ -24,8 +24,7 @@ import android.util.Log;
 
 import java.lang.reflect.Method;
 
-class DBHelper extends SQLiteOpenHelper
-{
+class DBHelper extends SQLiteOpenHelper {
     static final String TAG = "DbHelper";
     static final int DB_VERSION = 1;
     private static String sDbName;
