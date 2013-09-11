@@ -47,7 +47,8 @@ import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 public class ProjectsList extends Activity
-    implements LoaderManager.LoaderCallbacks<Cursor>
+    implements LoaderManager.LoaderCallbacks<Cursor>,
+        SearchView.OnQueryTextListener
 {
     ExpandableListView mProjectsListView;
     ProjectsTable mProjectsTable;
@@ -68,16 +69,6 @@ public class ProjectsList extends Activity
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         mProjectsListView = (ExpandableListView) findViewById(R.id.projects);
-
-        // Set the adapter for the list view
-        mListAdapter = new ProjectsListAdapter(this,
-                android.R.layout.simple_expandable_list_item_1,
-                new String[] { ProjectsTable.C_ROOT }, // Name for group layouts
-                new int[] { android.R.id.text1 },
-                R.layout.projects_subproject_row,
-                new String[] { ProjectsTable.C_SUBPROJECT }, // Name for child layouts
-                new int[] { android.R.id.text1 });
-        mProjectsListView.setAdapter(mListAdapter);
 
         mProjectsListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -106,7 +97,8 @@ public class ProjectsList extends Activity
             }
         });
 
-        getLoaderManager().initLoader(0, null, this);
+        handleIntent(this.getIntent());
+
         receivers = new DefaultGerritReceivers(this);
 
         // Todo: We don't always need to query the server here
@@ -116,15 +108,31 @@ public class ProjectsList extends Activity
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            Pair<String, String> pair = splitQuery(query);
-
-            mBase = pair.first;
-            mSubproject = pair.second;
-
-            getLoaderManager().restartLoader(0, null, this);
+        if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
+           handleIntent(intent);
         }
+    }
+
+    private void handleIntent(Intent intent)
+    {
+        // Searching is already handled when the query text changes.
+        if (!Intent.ACTION_SEARCH.equals(intent.getAction()))
+            loadAdapter();
+    }
+
+    private void loadAdapter()
+    {
+        // Set the adapter for the list view
+        mListAdapter = new ProjectsListAdapter(this,
+                android.R.layout.simple_expandable_list_item_1,
+                new String[] { ProjectsTable.C_ROOT }, // Name for group layouts
+                new int[] { android.R.id.text1 },
+                R.layout.projects_subproject_row,
+                new String[] { ProjectsTable.C_SUBPROJECT }, // Name for child layouts
+                new int[] { android.R.id.text1 });
+        mProjectsListView.setAdapter(mListAdapter);
+
+        getLoaderManager().initLoader(0, null, this);
     }
 
     // Source: http://developer.android.com/guide/topics/search/search-dialog.html
@@ -140,6 +148,7 @@ public class ProjectsList extends Activity
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(this);
 
         return true;
     }
@@ -230,5 +239,21 @@ public class ProjectsList extends Activity
         String p[] = query.split(SEPERATOR, 2);
         if (p.length < 2) return new Pair<String, String>(p[0], p[0]);
         else return new Pair<String, String>(p[0], p[1]);
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+        Pair<String, String> pair = splitQuery(query);
+        mBase = pair.first;
+        mSubproject = pair.second;
+        getLoaderManager().restartLoader(0, null, this);
+        return true; // Don't have support for suggestions yet.
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+		/* Although the submit request is handled when the query changes,
+		 *  return false here to hide the soft keyboard.  */
+        return false;
     }
 }
