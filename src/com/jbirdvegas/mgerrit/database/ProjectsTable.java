@@ -70,7 +70,7 @@ public class ProjectsTable extends DatabaseTable {
                 + C_ROOT + " text NOT NULL, "
                 + C_SUBPROJECT + " text NOT NULL, "
                 + C_DESCRIPTION + " text, " // This will probably be null
-                + " PRIMARY KEY (" + C_ROOT + ", " + C_SUBPROJECT + "))");
+                + "PRIMARY KEY (" + C_ROOT + ", " + C_SUBPROJECT + "))");
     }
 
     public static void addURIMatches(UriMatcher _urim) {

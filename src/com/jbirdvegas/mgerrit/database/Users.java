@@ -29,13 +29,16 @@ public class Users extends DatabaseTable {
     public static final String TABLE = "Users";
 
     // Columns
+    // The email address the user prefers to be contacted through. This appears to be unique
     public static final String C_EMAIL = "email";
+
+    // The full name of the user.
     public static final String C_NAME = "name";
 
     public static final String[] PRIMARY_KEY = { C_EMAIL };
 
-    public static final int ITEM_LIST = UriType.ProjectsList.ordinal();
-    public static final int ITEM_ID = UriType.ProjectsID.ordinal();
+    public static final int ITEM_LIST = UriType.SyncTimeList.ordinal();
+    public static final int ITEM_ID = UriType.SyncTimeID.ordinal();
 
     public static final Uri CONTENT_URI = Uri.parse(DatabaseFactory.BASE_URI + TABLE);
 
