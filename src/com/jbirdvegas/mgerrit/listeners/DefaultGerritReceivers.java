@@ -37,6 +37,7 @@ import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.HandshakeError;
 import com.jbirdvegas.mgerrit.message.InitializingDataTransfer;
 import com.jbirdvegas.mgerrit.message.ProgressUpdate;
+import com.jbirdvegas.mgerrit.message.StartingRequest;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 
 import java.util.ArrayList;
@@ -167,6 +168,7 @@ public class DefaultGerritReceivers {
 
         HashMap<String, BroadcastReceiver> typeReceiver = new HashMap<String, BroadcastReceiver>();
         typeReceiver.put(EstablishingConnection.TYPE, startReceiver);
+        typeReceiver.put(StartingRequest.TYPE, startReceiver);
         typeReceiver.put(ConnectionEstablished.TYPE, runningReceiver);
         typeReceiver.put(InitializingDataTransfer.TYPE, runningReceiver);
         typeReceiver.put(ProgressUpdate.TYPE, updateReceiver);

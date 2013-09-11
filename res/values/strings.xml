@@ -117,4 +117,6 @@
     </string>
     <string name="patchset_labels_change_diff">Change Differences</string>
     <string name="remove_content">Remove this content</string>
+    <string name="connection_starting">Starting Gerrit request</string>
+    <string name="search_hint">Search projects</string>
 </resources>

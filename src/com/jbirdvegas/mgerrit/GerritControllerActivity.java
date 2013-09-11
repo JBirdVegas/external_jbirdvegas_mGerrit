@@ -236,9 +236,11 @@ public class GerritControllerActivity extends FragmentActivity {
     private AlertDialog alertDialog = null;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_save:
-                Intent intent = new Intent(this, PrefsActivity.class);
+                intent = new Intent(this, PrefsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
@@ -259,7 +261,10 @@ public class GerritControllerActivity extends FragmentActivity {
                 showGerritDialog();
                 return true;
             case R.id.menu_projects:
-                getProjectsList();
+                intent = new Intent(this, ProjectsList.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
                 return true;
             case R.id.menu_changelog:
                 Intent changelog = new Intent(this,
@@ -270,66 +275,6 @@ public class GerritControllerActivity extends FragmentActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void getProjectsList() {
-        GerritTask gerritTask = new GerritTask(this)
-        {
-            @Override
-            public void onJSONResult(String jsonString)
-            {
-                try {
-                    JSONObject projectsJson = new JSONObject(jsonString);
-                    Iterator stringIterator = projectsJson.keys();
-                    List<Project> projectLinkedList
-                            = new LinkedList<Project>();
-                    while (stringIterator.hasNext()) {
-                        String path = (String) stringIterator.next();
-                        JSONObject projJson = projectsJson.getJSONObject(path);
-                        String kind = projJson.getString(JSONCommit.KEY_KIND);
-                        String id = projJson.getString(JSONCommit.KEY_ID);
-                        projectLinkedList.add(Project.getInstance(path, kind, id));
-                    }
-                    Collections.sort(projectLinkedList);
-                    ListView projectsList = new ListView(getThis());
-                    projectsList.setAdapter(new ArrayAdapter<Object>(getThis(),
-                            android.R.layout.simple_list_item_single_choice,
-                            projectLinkedList.toArray()));
-                    projectsList.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                    {
-                        @Override
-                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-                        {
-                            Project project = (Project) adapterView.getItemAtPosition(i);
-                            Prefs.setCurrentProject(GerritControllerActivity.this, project.getmPath());
-                            if (alertDialog != null) {
-                                alertDialog.dismiss();
-                                alertDialog = null;
-                            }
-                            // A call to the project change callback will be triggered here.
-                        }
-                    });
-
-                    Builder projectsBuilder = new Builder(getThis());
-                    projectsBuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i)
-                        {
-                            dialogInterface.dismiss();
-                        }
-                    });
-                    projectsBuilder.setView(projectsList);
-                    AlertDialog alertDialog1 = projectsBuilder.create();
-                    alertDialog = alertDialog1;
-                    alertDialog1.show();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        mGerritTasks.add(gerritTask);
-        gerritTask.execute(Prefs.getCurrentGerrit(this) + "projects/?d");
     }
 
     private void showGerritDialog() {
