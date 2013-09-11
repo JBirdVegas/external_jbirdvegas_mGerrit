@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 
 class DBHelper extends SQLiteOpenHelper {
     static final String TAG = "DbHelper";
-    static final int DB_VERSION = 1;
+    static final int DB_VERSION = 2;
     private static String sDbName;
 
     /**
