@@ -60,12 +60,8 @@ import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
-import com.jbirdvegas.mgerrit.objects.JSONCommit;
-import com.jbirdvegas.mgerrit.objects.Project;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import com.jbirdvegas.mgerrit.widgets.AddTeamView;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -73,8 +69,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 public class GerritControllerActivity extends FragmentActivity {
@@ -106,6 +100,9 @@ public class GerritControllerActivity extends FragmentActivity {
     ArrayList<CharSequence> mTitles;
     private DefaultGerritReceivers receivers;
 
+    // This is maintained for checking if the project has changed without looking
+    private String mCurrentProject;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +125,7 @@ public class GerritControllerActivity extends FragmentActivity {
         if ("".equals(Prefs.getCurrentProject(this))) {
             Prefs.setCurrentProject(this, null);
         }
+        mCurrentProject = Prefs.getCurrentProject(this);
 
         try {
             mChangeLogStart = getIntent()
@@ -180,7 +178,6 @@ public class GerritControllerActivity extends FragmentActivity {
                 Finished.TYPE,
                 HandshakeError.TYPE,
                 ErrorDuringConnection.TYPE);
-
     }
 
     /** MUST BE CALLED ON MAIN THREAD */
@@ -262,7 +259,6 @@ public class GerritControllerActivity extends FragmentActivity {
                 return true;
             case R.id.menu_projects:
                 intent = new Intent(this, ProjectsList.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
                 return true;
@@ -303,7 +299,6 @@ public class GerritControllerActivity extends FragmentActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 try {
-                    mGerritWebsite = urls.get(i);
                     Prefs.setCurrentGerrit(view.getContext(), mGerritWebsite);
                     if (alertDialog != null) {
                         alertDialog.dismiss();
@@ -366,10 +361,6 @@ public class GerritControllerActivity extends FragmentActivity {
         this.alertDialog.show();
     }
 
-    private Activity getThis() {
-        return this;
-    }
-
     public void onGerritChanged(String newGerrit)
     {
         mGerritWebsite = newGerrit;
@@ -388,6 +379,7 @@ public class GerritControllerActivity extends FragmentActivity {
 
     public void onProjectChanged(String newProject)
     {
+        mCurrentProject = newProject;
         GerritURL.setProject(newProject);
         CardsFragment.inProject = (newProject != null && newProject != "");
         refreshTabs();
@@ -403,10 +395,6 @@ public class GerritControllerActivity extends FragmentActivity {
 
     public CommitterObject getCommitterObject() { return mCommitterObject; }
     public void clearCommitterObject() { mCommitterObject = null; }
-
-    public String getGerritWebsite() {
-        return mGerritWebsite;
-    }
 
     @Override
     protected void onPause()
@@ -430,6 +418,14 @@ public class GerritControllerActivity extends FragmentActivity {
         super.onResume();
         mPrefs.registerOnSharedPreferenceChangeListener(mListener);
         registerReceivers();
+
+        // Manually check if the project changed (e.g. we are resuming from the Projects List)
+        String s = Prefs.getCurrentProject(this);
+        if (!s.equals(mCurrentProject)) onProjectChanged(s);
+
+        // Manually check if the Gerrit source changed (from the Preferences)
+        s = Prefs.getCurrentGerrit(this);
+        if (!s.equals(mGerritWebsite)) onGerritChanged(s);
     }
 
     @Override
