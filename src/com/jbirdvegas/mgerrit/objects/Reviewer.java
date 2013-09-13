@@ -20,6 +20,8 @@ package com.jbirdvegas.mgerrit.objects;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Reviewer implements Parcelable {
     public static final String NO_SCORE = "No score";
     public static final String CODE_REVIEW_PLUS_TWO = "Looks good to me, approved";
@@ -29,44 +31,52 @@ public class Reviewer implements Parcelable {
     public static final String VERIFIED_PLUS_ONE = "Verified";
     public static final String VERIFIED_MINUS_ONE = "Fails";
 
-    private Reviewer(String val, String _name, String _email) {
-        value = val;
-        name = _name;
-        email = _email;
+    @SerializedName("value")
+    private String mValue;
+    private CommitterObject mCommitter;
+
+    @SerializedName("date")
+    private final String mDate;
+
+    public Reviewer(String value, String name, String email) {
+        mValue = value;
+        mCommitter = CommitterObject.getInstance(name, email);
+        mDate = null;
     }
 
-    public static Reviewer getReviewerInstance(String val, String name, String email) {
-        return new Reviewer(val, name, email);
+    public Reviewer(Parcel parcel) {
+        mValue = parcel.readString();
+        mCommitter = new CommitterObject(parcel);
+        mDate = null;
     }
 
     public CommitterObject getCommiterObject() {
-        return CommitterObject.getInstance(name, email);
+        return mCommitter;
     }
 
-    private String value;
-    private String name;
-    private String email;
-
     public String getValue() {
-        return value;
+        return mValue;
     }
 
     public String getName() {
-        return name;
+        return mCommitter.getName();
+    }
+
+    public String getEmail() {
+        return mCommitter.getEmail();
+    }
+
+    public void setCommitter(CommitterObject committer) {
+        mCommitter = committer;
     }
 
     @Override
     public String toString() {
         return "Reviewer{" +
-                "value='" + value + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
+                "value='" + mValue + '\'' +
+                ", name='" + mCommitter.getName() + '\'' +
+                ", email='" + mCommitter.getEmail() + '\'' +
                 '}';
-    }
-
-    public Reviewer(Parcel parcel) {
-        value = parcel.readString();
-        name = parcel.readString();
     }
 
     @Override
@@ -76,11 +86,7 @@ public class Reviewer implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(value);
-        parcel.writeString(name);
-    }
-
-    public String getEmail() {
-        return email;
+        parcel.writeString(mValue);
+        mCommitter.writeToParcel(parcel, i);
     }
 }
