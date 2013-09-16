@@ -26,6 +26,11 @@ import java.util.ArrayList;
  * Base class using reflection to get fields out of the database
  */
 public abstract class DatabaseTable {
+
+    // Some helpful error messages for not obeying contracts
+    protected static final String NO_TABLE_CONST = "Database table must provide static constant 'TABLE'.";
+    protected static final String PRIVATE_TABLE_CONST = "'TABLE' constant must not be private.";
+
     /**
      * Executes an SQL script to instanciate its database table
      * @param TAG For logging purposes
@@ -45,10 +50,11 @@ public abstract class DatabaseTable {
         ChangesList, ChangesID,
         FileInfoList, FileInfoID,
         MessageInfoList, MessageInfoID,
-        SyncTimeList, SyncTimeID
+        SyncTimeList, SyncTimeID,
+        UsersChangesList, UsersChangesID
     };
 
-    // Add each DatabaseTable class here
+    // Add each DatabaseTable class here, we need to add the virtual tables as well
     public static ArrayList<Class<? extends DatabaseTable>> tables;
     static {
         tables = new ArrayList<Class<? extends DatabaseTable>>();
@@ -58,6 +64,7 @@ public abstract class DatabaseTable {
         tables.add(FileInfo.class);
         tables.add(MessageInfo.class);
         tables.add(SyncTime.class);
+        tables.add(UserChanges.class);
     };
 
     // Each subclass MUST declare the following constant in order to facilitate table creation:

@@ -37,7 +37,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.adapters.ProjectsListAdapter;
-import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
@@ -54,7 +53,7 @@ public class ProjectsList extends Activity
     ProjectsTable mProjectsTable;
     ProjectsListAdapter mListAdapter;
     private DefaultGerritReceivers receivers;
-    private String mBase, mSubproject;
+    private String mQuery;
 
     private static final String SEPERATOR = ProjectsTable.SEPERATOR;
 
@@ -200,6 +199,7 @@ public class ProjectsList extends Activity
         url.listProjects();
 
         Intent it = new Intent(this, GerritService.class);
+        it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Project);
         it.putExtra(GerritService.URL_KEY, url.toString());
         startService(it);
     }
@@ -210,14 +210,15 @@ public class ProjectsList extends Activity
      *  downloaded and we can start binding data to views.
      */
 
+    // Note: Using the platform Loader here (android.app.Loader)
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return ProjectsTable.getProjects(this, mBase, mSubproject);
+        return ProjectsTable.getProjects(this, mQuery);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mListAdapter.setSubprojectQuery(mSubproject);
+        mListAdapter.setSubprojectQuery(mQuery);
         mListAdapter.changeCursor(cursor);
     }
 
@@ -242,9 +243,7 @@ public class ProjectsList extends Activity
 
     @Override
     public boolean onQueryTextChange(String query) {
-        Pair<String, String> pair = splitQuery(query);
-        mBase = pair.first;
-        mSubproject = pair.second;
+        mQuery = query;
         getLoaderManager().restartLoader(0, null, this);
         int sizeOfGroups = mListAdapter.getGroupCount();
         for (int i = 0; sizeOfGroups > i; i++) {

@@ -45,10 +45,15 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
 
     @Override
     boolean isSyncRequired() {
-        long syncInterval = getContext().getResources().getInteger(R.integer.projects_sync_interval);
-        long lastSync = SyncTime.getValue(getContext(), SyncTime.PROJECTS_LIST_SYNC_TIME);
+        Context context = getContext();
+        long syncInterval = context.getResources().getInteger(R.integer.projects_sync_interval);
+        long lastSync = SyncTime.getValue(context, SyncTime.PROJECTS_LIST_SYNC_TIME);
         long timeNow = System.currentTimeMillis();
-        return (timeNow - lastSync > syncInterval);
+        boolean sync = (timeNow - lastSync > syncInterval);
+        if (sync) return true;
+
+        // Better just make sure that there are projects in the database
+        return !(ProjectsTable.anyProjects(context));
     }
 
     @Override

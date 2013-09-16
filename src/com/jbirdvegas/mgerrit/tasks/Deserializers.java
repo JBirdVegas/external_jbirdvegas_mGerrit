@@ -24,6 +24,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Projects;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 
@@ -32,7 +33,7 @@ import java.lang.reflect.Type;
 public final class Deserializers {
 
     // Custom deserializer as we are separating the one object into two
-    private static final JsonDeserializer<Reviewer> reviewerJsonDeserializer = new JsonDeserializer<Reviewer>() {
+    private static final JsonDeserializer<Reviewer> reviewerDeserializer = new JsonDeserializer<Reviewer>() {
 
         @Override
         public Reviewer deserialize(JsonElement jsonElement,
@@ -46,9 +47,23 @@ public final class Deserializers {
             }
         };
 
+    private static final JsonDeserializer<JSONCommit> commitDeserializer = new JsonDeserializer<JSONCommit>() {
+
+        @Override
+        public JSONCommit deserialize(JsonElement jsonElement,
+                                    Type type,
+                                    JsonDeserializationContext jsonDeserializationContext)
+                throws JsonParseException {
+
+            JSONCommit commit = new Gson().fromJson(jsonElement, type);
+            return commit;
+        }
+    };
+
     // Register all of the custom deserializers here
     protected static void addDeserializers(GsonBuilder gsonBuilder) {
         gsonBuilder.registerTypeAdapter(Projects.class, new Projects());
-        gsonBuilder.registerTypeAdapter(Reviewer.class, reviewerJsonDeserializer);
+        gsonBuilder.registerTypeAdapter(Reviewer.class, reviewerDeserializer);
+        //gsonBuilder.registerTypeAdapter(JSONCommit.class, commitDeserializer); NOT CURRENTLY USED
     }
 }

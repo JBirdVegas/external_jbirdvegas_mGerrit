@@ -28,19 +28,19 @@ import org.json.JSONObject;
 public class CommitterObject implements Parcelable {
     private static final String OWNER = "owner";
 
-    @SerializedName("name")
+    @SerializedName(JSONCommit.KEY_NAME)
     private final String mName;
 
-    @SerializedName("email")
+    @SerializedName(JSONCommit.KEY_EMAIL)
     private final String mEmail;
 
     @SerializedName("date")
     private final String mDate;
 
-
+    @SerializedName("tz")
     private final String mTimezone;
 
-    @SerializedName("_account_id")
+    @SerializedName(JSONCommit.KEY_ACCOUNT_ID)
     private final int mAccountId;
     // used when object is passed while looking for author specific
     // commits mState=[owner/author/committer/reviewer];
@@ -108,15 +108,19 @@ public class CommitterObject implements Parcelable {
         return mState;
     }
 
+    public int getAccountId() {
+        return mAccountId;
+    }
+
     @Override
     public String toString() {
         return "CommitterObject{" +
-                "mName='" + mName + '\'' +
-                ", mEmail='" + mEmail + '\'' +
-                ", mDate='" + mDate + '\'' +
-                ", mTimezone='" + mTimezone + '\'' +
-                ", mAccountId=" + mAccountId +
-                ", mState='" + mState + '\'' +
+                "name='" + mName + '\'' +
+                ", email='" + mEmail + '\'' +
+                ", date='" + mDate + '\'' +
+                ", timezone='" + mTimezone + '\'' +
+                ", accountId=" + mAccountId +
+                ", state='" + mState + '\'' +
                 '}';
     }
 
@@ -155,4 +159,25 @@ public class CommitterObject implements Parcelable {
             return new CommitterObject[size];
         }
     };
+
+    /*
+     * No two users should share the same account ID. This should be the same as the
+     *  primary key constraint in the database.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        else if (o == null) return false;
+
+        CommitterObject that = (CommitterObject) o;
+
+        if (mAccountId != that.mAccountId) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return mAccountId;
+    }
 }

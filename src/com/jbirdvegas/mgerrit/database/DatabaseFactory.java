@@ -82,7 +82,6 @@ public class DatabaseFactory extends ContentProvider {
         }
     }
 
-    /** The content provider requires an empty constructor **/
     public DatabaseFactory() {
         super();
         if (mInstances == null) mInstances = new ArrayList<WeakReference<DatabaseFactory>>();
@@ -192,8 +191,7 @@ public class DatabaseFactory extends ContentProvider {
             id = this.wdb.insertWithOnConflict(table, null, values, conflictAlgorithm);
         }
 
-        if (id > 0)
-        {
+        if (id > 0) {
             Uri itemUri = uri;
             // notify all listeners of changes and return itemUri:
             itemUri = ContentUris.withAppendedId(uri, id);
@@ -223,8 +221,7 @@ public class DatabaseFactory extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int updateCount = 0, result = URI_MATCHER.match(uri);
 
-        if (isUriList(uri))
-            selection = handleID(uri, selection);
+        if (isUriList(uri)) selection = handleID(uri, selection);
 
         String tableName = getUriTable(uri);
         updateCount = wdb.update(tableName, values, selection, selectionArgs);
@@ -292,7 +289,9 @@ public class DatabaseFactory extends ContentProvider {
         int result = URI_MATCHER.match(uri);
 
         String tableName = DatabaseTable.sTableMap.get(result);
-        if (tableName != null) return tableName;
+
+        if (tableName.equals(UserChanges.TABLE)) return Users.TABLE + ", " + Changes.TABLE;
+        else if (tableName != null) return tableName;
         else {
             throw new IllegalArgumentException("Could not resolve URI data location: " + uri);
         }

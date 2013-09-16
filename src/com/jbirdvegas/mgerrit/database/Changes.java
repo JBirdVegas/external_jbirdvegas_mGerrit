@@ -38,16 +38,20 @@ public class Changes extends DatabaseTable {
     public static final String C_STATUS = "status";
 
     // The name of the project (References Project table)
-    public static final String C_PROJECT_BASE = "base";
-    public static final String C_PROJECT_SUBPROJECT = "subproject";
+    public static final String C_PROJECT = "project";
 
     // The owner of the change (References User table)
     public static final String C_OWNER = "owner";
 
-    // The timestamp of when the change was created.
+    /* The timestamp of when the change was created.
+     * Store as ISO8601 string ("YYYY-MM-DD HH:MM:SS.SSS"). */
     public static final String C_CREATED = "time_created";
-    // The timestamp of when the change was last updated.
+    /* The timestamp of when the change was last updated.
+     * Store as ISO8601 string ("YYYY-MM-DD HH:MM:SS.SSS"). */
     public static final String C_UPDATED = "time_modified";
+
+    // The topic to which this change belongs.
+    public static final String C_TOPIC = "topic";
 
     public static final String[] PRIMARY_KEY = { C_CHANGE_ID };
 
@@ -77,18 +81,17 @@ public class Changes extends DatabaseTable {
                 + C_SUBJECT + " text NOT NULL, "
                 + C_CREATED + " INTEGER NOT NULL, "
                 + C_UPDATED + " INTEGER NOT NULL ,"
-                + C_OWNER + " text NOT NULL, "
-                + C_PROJECT_BASE + " text NOT NULL, "
-                + C_PROJECT_SUBPROJECT + " text DEFAULT '', "
+                + C_OWNER + " INTEGER NOT NULL, "
+                + C_PROJECT + " text NOT NULL, "
                 + C_STATUS + " text DEFAULT '" + JSONCommit.KEY_STATUS_OPEN + "' NOT NULL, "
+                + C_TOPIC + " text, "
                 + "FOREIGN KEY (" + C_OWNER + ") REFERENCES "
                     + Users.TABLE + "(" + Users.C_EMAIL + "), "
-                + "FOREIGN KEY (" + C_PROJECT_BASE + ") REFERENCES "
-                    + ProjectsTable.TABLE + "(" + ProjectsTable.C_ROOT + "), "
-                + "FOREIGN KEY (" + C_PROJECT_SUBPROJECT + ") REFERENCES "
-                    + ProjectsTable.TABLE + "(" + ProjectsTable.C_SUBPROJECT + "))");
+                + "FOREIGN KEY (" + C_PROJECT + ") REFERENCES "
+                    + ProjectsTable.TABLE + "(" + ProjectsTable.C_PATH + "))");
     }
 
+    @SuppressWarnings("unused")
     public static void addURIMatches(UriMatcher _urim)
     {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE, ITEM_LIST);

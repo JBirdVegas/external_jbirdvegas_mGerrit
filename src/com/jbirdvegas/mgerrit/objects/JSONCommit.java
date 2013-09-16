@@ -22,11 +22,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,6 +69,9 @@ public class JSONCommit implements Parcelable {
     public static final String KEY_NAME = "name";
     public static final String KEY_KIND = "kind";
     public static final String KEY_PROJECT = "project";
+    private static final String KEY_TOPIC = "topic";
+    private static final String KEY_OWNER = "owner";
+    private static final String KEY_COMMITTER = "committer";
 
     // internal
     private static final String KEY_BRANCH = "branch";
@@ -80,10 +82,8 @@ public class JSONCommit implements Parcelable {
     private static final String KEY_MERGEABLE = "mergeable";
     private static final String KEY_SORT_KEY = "_sortkey";
     private static final String KEY_COMMIT_NUMBER = "_number";
-    private static final String KEY_OWNER = "owner";
     private static final String KEY_MESSAGES = "messages";
     private static final String KEY_CURRENT_REVISION = "current_revision";
-    private static final String KEY_COMMITTER = "committer";
     private static final String KEY_CHANGED_FILES = "files";
     private static final String KEY_LABELS = "labels";
     private static final String KEY_VERIFIED = "Verified";
@@ -94,8 +94,9 @@ public class JSONCommit implements Parcelable {
     private static final String KEY_COMMIT = "commit";
     private static final String KEY_TIMEZONE = "tz";
     private static final boolean DEBUG = false;
-    private static final String GERRIT_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss.SSSSSSSSSS";
+    private static final String GERRIT_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
     private static final String HUMAN_READABLE_DATE_FORMAT = "MMMM dd, yyyy '%s' hh:mm:ss aa";
+
     private TimeZone mServerTimeZone;
     private TimeZone mLocalTimeZone;
 
@@ -139,6 +140,31 @@ public class JSONCommit implements Parcelable {
             return null;
         }
 
+        public static Status getStatusFromString(final String status) {
+            String status_lower = status.toLowerCase();
+            if (status_lower.equals(KEY_STATUS_OPEN.toLowerCase()) || status.equals("new")) {
+                return NEW;
+            } else if (status_lower.equals(KEY_STATUS_MERGED.toLowerCase())) {
+                return MERGED;
+            } else if (status_lower.equals(KEY_STATUS_ABANDONED)) {
+                return ABANDONED;
+            }
+            return SUBMITTED;
+        }
+    }
+
+    public JSONCommit(Context context, String changeid, String project, String subject,
+                      CommitterObject committer, String updated, String status) {
+
+        mServerTimeZone = Prefs.getServerTimeZone(context);
+        mLocalTimeZone = Prefs.getLocalTimeZone(context);
+
+        mChangeId = changeid;
+        mProject = project;
+        mSubject = subject;
+        mOwnerObject = committer;
+        mLastUpdatedDate = updated;
+        mStatus = Status.valueOf(status);
     }
 
     /**
@@ -151,7 +177,6 @@ public class JSONCommit implements Parcelable {
     public JSONCommit(JSONObject object, Context context) {
         mServerTimeZone = Prefs.getServerTimeZone(context);
         mLocalTimeZone = Prefs.getLocalTimeZone(context);
-        mRawJSONCommit = object;
         try {
             mKind = object.getString(KEY_KIND);
             mId = object.getString(KEY_ID);
@@ -285,8 +310,6 @@ public class JSONCommit implements Parcelable {
         return linkedList.isEmpty() ? new LinkedList<CommitComment>() : linkedList;
     }
 
-    private final JSONObject mRawJSONCommit;
-
     @SerializedName(JSONCommit.KEY_KIND)
     private String mKind;
 
@@ -298,6 +321,9 @@ public class JSONCommit implements Parcelable {
 
     @SerializedName(JSONCommit.KEY_BRANCH)
     private String mBranch;
+
+    @SerializedName(JSONCommit.KEY_TOPIC)
+    private String mTopic;
 
     @SerializedName(JSONCommit.KEY_CHANGE_ID)
     private String mChangeId;
@@ -315,7 +341,7 @@ public class JSONCommit implements Parcelable {
     private String mLastUpdatedDate;
 
     @SerializedName(JSONCommit.KEY_MERGEABLE)
-    private boolean mIsMergeable;
+    private boolean mIsMergeable = false;
 
     @SerializedName(JSONCommit.KEY_SORT_KEY)
     private String mSortKey;
@@ -431,16 +457,6 @@ public class JSONCommit implements Parcelable {
         return list;
     }
 
-    private String getOwnerName(JSONObject owners) {
-        try {
-            return owners.getString(KEY_NAME);
-        } catch (JSONException e) {
-            // should never happen all commit objects have an owner
-            Log.wtf(TAG, "Failed to find commit owner!", e);
-            return "Unknown";
-        }
-    }
-
     public String getKind() {
         return mKind;
     }
@@ -471,6 +487,10 @@ public class JSONCommit implements Parcelable {
 
     public String getCreatedDate() {
         return mCreatedDate;
+    }
+
+    public String getLastUpdatedDate() {
+        return mLastUpdatedDate;
     }
 
     /**
@@ -545,11 +565,6 @@ public class JSONCommit implements Parcelable {
         return mWebAddress;
     }
 
-
-    public JSONObject getRawJSONCommit() {
-        return mRawJSONCommit;
-    }
-
     public List<Reviewer> getVerifiedReviewers() {
         return mVerifiedReviewers;
     }
@@ -570,9 +585,16 @@ public class JSONCommit implements Parcelable {
         return mPatchSetNumber;
     }
 
+    public String getTopic() {
+        return mTopic;
+    }
+
+    public void setStatus(String status) {
+        mStatus = Status.valueOf(status);
+    }
+
     // Parcelable implementation
     public JSONCommit(Parcel parcel) {
-        mRawJSONCommit = null;
         mKind = parcel.readString();
         mId = parcel.readString();
         mProject = parcel.readString();
@@ -633,8 +655,7 @@ public class JSONCommit implements Parcelable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("JSONCommit{");
-        sb.append("mRawJSONCommit=").append(mRawJSONCommit);
-        sb.append(", mKind='").append(mKind).append('\'');
+        sb.append("mKind='").append(mKind).append('\'');
         sb.append(", mId='").append(mId).append('\'');
         sb.append(", mProject='").append(mProject).append('\'');
         sb.append(", mBranch='").append(mBranch).append('\'');
@@ -657,6 +678,7 @@ public class JSONCommit implements Parcelable {
         sb.append(", mCodeReviewers=").append(mCodeReviewers);
         sb.append(", mPatchSetNumber=").append(mPatchSetNumber);
         sb.append(", mMessagesList=").append(mMessagesList);
+        sb.append(", Topic='").append(mTopic).append('\'');
         sb.append('}');
         return sb.toString();
     }

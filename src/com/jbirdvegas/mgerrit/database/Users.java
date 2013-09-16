@@ -24,6 +24,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.jbirdvegas.mgerrit.helpers.DBParams;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Users extends DatabaseTable {
     // Table name
     public static final String TABLE = "Users";
@@ -35,10 +41,13 @@ public class Users extends DatabaseTable {
     // The full name of the user.
     public static final String C_NAME = "name";
 
+    // The numeric ID of the account.
+    public static final String C_ACCOUNT_ID = "account_id";
+
     public static final String[] PRIMARY_KEY = { C_EMAIL };
 
-    public static final int ITEM_LIST = UriType.SyncTimeList.ordinal();
-    public static final int ITEM_ID = UriType.SyncTimeID.ordinal();
+    public static final int ITEM_LIST = UriType.UsersList.ordinal();
+    public static final int ITEM_ID = UriType.UsersID.ordinal();
 
     public static final Uri CONTENT_URI = Uri.parse(DatabaseFactory.BASE_URI + TABLE);
 
@@ -59,13 +68,33 @@ public class Users extends DatabaseTable {
     public void create(String TAG, SQLiteDatabase db) {
         // Specify a conflict algorithm here so we don't have to worry about it later
         db.execSQL("create table " + TABLE + " ("
-                + C_EMAIL + " text PRIMARY KEY ON CONFLICT IGNORE, "
+                + C_ACCOUNT_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
+                + C_EMAIL + " text, "
                 + C_NAME + " text NOT NULL)");
     }
 
     public static void addURIMatches(UriMatcher _urim) {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE, ITEM_LIST);
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE + "/#", ITEM_ID);
+    }
+
+    /** Insert the list of users into the database **/
+    public static int insertUsers(Context context, CommitterObject[] users) {
+
+        List<ContentValues> values = new ArrayList<ContentValues>();
+
+        for (CommitterObject user : users) {
+            ContentValues row = new ContentValues();
+            row.put(C_ACCOUNT_ID, user.getAccountId());
+            row.put(C_EMAIL, user.getEmail());
+            row.put(C_NAME, user.getName());
+            values.add(row);
+        }
+
+        Uri uri = DBParams.insertWithReplace(CONTENT_URI);
+
+        ContentValues valuesArray[] = new ContentValues[values.size()];
+        return context.getContentResolver().bulkInsert(uri, values.toArray(valuesArray));
     }
 
     public static Uri insertUser(Context context, String name, String email) {

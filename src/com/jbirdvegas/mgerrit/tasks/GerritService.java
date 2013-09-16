@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 public class GerritService extends IntentService {
 
@@ -27,7 +28,7 @@ public class GerritService extends IntentService {
     public static final String URL_KEY = "Url";
     public static final String DATA_TYPE_KEY = "Type";
 
-    public static enum DataTypes { Project }
+    public static enum DataType { Project, Commit }
 
     private String mCurrentUrl;
 
@@ -37,17 +38,23 @@ public class GerritService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         mCurrentUrl = intent.getStringExtra(URL_KEY);
-        SyncProcessor processor = null;
+        SyncProcessor processor;
 
         // Determine which SyncProcessor to use here
-        int dataType = intent.getIntExtra(DATA_TYPE_KEY, 0);
-        if (dataType == DataTypes.Project.ordinal()) {
+
+        DataType dataType = (DataType) intent.getSerializableExtra(DATA_TYPE_KEY);
+        if (dataType == DataType.Project) {
             processor = new ProjectListProcessor(this, mCurrentUrl);
+        }
+        else if (dataType == DataType.Commit) {
+            processor = new CommitProcessor(this, mCurrentUrl);
+        }
+        else {
+            Log.w(TAG, "Don't know how to handle syncronization of type " + DATA_TYPE_KEY);
+            return;
         }
 
         // Call the SyncProcessor to fetch the data if necessary
-        if (processor != null && processor.isSyncRequired()) {
-            processor.fetchData();
-        }
+        if (processor.isSyncRequired()) processor.fetchData();
     }
 }

@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.CardsFragment;
@@ -63,6 +64,8 @@ public class CommitCard extends Card {
     public View getCardContent(final Context context) {
         int mGreen = context.getResources().getColor(R.color.text_green);
         int mRed = context.getResources().getColor(R.color.text_red);
+
+        // We are inflating a layout for each card, this is not good when we could be re-using them!
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commitCardView = inflater.inflate(R.layout.commit_card, null);
@@ -128,7 +131,7 @@ public class CommitCard extends Card {
                 StringBuilder builder = new StringBuilder(0)
                         .append(Prefs.getCurrentGerrit(context))
                         .append(StaticWebAddress.getQuery())
-                        .append(mCommit.getCommitNumber());
+                        .append(mCommit.getChangeId());
 
                 builder.append(JSONCommit.CURRENT_PATCHSET_ARGS);
 

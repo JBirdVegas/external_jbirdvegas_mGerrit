@@ -26,8 +26,7 @@ import java.lang.reflect.Method;
 
 class DBHelper extends SQLiteOpenHelper {
     static final String TAG = "DbHelper";
-    static final int DB_VERSION = 2;
-    private static String sDbName;
+    static final int DB_VERSION = 4;
 
     /**
      * Constructor should be private to prevent direct instantiation.
@@ -35,14 +34,12 @@ class DBHelper extends SQLiteOpenHelper {
      */
     protected DBHelper(Context context, String dbName) {
         super(context, dbName, null, DB_VERSION);
-        sDbName = dbName;
     }
 
     // Called only once, first time the DB is created. Create all the tables here
     @Override
     public void onCreate(SQLiteDatabase db) {
-        for (Class<? extends DatabaseTable> table : DatabaseTable.tables)
-        {
+        for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
             try {
                 Method getTableInst = table.getDeclaredMethod("getInstance");
                 DatabaseTable tableInst = (DatabaseTable) getTableInst.invoke(null);
@@ -57,10 +54,19 @@ class DBHelper extends SQLiteOpenHelper {
 
     // Called whenever newVersion > oldVersion. Can do some version number checking
     //  in here to avoid completely emptying the database, although it may be a good
-    //  idea to query the lot again.
+    //  idea to re-create the lot again.
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("drop table if exists " + ProjectsTable.TABLE);
+        for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
+            try {
+                String tableName = table.getField("TABLE").get(null).toString();
+                db.execSQL("drop table if exists " + tableName);
+            } catch (IllegalAccessException e) {
+                throw new IllegalAccessError(DatabaseTable.PRIVATE_TABLE_CONST);
+            } catch (NoSuchFieldException e) {
+                throw new NoSuchFieldError(DatabaseTable.NO_TABLE_CONST);
+            }
+        }
 
         Log.d(TAG, "Database Updated.");
         onCreate(db); // run onCreate to get new database
@@ -77,9 +83,7 @@ class DBHelper extends SQLiteOpenHelper {
         return name.toLowerCase().replaceAll("[^a-z0-9_]+", "") + ".db";
     }
 
-    protected void shutdown()
-    {
+    protected void shutdown() {
         this.close();
-        sDbName = null;
     }
 }
