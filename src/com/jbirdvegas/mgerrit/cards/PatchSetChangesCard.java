@@ -147,7 +147,7 @@ public class PatchSetChangesCard extends Card {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // launch in webbrowser
-                        String base = "%s#/c/%d/%d/%s";
+                        String base = "%s#/c/%d/%d/%s,unified";
                         Intent browserIntent = new Intent(
                                 Intent.ACTION_VIEW, Uri.parse(String.format(base,
                                 Prefs.getCurrentGerrit(context),
