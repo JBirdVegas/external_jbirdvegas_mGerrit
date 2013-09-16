@@ -526,7 +526,14 @@ public class GerritControllerActivity extends FragmentActivity {
             if (mReviewTab != null) mReviewTab.markDirty();
             if (mMergedTab != null) mMergedTab.markDirty();
             if (mAbandonedTab != null) mAbandonedTab.markDirty();
-            getCurrentFragment().refresh();
+            // Its possible the current fragment may be null... if that happens
+            // reload the page
+            CardsFragment currentFragment = getCurrentFragment();
+            if (currentFragment == null) {
+                onCreate(null);
+            } else {
+                currentFragment.refresh();
+            }
         }
     }
 }
