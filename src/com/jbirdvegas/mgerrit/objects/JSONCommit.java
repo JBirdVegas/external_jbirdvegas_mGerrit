@@ -21,6 +21,10 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.annotations.SerializedName;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import org.json.JSONArray;
@@ -282,28 +286,74 @@ public class JSONCommit implements Parcelable {
     }
 
     private final JSONObject mRawJSONCommit;
+
+    @SerializedName(JSONCommit.KEY_KIND)
     private String mKind;
+
+    @SerializedName(JSONCommit.KEY_ID)
     private String mId;
+
+    @SerializedName(JSONCommit.KEY_PROJECT)
     private String mProject;
+
+    @SerializedName(JSONCommit.KEY_BRANCH)
     private String mBranch;
+
+    @SerializedName(JSONCommit.KEY_CHANGE_ID)
     private String mChangeId;
+
+    @SerializedName(JSONCommit.KEY_SUBJECT)
     private String mSubject;
+
+    @SerializedName(JSONCommit.KEY_STATUS)
     private Status mStatus;
+
+    @SerializedName(JSONCommit.KEY_CREATED)
     private String mCreatedDate;
+
+    @SerializedName(JSONCommit.KEY_UPDATED)
     private String mLastUpdatedDate;
+
+    @SerializedName(JSONCommit.KEY_MERGEABLE)
     private boolean mIsMergeable;
+
+    @SerializedName(JSONCommit.KEY_SORT_KEY)
     private String mSortKey;
+
+    @SerializedName(JSONCommit.KEY_COMMIT_NUMBER)
     private int mCommitNumber;
+
+    @SerializedName(JSONCommit.KEY_CURRENT_REVISION)
     private String mCurrentRevision;
+
+    @SerializedName(JSONCommit.KEY_OWNER)
     private CommitterObject mOwnerObject;
+
+    @SerializedName(JSONCommit.KEY_AUTHOR)
     private CommitterObject mAuthorObject;
+
+    @SerializedName(JSONCommit.KEY_COMMITTER)
     private CommitterObject mCommitterObject;
+
+    @SerializedName(JSONCommit.KEY_MESSAGE)
     private String mMessage;
+
+    @SerializedName(JSONCommit.KEY_CHANGED_FILES)
     private List<ChangedFile> mChangedFiles;
+
+    @SerializedName(JSONCommit.KEY_WEBSITE)
     private String mWebAddress;
+
+    @SerializedName(JSONCommit.KEY_VERIFIED)
     private List<Reviewer> mVerifiedReviewers;
+
+    @SerializedName(JSONCommit.KEY_CODE_REVIEW)
     private List<Reviewer> mCodeReviewers;
+
+    // Not serialised
     private int mPatchSetNumber;
+
+    @SerializedName(JSONCommit.KEY_MESSAGES)
     private List<CommitComment> mMessagesList;
 
     private CommitterObject getCommitter(String currentRevision,
@@ -368,11 +418,11 @@ public class JSONCommit implements Parcelable {
         for (int i = 0; jsonArray.length() > i; i++) {
             JSONObject object = jsonArray.getJSONObject(i);
             try {
-                list.add(Reviewer.getReviewerInstance(object.getString(KEY_VALUE),
+                list.add(new Reviewer(object.getString(KEY_VALUE),
                         object.getString(KEY_NAME),
                         object.getString(KEY_EMAIL)));
             } catch (JSONException je) {
-                list.add(Reviewer.getReviewerInstance(null,
+                list.add(new Reviewer(null,
                         object.getString(KEY_NAME),
                         object.getString(KEY_EMAIL)));
             }

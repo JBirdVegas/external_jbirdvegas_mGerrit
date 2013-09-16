@@ -17,19 +17,23 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
-public final class Project implements Comparable<Project>{
+import com.google.gson.annotations.SerializedName;
+
+public final class Project implements Comparable<Project> {
+
+    @SerializedName(JSONCommit.KEY_PROJECT)
     private final String mPath;
+
+    @SerializedName(JSONCommit.KEY_KIND)
     private final String mKind;
+
+    @SerializedName(JSONCommit.KEY_ID)
     private final String mId;
 
-    private Project(String path, String kind, String id) {
+    public Project(String path, String kind, String id) {
         this.mPath = path;
         this.mKind = kind;
         this.mId = id;
-    }
-
-    public static Project getInstance(String path, String kind, String id) {
-        return new Project(path, kind, id);
     }
 
     public String getmKind() {

@@ -30,7 +30,6 @@ public abstract class GerritMessage {
     public static final String MESSAGE = "Gerrit Task Update";
     public static final String EXCEPTION = "Exception";
     public static final String URL = "URL";
-
     public static final String PROGRESS = "Progress";
     public static final String FILE_LENGTH = "File Length";
 

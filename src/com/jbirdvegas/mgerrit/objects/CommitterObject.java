@@ -19,15 +19,28 @@ package com.jbirdvegas.mgerrit.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CommitterObject implements Parcelable {
     private static final String OWNER = "owner";
+
+    @SerializedName("name")
     private final String mName;
+
+    @SerializedName("email")
     private final String mEmail;
+
+    @SerializedName("date")
     private final String mDate;
+
+
     private final String mTimezone;
+
+    @SerializedName("_account_id")
     private final int mAccountId;
     // used when object is passed while looking for author specific
     // commits mState=[owner/author/committer/reviewer];
@@ -84,18 +97,6 @@ public class CommitterObject implements Parcelable {
 
     public String getEmail() {
         return mEmail;
-    }
-
-    public String getDate() {
-        return mDate;
-    }
-
-    public String getTimezone() {
-        return mTimezone;
-    }
-
-    public int getAccountId() {
-        return mAccountId;
     }
 
     public CommitterObject setState(String state) {
