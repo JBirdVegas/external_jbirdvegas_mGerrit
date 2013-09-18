@@ -42,7 +42,7 @@ abstract class SyncProcessor<T> {
         @Override
         public void onResponse(T s) {
             insert(s);
-            new Finished(mContext, null, mCurrentUrl);
+            new Finished(mContext, null, mCurrentUrl).sendUpdateMessage();
             SyncTime.setValue(mContext, SyncTime.PROJECTS_LIST_SYNC_TIME,
                     System.currentTimeMillis());
         }
