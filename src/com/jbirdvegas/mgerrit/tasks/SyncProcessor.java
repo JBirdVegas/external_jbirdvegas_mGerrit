@@ -25,7 +25,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
@@ -38,12 +37,15 @@ import com.jbirdvegas.mgerrit.message.StartingRequest;
 abstract class SyncProcessor<T> {
     protected final Context mContext;
     private final String mCurrentUrl;
+    private ResponseHandler mResponseHandler;
+
     private final Response.Listener<T> listener = new Response.Listener<T>() {
         @Override
         public void onResponse(T data) {
-            insert(data);
-            new Finished(mContext, null, mCurrentUrl).sendUpdateMessage();
-            doPostProcess(data);
+            /* Offload all the work to a seperate thread so database activity is not
+             * done on the main thread. */
+            mResponseHandler = new ResponseHandler(data);
+            mResponseHandler.start();
         }
     };
 
@@ -108,5 +110,28 @@ abstract class SyncProcessor<T> {
     protected boolean isInSyncInterval(long syncInterval, long lastSync) {
         long timeNow = System.currentTimeMillis();
         return (timeNow - lastSync > syncInterval);
+    }
+
+    public void cancelOperation() {
+        if (mResponseHandler == null) return;
+        mResponseHandler.interrupt();
+        mResponseHandler = null;
+    }
+
+    class ResponseHandler extends Thread {
+        private final T mData;
+
+        ResponseHandler(T data) {
+            this.mData = data;
+        }
+
+        @Override
+        public void run() {
+            insert(mData);
+            new Finished(mContext, null, mCurrentUrl).sendUpdateMessage();
+            doPostProcess(mData);
+            // This thread has finished so the parent activity should no longer need it
+            mResponseHandler = null;
+        }
     }
 }
