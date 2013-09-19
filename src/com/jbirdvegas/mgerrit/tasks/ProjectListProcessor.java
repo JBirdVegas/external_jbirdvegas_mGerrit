@@ -19,9 +19,8 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.objects.Project;
@@ -47,17 +46,22 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     boolean isSyncRequired() {
         Context context = getContext();
         long syncInterval = context.getResources().getInteger(R.integer.projects_sync_interval);
-        long lastSync = SyncTime.getValue(context, SyncTime.PROJECTS_LIST_SYNC_TIME);
-        long timeNow = System.currentTimeMillis();
-        boolean sync = (timeNow - lastSync > syncInterval);
+        long lastSync = SyncTime.getValueForQuery(context, SyncTime.CHANGES_LIST_SYNC_TIME, getUrl());
+        boolean sync = isInSyncInterval(syncInterval, lastSync);
         if (sync) return true;
 
         // Better just make sure that there are projects in the database
-        return !(ProjectsTable.anyProjects(context));
+        return DatabaseTable.isEmpty(context, ProjectsTable.CONTENT_URI);
     }
 
     @Override
     Class<Projects> getType() {
         return Projects.class;
+    }
+
+    @Override
+    void doPostProcess(Projects data) {
+        SyncTime.setValue(mContext, SyncTime.PROJECTS_LIST_SYNC_TIME,
+                System.currentTimeMillis(), getUrl());
     }
 }

@@ -88,8 +88,7 @@ public class GerritURL
 
         StringBuilder builder = new StringBuilder(0)
             .append(sGerritBase)
-            .append(StaticWebAddress.getQuery())
-            .append("(");
+            .append(StaticWebAddress.getQuery());
 
         if (!"".equals(mStatus))
         {
@@ -120,8 +119,6 @@ public class GerritURL
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
-        builder.append(")");
 
         if (mRequestDetailedAccounts) {
             builder.append(JSONCommit.DETAILED_ACCOUNTS_ARG);

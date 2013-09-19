@@ -19,9 +19,12 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
 
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
+import com.jbirdvegas.mgerrit.database.DatabaseTable;
+import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.database.Users;
+import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.Arrays;
@@ -39,12 +42,24 @@ class CommitProcessor extends SyncProcessor<JSONCommit[]> {
 
     @Override
     boolean isSyncRequired() {
-        // TODO: Implement sync interval for Change list requests
-        return true;
+        Context context = getContext();
+        long syncInterval = context.getResources().getInteger(R.integer.changes_sync_interval);
+        long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, getUrl());
+        boolean sync = isInSyncInterval(syncInterval, lastSync);
+        if (sync) return true;
+
+        // Better just make sure that there are changes in the database
+        return DatabaseTable.isEmpty(context, Changes.CONTENT_URI);
     }
 
     @Override
     Class<JSONCommit[]> getType() {
         return JSONCommit[].class;
+    }
+
+    @Override
+    void doPostProcess(JSONCommit[] data) {
+        SyncTime.setValue(mContext, SyncTime.CHANGES_LIST_SYNC_TIME,
+                System.currentTimeMillis(), getUrl());
     }
 }

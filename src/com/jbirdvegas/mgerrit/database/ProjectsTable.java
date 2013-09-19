@@ -154,16 +154,6 @@ public class ProjectsTable extends DatabaseTable {
                 where.toString(), whereQuery,SORT_BY);
     }
 
-    public static boolean anyProjects(Context context) {
-        Cursor cursor = context.getContentResolver().query(CONTENT_URI, new String[] { "count(*)" },
-                null, null, null);
-        if (cursor == null) return false;
-        cursor.moveToFirst(); // IMPORTANT
-        boolean areProjects = (cursor.getInt(0) > 0);
-        cursor.close();
-        return areProjects;
-    }
-
     // Split a project's path (name) into its root and subproject
     private static Pair<String, String> splitPath(String projectPath) {
         String p[] = projectPath.split(SEPERATOR, 2);

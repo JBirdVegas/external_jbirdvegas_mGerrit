@@ -18,15 +18,10 @@ package com.jbirdvegas.mgerrit;
  */
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -36,7 +31,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,12 +46,10 @@ import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
-import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
 import com.jbirdvegas.mgerrit.listeners.MyTabListener;
 import com.jbirdvegas.mgerrit.message.*;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
-import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
@@ -207,7 +199,7 @@ public class GerritControllerActivity extends FragmentActivity {
                     public void onPageSelected(int position)
                     {
                         mActionBar.setSelectedNavigationItem(position);
-                        mSectionsPagerAdapter.getFragment(position).refresh();
+                        mSectionsPagerAdapter.getFragment(position).refresh(false);
                     }
                 });
 
@@ -532,7 +524,7 @@ public class GerritControllerActivity extends FragmentActivity {
             if (currentFragment == null) {
                 onCreate(null);
             } else {
-                currentFragment.refresh();
+                currentFragment.refresh(true);
             }
         }
     }

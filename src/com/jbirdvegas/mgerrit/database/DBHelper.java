@@ -26,7 +26,10 @@ import java.lang.reflect.Method;
 
 class DBHelper extends SQLiteOpenHelper {
     static final String TAG = "DbHelper";
-    static final int DB_VERSION = 4;
+
+    // Don't forget to set this when a change to the database is made!
+    // This must be strictly ascending, but can skip numbers
+    static final int DB_VERSION = 6;
 
     /**
      * Constructor should be private to prevent direct instantiation.

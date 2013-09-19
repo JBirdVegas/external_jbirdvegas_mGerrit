@@ -40,11 +40,10 @@ abstract class SyncProcessor<T> {
     private final String mCurrentUrl;
     private final Response.Listener<T> listener = new Response.Listener<T>() {
         @Override
-        public void onResponse(T s) {
-            insert(s);
+        public void onResponse(T data) {
+            insert(data);
             new Finished(mContext, null, mCurrentUrl).sendUpdateMessage();
-            SyncTime.setValue(mContext, SyncTime.PROJECTS_LIST_SYNC_TIME,
-                    System.currentTimeMillis());
+            doPostProcess(data);
         }
     };
 
@@ -61,6 +60,7 @@ abstract class SyncProcessor<T> {
     }
 
     protected Context getContext() { return mContext; }
+    protected String getUrl() { return mCurrentUrl; }
 
     /**
      * Inserts data into the database
@@ -77,6 +77,14 @@ abstract class SyncProcessor<T> {
      * @return T.class (the class of T). This is used for Volley Gson requests
      */
     abstract Class<T> getType();
+
+    /**
+     * Do some additional work after the data has been processed.
+     * @param data The data that was just processed passed here for convenience
+     */
+    void doPostProcess(T data) {
+        // Default to doing nothing - subclasses can override this
+    }
 
     protected void fetchData() {
 
@@ -95,5 +103,10 @@ abstract class SyncProcessor<T> {
             }
         });
         queue.add(request);
+    }
+
+    protected boolean isInSyncInterval(long syncInterval, long lastSync) {
+        long timeNow = System.currentTimeMillis();
+        return (timeNow - lastSync > syncInterval);
     }
 }

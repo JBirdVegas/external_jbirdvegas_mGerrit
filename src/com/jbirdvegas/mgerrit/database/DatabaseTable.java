@@ -17,19 +17,32 @@ package com.jbirdvegas.mgerrit.database;
  *  limitations under the License.
  */
 
+import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.util.SparseArray;
 
 import java.util.ArrayList;
 
 /**
- * Base class using reflection to get fields out of the database
+ * Base class using reflection to get fields out of the database.
+ *  This class defines a contract that implementing classes must obey. Note that there are
+ *  (constant) static fields that implementing classes MUST provide (see below).
  */
 public abstract class DatabaseTable {
 
     // Some helpful error messages for not obeying contracts
     protected static final String NO_TABLE_CONST = "Database table must provide static constant 'TABLE'.";
     protected static final String PRIVATE_TABLE_CONST = "'TABLE' constant must not be private.";
+
+    // Static (constant) fields implementing concrete classes MUST define:
+    //  public static final String TABLE
+    //  public static final int ITEM_LIST
+    //  public static final int ITEM_ID
+    //  public static final Uri CONTENT_URI = Uri.parse(DatabaseFactory.BASE_URI + TABLE);
+    //  public static final String CONTENT_TYPE = DatabaseFactory.BASE_MIME_LIST + TABLE;
+    //  public static final String CONTENT_ITEM_TYPE = DatabaseFactory.BASE_MIME_ITEM + TABLE;
 
     /**
      * Executes an SQL script to instanciate its database table
@@ -43,7 +56,9 @@ public abstract class DatabaseTable {
      *  needs to be declared static */
     //public static ProjectsTable getInstance();
 
-    // Add an element for the List and ID MIME types for each table
+    /* Add an element for the List and ID MIME types for each table.
+     *  These should be used to define the ITEM_LIST and ITEM_ID constants in each table
+     */
     enum UriType {
         ProjectsList, ProjectsID,
         UsersList, UsersID,
@@ -67,11 +82,8 @@ public abstract class DatabaseTable {
         tables.add(UserChanges.class);
     };
 
-    // Each subclass MUST declare the following constant in order to facilitate table creation:
-    // public static final String TABLE;
-
-    /* Gathers information from the DatabaseTable classes
-     *  to help implement the ContentProvider's getType method, which handles requests for the
+    /* Gathers information from the DatabaseTable classes to help implement the
+     *  ContentProvider's getType method, which handles requests for the
      *  MIME type of the data at the given URI.
      */
     public static final SparseArray<String> sContentTypeMap;
@@ -89,10 +101,9 @@ public abstract class DatabaseTable {
                 value = (String) table.getField("CONTENT_ITEM_TYPE").get(null);
                 sContentTypeMap.append(key, value);
 
-            } catch (IllegalAccessException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+                throw new RuntimeException("Table does not provide sufficient MIME type information", e);
             }
         }
     }
@@ -115,5 +126,20 @@ public abstract class DatabaseTable {
                 throw new RuntimeException("Unable to initialise table mappings due to inaccessible field", e);
             }
         }
+    }
+
+    /**
+     * @param context Context for database access
+     * @param uri The Uri of the table to search
+     * @return whether there are any rows in the given table
+     */
+    public static boolean isEmpty(Context context, Uri uri) {
+        Cursor cursor = context.getContentResolver().query(uri, new String[] { "count(*)" },
+                null, null, null);
+        if (cursor == null) return true;
+        cursor.moveToFirst(); // IMPORTANT
+        boolean noRows = (cursor.getInt(0) <= 0);
+        cursor.close();
+        return noRows;
     }
 }

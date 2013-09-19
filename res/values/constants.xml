@@ -22,4 +22,8 @@
     <!-- Interval between project list synchronizations (in milliseconds)
         Sync at most once every 24 hours -->
     <integer name="projects_sync_interval">86400000</integer>
+
+    <!-- Interval between change list synchronizations (in milliseconds)
+        Sync at most once every 20 minutes -->
+    <integer name="changes_sync_interval">1200000</integer>
 </resources>

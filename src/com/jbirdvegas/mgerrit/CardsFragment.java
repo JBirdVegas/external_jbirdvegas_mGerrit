@@ -204,12 +204,10 @@ public abstract class CardsFragment extends Fragment
         return inflater.inflate(R.layout.commit_list, container, false);
     }
 
+    // committerObject == mParent.getCommitterObject()
     private ImageCard stalkUser(final CommitterObject committerObject)
     {
-        mUrl.setCommitterState(committerObject.getState());
-        mUrl.setEmail(committerObject.getEmail());
-
-        Toast.makeText(mParent.getApplicationContext(),
+        Toast.makeText(mParent,
                 // format string with a space
                 String.format("%s %s",
                         getString(R.string.stalker_mode_toast),
@@ -228,10 +226,6 @@ public abstract class CardsFragment extends Fragment
             public void onCardSwiped(Card card, View layout) {
                 mParent.clearCommitterObject();
                 mSkipStalking = true;
-
-                mUrl.setCommitterState("");
-                mUrl.setEmail("");
-
                 mParent.refreshTabs();
             }
         });
@@ -292,7 +286,7 @@ public abstract class CardsFragment extends Fragment
             if (DEBUG) Log.w(TAG, "Not making changelog");
         }
 
-        sendRequest();
+        sendRequest(false);
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -372,14 +366,15 @@ public abstract class CardsFragment extends Fragment
      */
     abstract String getQuery();
 
-    private void sendRequest() {
+    private void sendRequest(boolean forceUpdate) {
         Intent it = new Intent(mParent, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
         it.putExtra(GerritService.URL_KEY, mUrl.toString());
+        it.putExtra(GerritService.FORCE_UPDATE_KEY, forceUpdate);
         mParent.startService(it);
     }
 
-    protected void refresh()
+    protected void refresh(boolean forceUpdate)
     {
         if (!mIsDirty) return;
         mCards.clearCards();
@@ -387,6 +382,8 @@ public abstract class CardsFragment extends Fragment
         if (inProject) mCards.addCard(getProjectCard());
         mIsDirty = false;
         getLoaderManager().restartLoader(0, null, this);
+
+        if (forceUpdate) sendRequest(forceUpdate);
     }
 
     public void markDirty() { mIsDirty = true; }
@@ -410,6 +407,5 @@ public abstract class CardsFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         drawCardsFromList(generateCardsList(cursor), mCards);
-
     }
 }
