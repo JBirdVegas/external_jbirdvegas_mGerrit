@@ -20,8 +20,11 @@ package com.jbirdvegas.mgerrit;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -31,6 +34,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,6 +54,7 @@ import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
 import com.jbirdvegas.mgerrit.listeners.MyTabListener;
 import com.jbirdvegas.mgerrit.message.*;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
+import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
@@ -79,7 +84,8 @@ public class GerritControllerActivity extends FragmentActivity {
     private Set<GerritTask> mGerritTasks;
 
     SharedPreferences mPrefs;
-    SharedPreferences.OnSharedPreferenceChangeListener mListener;
+
+    BroadcastReceiver mListener;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -135,10 +141,11 @@ public class GerritControllerActivity extends FragmentActivity {
         mGerritTasks = new HashSet<GerritTask>();
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        mListener = new SharedPreferences.OnSharedPreferenceChangeListener()
-        {
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
-            {
+
+        mListener = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String key = intent.getStringExtra(TheApplication.PREF_CHANGE_KEY);
                 if (key.equals(Prefs.GERRIT_KEY))
                     onGerritChanged(Prefs.getCurrentGerrit(GerritControllerActivity.this));
                 else if (key.equals(Prefs.CURRENT_PROJECT))
@@ -171,6 +178,8 @@ public class GerritControllerActivity extends FragmentActivity {
                 Finished.TYPE,
                 HandshakeError.TYPE,
                 ErrorDuringConnection.TYPE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mListener,
+                new IntentFilter(TheApplication.PREF_CHANGE_TYPE));
     }
 
     /** MUST BE CALLED ON MAIN THREAD */
@@ -293,14 +302,20 @@ public class GerritControllerActivity extends FragmentActivity {
         instances.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String gerritInstanceUrl = null;
+                String[] gerritInstances = getResources().getStringArray(R.array.gerrit_webaddresses);
                 try {
-                    Prefs.setCurrentGerrit(view.getContext(), mGerritWebsite);
-                    if (alertDialog != null) {
-                        alertDialog.dismiss();
-                        alertDialog = null;
-                    }
+                    gerritInstanceUrl = gerritInstances[i];
                 } catch (ArrayIndexOutOfBoundsException ignored) {
-
+                    GerritTeamsHelper helper = new GerritTeamsHelper();
+                    int length = gerritInstances.length;
+                    gerritInstanceUrl = helper.getGerritUrlsList().get(length - i);
+                }
+                Prefs.setCurrentGerrit(view.getContext(), gerritInstanceUrl);
+                refreshTabs();
+                if (alertDialog != null) {
+                    alertDialog.dismiss();
+                    alertDialog = null;
                 }
             }
         });
@@ -324,40 +339,39 @@ public class GerritControllerActivity extends FragmentActivity {
         teamBuilder.setView(instances);
         teamBuilder.setNegativeButton(R.string.cancel,
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
         teamBuilder.setPositiveButton(R.string.add_gerrit_team,
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                AlertDialog addTeamDialog = new Builder(teamBuilder.getContext())
-                        .setTitle(R.string.add_gerrit_team)
-                        .setIcon(android.R.drawable.ic_input_add)
-                        .create();
-                AddTeamView.RefreshCallback callback =
-                        new AddTeamView.RefreshCallback() {
                     @Override
-                    public void refreshScreenCallback() {
-                        refreshTabs();
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AlertDialog addTeamDialog = new Builder(teamBuilder.getContext())
+                                .setTitle(R.string.add_gerrit_team)
+                                .setIcon(android.R.drawable.ic_input_add)
+                                .create();
+                        AddTeamView.RefreshCallback callback =
+                                new AddTeamView.RefreshCallback() {
+                                    @Override
+                                    public void refreshScreenCallback() {
+                                        refreshTabs();
+                                    }
+                                };
+                        AddTeamView addTeamView = new AddTeamView(
+                                teamBuilder.getContext(),
+                                addTeamDialog);
+                        addTeamView.addRefreshScreenCallback(callback);
+                        addTeamDialog.setView(addTeamView.getView());
+                        addTeamDialog.show();
                     }
-                };
-                AddTeamView addTeamView = new AddTeamView(
-                        teamBuilder.getContext(),
-                        addTeamDialog);
-                addTeamView.addRefreshScreenCallback(callback);
-                addTeamDialog.setView(addTeamView.getView());
-                addTeamDialog.show();
-            }
-        });
+                });
         this.alertDialog = teamBuilder.create();
         this.alertDialog.show();
     }
 
-    public void onGerritChanged(String newGerrit)
-    {
+    public void onGerritChanged(String newGerrit) {
         mGerritWebsite = newGerrit;
         Toast.makeText(this,
                 new StringBuilder(0)
@@ -366,14 +380,10 @@ public class GerritControllerActivity extends FragmentActivity {
                         .append(newGerrit)
                         .toString(),
                 Toast.LENGTH_LONG).show();
-        GerritURL.setGerrit(newGerrit);
-        hideChangelogOption(newGerrit);
-        DatabaseFactory.changeGerrit(this, newGerrit);
         refreshTabs();
     }
 
-    public void onProjectChanged(String newProject)
-    {
+    public void onProjectChanged(String newProject) {
         mCurrentProject = newProject;
         GerritURL.setProject(newProject);
         CardsFragment.inProject = (newProject != null && newProject != "");
@@ -395,8 +405,9 @@ public class GerritControllerActivity extends FragmentActivity {
     protected void onPause()
     {
         super.onPause();
-        mPrefs.unregisterOnSharedPreferenceChangeListener(mListener);
         receivers.unregisterReceivers();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mListener);
 
         Iterator<GerritTask> it = mGerritTasks.iterator();
         while (it.hasNext())
@@ -411,7 +422,6 @@ public class GerritControllerActivity extends FragmentActivity {
     protected void onResume()
     {
         super.onResume();
-        mPrefs.registerOnSharedPreferenceChangeListener(mListener);
         registerReceivers();
 
         // Manually check if the project changed (e.g. we are resuming from the Projects List)

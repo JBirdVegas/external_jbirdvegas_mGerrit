@@ -27,6 +27,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
@@ -82,6 +83,8 @@ public class DatabaseFactory extends ContentProvider {
         }
     }
 
+    private boolean mLocked;
+
     public DatabaseFactory() {
         super();
         if (mInstances == null) mInstances = new ArrayList<WeakReference<DatabaseFactory>>();
@@ -93,21 +96,56 @@ public class DatabaseFactory extends ContentProvider {
         return dbHelper;
     }
 
-    public SQLiteDatabase getWritableDatabase() {
-        return wdb;
-    }
-
+    /**
+     * Close the current database. We can always check if the database is open by
+     *  looking for one of the results of this method (e.g. dbHelper == null)
+     */
     public void closeDatabase() {
-        dbHelper.shutdown();
-        wdb = null;
-        dbHelper = null;
+        if (mLocked) {
+            dbHelper.shutdown();
+            wdb = null;
+            dbHelper = null;
+        }
     }
 
-    // This should be called when the Gerrit source changes to modify all database references to
-    //  use the new database source.
-    public static void changeGerrit(Context context, String newGerrit) {
-        for (WeakReference<DatabaseFactory> key : mInstances) {
+    /** Locking methods **/
+    private void lock() { mLocked = true; }
+    private synchronized void unlock() {
+        mLocked = false;
+        this.notify();
+    }
 
+    /**
+     * Checks if the database is currently in use (i.e. a CRUD operation is being undertaken)
+     *  If this is the case, we want it to proceed before trying to change the database out
+     *  from under it. Otherwise, we are free to switch the database.
+     */
+    protected void waitUntilUnlocked() {
+        new Thread() {
+            @Override
+            public void run() {
+                while (mLocked) {
+                    try {
+                        this.wait();
+                    } catch (InterruptedException e) {
+                        // Interupted. Stop waiting and try one final time to close the database
+                        break;
+                    }
+                }
+                closeDatabase();
+            }
+        }.start();
+    }
+
+    /** This should be called when the Gerrit source changes to modify all database references to
+     *  use the new database source.
+     */
+    public static void changeGerrit(Context context, String newGerrit) {
+        Log.d("DatabaseFactory", "Switching Gerrit instance to: " + newGerrit);
+
+        /* Currently all the members of this class are static so it is only relevant
+         *  for the first instance */
+        for (WeakReference<DatabaseFactory> key : mInstances) {
             DatabaseFactory instance = key.get();
             if (instance == null) {
                 mInstances.remove(key);
@@ -115,14 +153,14 @@ public class DatabaseFactory extends ContentProvider {
             }
 
             // Close the database file
-            instance.closeDatabase();
-
-            // Reopen the new database
-            instance.getDatabase(context, newGerrit);
+            instance.waitUntilUnlocked();
         }
+
+        // Reopen the new database for all the instances
+        DatabaseFactory.getDatabase(context, newGerrit);
     }
 
-    public void getDatabase(Context context, String gerrit) {
+    public static void getDatabase(Context context, String gerrit) {
         String dbName = DBHelper.getDatabaseName(gerrit);
         DatabaseFactory.dbHelper = new DBHelper(context, dbName);
         // Ensure the database is open and we have a reference to it before
@@ -131,7 +169,7 @@ public class DatabaseFactory extends ContentProvider {
 
         // Notify ALL content providers that their data has changed. This should force a refresh
         //  of every loader's data
-        getContext().getContentResolver().notifyChange(Uri.parse(DatabaseFactory.BASE_URI), null);
+        context.getContentResolver().notifyChange(Uri.parse(DatabaseFactory.BASE_URI), null);
     }
 
     /** This the actual constructor **/
@@ -158,8 +196,10 @@ public class DatabaseFactory extends ContentProvider {
         String sLimit = (limit == null ? null : limit.toString());
         String groupby = DBParams.getGroupByCondition(uri);
 
+        lock();
         Cursor c = this.wdb.query(table, projection, selection, selectionArgs,
                 groupby, null, sortOrder, sLimit);
+        unlock();
 
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
@@ -186,10 +226,12 @@ public class DatabaseFactory extends ContentProvider {
         Map<String, Integer> params = DBParams.getParameters(uri);
         Integer conflictAlgorithm = params.get(DBParams.TAG_CONFLICT);
 
+        lock();
         if (conflictAlgorithm == null) id = this.wdb.insert(table, null, values);
         else {
             id = this.wdb.insertWithOnConflict(table, null, values, conflictAlgorithm);
         }
+        unlock();
 
         if (id > 0) {
             Uri itemUri = uri;
@@ -208,7 +250,9 @@ public class DatabaseFactory extends ContentProvider {
             selection = handleID(uri, selection);
 
         String table = getUriTable(uri);
+        lock();
         int rows = this.wdb.delete(table, selection, selectionArgs);
+        unlock();
 
         if (rows > 0) {
             getContext().getContentResolver().notifyChange(uri, null);
@@ -224,7 +268,9 @@ public class DatabaseFactory extends ContentProvider {
         if (isUriList(uri)) selection = handleID(uri, selection);
 
         String tableName = getUriTable(uri);
+        lock();
         updateCount = wdb.update(tableName, values, selection, selectionArgs);
+        unlock();
 
         if (updateCount > 0) {
             getContext().getContentResolver().notifyChange(uri, null);
@@ -242,6 +288,7 @@ public class DatabaseFactory extends ContentProvider {
         boolean update = DBParams.updateOnDuplicateInsertion(uri);
         int numInserted = 0;
 
+        lock();
         this.wdb.beginTransaction();
         try {
             for (ContentValues cv : values) {
@@ -252,6 +299,8 @@ public class DatabaseFactory extends ContentProvider {
         } finally {
             this.wdb.endTransaction();
         }
+        unlock();
+
         getContext().getContentResolver().notifyChange(uri, null);
         return numInserted;
     }
@@ -269,12 +318,14 @@ public class DatabaseFactory extends ContentProvider {
         long id = -1;
         if (table == null) return false;
 
+        lock();
         if (conflictAlgorithm == null) {
             id = this.wdb.insert(table, null, values);
         }
         else {
             id = this.wdb.insertWithOnConflict(table, null, values, conflictAlgorithm);
         }
+        unlock();
 
         return id > 0;
     }
