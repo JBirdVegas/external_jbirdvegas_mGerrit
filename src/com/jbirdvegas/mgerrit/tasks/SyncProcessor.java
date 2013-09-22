@@ -68,7 +68,7 @@ abstract class SyncProcessor<T> {
     protected void setUrl(GerritURL url) { mCurrentUrl = url; }
 
     // Helper method to extract the relevant query portion of the URL
-    protected String getQuery() {
+    public String getQuery() {
         return mCurrentUrl.getQuery();
     }
 

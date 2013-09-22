@@ -93,5 +93,12 @@ class CommitProcessor extends SyncProcessor<JSONCommit[]> {
                 return commit;
         }
         return null;
+
+    }
+
+    // Helper method to extract the relevant query portion of the URL
+    public String getQuery() {
+        String url = GerritURL.getQuery(getUrl().getQuery());
+        return (url == null) ? getUrl().getQuery() : url;
     }
 }

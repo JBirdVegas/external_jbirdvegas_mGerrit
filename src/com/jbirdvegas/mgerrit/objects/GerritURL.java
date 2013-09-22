@@ -24,6 +24,8 @@ import com.jbirdvegas.mgerrit.StaticWebAddress;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class that helps to deconstruct Gerrit queries and assemble them
@@ -137,7 +139,6 @@ public class GerritURL implements Parcelable
                 builder.append(JSONCommit.KEY_PROJECT)
                     .append(":")
                     .append(URLEncoder.encode(sProject, "UTF-8"));
-                addPlus = true;
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -167,6 +168,18 @@ public class GerritURL implements Parcelable
                     .append(":")
                     .append(mStatus).toString();
         }
+    }
+
+    /**
+     * Get the status query portion of the string
+     * @param str A gerrit query url, ideally the result of this class's toString method.
+     * @return The status query in the form "status:xxx"
+     */
+    public static String getQuery(String str) {
+        Pattern MY_PATTERN = Pattern.compile("(" + JSONCommit.KEY_STATUS + ":.*?)[+&]");
+        Matcher m = MY_PATTERN.matcher(str);
+        if (m.find()) return m.group(1);
+        else return null;
     }
 
     public boolean equals(String str) {
