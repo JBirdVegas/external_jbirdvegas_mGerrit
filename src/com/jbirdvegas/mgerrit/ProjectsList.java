@@ -200,7 +200,7 @@ public class ProjectsList extends Activity
 
         Intent it = new Intent(this, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Project);
-        it.putExtra(GerritService.URL_KEY, url.toString());
+        it.putExtra(GerritService.URL_KEY, url);
         startService(it);
     }
 

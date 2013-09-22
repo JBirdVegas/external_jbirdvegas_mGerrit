@@ -16,6 +16,10 @@ package com.jbirdvegas.mgerrit.objects;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.jbirdvegas.mgerrit.StaticWebAddress;
 
 import java.io.UnsupportedEncodingException;
@@ -26,7 +30,7 @@ import java.net.URLEncoder;
  *  when necessary. This allows for setting individual parts of a query
  *  without knowing other query parameters.
  */
-public class GerritURL
+public class GerritURL implements Parcelable
 {
     private static String sGerritBase;
     private static String sProject = "";
@@ -35,6 +39,12 @@ public class GerritURL
     private String mCommitterState = "";
     private boolean mRequestDetailedAccounts = false;
     private boolean mListProjects = false;
+    private String mSortkey = "";
+
+    // Default constructor to facilitate instanciation
+    public GerritURL() {
+        super();
+    }
 
     public static void setGerrit(String mGerritBase) {
         GerritURL.sGerritBase = mGerritBase;
@@ -60,6 +70,10 @@ public class GerritURL
         mCommitterState = committerState;
     }
 
+    /**
+     * DETAILED_ACCOUNTS: include _account_id and email fields when referencing accounts.
+     * @param requestDetailedAccounts true if to include the additional fields in the response
+     */
     public void setRequestDetailedAccounts(boolean requestDetailedAccounts) {
         mRequestDetailedAccounts = requestDetailedAccounts;
     }
@@ -67,6 +81,15 @@ public class GerritURL
     // Setting this will ignore all change related parts of the query URL
     public void listProjects() {
         mListProjects = true;
+    }
+
+    /**
+     * Use the sortKey to resume a query from a given change. This is only valid
+     *  for requesting change lists.
+     * @param sortKey The sortkey of a given change.
+     */
+    public void setSortKey(String sortKey) {
+        mSortkey = sortKey;
     }
 
     @Override
@@ -120,6 +143,10 @@ public class GerritURL
             e.printStackTrace();
         }
 
+        if (!"".equals(mSortkey)) {
+            builder.append("&P=").append(mSortkey);
+        }
+
         if (mRequestDetailedAccounts) {
             builder.append(JSONCommit.DETAILED_ACCOUNTS_ARG);
         }
@@ -127,7 +154,64 @@ public class GerritURL
         return builder.toString();
     }
 
+    public String getStatus() {
+        return mStatus;
+    }
+
+    public String getQuery() {
+        if (mStatus == null) {
+            return null;
+        } else {
+            return new StringBuilder(0)
+                    .append(JSONCommit.KEY_STATUS)
+                    .append(":")
+                    .append(mStatus).toString();
+        }
+    }
+
     public boolean equals(String str) {
         return this.toString().equals(str);
+    }
+
+    // --- Parcelable stuff so we can send this object through intents ---
+
+    public static final Creator<GerritURL> CREATOR
+            = new Creator<GerritURL>() {
+        public GerritURL createFromParcel(Parcel in) {
+            return new GerritURL(in);
+        }
+
+        @Override
+        public GerritURL[] newArray(int size) {
+            return new GerritURL[0];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(sGerritBase);
+        dest.writeString(sProject);
+        dest.writeString(mStatus);
+        dest.writeString(mEmail);
+        dest.writeString(mCommitterState);
+        dest.writeInt(mListProjects ? 1 : 0);
+        dest.writeInt(mRequestDetailedAccounts ? 1 : 0);
+        dest.writeString(mSortkey);
+    }
+
+    public GerritURL(Parcel in) {
+        sGerritBase = in.readString();
+        sProject = in.readString();
+        mStatus = in.readString();
+        mEmail = in.readString();
+        mCommitterState = in.readString();
+        mListProjects = in.readInt() == 1;
+        mRequestDetailedAccounts = in.readInt() == 1;
+        mSortkey = in.readString();
     }
 }

@@ -21,6 +21,7 @@ import android.content.Context;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
+import com.jbirdvegas.mgerrit.database.CommitMarker;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
@@ -31,8 +32,9 @@ import java.util.Arrays;
 
 class CommitProcessor extends SyncProcessor<JSONCommit[]> {
 
-    CommitProcessor(Context context, String url) {
+    CommitProcessor(Context context, GerritURL url) {
         super(context, url);
+        setResumableUrl();
     }
 
     @Override
@@ -44,7 +46,7 @@ class CommitProcessor extends SyncProcessor<JSONCommit[]> {
     boolean isSyncRequired() {
         Context context = getContext();
         long syncInterval = context.getResources().getInteger(R.integer.changes_sync_interval);
-        long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, getUrl());
+        long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, getQuery());
         boolean sync = isInSyncInterval(syncInterval, lastSync);
         if (sync) return true;
 
@@ -60,6 +62,36 @@ class CommitProcessor extends SyncProcessor<JSONCommit[]> {
     @Override
     void doPostProcess(JSONCommit[] data) {
         SyncTime.setValue(mContext, SyncTime.CHANGES_LIST_SYNC_TIME,
-                System.currentTimeMillis(), getUrl());
+                System.currentTimeMillis(), getQuery());
+
+        // Save our spot using the sortkey of the most recent change
+        String changeID = Changes.getMostRecentChange(mContext, getUrl().getStatus());
+        if (changeID != null) {
+            JSONCommit commit = findCommit(data, changeID);
+            if (commit != null) {
+                CommitMarker.markCommit(mContext, commit);
+            }
+        }
+    }
+
+    /**
+     * Check if we have a sortkey already stored for the current query, if so
+     *  we can modify the url given to include that sortkey.
+     */
+    protected void setResumableUrl() {
+        GerritURL originalURL = getUrl();
+        String sortKey = CommitMarker.getSortKeyForQuery(mContext, getUrl().getStatus());
+        if (sortKey != null) {
+            originalURL.setSortKey(sortKey);
+            super.setUrl(originalURL);
+        }
+    }
+
+    private JSONCommit findCommit(JSONCommit[] commits, String changeID) {
+        for (JSONCommit commit : commits) {
+            if (changeID.equals(commit.getChangeId()))
+                return commit;
+        }
+        return null;
     }
 }

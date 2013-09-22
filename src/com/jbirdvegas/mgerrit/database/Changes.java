@@ -17,10 +17,13 @@ package com.jbirdvegas.mgerrit.database;
  *  limitations under the License.
  */
 
+import android.content.Context;
 import android.content.UriMatcher;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 public class Changes extends DatabaseTable {
@@ -96,5 +99,29 @@ public class Changes extends DatabaseTable {
     {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE, ITEM_LIST);
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE + "/#", ITEM_ID);
+    }
+
+    public static String getMostRecentChange(Context context, String status) {
+        Uri uri = DBParams.fetchOneRow(CONTENT_URI);
+        String changeID = null;
+
+        status = JSONCommit.Status.getStatusString(status);
+
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(uri,
+                    new String[] { C_CHANGE_ID },
+                    C_STATUS + " = ?",
+                    new String[] { status },
+                    C_UPDATED + " DESC");
+            if (cursor.moveToFirst()) {
+                changeID = cursor.getString(0);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return changeID;
     }
 }

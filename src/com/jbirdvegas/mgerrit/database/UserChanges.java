@@ -139,8 +139,7 @@ public class UserChanges extends DatabaseTable {
 
         List<String> bindArgs = new ArrayList<String>();
 
-        // Convert the status to a Status enum instance and back again to
-        status = JSONCommit.Status.getStatusFromString(status).toString();
+        status = JSONCommit.Status.getStatusString(status);
         bindArgs.add(status);
 
         if (committer != null) {

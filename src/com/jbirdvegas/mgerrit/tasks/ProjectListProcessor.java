@@ -23,6 +23,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.database.SyncTime;
+import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.Project;
 import com.jbirdvegas.mgerrit.objects.Projects;
 
@@ -31,8 +32,11 @@ import java.util.List;
 
 class ProjectListProcessor extends SyncProcessor<Projects> {
 
-    ProjectListProcessor(Context context, String url) {
+    private final String mUrl;
+
+    ProjectListProcessor(Context context, GerritURL url) {
         super(context, url);
+        mUrl = url.toString();
     }
 
     @Override
@@ -46,7 +50,7 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     boolean isSyncRequired() {
         Context context = getContext();
         long syncInterval = context.getResources().getInteger(R.integer.projects_sync_interval);
-        long lastSync = SyncTime.getValueForQuery(context, SyncTime.CHANGES_LIST_SYNC_TIME, getUrl());
+        long lastSync = SyncTime.getValueForQuery(context, SyncTime.CHANGES_LIST_SYNC_TIME, mUrl);
         boolean sync = isInSyncInterval(syncInterval, lastSync);
         if (sync) return true;
 
@@ -62,6 +66,6 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     @Override
     void doPostProcess(Projects data) {
         SyncTime.setValue(mContext, SyncTime.PROJECTS_LIST_SYNC_TIME,
-                System.currentTimeMillis(), getUrl());
+                System.currentTimeMillis(), mUrl);
     }
 }

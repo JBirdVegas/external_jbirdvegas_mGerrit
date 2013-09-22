@@ -28,6 +28,7 @@ import com.google.gson.GsonBuilder;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
+import com.jbirdvegas.mgerrit.objects.GerritURL;
 
 /**
  * Base class that the GerritService expects as a contract to synchronise data from the
@@ -36,7 +37,7 @@ import com.jbirdvegas.mgerrit.message.StartingRequest;
  */
 abstract class SyncProcessor<T> {
     protected final Context mContext;
-    private final String mCurrentUrl;
+    private GerritURL mCurrentUrl;
     private ResponseHandler mResponseHandler;
 
     private final Response.Listener<T> listener = new Response.Listener<T>() {
@@ -56,13 +57,20 @@ abstract class SyncProcessor<T> {
         gson = gsonBuilder.create();
     }
 
-    SyncProcessor(Context context, String url) {
+    SyncProcessor(Context context, GerritURL url) {
         this.mContext = context;
         this.mCurrentUrl = url;
     }
 
     protected Context getContext() { return mContext; }
-    protected String getUrl() { return mCurrentUrl; }
+    protected GerritURL getUrl() { return mCurrentUrl; }
+
+    protected void setUrl(GerritURL url) { mCurrentUrl = url; }
+
+    // Helper method to extract the relevant query portion of the URL
+    protected String getQuery() {
+        return mCurrentUrl.getQuery();
+    }
 
     /**
      * Inserts data into the database
@@ -95,13 +103,14 @@ abstract class SyncProcessor<T> {
         //  trimming it should be fine.
 
         RequestQueue queue = Volley.newRequestQueue(mContext);
-        new StartingRequest(mContext, mCurrentUrl).sendUpdateMessage();
+        final String url = getUrl().toString();
+        new StartingRequest(mContext, url).sendUpdateMessage();
 
-        GsonRequest request = new GsonRequest<T>(mCurrentUrl, gson, getType(), 5,
+        GsonRequest request = new GsonRequest<T>(url, gson, getType(), 5,
                listener, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                new ErrorDuringConnection(mContext, volleyError, mCurrentUrl);
+                new ErrorDuringConnection(mContext, volleyError, url);
             }
         });
         queue.add(request);
@@ -127,8 +136,9 @@ abstract class SyncProcessor<T> {
 
         @Override
         public void run() {
+            String url = getUrl().toString();
             insert(mData);
-            new Finished(mContext, null, mCurrentUrl).sendUpdateMessage();
+            new Finished(mContext, null, url).sendUpdateMessage();
             doPostProcess(mData);
             // This thread has finished so the parent activity should no longer need it
             mResponseHandler = null;

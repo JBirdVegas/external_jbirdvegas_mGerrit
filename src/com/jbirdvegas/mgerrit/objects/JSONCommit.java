@@ -151,6 +151,11 @@ public class JSONCommit implements Parcelable {
             }
             return SUBMITTED;
         }
+
+        // Convert the status to a Status enum instance and back again
+        public static String getStatusString(final String status) {
+            return getStatusFromString(status).toString();
+        }
     }
 
     public JSONCommit(Context context, String changeid, String project, String subject,

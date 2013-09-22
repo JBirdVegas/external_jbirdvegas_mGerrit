@@ -369,7 +369,7 @@ public abstract class CardsFragment extends Fragment
     private void sendRequest(boolean forceUpdate) {
         Intent it = new Intent(mParent, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
-        it.putExtra(GerritService.URL_KEY, mUrl.toString());
+        it.putExtra(GerritService.URL_KEY, mUrl);
         it.putExtra(GerritService.FORCE_UPDATE_KEY, forceUpdate);
         mParent.startService(it);
     }

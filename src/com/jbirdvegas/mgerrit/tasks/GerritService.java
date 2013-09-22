@@ -21,6 +21,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.jbirdvegas.mgerrit.objects.GerritURL;
+
 public class GerritService extends IntentService {
 
     public static final String TAG = "GerritService";
@@ -31,7 +33,7 @@ public class GerritService extends IntentService {
 
     public static enum DataType { Project, Commit }
 
-    private String mCurrentUrl;
+    private GerritURL mCurrentUrl;
     private boolean mForceUpdate;
 
     // This is required for the service to be started
@@ -39,7 +41,7 @@ public class GerritService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        mCurrentUrl = intent.getStringExtra(URL_KEY);
+        mCurrentUrl = intent.getParcelableExtra(URL_KEY);
         SyncProcessor processor;
 
         // Determine which SyncProcessor to use here
@@ -52,7 +54,7 @@ public class GerritService extends IntentService {
             processor = new CommitProcessor(this, mCurrentUrl);
         }
         else {
-            Log.w(TAG, "Don't know how to handle syncronization of type " + DATA_TYPE_KEY);
+            Log.w(TAG, "Don't know how to handle synchronization of type " + DATA_TYPE_KEY);
             return;
         }
 
