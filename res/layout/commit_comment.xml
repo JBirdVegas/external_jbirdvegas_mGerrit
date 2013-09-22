@@ -39,6 +39,7 @@
         android:layout_width="match_parent"
         android:textAppearance="@style/CardText"
         android:textSize="@dimen/card_medium_text"
+        android:autoLink="web"
         android:padding="@dimen/standard_padding"/>
 
 </LinearLayout>
