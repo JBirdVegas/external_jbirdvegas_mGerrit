@@ -23,13 +23,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 class DBHelper extends SQLiteOpenHelper {
     static final String TAG = "DbHelper";
 
     // Don't forget to set this when a change to the database is made!
     // This must be strictly ascending, but can skip numbers
-    static final int DB_VERSION = 6;
+    static final int DB_VERSION = 7;
+    private static List<DatabaseTable> mTables;
+    private Context mContext;
 
     /**
      * Constructor should be private to prevent direct instantiation.
@@ -37,6 +41,8 @@ class DBHelper extends SQLiteOpenHelper {
      */
     protected DBHelper(Context context, String dbName) {
         super(context, dbName, null, DB_VERSION);
+        mContext = context;
+        registerTables();
     }
 
     // Called only once, first time the DB is created. Create all the tables here
@@ -86,7 +92,30 @@ class DBHelper extends SQLiteOpenHelper {
         return name.toLowerCase().replaceAll("[^a-z0-9_]+", "") + ".db";
     }
 
+    private static void instantiateTables() {
+        mTables = new ArrayList<DatabaseTable>();
+        for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
+            try {
+                Method getTableInst = table.getDeclaredMethod("getInstance");
+                DatabaseTable tableInst = (DatabaseTable) getTableInst.invoke(null);
+                mTables.add(tableInst);
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to instantiate table " + table.getSimpleName(), e);
+            }
+        }
+    }
+
+    private void registerTables() {
+        instantiateTables();
+        for (DatabaseTable table : mTables) {
+            table.registerContentObserver(mContext);
+        }
+    }
+
     protected void shutdown() {
         this.close();
+        for (DatabaseTable table : mTables) {
+            table.unRegisterContentObserver(mContext);
+        }
     }
 }

@@ -142,4 +142,12 @@ public abstract class DatabaseTable {
         cursor.close();
         return noRows;
     }
+
+    protected void registerContentObserver(Context context) {
+        // Do nothing by default
+    }
+
+    protected void unRegisterContentObserver(Context context) {
+        // Do nothing by default
+    }
 }

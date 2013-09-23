@@ -20,9 +20,11 @@ package com.jbirdvegas.mgerrit.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.content.CursorLoader;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
@@ -99,6 +101,7 @@ public class UserChanges extends DatabaseTable {
     public static final String SORT_BY = C_UPDATED + " DESC";
 
     private static UserChanges mInstance = null;
+    private MyObserver mObserver;
 
     public static UserChanges getInstance() {
         if (mInstance == null) mInstance = new UserChanges();
@@ -200,5 +203,39 @@ public class UserChanges extends DatabaseTable {
     // Removes the extraneous 0s off the milliseconds in server timestamps
     private static String trimDate(String date) {
         return date.substring(0, date.length() - 6);
+    }
+
+    @Override
+    protected void registerContentObserver(Context context) {
+        mObserver = new MyObserver(new Handler(), context);
+        context.getContentResolver().registerContentObserver(Users.CONTENT_URI, true,
+                mObserver);
+        context.getContentResolver().registerContentObserver(Changes.CONTENT_URI, true,
+                mObserver);
+    }
+
+    @Override
+    protected void unRegisterContentObserver(Context context) {
+        context.getContentResolver().unregisterContentObserver(mObserver);
+    }
+
+    class MyObserver extends ContentObserver {
+
+        Context mContext;
+
+        public MyObserver(Handler handler, Context context) {
+            super(handler);
+            mContext = context;
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            this.onChange(selfChange, null);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            mContext.getContentResolver().notifyChange(UserChanges.CONTENT_URI, this);
+        }
     }
 }
