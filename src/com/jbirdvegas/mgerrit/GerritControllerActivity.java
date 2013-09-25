@@ -94,6 +94,7 @@ public class GerritControllerActivity extends FragmentActivity {
 
     // This is maintained for checking if the project has changed without looking
     private String mCurrentProject;
+    private Menu mMenu;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -219,6 +220,8 @@ public class GerritControllerActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.gerrit_instances_menu, menu);
+        this.mMenu = menu;
+        hideChangelogOption(Prefs.getCurrentGerrit(this));
         return true;
     }
 
@@ -364,7 +367,7 @@ public class GerritControllerActivity extends FragmentActivity {
                         .toString(),
                 Toast.LENGTH_LONG).show();
         GerritURL.setGerrit(newGerrit);
-
+        hideChangelogOption(newGerrit);
         DatabaseFactory.changeGerrit(this, newGerrit);
         refreshTabs();
     }
@@ -430,8 +433,14 @@ public class GerritControllerActivity extends FragmentActivity {
         mGerritTasks = null;
     }
 
-    protected FragmentStatePagerAdapter getAdapter() {
-        return mSectionsPagerAdapter;
+    // Hide the AOKP Changelog menu option when AOKP's Gerrit is not selected
+    private void hideChangelogOption(String gerrit) {
+        MenuItem changelog = mMenu.findItem(R.id.menu_changelog);
+        if (gerrit.contains("aokp")) {
+            changelog.setVisible(true);
+        } else {
+            changelog.setVisible(false);
+        }
     }
 
 
