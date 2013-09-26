@@ -226,11 +226,16 @@ public class GerritControllerActivity extends FragmentActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        hideChangelogOption(Prefs.getCurrentGerrit(this));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.gerrit_instances_menu, menu);
         this.mMenu = menu;
-        hideChangelogOption(Prefs.getCurrentGerrit(this));
         return true;
     }
 
