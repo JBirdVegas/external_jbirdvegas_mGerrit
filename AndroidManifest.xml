@@ -18,8 +18,8 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.jbirdvegas.mgerrit"
-          android:versionCode="204002"
-          android:versionName="2.04.002">
+          android:versionCode="204003"
+          android:versionName="2.04.003">
 
     <uses-sdk android:minSdkVersion="11"
         android:targetSdkVersion="18"/>
@@ -44,8 +44,10 @@
                   android:parentActivityName=".GerritControllerActivity"
                   android:icon="@drawable/ic_launcher"/>
         <activity android:name=".AOKPChangelog"
+                  android:allowTaskReparenting="true"
                   android:parentActivityName=".GerritControllerActivity"
-                  android:icon="@drawable/ic_launcher"/>
+                  android:exported="true"
+                  android:icon="@drawable/ic_launcher" />
         <activity android:name=".ProjectsList"
                   android:parentActivityName=".GerritControllerActivity"
                   android:icon="@drawable/ic_launcher"
