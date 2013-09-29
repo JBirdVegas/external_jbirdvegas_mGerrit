@@ -67,7 +67,8 @@ public abstract class DatabaseTable {
         MessageInfoList, MessageInfoID,
         SyncTimeList, SyncTimeID,
         UsersChangesList, UsersChangesID,
-        CommitMarkerList, CommitMarkerID
+        CommitMarkerList, CommitMarkerID,
+        SelectedChangeList, SelectedChangeID
     };
 
     // Add each DatabaseTable class here, we need to add the virtual tables as well
@@ -82,6 +83,7 @@ public abstract class DatabaseTable {
         tables.add(SyncTime.class);
         tables.add(UserChanges.class);
         tables.add(CommitMarker.class);
+        tables.add(SelectedChange.class);
     };
 
     /* Gathers information from the DatabaseTable classes to help implement the

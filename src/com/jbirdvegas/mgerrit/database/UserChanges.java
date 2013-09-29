@@ -74,6 +74,9 @@ public class UserChanges extends DatabaseTable {
     // The topic to which this change belongs.
     public static final String C_TOPIC = Changes.C_TOPIC;
 
+    // The legacy numeric ID of the change (used in the web address)
+    public static final String C_COMMIT_NUMBER = "_change_number";
+
 
     // --- Columns in Users table ---
     // The numeric ID of the account.
@@ -99,6 +102,11 @@ public class UserChanges extends DatabaseTable {
 
     // Sort by condition for querying results.
     public static final String SORT_BY = C_UPDATED + " DESC";
+
+    private static final String[] CHANGE_LIST_PROJECTION = new String[] {
+            C_CHANGE_ID, C_SUBJECT, C_PROJECT, C_UPDATED,
+            C_STATUS, C_TOPIC, C_USER_ID, C_EMAIL, C_NAME,
+            C_COMMIT_NUMBER };
 
     private static UserChanges mInstance = null;
     private MyObserver mObserver;
@@ -131,8 +139,6 @@ public class UserChanges extends DatabaseTable {
     public static CursorLoader listCommits(Context context, String status, Integer committer,
                                            String project) {
 
-        String[] projection = new String[] { C_CHANGE_ID, C_SUBJECT, C_PROJECT, C_UPDATED,
-                C_STATUS, C_TOPIC, C_USER_ID, C_EMAIL, C_NAME };
         StringBuilder where = new StringBuilder().append(C_STATUS).append(" = ?").append(" AND ")
                 .append(Changes.TABLE).append(".").append(C_OWNER)
                 .append(" = ").append(Users.TABLE).append(".").append(C_USER_ID);
@@ -155,7 +161,7 @@ public class UserChanges extends DatabaseTable {
         String valuesArray[] = new String[1];
 
         return new CursorLoader(context, CONTENT_URI,
-                projection, where.toString(), bindArgs.toArray(valuesArray),
+                CHANGE_LIST_PROJECTION, where.toString(), bindArgs.toArray(valuesArray),
                 SORT_BY);
     }
 
@@ -177,7 +183,7 @@ public class UserChanges extends DatabaseTable {
 
             row.put(C_CHANGE_ID, commit.getChangeId());
             row.put(C_SUBJECT, commit.getSubject());
-
+            row.put(C_COMMIT_NUMBER, commit.getCommitNumber());
             row.put(C_CREATED, trimDate(commit.getCreatedDate()));
             row.put(C_UPDATED, trimDate(commit.getLastUpdatedDate()));
             row.put(C_OWNER, commit.getOwnerObject().getAccountId());

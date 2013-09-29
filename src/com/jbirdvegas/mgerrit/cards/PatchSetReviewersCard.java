@@ -25,7 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
-import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
+import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.PatchSetReviewersAdapter;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
@@ -38,15 +38,17 @@ import java.util.List;
 public class PatchSetReviewersCard extends Card {
     private static final String TAG = PatchSetReviewersAdapter.class.getSimpleName();
     private static final boolean DEBUG = true;
-    private final PatchSetViewerActivity mPatchSetViewActiviy;
     private final RequestQueue mRequestQueue;
+    private final Context mContext;
     private JSONCommit mJSONCommit;
     private LayoutInflater mLayoutInflater;
 
-    public PatchSetReviewersCard(JSONCommit commit, PatchSetViewerActivity patchSetViewerActivity, RequestQueue requestQueue) {
+    public PatchSetReviewersCard(JSONCommit commit,
+                                 RequestQueue requestQueue,
+                                 Context context) {
         mJSONCommit = commit;
-        mPatchSetViewActiviy = patchSetViewerActivity;
         mRequestQueue = requestQueue;
+        mContext = context;
     }
 
     @Override
@@ -89,7 +91,7 @@ public class PatchSetReviewersCard extends Card {
         TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
         name.setOnClickListener(
                 new TrackingClickListener(
-                        mPatchSetViewActiviy,
+                        mContext,
                         reviewer.getCommiterObject()));
         GravatarHelper.attachGravatarToTextView(name,
                 reviewer.getEmail(),
@@ -105,8 +107,8 @@ public class PatchSetReviewersCard extends Card {
     }
 
     private void setColoredApproval(String value, TextView approval) {
-        int mGreen = mPatchSetViewActiviy.getResources().getColor(R.color.text_green);
-        int mRed = mPatchSetViewActiviy.getResources().getColor(R.color.text_red);
+        int mGreen = mContext.getResources().getColor(R.color.text_green);
+        int mRed = mContext.getResources().getColor(R.color.text_red);
         int plusStatus;
         if (value == null) {
             value = "0";

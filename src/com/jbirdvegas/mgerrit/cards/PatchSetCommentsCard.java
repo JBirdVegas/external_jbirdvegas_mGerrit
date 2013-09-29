@@ -29,7 +29,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
-import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
+import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.caches.BitmapLruCache;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
@@ -43,12 +43,12 @@ import java.util.LinkedList;
 public class PatchSetCommentsCard extends Card {
 
     private JSONCommit mJsonCommit;
-    private final PatchSetViewerActivity mPatchsetViewerActivity;
+    private final PatchSetViewerFragment mPatchsetViewerFragment;
     private RequestQueue mRequestQuery;
 
-    public PatchSetCommentsCard(JSONCommit jsonCommit, PatchSetViewerActivity activity, RequestQueue requestQueue) {
+    public PatchSetCommentsCard(JSONCommit jsonCommit, PatchSetViewerFragment activity, RequestQueue requestQueue) {
         mJsonCommit = jsonCommit;
-        mPatchsetViewerActivity = activity;
+        mPatchsetViewerFragment = activity;
         mRequestQuery = requestQueue;
     }
 
@@ -76,11 +76,11 @@ public class PatchSetCommentsCard extends Card {
         TextView authorTextView = (TextView) commentView.findViewById(R.id.comment_author_name);
         authorTextView.setText(comment.getAuthorObject().getName());
         authorTextView.setOnClickListener(
-                new TrackingClickListener(mPatchsetViewerActivity,
+                new TrackingClickListener(mContext,
                         comment.getAuthorObject()));
 
         authorTextView.setTag(comment.getAuthorObject());
-        mPatchsetViewerActivity.registerViewForContextMenu(authorTextView);
+        mPatchsetViewerFragment.registerViewForContextMenu(authorTextView);
         // setup styled comments
         TextView commentMessage = (TextView) commentView.findViewById(R.id.comment_message);
         // use Linkify to automatically linking http/email/addresses
@@ -95,7 +95,7 @@ public class PatchSetCommentsCard extends Card {
         NetworkImageView gravatar = (NetworkImageView) commentView.findViewById(R.id.comment_gravatar);
 
         gravatar.setImageUrl(GravatarHelper.getGravatarUrl(comment.getAuthorObject().getEmail()),
-                new ImageLoader(mRequestQuery, new BitmapLruCache(mPatchsetViewerActivity)));
+                new ImageLoader(mRequestQuery, new BitmapLruCache(mContext)));
         return commentView;
     }
 }

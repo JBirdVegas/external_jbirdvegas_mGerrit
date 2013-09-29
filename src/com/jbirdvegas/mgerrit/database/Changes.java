@@ -34,6 +34,9 @@ public class Changes extends DatabaseTable {
     // The Change-Id of the change.
     public static final String C_CHANGE_ID = "change_id";
 
+    // The legacy numeric ID of the change (used in the web address)
+    public static final String C_COMMIT_NUMBER = "_change_number";
+
     //The subject of the change (header line of the commit message).
     public static final String C_SUBJECT = "subject";
 
@@ -88,6 +91,7 @@ public class Changes extends DatabaseTable {
                 + C_PROJECT + " text NOT NULL, "
                 + C_STATUS + " text DEFAULT '" + JSONCommit.KEY_STATUS_OPEN + "' NOT NULL, "
                 + C_TOPIC + " text, "
+                + C_COMMIT_NUMBER + " INTEGER NOT NULL, "
                 + "FOREIGN KEY (" + C_OWNER + ") REFERENCES "
                     + Users.TABLE + "(" + Users.C_EMAIL + "), "
                 + "FOREIGN KEY (" + C_PROJECT + ") REFERENCES "

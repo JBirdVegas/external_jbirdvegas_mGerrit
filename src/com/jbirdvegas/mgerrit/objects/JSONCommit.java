@@ -158,18 +158,21 @@ public class JSONCommit implements Parcelable {
         }
     }
 
-    public JSONCommit(Context context, String changeid, String project, String subject,
-                      CommitterObject committer, String updated, String status) {
+    public JSONCommit(Context context, String changeid, int commitNumber, String project,
+                      String subject, CommitterObject committer, String updated, String status) {
 
         mServerTimeZone = Prefs.getServerTimeZone(context);
         mLocalTimeZone = Prefs.getLocalTimeZone(context);
 
         mChangeId = changeid;
+        mCommitNumber = commitNumber;
         mProject = project;
         mSubject = subject;
         mOwnerObject = committer;
         mLastUpdatedDate = updated;
         mStatus = Status.valueOf(status);
+
+        mWebAddress = String.format("%s#/c/%d/", Prefs.getCurrentGerrit(context), mCommitNumber);
     }
 
     /**

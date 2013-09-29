@@ -28,10 +28,9 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.CardsFragment;
-import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
-import com.jbirdvegas.mgerrit.Prefs;
+import com.jbirdvegas.mgerrit.GerritControllerActivity;
+import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.StaticWebAddress;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
 import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
@@ -47,6 +46,7 @@ public class CommitCard extends Card {
 
     private final CommitterObject mCommitterObject;
     private final RequestQueue mRequestQuery;
+    private final GerritControllerActivity mActivity;
     private JSONCommit mCommit;
     private TextView mProjectTextView;
     private ChangeLogRange mChangeLogRange;
@@ -54,10 +54,11 @@ public class CommitCard extends Card {
     public CommitCard(JSONCommit commit,
                       CommitterObject committerObject,
                       RequestQueue requestQueue,
-                      CardsFragment cardsFragment) {
+                      GerritControllerActivity activity) {
         this.mCommit = commit;
         this.mCommitterObject = committerObject;
         this.mRequestQuery = requestQueue;
+        this.mActivity = activity;
     }
 
     @Override
@@ -121,26 +122,22 @@ public class CommitCard extends Card {
         ImageView moarInfo = (ImageView) commitCardView.findViewById(
                 R.id.commit_card_moar_info);
 
-        moarInfo.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener cardListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, PatchSetViewerActivity.class);
+                Intent intent = new Intent(context, PatchSetViewerFragment.class);
                 // example website
                 // http://gerrit.aokp.co/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
-
-                StringBuilder builder = new StringBuilder(0)
-                        .append(Prefs.getCurrentGerrit(context))
-                        .append(StaticWebAddress.getQuery())
-                        .append(mCommit.getChangeId());
-
-                builder.append(JSONCommit.CURRENT_PATCHSET_ARGS);
-
-                intent.putExtra(JSONCommit.KEY_WEBSITE, builder.toString());
-
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                context.startActivity(intent);
+                mActivity.onChangeSelected(mCommit.getChangeId(), mCommit.getStatus().toString(), true);
             }
-        });
+        };
+
+        if (moarInfo != null) {
+            moarInfo.setOnClickListener(cardListener);
+        } else {
+            setOnClickListener(cardListener);
+        }
+
         shareView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

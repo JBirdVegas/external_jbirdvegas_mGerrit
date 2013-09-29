@@ -162,6 +162,7 @@ public abstract class CardsFragment extends Fragment
         int project_index = changes.getColumnIndex(UserChanges.C_PROJECT);
         int updated_index = changes.getColumnIndex(UserChanges.C_UPDATED);
         int status_index = changes.getColumnIndex(UserChanges.C_STATUS);
+        int changenum_index = changes.getColumnIndex(UserChanges.C_COMMIT_NUMBER);
 
         // Committer object
         int username_index = changes.getColumnIndex(UserChanges.C_NAME);
@@ -175,6 +176,7 @@ public abstract class CardsFragment extends Fragment
                     changes.getInt(userid_index));
 
             JSONCommit commit = new JSONCommit(mParent, changes.getString(changeid_index),
+                    changes.getInt(changenum_index),
                     changes.getString(project_index),
                     changes.getString(subject_index),
                     committer,
@@ -182,7 +184,7 @@ public abstract class CardsFragment extends Fragment
                     changes.getString(status_index));
 
             CommitCard card = new CommitCard(commit, mParent.getCommitterObject(),
-                    mRequestQueue, this);
+                    mRequestQueue, mParent);
 
             commitCardList.add(card);
         }
@@ -195,7 +197,7 @@ public abstract class CardsFragment extends Fragment
                 new JSONCommit(jsonObject, context),
                 mParent.getCommitterObject(),
                 mRequestQueue,
-                this);
+                mParent);
     }
 
     @Override

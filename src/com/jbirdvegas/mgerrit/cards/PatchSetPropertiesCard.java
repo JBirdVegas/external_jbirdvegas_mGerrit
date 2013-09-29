@@ -26,7 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
-import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
+import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
@@ -34,19 +34,22 @@ import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 public class PatchSetPropertiesCard extends Card {
     private final JSONCommit mJSONCommit;
-    private final PatchSetViewerActivity mPatchSetViewerActivity;
+    private final PatchSetViewerFragment mPatchSetViewerFragment;
     private final RequestQueue mRequestQuery;
+    private final Context mContext;
     private TextView mSubject;
     private TextView mOwner;
     private TextView mAuthor;
     private TextView mCommitter;
 
     public PatchSetPropertiesCard(JSONCommit commit,
-                                  PatchSetViewerActivity activity,
-                                  RequestQueue requestQueue) {
+                                  PatchSetViewerFragment activity,
+                                  RequestQueue requestQueue,
+                                  Context context) {
         this.mJSONCommit = commit;
-        this.mPatchSetViewerActivity = activity;
+        this.mPatchSetViewerFragment = activity;
         this.mRequestQuery = requestQueue;
+        this.mContext = context;
     }
 
     @Override
@@ -67,7 +70,7 @@ public class PatchSetPropertiesCard extends Card {
                 mJSONCommit.getOwnerObject().getEmail(),
                 mRequestQuery);
         mOwner.setOnClickListener(new TrackingClickListener(
-                mPatchSetViewerActivity,
+                mContext,
                 mJSONCommit.getOwnerObject()
         ));
         mOwner.setTag(mJSONCommit.getOwnerObject());
@@ -81,12 +84,12 @@ public class PatchSetPropertiesCard extends Card {
             mAuthor.setText(mJSONCommit.getAuthorObject().getName());
             mAuthor.setOnClickListener(
                     new TrackingClickListener(
-                            mPatchSetViewerActivity,
+                            mContext,
                             mJSONCommit.getAuthorObject()));
             mCommitter.setText(mJSONCommit.getCommitterObject().getName());
             mCommitter.setOnClickListener(
                     new TrackingClickListener(
-                            mPatchSetViewerActivity,
+                            mContext,
                             mJSONCommit.getCommitterObject()));
             // setup contextmenu click actions
             mAuthor.setTag(mJSONCommit.getAuthorObject());
@@ -136,6 +139,6 @@ public class PatchSetPropertiesCard extends Card {
     }
 
     private void setContextMenu(TextView textView) {
-        mPatchSetViewerActivity.registerViewForContextMenu(textView);
+        mPatchSetViewerFragment.registerViewForContextMenu(textView);
     }
 }
