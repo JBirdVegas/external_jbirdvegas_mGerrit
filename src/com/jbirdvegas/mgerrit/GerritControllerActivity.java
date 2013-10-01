@@ -69,6 +69,7 @@ import java.util.Set;
 public class GerritControllerActivity extends FragmentActivity {
 
     private static final String TAG = GerritControllerActivity.class.getSimpleName();
+    private static final String GERRIT_INSTANCE = "gerrit";
 
     private CommitterObject mCommitterObject;
     private String mGerritWebsite;
@@ -98,6 +99,14 @@ public class GerritControllerActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // check if caller has a gerrit instance start screen preference
+        String suppliedGerritInstance = getIntent().getStringExtra(GERRIT_INSTANCE);
+        if (suppliedGerritInstance != null
+                && !suppliedGerritInstance.isEmpty()
+                && suppliedGerritInstance.contains("http")) {
+            // just set the prefs and allow normal loading
+            Prefs.setCurrentGerrit(this, suppliedGerritInstance);
+        }
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main);

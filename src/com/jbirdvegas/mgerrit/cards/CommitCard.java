@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.Card;
 import com.jbirdvegas.mgerrit.CardsFragment;
@@ -152,9 +153,16 @@ public class CommitCard extends Card {
         browserView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(mCommit.getWebAddress()));
-                context.startActivity(browserIntent);
+                if (mCommit.getWebAddress() != null) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse(mCommit.getWebAddress()));
+                    context.startActivity(browserIntent);
+                } else {
+                    Toast.makeText(view.getContext(),
+                            R.string.failed_to_find_url,
+                            Toast.LENGTH_SHORT)
+                            .show();
+                }
             }
         });
         // we only have these if we direct query the commit specifically
