@@ -22,12 +22,14 @@
         <item>AOSP</item>
         <item>Gerrit Review</item>
         <item>CyanogenMod</item>
+        <item>Paranoid Android</item>
     </string-array>
     <string-array name="gerrit_webaddresses">
         <item>http://gerrit.aokp.co/</item>
         <item>https://android-review.googlesource.com/</item>
         <item>https://gerrit-review.googlesource.com/</item>
         <item>http://review.cyanogenmod.org/</item>
+        <item>http://gerrit.paranoidandroid.co/</item>
     </string-array>
     <string-array name="status_entries">
         <item>@string/reviewable</item>
