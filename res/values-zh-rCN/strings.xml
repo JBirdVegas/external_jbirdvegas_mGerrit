@@ -107,4 +107,9 @@
     <string name="local_timezone_summary">提供的时区可能不正确。
         使用这个覆盖默认本地时区。
     </string>
+    <string name="patchset_labels_change_diff">变更差异</string>
+    <string name="remove_content">移除内容</string>
+    <string name="connection_starting">开始 Gerrit 请求</string>
+    <string name="search_hint">搜索项目</string>
+    <string name="failed_to_find_url">失败，找不到项目URL</string>
 </resources>
