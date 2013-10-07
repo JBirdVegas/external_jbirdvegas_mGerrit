@@ -21,13 +21,12 @@ import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
-import com.fima.cardsui.objects.Card;
-import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
+import com.fima.cardsui.objects.RecyclableCard;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.adapters.PatchSetReviewersAdapter;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
@@ -35,13 +34,13 @@ import com.jbirdvegas.mgerrit.objects.Reviewer;
 
 import java.util.List;
 
-public class PatchSetReviewersCard extends Card {
-    private static final String TAG = PatchSetReviewersAdapter.class.getSimpleName();
+public class PatchSetReviewersCard extends RecyclableCard {
+    private static final String TAG = "PatchSetReviewersCard";
     private static final boolean DEBUG = true;
+
     private final RequestQueue mRequestQueue;
     private final Context mContext;
     private JSONCommit mJSONCommit;
-    private LayoutInflater mLayoutInflater;
 
     public PatchSetReviewersCard(JSONCommit commit,
                                  RequestQueue requestQueue,
@@ -52,41 +51,49 @@ public class PatchSetReviewersCard extends Card {
     }
 
     @Override
-    public View getCardContent(Context context) {
-        mLayoutInflater = (LayoutInflater)
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout rootView =
-                (LinearLayout) mLayoutInflater.inflate(R.layout.patchset_labels_card, null);
-        LinearLayout codeReviewersContainer =
-                (LinearLayout) rootView.findViewById(R.id.patchset_lables_reviewers);
-        LinearLayout verifyReviewersContainer =
-                (LinearLayout) rootView.findViewById(R.id.patchset_lables_verifier);
-        TextView reviewerLabel = (TextView) rootView.findViewById(R.id.patchset_labels_code_reviewer_title);
-        TextView verifierLabel = (TextView) rootView.findViewById(R.id.patchset_labels_verified_reviewer_title);
+    protected void applyTo(View convertView) {
+        // Locate the views if necessary (these views are constant)
+        ViewHolder viewHolder = (ViewHolder) convertView.getTag();
+        if (convertView.getTag() == null) {
+            viewHolder = new ViewHolder();
+            viewHolder.reviewerLabel = (TextView) convertView.findViewById(R.id.patchset_labels_code_reviewer_title);
+            viewHolder.verifierLabel = (TextView) convertView.findViewById(R.id.patchset_labels_verified_reviewer_title);
+            viewHolder.reviewerList = (ViewGroup) convertView.findViewById(R.id.patchset_lables_reviewers);
+            viewHolder.verifierList = (ViewGroup) convertView.findViewById(R.id.patchset_lables_verifier);
+            convertView.setTag(viewHolder);
+        }
+
+        // Get the data
         List<Reviewer> reviewerList = mJSONCommit.getCodeReviewers();
         List<Reviewer> verifierList = mJSONCommit.getVerifiedReviewers();
 
+        // Bind the data, inflating views as needed
+        viewHolder.reviewerList.removeAllViews();
         if (reviewerList != null) {
-            for (Reviewer reviewer : mJSONCommit.getCodeReviewers()) {
-                codeReviewersContainer.addView(getReviewerView(reviewer));
+            for (Reviewer reviewer : reviewerList) {
+                viewHolder.reviewerList.addView(getReviewerView(reviewer));
             }
+            viewHolder.reviewerLabel.setVisibility(View.VISIBLE);
         } else {
-            codeReviewersContainer.setVisibility(View.GONE);
-            reviewerLabel.setVisibility(View.GONE);
+            viewHolder.reviewerLabel.setVisibility(View.GONE);
         }
 
+        viewHolder.verifierList.removeAllViews();
         if (verifierList != null) {
-            for (Reviewer reviewer : mJSONCommit.getVerifiedReviewers()) {
-                verifyReviewersContainer.addView(getReviewerView(reviewer));
+            for (Reviewer reviewer : verifierList) {
+                viewHolder.verifierList.addView(getReviewerView(reviewer));
             }
+            viewHolder.verifierLabel.setVisibility(View.VISIBLE);
         } else {
-            verifyReviewersContainer.setVisibility(View.GONE);
-            verifierLabel.setVisibility(View.GONE);
+            viewHolder.verifierLabel.setVisibility(View.GONE);
         }
-        return rootView;
     }
+
     public View getReviewerView(Reviewer reviewer) {
-        View root = mLayoutInflater.inflate(R.layout.patchset_labels_list_item, null);
+        // Cannot use the viewholder here, we need to inflate views as needed
+        LayoutInflater inflater = (LayoutInflater)
+                mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View root = inflater.inflate(R.layout.patchset_labels_list_item, null);
         TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);
         TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
         name.setOnClickListener(
@@ -127,5 +134,17 @@ public class PatchSetReviewersCard extends Card {
         } catch (NumberFormatException nfe) {
             Log.e(TAG, "Failed to grab reviewers approval");
         }
+    }
+
+    @Override
+    protected int getCardLayoutId() {
+        return R.layout.patchset_labels_card;
+    }
+
+    private static class ViewHolder {
+        ViewGroup reviewerList;
+        ViewGroup verifierList;
+        TextView reviewerLabel;
+        TextView verifierLabel;
     }
 }

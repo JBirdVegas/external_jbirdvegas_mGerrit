@@ -22,11 +22,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import com.fima.cardsui.objects.Card;
+import com.fima.cardsui.objects.RecyclableCard;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
-public class PatchSetMessageCard extends Card {
+public class PatchSetMessageCard extends RecyclableCard {
     private final JSONCommit mJSONCommit;
     private static final String TAG = PatchSetMessageCard.class.getSimpleName();
 
@@ -35,16 +36,13 @@ public class PatchSetMessageCard extends Card {
     }
 
     @Override
-    public View getCardContent(Context context) {
-        LayoutInflater inflater = (LayoutInflater)
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rootView = inflater.inflate(R.layout.patchset_message_card, null);
-
+    protected void applyTo(View convertView) {
+        Context context = convertView.getContext();
         // display latest update date
-        ((TextView) rootView.findViewById(R.id.message_card_last_update))
+        ((TextView) convertView.findViewById(R.id.message_card_last_update))
                 .setText(mJSONCommit.getLastUpdatedDate(context));
         // display message if available (only not available if patch set is a draft)
-        TextView commitMessageTextView = (TextView) rootView.findViewById(R.id.message_card_message);
+        TextView commitMessageTextView = (TextView) convertView.findViewById(R.id.message_card_message);
         String message = mJSONCommit.getMessage();
         if (message != null && !message.isEmpty()) {
             // apply emoticons to patchset messages if present
@@ -52,6 +50,10 @@ public class PatchSetMessageCard extends Card {
         } else {
             commitMessageTextView.setText(context.getString(R.string.current_revision_is_draft_message));
         }
-        return rootView;
+    }
+
+    @Override
+    protected int getCardLayoutId() {
+        return R.layout.patchset_message_card;
     }
 }

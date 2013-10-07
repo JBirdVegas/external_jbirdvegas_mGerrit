@@ -16,14 +16,9 @@
   ~  limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="wrap_content"
-              android:layout_height="match_parent">
-
-    <com.fima.cardsui.views.CardUI
-        android:id="@+id/commit_cards"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:paddingBottom="8dip"/>
-</LinearLayout>
+<com.fima.cardsui.views.CardUI
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/commit_cards"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:paddingTop="8dp"/>

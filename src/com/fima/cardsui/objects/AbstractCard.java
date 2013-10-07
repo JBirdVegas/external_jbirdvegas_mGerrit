@@ -6,10 +6,10 @@ import android.view.View;
 public abstract class AbstractCard {
 
     protected int image;
-
     protected String description, color, titleColor, desc, title, titlePlay;
-
     protected Boolean hasOverflow, isClickable;
+    protected int imageRes;
+    protected Object data;
 
     public abstract View getView(Context context);
 
@@ -51,4 +51,21 @@ public abstract class AbstractCard {
         return isClickable;
     }
 
+    public int getImageRes() {
+        return imageRes;
+    }
+
+    /**
+     * @return the data
+     */
+    public Object getData() {
+        return data;
+    }
+
+    /**
+     * @param data the data to set
+     */
+    public void setData(Object data) {
+        this.data = data;
+    }
 }

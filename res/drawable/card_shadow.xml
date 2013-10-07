@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
   ~  Author: Jon Stanford (JBirdVegas), 2013
@@ -16,17 +15,8 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="wrap_content"
-              android:layout_height="match_parent"
-              android:background="@color/main_background">
-
-    <com.fima.cardsui.views.CardUI
-        android:id="@+id/commit_cards"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"/>
-</LinearLayout>
+<!-- Source: https://raw.github.com/afollestad/Cards-UI/master/res/drawable/card_shadow.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient android:startColor="#33000000" android:centerColor="#11000000"
+              android:endColor="#00000000" android:angle="270"/>
+</shape>

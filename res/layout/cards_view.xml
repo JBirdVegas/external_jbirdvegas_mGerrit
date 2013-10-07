@@ -1,6 +1,4 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layoutCardsView"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
@@ -21,7 +19,6 @@
         android:id="@+id/sticky"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
         android:visibility="gone" />
 
 </FrameLayout>

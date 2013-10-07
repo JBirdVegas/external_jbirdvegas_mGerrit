@@ -432,6 +432,13 @@ public class JSONCommit implements Parcelable {
         JSONObject filesObject = revisionObject.getJSONObject(KEY_CHANGED_FILES);
         List<ChangedFile> list = new ArrayList<ChangedFile>(0);
         JSONArray keysArray = filesObject.names();
+
+        /* If there are no files changed (i.e. a merge commit) then an empty
+         * list should be returned. */
+        if (keysArray == null) {
+            return list;
+        }
+
         for (int i = 0; keysArray.length() > i; i++) {
             try {
                 String path = (String) keysArray.get(i);

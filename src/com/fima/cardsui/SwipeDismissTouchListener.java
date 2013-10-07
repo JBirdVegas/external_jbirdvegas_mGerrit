@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.fima.cardsui;
 
 import android.view.MotionEvent;
@@ -5,6 +21,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
@@ -16,7 +33,7 @@ import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 /**
  * A {@link android.view.View.OnTouchListener} that makes any {@link View}
- * dismissable when the user swipes (drags her finger) horizontally across the
+ * dismissable when the user swipes (drags their finger) horizontally across the
  * view.
  * <p/>
  * <p>
@@ -33,11 +50,11 @@ import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
  * <p/>
  * <pre>
  * view.setOnTouchListener(new SwipeDismissTouchListener(view, null, // Optional
- * 																	// token/cookie
- * 																	// object
- * 		new SwipeDismissTouchListener.OnDismissCallback() {
- * 			public void onDismiss(View view, Object token) {
- * 				parent.removeView(view);
+ *                                                                                                                                      // token/cookie
+ *                                                                                                                                      // object
+ *              new SwipeDismissTouchListener.OnDismissCallback() {
+ *                      public void onDismiss(View view, Object token) {
+ *                              parent.removeView(view);
  *            }
  *        }));
  * </pre>
@@ -121,7 +138,7 @@ public class SwipeDismissTouchListener implements View.OnTouchListener {
                 mDownX = motionEvent.getRawX();
                 mVelocityTracker = VelocityTracker.obtain();
                 mVelocityTracker.addMovement(motionEvent);
-                view.onTouchEvent(motionEvent);
+                //view.onTouchEvent(motionEvent);
                 return false;
             }
 
@@ -182,6 +199,7 @@ public class SwipeDismissTouchListener implements View.OnTouchListener {
                             .setDuration(mAnimationTime).setListener(null);
 
                 }
+                mVelocityTracker.recycle();
                 mVelocityTracker = null;
                 mTranslationX = 0;
                 mDownX = 0;
@@ -206,6 +224,7 @@ public class SwipeDismissTouchListener implements View.OnTouchListener {
                             .setAction(MotionEvent.ACTION_CANCEL
                                     | (motionEvent.getActionIndex() << MotionEvent.ACTION_POINTER_INDEX_SHIFT));
                     mView.onTouchEvent(cancelEvent);
+                    cancelEvent.recycle();
                 }
 
                 if (mSwiping) {

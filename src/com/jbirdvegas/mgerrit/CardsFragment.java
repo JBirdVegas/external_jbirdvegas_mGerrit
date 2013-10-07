@@ -100,10 +100,8 @@ public abstract class CardsFragment extends Fragment
 
     // renders each card separately
     protected void drawCardsFromList(List<CommitCard> cards, CardUI cardUI) {
-        int count = 0;
-        for (int i = 0; cards.size() > i; i++) {
-            cardUI.addCard(cards.get(i));
-            count++;
+        for (Card card : cards) {
+            cardUI.addCard(card);
         }
 
         // Check if the fragment is attached to an activity
@@ -115,6 +113,7 @@ public abstract class CardsFragment extends Fragment
                             (System.currentTimeMillis() - mTimerStart) / 1000)),
                     Toast.LENGTH_LONG).show();*/
         }
+        cardUI.setSwipeable(false);
         cardUI.refresh();
     }
 
@@ -125,27 +124,6 @@ public abstract class CardsFragment extends Fragment
 
         init(savedInstanceState);
         setup();
-    }
-
-    protected List<CommitCard> generateCardsList(String result) {
-        List<CommitCard> commitCardList = new LinkedList<CommitCard>();
-        try {
-            JSONArray jsonArray = new JSONArray(result);
-            int arraySize = jsonArray.length();
-            for (int i = 0; arraySize > i; i++) {
-                commitCardList.add(getCommitCard(jsonArray.getJSONObject(i),
-                        mParent.getApplicationContext()));
-            }
-        } catch (JSONException e) {
-            String url = mUrl.toString();
-            Log.d(TAG, new StringBuilder(0)
-                    .append(getString(R.string.failed_to_parse_json_response))
-                    .append(' ')
-                    .append(url)
-                    .append('\n')
-                    .append(result).toString(), e);
-        }
-        return commitCardList;
     }
 
     protected List<CommitCard> generateCardsList(Cursor changes) {

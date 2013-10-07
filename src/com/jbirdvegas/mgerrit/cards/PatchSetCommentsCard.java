@@ -24,11 +24,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.Volley;
-import com.fima.cardsui.objects.Card;
+import com.fima.cardsui.objects.RecyclableCard;
 import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.caches.BitmapLruCache;
@@ -40,38 +40,45 @@ import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.LinkedList;
 
-public class PatchSetCommentsCard extends Card {
+public class PatchSetCommentsCard extends RecyclableCard {
 
     private JSONCommit mJsonCommit;
     private final PatchSetViewerFragment mPatchsetViewerFragment;
     private RequestQueue mRequestQuery;
+    private Context mContext;
 
-    public PatchSetCommentsCard(JSONCommit jsonCommit, PatchSetViewerFragment activity, RequestQueue requestQueue) {
+    public PatchSetCommentsCard(JSONCommit jsonCommit, PatchSetViewerFragment fragment, RequestQueue requestQueue) {
         mJsonCommit = jsonCommit;
-        mPatchsetViewerFragment = activity;
+        mPatchsetViewerFragment = fragment;
         mRequestQuery = requestQueue;
+
+        mContext = fragment.getActivity();
     }
 
-    private LayoutInflater mInflater;
-    private Context mContext;
-    private ViewGroup mRootView;
-
     @Override
-    public View getCardContent(Context context) {
-        mRequestQuery = Volley.newRequestQueue(context);
-        mContext = context;
-        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mRootView = (ViewGroup) mInflater.inflate(R.layout.comments_card, null);
+    protected void applyTo(View convertView) {
         LinkedList<CommitComment> commentsList = (LinkedList<CommitComment>) mJsonCommit.getMessagesList();
-        // make and add a view for each comment
-        for (CommitComment comment : commentsList) {
-            mRootView.addView(getCommentView(comment));
+
+        ViewHolder viewHolder = (ViewHolder) convertView.getTag();
+        if (convertView.getTag() == null) {
+            viewHolder = new ViewHolder();
+            viewHolder.viewGroup = (ViewGroup) convertView.findViewById(R.id.comments_list);
+            convertView.setTag(viewHolder);
         }
-        return mRootView;
+
+        if (commentsList != null) {
+            viewHolder.viewGroup.removeAllViews();
+
+            // make and add a view for each comment
+            for (CommitComment comment : commentsList) {
+                viewHolder.viewGroup.addView(getCommentView(comment));
+            }
+        }
     }
 
     public View getCommentView(final CommitComment comment) {
-        View commentView = mInflater.inflate(R.layout.commit_comment, null);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View commentView = inflater.inflate(R.layout.commit_comment, null);
         // set author name
         TextView authorTextView = (TextView) commentView.findViewById(R.id.comment_author_name);
         authorTextView.setText(comment.getAuthorObject().getName());
@@ -97,5 +104,14 @@ public class PatchSetCommentsCard extends Card {
         gravatar.setImageUrl(GravatarHelper.getGravatarUrl(comment.getAuthorObject().getEmail()),
                 new ImageLoader(mRequestQuery, new BitmapLruCache(mContext)));
         return commentView;
+    }
+
+    @Override
+    protected int getCardLayoutId() {
+        return R.layout.comments_card;
+    }
+
+    private static class ViewHolder {
+        static ViewGroup viewGroup;
     }
 }

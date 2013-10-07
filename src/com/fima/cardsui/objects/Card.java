@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
 import com.fima.cardsui.Utils;
 import com.jbirdvegas.mgerrit.R;
 
@@ -13,23 +14,9 @@ public abstract class Card extends AbstractCard {
 
     // handle swiping on a per card bases
     protected boolean mSwipable = false;
-
-    public boolean isSwipable() {
-        return mSwipable;
-    }
-
-    public Card setSwipableCard(boolean swipable) {
-        this.mSwipable = swipable;
-        return this;
-    }
-
-    public interface OnCardSwiped {
-        public void onCardSwiped(Card card, View layout);
-    }
-
+    protected View mCardLayout;
     private OnCardSwiped onCardSwipedListener;
     private OnClickListener mListener;
-    protected View mCardLayout;
 
     public Card() {
 
@@ -66,10 +53,38 @@ public abstract class Card extends AbstractCard {
         this.isClickable = isClickable;
     }
 
+    public Card(String titlePlay, String description, int imageRes, String titleColor, Boolean hasOverflow,
+                Boolean isClickable) {
+
+        this.titlePlay = titlePlay;
+        this.description = description;
+        this.titleColor = titleColor;
+        this.hasOverflow = hasOverflow;
+        this.isClickable = isClickable;
+        this.imageRes = imageRes;
+    }
+
+    public boolean isSwipable() {
+        return mSwipable;
+    }
+
+    public Card setSwipableCard(boolean swipable) {
+        this.mSwipable = swipable;
+        return this;
+    }
+
     @Override
     public View getView(Context context, boolean swipable) {
+        return getView(context, false);
+    }
+
+    @Override
+    public View getView(Context context) {
+
         View view = LayoutInflater.from(context).inflate(getCardLayout(), null);
+
         mCardLayout = view;
+
         try {
             ((FrameLayout) view.findViewById(R.id.cardContent))
                     .addView(getCardContent(context));
@@ -88,11 +103,6 @@ public abstract class Card extends AbstractCard {
         view.setLayoutParams(lp);
 
         return view;
-    }
-
-    @Override
-    public View getView(Context context) {
-        return getView(context, false);
     }
 
     public View getViewLast(Context context) {
@@ -178,12 +188,30 @@ public abstract class Card extends AbstractCard {
         return R.layout.item_card;
     }
 
+    protected int getId() {
+        return R.id.cardContent;
+    }
+
     protected int getLastCardLayout() {
         return R.layout.item_card_empty_last;
     }
 
     protected int getFirstCardLayout() {
         return R.layout.item_play_card_empty_first;
+    }
+
+    /**
+     * Attempt to reuse convertCardView.  Should not modify convertCardView if it's
+     * not compatible.  The implementer should check the card content part and
+     * verify that it matches.
+     *
+     * @param convertCardView the view to convert, with root Id equal to Card.getId()
+     * @return true on success, false if not compatible
+     */
+    public abstract boolean convert(View convertCardView);
+
+    public interface OnCardSwiped {
+        public void onCardSwiped(Card card, View layout);
     }
 
 }

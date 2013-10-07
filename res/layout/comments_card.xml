@@ -16,4 +16,9 @@
         android:textAppearance="@style/CardTitle"
         android:textSize="20sp"/>
 
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/comments_list"
+                  android:orientation="vertical"/>
+
 </LinearLayout>
