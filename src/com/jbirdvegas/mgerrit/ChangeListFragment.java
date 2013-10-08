@@ -26,10 +26,12 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import java.util.ArrayList;
 
-public class ChangeListFragment extends Fragment {
+public class ChangeListFragment extends Fragment
+    implements SearchView.OnQueryTextListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -89,6 +91,26 @@ public class ChangeListFragment extends Fragment {
 
     public void refreshTabs() {
         mSectionsPagerAdapter.refreshTabs();
+    }
+
+    public CardsFragment getCurrentFragment() {
+        return mSectionsPagerAdapter.getCurrentFragment();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        // Pass this on to the current CardsFragment instance
+        getCurrentFragment().setSearchQuery(query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        // Handled when the search is submitted instead.
+        if (newText.isEmpty()) {
+            getCurrentFragment().setSearchQuery("");
+        }
+        return false;
     }
 
     /**

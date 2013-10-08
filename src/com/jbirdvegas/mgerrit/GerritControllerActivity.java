@@ -17,9 +17,9 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,12 +30,9 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,11 +43,11 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
 import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
-import com.jbirdvegas.mgerrit.listeners.MyTabListener;
 import com.jbirdvegas.mgerrit.message.*;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
@@ -124,7 +121,31 @@ public class GerritControllerActivity extends FragmentActivity {
         FragmentManager fm = getSupportFragmentManager();
         mChangeList = (ChangeListFragment) fm.findFragmentById(R.id.change_list_fragment);
 
-        if (!CardsFragment.mSkipStalking) {
+        mGerritWebsite = Prefs.getCurrentGerrit(this);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        /* Initially set the current Gerrit globally here.
+         *  We can rely on callbacks to know when they change */
+        GerritURL.setGerrit(Prefs.getCurrentGerrit(this));
+        GerritURL.setProject(Prefs.getCurrentProject(this));
+
+        mListener = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String key = intent.getStringExtra(TheApplication.PREF_CHANGE_KEY);
+                if (key.equals(Prefs.GERRIT_KEY))
+                    onGerritChanged(Prefs.getCurrentGerrit(GerritControllerActivity.this));
+                else if (key.equals(Prefs.CURRENT_PROJECT))
+                    onProjectChanged(Prefs.getCurrentProject(GerritControllerActivity.this));
+            }
+        };
+        // Don't register listener here. It is registered in onResume instead.
+
+        handleIntent(this.getIntent());
+    }
+
+    private void init() {
+        if (!CardsFragment.sSkipStalking) {
             try {
                 mCommitterObject = getIntent()
                         .getExtras()
@@ -152,27 +173,7 @@ public class GerritControllerActivity extends FragmentActivity {
             Log.d(TAG, "Changelog was null");
         }
 
-        mGerritWebsite = Prefs.getCurrentGerrit(this);
         mGerritTasks = new HashSet<GerritTask>();
-
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-        mListener = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String key = intent.getStringExtra(TheApplication.PREF_CHANGE_KEY);
-                if (key.equals(Prefs.GERRIT_KEY))
-                    onGerritChanged(Prefs.getCurrentGerrit(GerritControllerActivity.this));
-                else if (key.equals(Prefs.CURRENT_PROJECT))
-                    onProjectChanged(Prefs.getCurrentProject(GerritControllerActivity.this));
-            }
-        };
-        // Don't register listener here. It is registered in onResume instead.
-
-        /* Initially set the current Gerrit globally here.
-         *  We can rely on callbacks to know when they change */
-        GerritURL.setGerrit(Prefs.getCurrentGerrit(this));
-        GerritURL.setProject(Prefs.getCurrentProject(this));
 
         receivers = new DefaultGerritReceivers(this);
     }
@@ -201,7 +202,45 @@ public class GerritControllerActivity extends FragmentActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.gerrit_instances_menu, menu);
         this.mMenu = menu;
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        // Let the change list fragment handle queries directly.
+        searchView.setOnQueryTextListener(mChangeList);
+        searchView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                SearchView view = (SearchView) v;
+                if (view.isIconified()) {
+                    mMenu.findItem(R.id.menu_team_instance).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                    mMenu.findItem(R.id.menu_projects).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                } else {
+                    mMenu.findItem(R.id.menu_team_instance).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                    mMenu.findItem(R.id.menu_projects).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                }
+            }
+        });
+
         return true;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent)
+    {
+        // Searching is already handled when the query text changes.
+        if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            init();
+        }
     }
 
     private AlertDialog alertDialog = null;

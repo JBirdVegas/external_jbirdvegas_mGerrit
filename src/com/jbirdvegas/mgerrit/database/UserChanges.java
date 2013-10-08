@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
-import android.database.ContentObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Handler;
@@ -279,7 +278,7 @@ public class UserChanges extends DatabaseTable {
 
     @Override
     protected void registerContentObserver(Context context) {
-        mObserver = new MyObserver(new Handler(), context);
+        mObserver = new MyObserver(new Handler(), context, CONTENT_URI);
         context.getContentResolver().registerContentObserver(Users.CONTENT_URI, true,
                 mObserver);
         context.getContentResolver().registerContentObserver(Changes.CONTENT_URI, true,
@@ -289,25 +288,5 @@ public class UserChanges extends DatabaseTable {
     @Override
     protected void unRegisterContentObserver(Context context) {
         context.getContentResolver().unregisterContentObserver(mObserver);
-    }
-
-    class MyObserver extends ContentObserver {
-
-        Context mContext;
-
-        public MyObserver(Handler handler, Context context) {
-            super(handler);
-            mContext = context;
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            this.onChange(selfChange, null);
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            mContext.getContentResolver().notifyChange(UserChanges.CONTENT_URI, this);
-        }
     }
 }

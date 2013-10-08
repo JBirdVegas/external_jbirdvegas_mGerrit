@@ -43,6 +43,7 @@ import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import org.json.JSONArray;
@@ -51,9 +52,11 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -64,14 +67,12 @@ public abstract class CardsFragment extends Fragment
     public static final String KEY_REVIEWER = "reviewer";
 
     // TODO: Could take this out and put it in GerritControllerActivity
-    public static boolean mSkipStalking;
+    public static boolean sSkipStalking;
     private static final boolean DEBUG = true;
     private static final boolean CHATTY = false;
     protected String TAG = "CardsFragment";
 
     private GerritURL mUrl;
-
-    private long mTimerStart;
 
     private RequestQueue mRequestQueue;
 
@@ -206,7 +207,7 @@ public abstract class CardsFragment extends Fragment
             @Override
             public void onCardSwiped(Card card, View layout) {
                 mParent.clearCommitterObject();
-                mSkipStalking = true;
+                CardsFragment.sSkipStalking = true;
                 mParent.refreshTabs();
             }
         });
@@ -218,7 +219,7 @@ public abstract class CardsFragment extends Fragment
         mParent = (GerritControllerActivity) this.getActivity();
         mCurrentFragment = this.getView();
 
-        mTimerStart = System.currentTimeMillis();
+        long timerStart = System.currentTimeMillis();
         mCards = (CardUI) mCurrentFragment.findViewById(R.id.commit_cards);
         mCards.setSwipeable(true);
         mRequestQueue = Volley.newRequestQueue(mParent);
@@ -239,7 +240,7 @@ public abstract class CardsFragment extends Fragment
         inProject = (!"".equals(project));
 
         CommitterObject user = mParent.getCommitterObject();
-        if (!mSkipStalking) {
+        if (!sSkipStalking) {
             String userEmail = "";
 
             if (user == null) followingUser = false;
@@ -347,6 +348,41 @@ public abstract class CardsFragment extends Fragment
      */
     abstract String getQuery();
 
+    /**
+     * Set the search query. This will construct the SQL query and restart
+     *  the loader to perform the query
+     * @param query The search query text
+     */
+    public void setSearchQuery(String query) {
+        // Clear any previous searches that where made
+        if (query == null || query.isEmpty()) {
+            getLoaderManager().restartLoader(0, null, this);
+        }
+
+        Set<SearchKeyword> tokens = SearchKeyword.constructTokens(query);
+        if (tokens == null || tokens.isEmpty()) {
+            return;
+        }
+
+        String where = SearchKeyword.constructDbSearchQuery(tokens);
+        if (where == null || where.isEmpty()) {
+            return;
+        }
+
+        ArrayList<String> bindArgs = new ArrayList<String>();
+        for (SearchKeyword token : tokens) {
+            bindArgs.add(token.getEscapeArgument());
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putString("WHERE", where);
+        bundle.putStringArrayList("BIND_ARGS", bindArgs);
+
+        // OnLoaderReset is not called when restarting a loader so unbind the data here
+        mCards.clearCards();
+        getLoaderManager().restartLoader(0, bundle, this);
+    }
+
     private void sendRequest(boolean forceUpdate) {
         Intent it = new Intent(mParent, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
@@ -373,6 +409,13 @@ public abstract class CardsFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (args != null) {
+            String query = args.getString("WHERE");
+            ArrayList<String> bindArgs = args.getStringArrayList("BIND_ARGS");
+            if (query != null && bindArgs != null) {
+                return UserChanges.findCommits(mParent, getQuery(), query, bindArgs);
+            }
+        }
         String project = Prefs.getCurrentProject(mParent);
         if ("".equals(project)) project = null;
 

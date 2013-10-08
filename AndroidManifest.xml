@@ -31,32 +31,32 @@
         android:theme="@style/Theme.Custom">
         <activity
             android:name=".GerritControllerActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                       android:resource="@xml/changes_searchable"/>
         </activity>
         <activity android:name=".PatchSetViewerActivity"
-                  android:parentActivityName=".GerritControllerActivity"
-                  android:icon="@drawable/ic_launcher"/>
+                  android:parentActivityName=".GerritControllerActivity"/>
         <activity android:name=".PrefsActivity"
-                  android:parentActivityName=".GerritControllerActivity"
-                  android:icon="@drawable/ic_launcher"/>
+                  android:parentActivityName=".GerritControllerActivity"/>
         <activity android:name=".AOKPChangelog"
                   android:allowTaskReparenting="true"
                   android:parentActivityName=".GerritControllerActivity"
-                  android:exported="true"
-                  android:icon="@drawable/ic_launcher" />
+                  android:exported="true"/>
         <activity android:name=".ProjectsList"
                   android:parentActivityName=".GerritControllerActivity"
-                  android:icon="@drawable/ic_launcher"
                   android:launchMode="singleTop">
                   <intent-filter>
                       <action android:name="android.intent.action.SEARCH" />
                   </intent-filter>
                   <meta-data android:name="android.app.searchable"
-                      android:resource="@xml/searchable"/>
+                      android:resource="@xml/projects_searchable"/>
         </activity>
         <service android:name=".tasks.GerritService" />
         <provider

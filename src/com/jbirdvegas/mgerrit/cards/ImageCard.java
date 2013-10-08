@@ -66,7 +66,7 @@ public class ImageCard extends RecyclableCard {
         convertView.findViewById(R.id.remove_content).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCardsFragment.mSkipStalking = true;
+                mCardsFragment.sSkipStalking = true;
                 OnSwipeCard();
                 mActivity.refreshTabs();
             }

@@ -107,9 +107,7 @@ public class ProjectsList extends Activity
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
-        if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
-           handleIntent(intent);
-        }
+        handleIntent(intent);
     }
 
     private void handleIntent(Intent intent)
