@@ -22,7 +22,6 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -76,7 +75,7 @@ public class PatchSetCommentsCard extends RecyclableCard {
         }
     }
 
-    public View getCommentView(final CommitComment comment) {
+    private View getCommentView(final CommitComment comment) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commentView = inflater.inflate(R.layout.commit_comment, null);
         // set author name
@@ -95,12 +94,7 @@ public class PatchSetCommentsCard extends RecyclableCard {
         // replace replace emoticons with drawables
         commentMessage.setText(EmoticonSupportHelper.getSmiledText(mContext, comment.getMessage()));
         // set gravatar icon for commenter
-        GravatarHelper.populateProfilePicture(
-                (ImageView) commentView.findViewById(R.id.comment_gravatar),
-                comment.getAuthorObject().getEmail(),
-                mRequestQuery);
         NetworkImageView gravatar = (NetworkImageView) commentView.findViewById(R.id.comment_gravatar);
-
         gravatar.setImageUrl(GravatarHelper.getGravatarUrl(comment.getAuthorObject().getEmail()),
                 new ImageLoader(mRequestQuery, new BitmapLruCache(mContext)));
         return commentView;

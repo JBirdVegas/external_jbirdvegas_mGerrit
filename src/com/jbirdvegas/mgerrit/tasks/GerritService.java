@@ -29,12 +29,10 @@ public class GerritService extends IntentService {
 
     public static final String URL_KEY = "Url";
     public static final String DATA_TYPE_KEY = "Type";
-    public static final String FORCE_UPDATE_KEY = "FORCE";
 
     public static enum DataType { Project, Commit }
 
     private GerritURL mCurrentUrl;
-    private boolean mForceUpdate;
 
     // This is required for the service to be started
     public GerritService() { super(TAG); }
@@ -46,7 +44,6 @@ public class GerritService extends IntentService {
 
         // Determine which SyncProcessor to use here
         DataType dataType = (DataType) intent.getSerializableExtra(DATA_TYPE_KEY);
-        mForceUpdate = intent.getBooleanExtra(FORCE_UPDATE_KEY, false);
         if (dataType == DataType.Project) {
             processor = new ProjectListProcessor(this, mCurrentUrl);
         }
@@ -59,7 +56,7 @@ public class GerritService extends IntentService {
         }
 
         // Call the SyncProcessor to fetch the data if necessary
-        boolean needsSync = mForceUpdate || processor.isSyncRequired();
+        boolean needsSync = processor.isSyncRequired();
         if (needsSync) processor.fetchData();
     }
 }

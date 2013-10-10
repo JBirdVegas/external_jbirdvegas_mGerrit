@@ -35,32 +35,41 @@ public class GravatarHelper {
     public static final String GRAVATAR_API = "http://www.gravatar.com/avatar/";
     public static final String DEFAULT_AVATAR_SIZE = "80";
 
-    public static void populateProfilePicture(final ImageView imageView, String email, RequestQueue imageRequest) {
-        String emailMd5 = MD5Helper.md5Hex(email.trim().toLowerCase());
-        if (emailMd5 != null) {
-            String url = String.format("%s%s?s=%s",
-                    GRAVATAR_API,
-                    emailMd5,
-                    DEFAULT_AVATAR_SIZE);
+    public static void populateProfilePicture(final ImageView imageView, String email,
+                                              RequestQueue imageRequest) {
+        String url = getGravatarUrl(email);
+
+        if (url != null) {
             Log.d(TAG, "Gravatar url called: " + url);
-            imageVolleyRequest(imageView, url, imageRequest).start();
+            GravatarHelper.imageVolleyRequest(imageView, url, imageRequest).start();
+            imageView.setVisibility(View.VISIBLE);
         } else {
             imageView.setVisibility(View.GONE);
         }
     }
 
     public static String getGravatarUrl(String email) {
-        String emailMd5 = MD5Helper.md5Hex(email.trim().toLowerCase());
-        if (emailMd5 != null) {
-            return String.format("%s%s?s=%s",
-                    GRAVATAR_API,
-                    emailMd5,
-                    DEFAULT_AVATAR_SIZE);
+        if (email != null) {
+            String emailMd5 = MD5Helper.md5Hex(email.trim().toLowerCase());
+            if (emailMd5 != null) {
+                return String.format("%s%s?s=%s",
+                        GRAVATAR_API,
+                        emailMd5,
+                        DEFAULT_AVATAR_SIZE);
+            }
         }
         return null;
+
+        /* This only works when the server has a Gravatar plugin installed.
+         * StringBuilder builder = new StringBuilder()
+         *       .append(Prefs.getCurrentGerrit(context))
+         *       .append(accountID)
+         *       .append("/avatar?s=").append(DEFAULT_AVATAR_SIZE);
+         * return builder.toString();*/
     }
 
-    private static RequestQueue imageVolleyRequest(final ImageView imageView, String url, RequestQueue imageRequest) {
+    private static RequestQueue imageVolleyRequest(final ImageView imageView, String url,
+                                                   RequestQueue imageRequest) {
         imageRequest.add(new ImageRequest(url, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap bitmap) {
@@ -80,8 +89,11 @@ public class GravatarHelper {
         return imageRequest;
     }
 
-    public static void attachGravatarToTextView(final TextView textView, String email, RequestQueue imageRequest) {
+    public static void attachGravatarToTextView(final TextView textView, String email,
+                                                RequestQueue imageRequest) {
         String url = getGravatarUrl(email);
+        if (url == null) return;
+
         imageRequest.add(new ImageRequest(url, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap bitmap) {

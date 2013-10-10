@@ -20,6 +20,10 @@ package com.jbirdvegas.mgerrit.objects;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,7 +42,7 @@ public class CommitComment implements Parcelable {
         mJsonObject = jsonObject;
         try {
             mId = jsonObject.getString(JSONCommit.KEY_ID);
-            mAuthorObject = CommitterObject.getInstance(jsonObject.getJSONObject(JSONCommit.KEY_AUTHOR));
+            mAuthorObject = new Gson().fromJson(jsonObject.getJSONObject(JSONCommit.KEY_AUTHOR).toString(), CommitterObject.class);
             mDate = jsonObject.getString(JSONCommit.KEY_DATE);
             mMessage = jsonObject.getString(JSONCommit.KEY_MESSAGE);
             mRevisionNumber = jsonObject.getInt(KEY_REVISION_NUMBER);

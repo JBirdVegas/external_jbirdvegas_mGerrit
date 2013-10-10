@@ -93,4 +93,12 @@ public class SyncTime extends DatabaseTable {
         contentValues.put(C_VALUE, value);
         context.getContentResolver().insert(CONTENT_URI, contentValues);
     }
+
+    /**
+     * Clear all the data in this table. Not reversible.
+     * @param context Context from which to access the database
+     */
+    public static void clear(Context context){
+        context.getContentResolver().delete(CONTENT_URI, null, null);
+    }
 }

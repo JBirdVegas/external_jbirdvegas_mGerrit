@@ -37,6 +37,7 @@ import com.fima.cardsui.views.CardUI;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.ImageCard;
 import com.jbirdvegas.mgerrit.cards.ProjectCard;
+import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
@@ -350,7 +351,6 @@ public abstract class CardsFragment extends Fragment
         Intent it = new Intent(mParent, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
         it.putExtra(GerritService.URL_KEY, mUrl);
-        it.putExtra(GerritService.FORCE_UPDATE_KEY, forceUpdate);
         mParent.startService(it);
     }
 
@@ -363,7 +363,10 @@ public abstract class CardsFragment extends Fragment
         mIsDirty = false;
         getLoaderManager().restartLoader(0, null, this);
 
-        if (forceUpdate) sendRequest(forceUpdate);
+        if (forceUpdate) {
+            SyncTime.clear(mParent);
+            sendRequest(forceUpdate);
+        }
     }
 
     public void markDirty() { mIsDirty = true; }
