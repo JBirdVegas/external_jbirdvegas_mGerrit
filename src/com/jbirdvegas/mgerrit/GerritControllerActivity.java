@@ -93,6 +93,9 @@ public class GerritControllerActivity extends FragmentActivity {
     private boolean mTwoPane;
     private ChangeListFragment mChangeList;
 
+    // This will be null if mTwoPane is false (i.e. not tablet mode)
+    private PatchSetViewerFragment mChangeDetail;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,17 +111,17 @@ public class GerritControllerActivity extends FragmentActivity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main);
 
+        FragmentManager fm = getSupportFragmentManager();
         if (findViewById(R.id.change_detail_fragment) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
             // res/values-sw600dp). If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
-
+            mChangeDetail = (PatchSetViewerFragment) fm.findFragmentById(R.id.change_detail_fragment);
             // TODO: In two-pane mode, list items should be given the 'activated' state when touched.
         }
 
-        FragmentManager fm = getSupportFragmentManager();
         mChangeList = (ChangeListFragment) fm.findFragmentById(R.id.change_list_fragment);
 
         mGerritWebsite = Prefs.getCurrentGerrit(this);
@@ -472,14 +475,7 @@ public class GerritControllerActivity extends FragmentActivity {
         arguments.putString(PatchSetViewerFragment.STATUS, status);
 
         if (mTwoPane) {
-            // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
-            PatchSetViewerFragment fragment = new PatchSetViewerFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.change_detail_fragment, fragment)
-                    .commit();
+            mChangeDetail.setSelectedChange(changeID);
         } else if (expand) {
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
@@ -487,5 +483,16 @@ public class GerritControllerActivity extends FragmentActivity {
             detailIntent.putExtras(arguments);
             startActivity(detailIntent);
         }
+    }
+
+    public ChangeListFragment getChangeList() {
+        return mChangeList;
+    }
+
+    /**
+     * @return The change detail fragment, may be null.
+     */
+    public PatchSetViewerFragment getChangeDetail() {
+        return mChangeDetail;
     }
 }

@@ -78,6 +78,11 @@ public class SelectedChange extends DatabaseTable {
         else return c.getString(0);
     }
 
+    public static void setSelectedChange(Context context, String changeid) {
+        String status = Changes.getChangeStatus(context, changeid);
+        setSelectedChange(context, changeid, status);
+    }
+
     public static void setSelectedChange(Context context, String changeid, String status) {
         ContentValues contentValues = new ContentValues(2);
         contentValues.put(C_CHANGE_ID, changeid);

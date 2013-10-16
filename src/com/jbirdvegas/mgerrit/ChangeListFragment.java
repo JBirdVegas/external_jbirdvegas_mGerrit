@@ -28,6 +28,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.jbirdvegas.mgerrit.database.SelectedChange;
+import com.jbirdvegas.mgerrit.message.StatusSelected;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
+
 import java.util.ArrayList;
 
 public class ChangeListFragment extends Fragment
@@ -42,6 +46,9 @@ public class ChangeListFragment extends Fragment
     private FragmentActivity mParent;
     private View mThisFragment;
     private ArrayList<CharSequence> mTitles;
+
+    // This should be set to the status corresponding to the initially selected tab
+    private String mSelectedStatus = JSONCommit.Status.NEW.toString();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,6 +87,9 @@ public class ChangeListFragment extends Fragment
                     @Override
                     public void onPageSelected(int position)
                     {
+                        String status = mSectionsPagerAdapter.getStatusAtPostion(position);
+                        new StatusSelected(mParent, status).sendUpdateMessage();
+                        mSelectedStatus = status;
                         mSectionsPagerAdapter.getFragment(position).refresh(false);
                     }
                 });
@@ -113,6 +123,11 @@ public class ChangeListFragment extends Fragment
         return false;
     }
 
+    public String getStatus() {
+        return mSelectedStatus;
+    }
+
+
     /**
      * A {@link android.support.v4.app.FragmentStatePagerAdapter} that returns a
      * fragment corresponding to one of the sections/tabs/pages.
@@ -127,6 +142,15 @@ public class ChangeListFragment extends Fragment
 
         SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+        }
+
+        public String getStatusAtPostion(int position) {
+            switch (position) {
+                case 0: return JSONCommit.KEY_STATUS_OPEN;
+                case 1: return JSONCommit.KEY_STATUS_MERGED;
+                case 2: return JSONCommit.KEY_STATUS_ABANDONED;
+                default: return null;
+            }
         }
 
         @Override

@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.objects.Card;
@@ -39,6 +40,7 @@ import com.jbirdvegas.mgerrit.cards.ImageCard;
 import com.jbirdvegas.mgerrit.cards.ProjectCard;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
@@ -46,6 +48,7 @@ import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -147,7 +150,6 @@ public abstract class CardsFragment extends Fragment
         // Committer object
         int username_index = changes.getColumnIndex(UserChanges.C_NAME);
         int useremail_index = changes.getColumnIndex(UserChanges.C_EMAIL);
-        // TODO: This column is not present in the Users table yet
         int userid_index = changes.getColumnIndex(UserChanges.C_USER_ID);
 
         while (changes.moveToNext()) {
@@ -433,5 +435,8 @@ public abstract class CardsFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         drawCardsFromList(generateCardsList(cursor), mCards);
+        // Broadcast that we have finished loading changes
+        new ChangeLoadingFinished(mParent, getQuery()).sendUpdateMessage();
+
     }
 }

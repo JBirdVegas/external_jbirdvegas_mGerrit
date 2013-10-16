@@ -18,9 +18,13 @@ package com.jbirdvegas.mgerrit;
  */
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -36,7 +40,10 @@ import com.jbirdvegas.mgerrit.cards.PatchSetCommentsCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetMessageCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetPropertiesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetReviewersCard;
+import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
+import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
+import com.jbirdvegas.mgerrit.message.StatusSelected;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
@@ -53,17 +60,35 @@ import org.json.JSONException;
  */
 public class PatchSetViewerFragment extends Fragment {
     private static final String TAG = PatchSetViewerFragment.class.getSimpleName();
-    private static final String KEY_STORED_PATCHSET = "storedPatchset";
 
     private CardUI mCardsUI;
     private RequestQueue mRequestQueue;
     private Activity mParent;
+    private Context mContext;
+
     private View mCurrentFragment;
     private GerritURL mUrl;
     private String mSelectedChange;
+    private String mStatus;
 
     public static final String CHANGE_ID = "changeID";
     public static final String STATUS = "queryStatus";
+
+    private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
+            String status = intent.getStringExtra(StatusSelected.STATUS);
+
+            /* We may have got a broadcast saying that data from another tab
+             *  has been loaded. */
+            if (compareStatus(status, getStatus()) || action.equals(StatusSelected.ACTION)) {
+                setStatus(status);
+                loadChange();
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,7 +99,6 @@ public class PatchSetViewerFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         init();
     }
 
@@ -82,11 +106,15 @@ public class PatchSetViewerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mParent = this.getActivity();
+        mContext = mParent.getApplicationContext();
 
         if (getArguments() != null) {
             mSelectedChange = getArguments().getString(CHANGE_ID);
-            String status = getArguments().getString(CHANGE_ID);
-            SelectedChange.setSelectedChange(mParent.getApplicationContext(), mSelectedChange, status);
+            setStatus(getArguments().getString(STATUS));
+            SelectedChange.setSelectedChange(mContext, mSelectedChange, mStatus);
+        } else {
+            /** This should be the default value of {@link ChangeListFragment.mSelectedStatus } */
+            setStatus(JSONCommit.Status.NEW.toString());
         }
     }
 
@@ -98,36 +126,25 @@ public class PatchSetViewerFragment extends Fragment {
         mRequestQueue = Volley.newRequestQueue(mParent);
 
         mUrl = new GerritURL();
-        setSelectedChange(mSelectedChange);
+        loadChange();
     }
 
     private void executeGerritTask(final String query) {
-        if ("".equals(getStoredPatchSet())) {
-            new GerritTask(mParent) {
-                @Override
-                public void onJSONResult(String s) {
-                    try {
-                        savePatchSet(s);
-                        addCards(mCardsUI,
-                                new JSONCommit(
-                                        new JSONArray(s).getJSONObject(0),
-                                        mParent.getApplicationContext()));
-                    } catch (JSONException e) {
-                        Log.d(TAG, "Response from "
-                                + query + " could not be parsed into cards :(", e);
-                    }
+        new GerritTask(mParent) {
+            @Override
+            public void onJSONResult(String s) {
+                try {
+                    mCardsUI.clearCards();
+                    addCards(mCardsUI,
+                            new JSONCommit(
+                                    new JSONArray(s).getJSONObject(0),
+                                    mContext));
+                } catch (JSONException e) {
+                    Log.d(TAG, "Response from "
+                            + query + " could not be parsed into cards :(", e);
                 }
-            }.execute(query);
-        } else {
-            try {
-                addCards(mCardsUI, new JSONCommit(
-                        new JSONArray(getStoredPatchSet()).getJSONObject(0),
-                        mParent.getApplicationContext()
-                ));
-            } catch (JSONException e) {
-                Log.d(TAG, "Stored response could not be parsed into cards :(", e);
             }
-        }
+        }.execute(query);
     }
 
     private void addCards(CardUI ui, JSONCommit jsonCommit) {
@@ -165,13 +182,96 @@ public class PatchSetViewerFragment extends Fragment {
         }
     }
 
+    /**
+     * Set the change id to load details for
+     * @param changeID A valid change id
+     */
     public void setSelectedChange(String changeID) {
-        this.mSelectedChange = changeID;
-        if (mSelectedChange != null && mSelectedChange.length() > 0) {
-            mUrl.setChangeID(mSelectedChange);
-            mUrl.requestChangeDetail(true);
-            executeGerritTask(mUrl.toString());
+        if (changeID == null || changeID.length() < 0) {
+            return; // Invalid changeID
+        } else if (changeID == mSelectedChange) {
+            return; // Same change selected, no need to do anything.
         }
+
+        SelectedChange.setSelectedChange(mContext, changeID);
+        loadChange(changeID);
+    }
+
+    /**
+     * Load the details for a given change id and display it.
+     * @param changeID A valid change id
+     */
+    private void loadChange(String changeID) {
+        this.mSelectedChange = changeID;
+        mUrl.setChangeID(mSelectedChange);
+        mUrl.requestChangeDetail(true);
+        executeGerritTask(mUrl.toString());
+    }
+
+    /**
+     * Determine the changeid to load and call {@link #loadChange(String)}
+     */
+    private void loadChange() {
+        if (mStatus == null) {
+            // Without the status we cannot find a changeid to load data for
+            return;
+        }
+
+        String changeID = SelectedChange.getSelectedChange(mContext, mStatus);
+        if (changeID == null) {
+            changeID = Changes.getMostRecentChange(mParent, mStatus);
+            if (changeID == null) {
+                // No changes to load data from
+                return;
+            }
+        }
+
+        loadChange(changeID);
+    }
+
+    /**
+     * Use this to set the status to ensure we only use the database status
+     * @param status A valid change status string (database or web format)
+     */
+    public void setStatus(String status) {
+        this.mStatus = JSONCommit.Status.getStatusString(status);
+    }
+
+    public boolean compareStatus(String status1, String status2) {
+        return (JSONCommit.Status.getStatusString(status1)).equals(JSONCommit.Status.getStatusString(status2));
+    }
+
+    /**
+     * Helper function to get the selected status in the change list fragment.
+     *  If it is phone mode (the parent is not the main activity), then this will
+     *  return null.
+     * @return The selected status in the change list fragment, or null if not available
+     */
+    private String getStatus() {
+        if (mParent instanceof GerritControllerActivity) {
+            GerritControllerActivity controllerActivity = (GerritControllerActivity) mParent;
+            return controllerActivity.getChangeList().getStatus();
+        }
+        return null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(mParent).registerReceiver(mStatusReceiver,
+                new IntentFilter(StatusSelected.ACTION));
+
+        // If we cannot get the status, it is likely phone mode.
+        if (getStatus() != null) {
+            LocalBroadcastManager.getInstance(mParent).registerReceiver(mStatusReceiver,
+                    new IntentFilter(ChangeLoadingFinished.ACTION));
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(mParent).unregisterReceiver(mStatusReceiver);
     }
 
     /*
@@ -194,22 +294,14 @@ public class PatchSetViewerFragment extends Fragment {
 
      */
 
-    private void savePatchSet(String jsonResponse) {
-        // Caching disabled
-    }
-
-    private String getStoredPatchSet() {
-        return ""; // Caching disabled
-    }
-
     private CommitterObject committerObject = null;
 
     public void registerViewForContextMenu(View view) {
         registerForContextMenu(view);
     }
 
-    public static final int OWNER = 0;
-    public static final int REVIEWER = 1;
+    private static final int OWNER = 0;
+    private static final int REVIEWER = 1;
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

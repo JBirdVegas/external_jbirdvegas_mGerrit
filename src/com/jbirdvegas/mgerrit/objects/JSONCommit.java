@@ -142,7 +142,7 @@ public class JSONCommit implements Parcelable {
 
         public static Status getStatusFromString(final String status) {
             String status_lower = status.toLowerCase();
-            if (status_lower.equals(KEY_STATUS_OPEN.toLowerCase()) || status.equals("new")) {
+            if (status_lower.equals(KEY_STATUS_OPEN.toLowerCase()) || status_lower.equals("new")) {
                 return NEW;
             } else if (status_lower.equals(KEY_STATUS_MERGED.toLowerCase())) {
                 return MERGED;
