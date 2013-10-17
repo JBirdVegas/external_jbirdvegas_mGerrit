@@ -20,15 +20,17 @@
     <string-array name="gerrit_names">
         <item>AOKP</item>
         <item>AOSP</item>
-        <item>Gerrit Review</item>
         <item>CyanogenMod</item>
+        <item>Gerrit Review</item>
+        <item>Omni</item>
         <item>Paranoid Android</item>
     </string-array>
     <string-array name="gerrit_webaddresses" translatable="false">
         <item>http://gerrit.aokp.co/</item>
         <item>https://android-review.googlesource.com/</item>
-        <item>https://gerrit-review.googlesource.com/</item>
         <item>http://review.cyanogenmod.org/</item>
+        <item>https://gerrit-review.googlesource.com/</item>
+        <item>https://gerrit.omnirom.org/</item>
         <item>https://gerrit.paranoidandroid.co/</item>
     </string-array>
     <string-array name="status_entries">
