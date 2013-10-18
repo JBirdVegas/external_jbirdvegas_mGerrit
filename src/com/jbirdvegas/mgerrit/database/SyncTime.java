@@ -24,9 +24,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-import com.jbirdvegas.mgerrit.helpers.DBParams;
-import com.jbirdvegas.mgerrit.objects.JSONCommit;
-
 public class SyncTime extends DatabaseTable {
     // Table name
     public static final String TABLE = "_Times";

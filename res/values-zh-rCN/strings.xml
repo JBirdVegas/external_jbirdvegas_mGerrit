@@ -20,12 +20,12 @@
     <string name="reviewable">评审</string>
     <string name="merged">合并</string>
     <string name="abandoned">废弃</string>
-    <string name="status_explaination_new">更改仍在审核中。</string>
-    <string name="status_explaination_submitted">更改已提交并存在于合并队列中，
+    <string name="status_explanation_new">更改仍在审核中。</string>
+    <string name="status_explanation_submitted">更改已提交并存在于合并队列中，
     它可能需要等待一个或多个依赖项。
     </string>
-    <string name="status_explaination_merged">更改已合并到其分支。</string>
-    <string name="status_explaination_abandoned">更改被其所有者或管理员废弃。</string>
+    <string name="status_explanation_merged">更改已合并到其分支。</string>
+    <string name="status_explanation_abandoned">更改被其所有者或管理员废弃。</string>
     <string name="patchset_labels_code_reviewer_title">代码评审者</string>
     <string name="patchset_labels_verified_reviewer_title">已审核</string>
     <string name="inserted">插入行</string>
@@ -39,19 +39,18 @@
     <string name="commit_author">作者</string>
     <string name="commit_owner">所有者</string>
     <string name="failed_to_parse_json_response">解析响应失败，来自</string>
-    <string name="ok">确定</string>
     <string name="show_exception">显示异常</string>
     <string name="exit">退出</string>
     <string name="gerrit_call_failed">没有得到来自Gerrit实例的响应，
     请检查你的连接并重试。
     </string>
     <string name="establishing_connection">正在建立连接……</string>
-    <string name="transfering">正在传输JSON格式数据……</string>
+    <string name="transferring">正在传输JSON格式数据……</string>
     <string name="downloading_status" formatted="false">%d / %d 字节 已下载\t%d%% 已完成</string>
     <string name="connection_established">已建立连接</string>
     <string name="initializing_data_transfer">初始化数据传输……</string>
     <string name="communications_error">通讯错误！！！</string>
-    <string name="transfering_json_data">正在传输JSON格式数据……</string>
+    <string name="transferring_json_data">正在传输JSON格式数据……</string>
     <string name="open_source_libs">开源引用库</string>
     <string name="explain_status_title">状态解释</string>
     <string name="explain_status_summary">简要说明状态标签的含义</string>
@@ -110,6 +109,6 @@
     <string name="patchset_labels_change_diff">变更差异</string>
     <string name="remove_content">移除内容</string>
     <string name="connection_starting">开始 Gerrit 请求</string>
-    <string name="search_hint">搜索项目</string>
+    <string name="projects_search_hint">搜索项目</string>
     <string name="failed_to_find_url">失败，找不到项目URL</string>
 </resources>

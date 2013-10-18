@@ -69,7 +69,7 @@ public abstract class DatabaseTable {
         UsersChangesList, UsersChangesID,
         CommitMarkerList, CommitMarkerID,
         SelectedChangeList, SelectedChangeID
-    };
+    }
 
     // Add each DatabaseTable class here, we need to add the virtual tables as well
     public static ArrayList<Class<? extends DatabaseTable>> tables;
@@ -84,7 +84,7 @@ public abstract class DatabaseTable {
         tables.add(UserChanges.class);
         tables.add(CommitMarker.class);
         tables.add(SelectedChange.class);
-    };
+    }
 
     /* Gathers information from the DatabaseTable classes to help implement the
      *  ContentProvider's getType method, which handles requests for the

@@ -31,9 +31,9 @@ public class DBParams {
 
     private DBParams() { } // Empty private constructor
 
-    public static final String TAG_LIMIT = "limit";
-    public static final String TAG_CONFLICT = "conflict";
-    public static final String TAG_GROUP_BY = "group_by";
+    private static final String TAG_LIMIT = "limit";
+    private static final String TAG_CONFLICT = "conflict";
+    private static final String TAG_GROUP_BY = "group_by";
 
     public static Uri appendLimitParameter(Uri uri, int numRows) {
         return uri.buildUpon().appendQueryParameter(TAG_LIMIT, Integer.toString(numRows)).build();
@@ -58,7 +58,7 @@ public class DBParams {
                 .build();
     }
 
-    private static Integer getConflictParameter(Uri uri) {
+    public static Integer getConflictParameter(Uri uri) {
         String conflictAlgorithm = uri.getQueryParameter(TAG_CONFLICT);
         if (conflictAlgorithm == null) return null;
         else if (conflictAlgorithm.equals("REPLACE")) {
@@ -72,7 +72,7 @@ public class DBParams {
         }
     }
 
-    private static Integer getLimitParameter(Uri uri) {
+    public static Integer getLimitParameter(Uri uri) {
         String limit = uri.getQueryParameter(TAG_LIMIT);
         if (limit == null || limit.isEmpty()) return null;
         return Integer.valueOf(limit);

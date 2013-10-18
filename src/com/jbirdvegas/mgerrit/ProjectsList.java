@@ -185,7 +185,7 @@ public class ProjectsList extends Activity
         if (subproject.equals("")) project = root;
         else project = root + SEPERATOR + subproject;
         Prefs.setCurrentProject(getApplicationContext(), project);
-        ProjectsList.this.finish();
+        this.finish();
     }
 
     private void startService() {

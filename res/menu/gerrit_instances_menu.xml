@@ -38,13 +38,13 @@
 
     <item
         android:id="@+id/menu_refresh"
-        android:icon="@drawable/ic_navigation_refresh"
+        android:icon="@drawable/ic_action_refresh"
         android:title="@string/menu_refresh"
         android:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_save"
-        android:icon="@drawable/ic_menu_moreoverflow_normal_holo_light"
+        android:icon="@drawable/ic_action_overflow"
         android:title="@string/menu_preferences"
         android:showAsAction="never"/>
 

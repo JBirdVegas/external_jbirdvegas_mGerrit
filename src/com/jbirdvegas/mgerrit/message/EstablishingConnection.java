@@ -2,7 +2,6 @@ package com.jbirdvegas.mgerrit.message;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;

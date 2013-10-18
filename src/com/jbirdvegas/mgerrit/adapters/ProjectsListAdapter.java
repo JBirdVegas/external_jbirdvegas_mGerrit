@@ -21,7 +21,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.widget.SimpleCursorTreeAdapter;
 
-import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 
 public class ProjectsListAdapter extends SimpleCursorTreeAdapter

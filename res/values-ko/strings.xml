@@ -21,12 +21,12 @@
     <string name="reviewable">리뷰</string>
     <string name="merged">병합</string>
     <string name="abandoned">포기</string>
-    <string name="status_explaination_new">여전히 검토중.</string>
-    <string name="status_explaination_submitted">Change has been submitted and is in the merge queue. It may be waiting
+    <string name="status_explanation_new">여전히 검토중.</string>
+    <string name="status_explanation_submitted">Change has been submitted and is in the merge queue. It may be waiting
         for one or more dependencies.
     </string>
-    <string name="status_explaination_merged">Change has been merged to its branch.</string>
-    <string name="status_explaination_abandoned">Change was abandoned by its owner or administrator.</string>
+    <string name="status_explanation_merged">Change has been merged to its branch.</string>
+    <string name="status_explanation_abandoned">Change was abandoned by its owner or administrator.</string>
     <string name="view_in_browser">브라우저</string>
     <string name="moar_info">추가 정보</string>
     <string name="patchset_labels_code_reviewer_title">코드 검토자</string>
@@ -41,19 +41,18 @@
     <string name="commit_author">저자</string>
     <string name="commit_owner">소유자</string>
     <string name="failed_to_parse_json_response">Failed to parse response from</string>
-    <string name="ok">확인</string>
     <string name="show_exception">예외 표시</string>
     <string name="exit">나가기</string>
     <string name="gerrit_call_failed">Failed to get useful response from Gerrit instance please check your connection
         and try again.
     </string>
     <string name="establishing_connection">연결 설정 ...</string>
-    <string name="transfering">JSON 인코딩 된 데이터를 전송 ...</string>
+    <string name="transferring">JSON 인코딩 된 데이터를 전송 ...</string>
     <string name="downloading_status" formatted="false">%d of %d bytes downloaded\t%d%% completed</string>
     <string name="connection_established">연결 설정</string>
     <string name="initializing_data_transfer">데이터 전송을 초기화 ...</string>
     <string name="communications_error">통신 오류!</string>
-    <string name="transfering_json_data">JSON 인코딩 된 데이터를 전송 ...</string>
+    <string name="transferring_json_data">JSON 인코딩 된 데이터를 전송 ...</string>
     <string name="open_source_libs">오픈 소스 라이브러리</string>
     <string name="cards_ui">CardsUI</string>
     <string name="nine_old_androids">NineOldAndroids</string>

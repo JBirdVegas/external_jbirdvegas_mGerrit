@@ -24,7 +24,7 @@
         <item>CyanogenMod</item>
         <item>Paranoid Android</item>
     </string-array>
-    <string-array name="gerrit_webaddresses">
+    <string-array name="gerrit_webaddresses" translatable="false">
         <item>http://gerrit.aokp.co/</item>
         <item>https://android-review.googlesource.com/</item>
         <item>https://gerrit-review.googlesource.com/</item>
@@ -36,9 +36,9 @@
         <item>@string/merged</item>
         <item>@string/abandoned</item>
     </string-array>
-    <string-array name="status_entry_values">
-        <item>@string/status_explaination_new</item>
-        <item>@string/status_explaination_merged</item>
-        <item>@string/status_explaination_abandoned</item>
+    <string-array name="status_entry_values" translatable="false">
+        <item>@string/status_explanation_new</item>
+        <item>@string/status_explanation_merged</item>
+        <item>@string/status_explanation_abandoned</item>
     </string-array>
 </resources>

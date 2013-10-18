@@ -20,10 +20,10 @@
     <string name="reviewable">Review</string>
     <string name="merged">Merged</string>
     <string name="abandoned">Abandoned</string>
-    <string name="status_explaination_new">変更はレビュー中です。</string>
-    <string name="status_explaination_submitted">変更は提出されてマージ中です。ひとつ以上の依存関係が解消されるのを待っています。</string>
-    <string name="status_explaination_merged">変更はブランチにマージされました。</string>
-    <string name="status_explaination_abandoned">変更はオーナーまたは管理者によって取り下げられました。</string>
+    <string name="status_explanation_new">変更はレビュー中です。</string>
+    <string name="status_explanation_submitted">変更は提出されてマージ中です。ひとつ以上の依存関係が解消されるのを待っています。</string>
+    <string name="status_explanation_merged">変更はブランチにマージされました。</string>
+    <string name="status_explanation_abandoned">変更はオーナーまたは管理者によって取り下げられました。</string>
     <string name="patchset_labels_code_reviewer_title">コードレビュー:</string>
     <string name="patchset_labels_verified_reviewer_title">検証:</string>
     <string name="inserted">挿入行:</string>
@@ -37,17 +37,16 @@
     <string name="commit_author">作者:</string>
     <string name="commit_owner">オーナー:</string>
     <string name="failed_to_parse_json_response">解析失敗:</string>
-    <string name="ok">ok</string>
     <string name="show_exception">例外を表示</string>
     <string name="exit">終了</string>
     <string name="gerrit_call_failed">Gerritインスタンスのデータ取得に失敗しました。接続を確認して再度試してください。</string>
     <string name="establishing_connection">接続中...</string>
-    <string name="transfering">JSONデータ変換中...</string>
+    <string name="transferring">JSONデータ変換中...</string>
     <string name="downloading_status" formatted="false">%d / %d バイトダウンロード\t%d%% 完了</string>
     <string name="connection_established">接続完了</string>
     <string name="initializing_data_transfer">データ変換初期化中...</string>
     <string name="communications_error">通信エラー!!!</string>
-    <string name="transfering_json_data">JSONデータ変換中...</string>
+    <string name="transferring_json_data">JSONデータ変換中...</string>
     <string name="open_source_libs">オープンソースライブラリー</string>
     <string name="cards_ui">CardsUI</string>
     <string name="nine_old_androids">NineOldAndroids</string>

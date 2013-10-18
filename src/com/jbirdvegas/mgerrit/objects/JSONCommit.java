@@ -108,25 +108,25 @@ public class JSONCommit implements Parcelable {
         NEW {
             @Override
             public String getExplaination(Context c) {
-                return c.getString(R.string.status_explaination_new);
+                return c.getString(R.string.status_explanation_new);
             }
         },
         SUBMITTED {
             @Override
             public String getExplaination(Context c) {
-                return c.getString(R.string.status_explaination_submitted);
+                return c.getString(R.string.status_explanation_submitted);
             }
         },
         MERGED {
             @Override
             public String getExplaination(Context c) {
-                return c.getString(R.string.status_explaination_merged);
+                return c.getString(R.string.status_explanation_merged);
             }
         },
         ABANDONED {
             @Override
             public String getExplaination(Context c) {
-                return c.getString(R.string.status_explaination_abandoned);
+                return c.getString(R.string.status_explanation_abandoned);
             }
         };
 

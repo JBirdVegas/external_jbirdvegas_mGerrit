@@ -20,10 +20,10 @@
     <string name="reviewable">Revidováno</string>
     <string name="merged">Sloučeno</string>
     <string name="abandoned">Zamítnuto</string>
-    <string name="status_explaination_new">Změna stále podléha revidování.</string>
-    <string name="status_explaination_submitted">Změna byla odeslána a je ve frontě ke sloučení. Možná čeká na nějaké závislosti.</string>
-    <string name="status_explaination_merged">Změna byla sloučena do branche.</string>
-    <string name="status_explaination_abandoned">Změna byla zamítnuta majitelem nebo správcem.</string>
+    <string name="status_explanation_new">Změna stále podléha revidování.</string>
+    <string name="status_explanation_submitted">Změna byla odeslána a je ve frontě ke sloučení. Možná čeká na nějaké závislosti.</string>
+    <string name="status_explanation_merged">Změna byla sloučena do branche.</string>
+    <string name="status_explanation_abandoned">Změna byla zamítnuta majitelem nebo správcem.</string>
     <string name="patchset_labels_code_reviewer_title">Revidenti kódu:</string>
     <string name="patchset_labels_verified_reviewer_title">Ověřeno:</string>
     <string name="inserted">Vložené řádky:</string>
@@ -36,17 +36,16 @@
     <string name="commit_author">Autor:</string>
     <string name="commit_owner">Vlastník:</string>
     <string name="failed_to_parse_json_response">Chyba při parsování odpovědi</string>
-    <string name="ok">ok</string>
     <string name="show_exception">Zobrazit vyjímku</string>
     <string name="exit">Ukončit</string>
     <string name="gerrit_call_failed">Načítání použitelné odpovědi z Gerritu selhalo. Je třeba zkontrolovat internetové připojení a zkusit znovu </string>
     <string name="establishing_connection">Navazování spojení…</string>
-    <string name="transfering">Přenášení JSON enkodovaných dat…</string>
+    <string name="transferring">Přenášení JSON enkodovaných dat…</string>
     <string name="downloading_status" formatted="false">%d z %d bytů kompetně\t%d%% staženo</string>
     <string name="connection_established">Připojení navázáno</string>
     <string name="initializing_data_transfer">Inicializace datového přenosu…</string>
     <string name="communications_error">CHYBA komunikace!!!</string>
-    <string name="transfering_json_data">Přenášení JSON enkodovaných dat…</string>
+    <string name="transferring_json_data">Přenášení JSON enkodovaných dat…</string>
     <string name="open_source_libs">Open Source knihovny</string>
     <string name="cards_ui">CardsUI</string>
     <string name="nine_old_androids">NineOldAndroids</string>

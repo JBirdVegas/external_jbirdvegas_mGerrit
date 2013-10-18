@@ -77,7 +77,7 @@
             style="@style/ActionViewsStyle"/>
 
         <ImageView
-            android:src="@drawable/ic_menu_share"
+            android:src="@drawable/ic_action_share"
             android:id="@+id/properties_card_share_info"
             style="@style/ActionViewsStyle"/>
     </LinearLayout>

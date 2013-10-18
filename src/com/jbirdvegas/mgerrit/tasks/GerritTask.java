@@ -17,15 +17,11 @@ package com.jbirdvegas.mgerrit.tasks;
  *  limitations under the License.
  */
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ConnectionEstablished;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.EstablishingConnection;
@@ -33,7 +29,6 @@ import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.HandshakeError;
 import com.jbirdvegas.mgerrit.message.InitializingDataTransfer;
 import com.jbirdvegas.mgerrit.message.ProgressUpdate;
-import com.jbirdvegas.mgerrit.objects.GerritMessage;
 
 import java.io.BufferedReader;
 import java.io.IOException;

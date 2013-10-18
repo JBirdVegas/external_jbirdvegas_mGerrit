@@ -42,7 +42,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/commit_card_project_name"
-        android:textAppearance="@style/CardText"/>
+        android:textAppearance="@style/CardText"
+        android:textSize="18sp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -84,7 +85,7 @@
             style="@style/ActionViewsStyle"
             android:layout_alignParentRight="true"/>
         <ImageView
-            android:src="@drawable/ic_menu_share"
+            android:src="@drawable/ic_action_share"
             android:id="@+id/commit_card_share_info"
             style="@style/ActionViewsStyle"
             android:layout_toLeftOf="@+id/commit_card_moar_info"/>

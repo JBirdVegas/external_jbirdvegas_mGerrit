@@ -62,8 +62,7 @@ public class AddTeamView extends View {
         // preset preface
         url.setText("https://");
 
-        Button saveButton = (Button) root.findViewById(R.id.add_team_save);
-        saveButton.setOnClickListener(new OnClickListener() {
+        mSendButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 String teamName = name.getText().toString().trim();

@@ -79,7 +79,7 @@
         android:layout_gravity="right"
         android:gravity="end">
         <ImageView
-            android:src="@drawable/ic_menu_share"
+            android:src="@drawable/ic_action_share"
             android:id="@+id/commit_card_share_info"
             style="@style/ActionViewsStyle"
             android:layout_alignParentRight="true"/>

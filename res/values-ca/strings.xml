@@ -20,10 +20,10 @@
     <string name="reviewable">Revisat</string>
     <string name="merged">Fusionat</string>
     <string name="abandoned">Abandonat</string>
-    <string name="status_explaination_new">Encara s\'està revisant el canvi.</string>
-    <string name="status_explaination_submitted">S\'ha proposat el canvi i està a la cua de fusió. Pot ser que estigui esperant una o més dependències.</string>
-    <string name="status_explaination_merged">El canvi s\'ha fusionat a la seva branca.</string>
-    <string name="status_explaination_abandoned">El canvi ha estat abandonat pel seu propietari o l\'administrador.</string>
+    <string name="status_explanation_new">Encara s\'està revisant el canvi.</string>
+    <string name="status_explanation_submitted">S\'ha proposat el canvi i està a la cua de fusió. Pot ser que estigui esperant una o més dependències.</string>
+    <string name="status_explanation_merged">El canvi s\'ha fusionat a la seva branca.</string>
+    <string name="status_explanation_abandoned">El canvi ha estat abandonat pel seu propietari o l\'administrador.</string>
     <string name="view_in_browser">Navegador</string>
     <string name="moar_info">Més Info!</string>
     <string name="patchset_labels_code_reviewer_title">Revisors del codi</string>
@@ -38,17 +38,16 @@
     <string name="commit_author">Autor</string>
     <string name="commit_owner">Propietari</string>
     <string name="failed_to_parse_json_response">No s\'ha pogut analitzar la resposta de</string>
-    <string name="ok">d\'acord</string>
     <string name="show_exception">Mostra l\'excepció</string>
     <string name="exit">Surt</string>
     <string name="gerrit_call_failed">No s\'ha pogut aconseguir una resposta útil de la instància Gerrit. Comproveu la connexió i torneu a intentar-ho.</string>
     <string name="establishing_connection">S\'està establint la connexió...</string>
-    <string name="transfering">S\'està transferint les dades codificades JSON...</string>
+    <string name="transferring">S\'està transferint les dades codificades JSON...</string>
     <string name="downloading_status" formatted="false">S\'ha baixat %d de %d bytes\t%d%% completat</string>
     <string name="connection_established">Connexió establerta</string>
     <string name="initializing_data_transfer">S\'està iniciant la transferència de dades...</string>
     <string name="communications_error">ERROR de comunicació!!!</string>
-    <string name="transfering_json_data">S\'està transferint les dades codificades JSON...</string>
+    <string name="transferring_json_data">S\'està transferint les dades codificades JSON...</string>
     <string name="open_source_libs">Biblioteques de codi obert</string>
     <string name="cards_ui">CardsUI</string>
     <string name="nine_old_androids">NineOldAndroids</string>
@@ -83,7 +82,6 @@
     <string name="failed_to_decode_base64">No s\'ha pogut descodificar la resposta Base64.</string>
     <string name="return_was_null">La resposta és nul·la... Visualitzeu-ho al navegador</string>
     <string name="apache_commons_title">Apache Commons Codec v1.8</string>
-    <string name="apache_commons_website">http://commons.apache.org/proper/commons-codec/</string>
     <string name="using_gerrit_toast">S\'està utilitzant Gerrit:</string>
     <string name="google_now_style_animations_title">Anima les targetes</string>
     <string name="google_now_style_animations_summary">Habilita les animacions a l\'estil Google Now en dibuixar les targetes</string>

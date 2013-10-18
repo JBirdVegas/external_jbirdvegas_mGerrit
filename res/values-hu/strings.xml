@@ -21,11 +21,11 @@
     <string name="reviewable">Áttekintés</string>
     <string name="merged">Hozzáadott</string>
     <string name="abandoned">Elavult</string>
-    <string name="status_explaination_new">Változások legyenek felül.</string>
-    <string name="status_explaination_submitted">Változtatások benyújtása és hozzáadása sorrendjében. Lehet várni kell jóváhagyásra.
+    <string name="status_explanation_new">Változások legyenek felül.</string>
+    <string name="status_explanation_submitted">Változtatások benyújtása és hozzáadása sorrendjében. Lehet várni kell jóváhagyásra.
     </string>
-    <string name="status_explaination_merged">Változás hozzáadva az ághoz.</string>
-    <string name="status_explaination_abandoned">Változás elavult a tulajdonosnak vagy a rendszergazdának.</string>
+    <string name="status_explanation_merged">Változás hozzáadva az ághoz.</string>
+    <string name="status_explanation_abandoned">Változás elavult a tulajdonosnak vagy a rendszergazdának.</string>
     <string name="patchset_labels_code_reviewer_title">Code-Bírálók:</string>
     <string name="patchset_labels_verified_reviewer_title">Ellenörző:</string>
     <string name="inserted">Beszúrt sorok:</string>
@@ -39,18 +39,17 @@
     <string name="commit_author">Szerző:</string>
     <string name="commit_owner">Tulajdonos:</string>
     <string name="failed_to_parse_json_response">Sikertelen válasz</string>
-    <string name="ok">ok</string>
     <string name="show_exception">Kivétel megjelenítése</string>
     <string name="exit">Kilépés</string>
     <string name="gerrit_call_failed">Nem kapott választ a Gerrit-től, ellenőrizd a kapcsolatot és próbáld újra.
     </string>
     <string name="establishing_connection">Kapcsolat létrehozása...</string>
-    <string name="transfering">JSON kódolt adat átvitel...</string>
+    <string name="transferring">JSON kódolt adat átvitel...</string>
     <string name="downloading_status" formatted="false">%d of %d bájt letöltve\t%d%% kész</string>
     <string name="connection_established">Kapcsolat létrehozva</string>
     <string name="initializing_data_transfer">Adat átvitel inicializálása...</string>
     <string name="communications_error">Kapcsolat HIBA!!!</string>
-    <string name="transfering_json_data">JSON kódolt adat átvitele...</string>
+    <string name="transferring_json_data">JSON kódolt adat átvitele...</string>
     <string name="open_source_libs">Nyílt Forrású Könyvtárak</string>
     <string name="cards_ui">CardsUI</string>
     <string name="nine_old_androids">NineOldAndroids</string>

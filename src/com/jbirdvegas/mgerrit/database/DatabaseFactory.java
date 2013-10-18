@@ -50,12 +50,12 @@ public class DatabaseFactory extends ContentProvider {
     public static final String AUTHORITY = "com.jbirdvegas.provider.mgerrit";
 
     // All URIs inherit from this URI
-    protected static final String BASE_URI = "content://" + AUTHORITY + "/";
+    static final String BASE_URI = "content://" + AUTHORITY + "/";
 
     // MIME type of a cursor containing a list of rows
-    protected static final String BASE_MIME_LIST = "vnd.android.cursor.dir/vnd" + AUTHORITY + ".";
+    static final String BASE_MIME_LIST = "vnd.android.cursor.dir/vnd" + AUTHORITY + ".";
     // MIME type of a cursor containing a single row
-    protected static final String BASE_MIME_ITEM = "vnd.android.cursor.item/vnd" + AUTHORITY + ".";
+    static final String BASE_MIME_ITEM = "vnd.android.cursor.item/vnd" + AUTHORITY + ".";
 
     // Utility class to aid in matching URIs in content providers.
     private static final UriMatcher URI_MATCHER;
@@ -120,7 +120,7 @@ public class DatabaseFactory extends ContentProvider {
      *  If this is the case, we want it to proceed before trying to change the database out
      *  from under it. Otherwise, we are free to switch the database.
      */
-    protected void waitUntilUnlocked() {
+    void waitUntilUnlocked() {
         new Thread() {
             @Override
             public void run() {
@@ -190,9 +190,7 @@ public class DatabaseFactory extends ContentProvider {
 
         String table = getUriTable(uri);
 
-        Map<String, Integer> params = DBParams.getParameters(uri);
-        Integer limit = params.get(DBParams.TAG_LIMIT);
-
+        Integer limit = DBParams.getLimitParameter(uri);
         String sLimit = (limit == null ? null : limit.toString());
         String groupby = DBParams.getGroupByCondition(uri);
 
@@ -222,9 +220,7 @@ public class DatabaseFactory extends ContentProvider {
             throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);
 
         String table = getUriTable(uri);
-
-        Map<String, Integer> params = DBParams.getParameters(uri);
-        Integer conflictAlgorithm = params.get(DBParams.TAG_CONFLICT);
+        Integer conflictAlgorithm = DBParams.getConflictParameter(uri);
 
         lock();
         if (conflictAlgorithm == null) id = this.wdb.insert(table, null, values);
@@ -284,7 +280,8 @@ public class DatabaseFactory extends ContentProvider {
         String table = getUriTable(uri);
 
         Map<String, Integer> params = DBParams.getParameters(uri);
-        Integer conflictAlgorithm = params.get(DBParams.TAG_CONFLICT);
+
+        Integer conflictAlgorithm = DBParams.getConflictParameter(uri);
         boolean update = DBParams.updateOnDuplicateInsertion(uri);
         int numInserted = 0;
 
@@ -292,7 +289,7 @@ public class DatabaseFactory extends ContentProvider {
         this.wdb.beginTransaction();
         try {
             for (ContentValues cv : values) {
-                numInserted = (insert(table, cv, conflictAlgorithm, update) == true) ?
+                numInserted = (insert(table, cv, conflictAlgorithm, update)) ?
                         numInserted + 1 : numInserted;
             }
             this.wdb.setTransactionSuccessful();

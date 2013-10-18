@@ -17,16 +17,16 @@
   -->
 
 <resources>
-    <string name="app_name" translatable="false">mGerrit</string>
+    <string name="app_name">mGerrit</string>
     <string name="reviewable">Review</string>
     <string name="merged">Merged</string>
     <string name="abandoned">Abandoned</string>
-    <string name="status_explaination_new">Change is still being reviewed.</string>
-    <string name="status_explaination_submitted">Change has been submitted and is in the merge queue. It may be waiting
+    <string name="status_explanation_new">Change is still being reviewed.</string>
+    <string name="status_explanation_submitted">Change has been submitted and is in the merge queue. It may be waiting
         for one or more dependencies.
     </string>
-    <string name="status_explaination_merged">Change has been merged to its branch.</string>
-    <string name="status_explaination_abandoned">Change was abandoned by its owner or administrator.</string>
+    <string name="status_explanation_merged">Change has been merged to its branch.</string>
+    <string name="status_explanation_abandoned">Change was abandoned by its owner or administrator.</string>
     <string name="patchset_labels_code_reviewer_title">Code-Reviewers:</string>
     <string name="patchset_labels_verified_reviewer_title">Verified:</string>
     <string name="dash" translatable="false">-</string>
@@ -41,19 +41,18 @@
     <string name="commit_author">Author:</string>
     <string name="commit_owner">Owner:</string>
     <string name="failed_to_parse_json_response">Failed to parse response from</string>
-    <string name="ok">ok</string>
     <string name="show_exception">Show Exception</string>
     <string name="exit">Exit</string>
     <string name="gerrit_call_failed">Failed to get useful response from Gerrit instance please check your connection
         and try again.
     </string>
     <string name="establishing_connection">Establishing connection…</string>
-    <string name="transfering">Transferring JSON encoded data…</string>
+    <string name="transferring">Transferring JSON encoded data…</string>
     <string name="downloading_status" formatted="false">%d of %d bytes downloaded\t%d%% completed</string>
     <string name="connection_established">Connection established</string>
     <string name="initializing_data_transfer">Initializing data transfer…</string>
     <string name="communications_error">Communication ERROR!!!</string>
-    <string name="transfering_json_data">Transferring JSON encoded data…</string>
+    <string name="transferring_json_data">Transferring JSON encoded data…</string>
     <string name="open_source_libs">Open Source Libraries</string>
     <string name="cards_ui">CardsUI</string>
     <string name="cards_ui_website" translatable="false">http://www.androidviews.net/2012/12/cardsui/</string>
@@ -91,7 +90,7 @@
     <string name="please_select_update_for_range">Please select file to view changelog</string>
     <string name="download_rom_zip">Download ROM zip</string>
     <string name="failed_to_decode_base64">Failed to decode the Base64 response.</string>
-    <string name="return_was_null">Responce was null… Please view in browser</string>
+    <string name="return_was_null">Response was null… Please view in browser</string>
     <string name="apache_commons_title">Apache Commons Codec v1.8</string>
     <string name="apache_commons_website" translatable="false">http://commons.apache.org/proper/commons-codec/</string>
     <string name="using_gerrit_toast">Using Gerrit:</string>
@@ -104,7 +103,7 @@
     <string name="add_team_url">New Gerrit team URL.</string>
     <string name="add_gerrit_url">New Gerrit team name</string>
     <string name="save">Save</string>
-    <string name="handshake_fail_message">Failed handshake try installing provider\'s certificite on your device.
+    <string name="handshake_fail_message">Failed handshake try installing provider\'s certificate on your device.
     </string>
     <string name="caused_by">Caused by:</string>
     <string name="at">at</string>

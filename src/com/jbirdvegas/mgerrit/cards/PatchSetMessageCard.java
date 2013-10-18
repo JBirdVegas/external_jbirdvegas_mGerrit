@@ -18,10 +18,9 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-import com.fima.cardsui.objects.Card;
+
 import com.fima.cardsui.objects.RecyclableCard;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;

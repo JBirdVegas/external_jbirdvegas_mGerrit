@@ -19,10 +19,10 @@
   <string name="reviewable">Обзор</string>
   <string name="merged">Добавлено</string>
   <string name="abandoned">Убрано</string>
-  <string name="status_explaination_new">Изменение рассматривается</string>
-  <string name="status_explaination_submitted">Изменение принято и находится в очереди на добавление. Возможно, ожидается доработка зависящих от него файлов.</string>
-  <string name="status_explaination_merged">Изменение добавлено в соответствующую ветку.</string>
-  <string name="status_explaination_abandoned">Изменение убрано владельцем или администратором.</string>
+  <string name="status_explanation_new">Изменение рассматривается</string>
+  <string name="status_explanation_submitted">Изменение принято и находится в очереди на добавление. Возможно, ожидается доработка зависящих от него файлов.</string>
+  <string name="status_explanation_merged">Изменение добавлено в соответствующую ветку.</string>
+  <string name="status_explanation_abandoned">Изменение убрано владельцем или администратором.</string>
   <string name="patchset_labels_code_reviewer_title">Обзор кодов:</string>
   <string name="patchset_labels_verified_reviewer_title">Проверено:</string>
   <string name="inserted">Вставленные строки:</string>
@@ -36,17 +36,16 @@
   <string name="commit_author">Автор:</string>
   <string name="commit_owner">Владелец:</string>
   <string name="failed_to_parse_json_response">Не удалось получить ответ от</string>
-  <string name="ok">хорошо</string>
   <string name="show_exception">Показать исключение</string>
   <string name="exit">Выход</string>
   <string name="gerrit_call_failed">Не удалось получить ответ от Gerrit, пожалуйста, проверьте соединение и попытайтесь снова.</string>
   <string name="establishing_connection">Соединение...</string>
-  <string name="transfering">Передача данных JSON...</string>
+  <string name="transferring">Передача данных JSON...</string>
   <string name="downloading_status" formatted="false">%d из %d байт загружено\t%d%% выполнено</string>
   <string name="connection_established">Соединение установлено</string>
   <string name="initializing_data_transfer">Инициализация передачи данных...</string>
   <string name="communications_error">ОШИБКА связи!!!</string>
-  <string name="transfering_json_data">Передача данных JSON...</string>
+  <string name="transferring_json_data">Передача данных JSON...</string>
   <string name="open_source_libs">Библиотеки открытого кода</string>
   <string name="cards_ui">CardsUI</string>
   <string name="nine_old_androids">NineOldAndroids</string>

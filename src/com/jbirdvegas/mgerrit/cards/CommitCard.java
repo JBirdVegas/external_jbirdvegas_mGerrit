@@ -102,7 +102,6 @@ public class CommitCard extends RecyclableCard {
         }
 
         viewHolder.project.setText(mCommit.getProject());
-        viewHolder.project.setTextSize(18f);
         TrackingClickListener trackingClickListener =
                 new TrackingClickListener(mActivity, mCommit.getProject(), mChangeLogRange);
         if (mCommitterObject != null) {
