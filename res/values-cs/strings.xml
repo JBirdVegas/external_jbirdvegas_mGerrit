@@ -94,4 +94,16 @@
     <string name="save">Uložit</string>
     <string name="handshake_fail_message">Chyba načtení, není potřeba nainstalovat na zařízení certifikát?</string>
     <string name="caused_by">Způsobeno:</string>
+    <string name="at">v</string>
+    <string name="locales">Lokalizace časové zóny</string>
+    <string name="server_timezone_title">Časová zóna serveru</string>
+    <string name="local_timezone_title">Mistní časová zóna</string>
+    <string name="server_timezone_summary">Lokální časová zóna místa, kde je umístěn server gerritu.</string>
+    <string name="local_timezone_summary">Výchozí časová zóna může být nepřesná. Touto volbou je možné výchozí časovou zónu změnit.</string>
+    <string name="patchset_labels_change_diff">Rozdíly změny</string>
+    <string name="remove_content">Odstranit tento obsah</string>
+    <string name="connection_starting">Zařít gerrit požadavek</string>
+    <string name="projects_search_hint">Hledat projekty</string>
+    <string name="changes_search_hint">Hledat změny</string>
+    <string name="failed_to_find_url">Chyba při hledání adresy projektu</string>
 </resources>
