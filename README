@@ -1,5 +1,60 @@
-README
+mGerrit
+=======
 
+Gerrit instance viewer supporting the most popular Android ROMs.
+Supports tracking the Gerrit Instances for:
+- AOKP
+- AOSP
+- CM
+- Gerrit Review
+- PA
+- Add your own...
+
+View commits by status Reviewable (Open), Merged, Abandoned;
+Quickly and easily view commit message, author, owner, committer, files changed and approvals and more. Quickly view diffs in browser.
+Simple and easy to use UI makes casual gerrit code review change viewing enjoyable.
+
+Open source: https://github.com/aokp/external_jbirdvegas_mGerrit
+
+This app is included in the Android Open Kang Project (ROMControl > About > AOKP Code Review).
+
+Thanks AOKP translators for the translations! We have the best support community in Android!
+
+Simplified Chinese translations by YULIANGMAX
+Czech translation by Petr Reznicek (kecinzer)
+
+
+Change List Searching
+-------------------
+Searching the change lists, either the 'Review', 'Merged' or 'Abandoned' tabs is designed to mimic the functionality in the Gerrit
+ web interface. As each change contains alot of different data, Gerrit uses what are known as operators. To avoid confusing these
+ with what they call boolean operators we will call these "keywords".
+
+Keywords: Act as restrictions on the search. As more keywords are added to the same query string, they further restrict the returned
+ results.
+
+As an example, searching for "subject:warnings" will return a list of chnages where the commit subject contains the string "warnings"
+ in the locally stored changes for the current tab.
+
+Note: these search queries operate on the data stored locally in the database and do not query the Gerrit server. It is recomended
+ to refresh the data before quering to make sure the most recent changes will be available to be searched.
+Currently, it is required to re-submit the search query when changing tabs as each one operates independently.
+
+Supported keywords
+~~~~~~~~~~~~~~~~~~
+Currently the following keywords are supported:
+
+change:'ID'; changeid:'ID'
+Either a legacy numerical ID such as 15183, or a newer style Change-Id that was scraped out of the commit message.
+
+message:'MESSAGE'; subject:'MESSAGE'; intitle:'MESSAGE'
+Changes that match MESSAGE arbitrary string in the first line of the commit message. The string MESSAGE can be quoted (") which will
+ only show changes that contain exactly the string MESSAGE. If the string is unquoted and contains spaces, only the first word will
+ be used.
+
+
+License
+-------
 mGerrit is licensed as Apache v2
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
@@ -15,12 +70,17 @@ mGerrit is licensed as Apache v2
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */
- 
+
+
+Building
+--------
 mGerrit building instructions (from base of repository):
  ANT: ant clean debug
  gradle: gradle clean build
- 
+
+
+AOKP
+----
 mGerrit's AOKP Embeded version:
    This software comes included in the AOKP firmware stack. The apk is included
 as a signed prebuilt apk.  This allows updating from the PlayStore, avoids
