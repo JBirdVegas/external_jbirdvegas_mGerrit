@@ -88,7 +88,7 @@
   <string name="please_enter_gerrit_name">Пожалуйста, введите имя варианта Gerrit</string>
   <string name="please_enter_gerrit_url">Пожалуйста, введите URL-адрес Gerrit</string>
   <string name="add_team_url">URL-адрес новой команды Gerrit.</string>
-  <string name="add_gerrit_url">Имя новой команды Gerrit</string>
+  <string name="add_gerrit_name">Имя новой команды Gerrit</string>
   <string name="save">Сохранить</string>
   <string name="handshake_fail_message">Не удалось, попробуйте установить сертификат провайдера на устройство.
     </string>

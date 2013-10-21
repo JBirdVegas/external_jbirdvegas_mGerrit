@@ -18,10 +18,8 @@
   -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <ListPreference
+    <Preference
         android:key="gerrit_instances_key"
-        android:entries="@array/gerrit_names"
-        android:entryValues="@array/gerrit_webaddresses"
         android:title="@string/choose_gerrit_instance"/>
 
     <CheckBoxPreference
