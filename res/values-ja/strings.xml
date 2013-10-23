@@ -91,7 +91,7 @@
     <string name="please_enter_gerrit_name">Gerritインスタンス名を入力してください</string>
     <string name="please_enter_gerrit_url">Gerrit URLを入力して下さい</string>
     <string name="add_team_url">GerritチームURL</string>
-    <string name="add_gerrit_url">Gerritチーム名</string>
+    <string name="add_gerrit_name">Gerritチーム名</string>
     <string name="save">保存</string>
     <string name="handshake_fail_message">認証に失敗しました。プロバイダの証明書を端末にインストールしてみてください。</string>
     <string name="caused_by">原因:</string>

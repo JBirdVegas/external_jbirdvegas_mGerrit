@@ -93,7 +93,7 @@
     <string name="please_enter_gerrit_name">请输入Gerrit实例的名称</string>
     <string name="please_enter_gerrit_url">请输入Gerrit的地址</string>
     <string name="add_team_url">新Gerrit团队地址</string>
-    <string name="add_gerrit_url">新Gerrit团队名称</string>
+    <string name="add_gerrit_name">新Gerrit团队名称</string>
     <string name="save">保存</string>
     <string name="handshake_fail_message">尝试在你的设备上安装提供者证书失败。
     </string>

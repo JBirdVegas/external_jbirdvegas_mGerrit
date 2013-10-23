@@ -34,5 +34,5 @@
     <color name="actionbar_text">#ff555555</color>
     <color name="background">#eeeeee</color>
     <color name="text_sticky">#000000</color>
-
+    <color name="secondary_text">#696969</color>
 </resources>

@@ -17,6 +17,7 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -45,6 +46,8 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public static final String CURRENT_PROJECT = "current_project";
     private CheckBoxPreference mAnimation;
 
+    private Preference mGerritSwitcher;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +62,10 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         findPreference(APACHE_COMMONS_KEY).setOnPreferenceClickListener(this);
 
         // select gerrit instance
-        ListPreference gerritList = (ListPreference) findPreference(GERRIT_KEY);
-        gerritList.setSummary(gerritList.getValue());
-        gerritList.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        mGerritSwitcher = findPreference(GERRIT_KEY);
+        mGerritSwitcher.setSummary(getCurrentGerrit(getActivity()));
+        mGerritSwitcher.setOnPreferenceClickListener(this);
+        mGerritSwitcher.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 preference.setSummary((CharSequence) o);
@@ -121,6 +125,12 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
      */
     @Override
     public boolean onPreferenceClick(Preference preference) {
+        if (preference.equals(mGerritSwitcher)) {
+            DialogFragment newFragment = new GerritSwitcher();
+            String tag = getResources().getString(R.string.add_gerrit_team);
+            newFragment.show(this.getFragmentManager(), tag);
+            return true;
+        }
         return launchWebsite(preference);
     }
 

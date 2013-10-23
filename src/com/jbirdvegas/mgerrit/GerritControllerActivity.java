@@ -19,14 +19,13 @@ package com.jbirdvegas.mgerrit;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.app.DialogFragment;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,25 +39,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
 import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
 import com.jbirdvegas.mgerrit.message.*;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
-import com.jbirdvegas.mgerrit.widgets.AddTeamView;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -271,7 +261,10 @@ public class GerritControllerActivity extends FragmentActivity {
                 refreshTabs();
                 return true;
             case R.id.menu_team_instance:
-                showGerritDialog();
+                DialogFragment newFragment = new GerritSwitcher();
+                String tag = getResources().getString(R.string.choose_gerrit_instance);
+                // Must use getFragmentManager not getSupportFragmentManager here
+                newFragment.show(getFragmentManager(), tag);
                 return true;
             case R.id.menu_projects:
                 intent = new Intent(this, ProjectsList.class);
@@ -287,100 +280,6 @@ public class GerritControllerActivity extends FragmentActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void showGerritDialog() {
-        final Builder teamBuilder = new Builder(this);
-        ListView instances = new ListView(this);
-        Resources res = getResources();
-
-        final ArrayList <String> teams = new ArrayList<String>(0);
-        String[] gerritNames = res.getStringArray(R.array.gerrit_names);
-        Collections.addAll(teams, gerritNames);
-
-        final ArrayList<String> urls = new ArrayList<String>(0);
-        String[] gerritWeb = res.getStringArray(R.array.gerrit_webaddresses);
-        Collections.addAll(urls, gerritWeb);
-
-        GerritTeamsHelper teamsHelper = new GerritTeamsHelper();
-        teams.addAll(teamsHelper.getGerritNamesList());
-        urls.addAll(teamsHelper.getGerritUrlsList());
-
-        final ArrayAdapter <String> instanceAdapter = new ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_list_item_1,
-                teams);
-        instances.setAdapter(instanceAdapter);
-        instances.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String gerritInstanceUrl = null;
-                String[] gerritInstances = getResources().getStringArray(R.array.gerrit_webaddresses);
-                try {
-                    gerritInstanceUrl = gerritInstances[i];
-                } catch (ArrayIndexOutOfBoundsException ignored) {
-                    GerritTeamsHelper helper = new GerritTeamsHelper();
-                    int length = gerritInstances.length;
-                    gerritInstanceUrl = helper.getGerritUrlsList().get(length - i);
-                }
-                Prefs.setCurrentGerrit(view.getContext(), gerritInstanceUrl);
-                refreshTabs();
-                if (alertDialog != null) {
-                    alertDialog.dismiss();
-                    alertDialog = null;
-                }
-            }
-        });
-        instances.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // on long click delete the file and refresh the list
-                File target = new File(GerritTeamsHelper.mExternalCacheDir + "/" + teams.get(i));
-                boolean success = target.delete();
-                Log.v(TAG, "Attempt to delete: " + target.getAbsolutePath()
-                        + " was " + success);
-                if (!success) {
-                    Log.v(TAG, "Files present:" + Arrays.toString(GerritTeamsHelper.mExternalCacheDir.list()));
-                }
-                teams.remove(i);
-                urls.remove(i);
-                instanceAdapter.notifyDataSetChanged();
-                return success;
-            }
-        });
-        teamBuilder.setView(instances);
-        teamBuilder.setNegativeButton(R.string.cancel,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                });
-        teamBuilder.setPositiveButton(R.string.add_gerrit_team,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        AlertDialog addTeamDialog = new Builder(teamBuilder.getContext())
-                                .setTitle(R.string.add_gerrit_team)
-                                .setIcon(android.R.drawable.ic_input_add)
-                                .create();
-                        AddTeamView.RefreshCallback callback =
-                                new AddTeamView.RefreshCallback() {
-                                    @Override
-                                    public void refreshScreenCallback() {
-                                        refreshTabs();
-                                    }
-                                };
-                        AddTeamView addTeamView = new AddTeamView(
-                                teamBuilder.getContext(),
-                                addTeamDialog);
-                        addTeamView.addRefreshScreenCallback(callback);
-                        addTeamDialog.setView(addTeamView.getView());
-                        addTeamDialog.show();
-                    }
-                });
-        this.alertDialog = teamBuilder.create();
-        this.alertDialog.show();
     }
 
     public void onGerritChanged(String newGerrit) {
