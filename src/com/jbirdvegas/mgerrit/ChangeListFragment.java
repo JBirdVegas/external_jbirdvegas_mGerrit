@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +35,9 @@ import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import java.util.ArrayList;
 
 public class ChangeListFragment extends Fragment
-    implements SearchView.OnQueryTextListener {
+        implements SearchView.OnQueryTextListener {
 
+    private static final String TAG = ChangeListFragment.class.getSimpleName();
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections.
@@ -89,7 +91,16 @@ public class ChangeListFragment extends Fragment
                         String status = mSectionsPagerAdapter.getStatusAtPostion(position);
                         new StatusSelected(mParent, status).sendUpdateMessage();
                         mSelectedStatus = status;
-                        mSectionsPagerAdapter.getFragment(position).refresh(false);
+                        CardsFragment fragment = mSectionsPagerAdapter.getFragment(position);
+                        if (fragment == null) {
+                            // It may just have not been instantiated yet
+                            fragment = (CardsFragment) mSectionsPagerAdapter.getItem(position);
+                            if (fragment == null) {
+                                Log.e(TAG, String.format("Cannot refresh the page selected at position %d", position));
+                                return; // We cannot do any more here
+                            }
+                        }
+                        fragment.refresh(false);
                     }
                 });
 

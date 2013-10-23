@@ -106,7 +106,7 @@ public abstract class SearchKeyword {
                     constructor = entry.getValue().getDeclaredConstructor(String.class);
                     return constructor.newInstance(param);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Could not call constructor for " + name, e);
                 }
             }
         }

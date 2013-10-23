@@ -359,30 +359,30 @@ public abstract class CardsFragment extends Fragment
         // Clear any previous searches that where made
         if (query == null || query.isEmpty()) {
             getLoaderManager().restartLoader(0, null, this);
+            return;
         }
 
         Set<SearchKeyword> tokens = SearchKeyword.constructTokens(query);
-        if (tokens == null || tokens.isEmpty()) {
-            return;
+        if (tokens != null && !tokens.isEmpty()) {
+
+            String where = SearchKeyword.constructDbSearchQuery(tokens);
+            if (where != null && !where.isEmpty()) {
+                ArrayList<String> bindArgs = new ArrayList<String>();
+                for (SearchKeyword token : tokens) {
+                    bindArgs.add(token.getEscapeArgument());
+                }
+
+                Bundle bundle = new Bundle();
+                bundle.putString("WHERE", where);
+                bundle.putStringArrayList("BIND_ARGS", bindArgs);
+
+                // OnLoaderReset is not called when restarting a loader so unbind the data here
+                mCards.clearCards();
+                getLoaderManager().restartLoader(0, bundle, this);
+                return;
+            }
         }
-
-        String where = SearchKeyword.constructDbSearchQuery(tokens);
-        if (where == null || where.isEmpty()) {
-            return;
-        }
-
-        ArrayList<String> bindArgs = new ArrayList<String>();
-        for (SearchKeyword token : tokens) {
-            bindArgs.add(token.getEscapeArgument());
-        }
-
-        Bundle bundle = new Bundle();
-        bundle.putString("WHERE", where);
-        bundle.putStringArrayList("BIND_ARGS", bindArgs);
-
-        // OnLoaderReset is not called when restarting a loader so unbind the data here
-        mCards.clearCards();
-        getLoaderManager().restartLoader(0, bundle, this);
+        Log.w(TAG, "Could not process query: " + query);
     }
 
     private void sendRequest(boolean forceUpdate) {

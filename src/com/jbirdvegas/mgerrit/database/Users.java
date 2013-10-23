@@ -23,6 +23,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
@@ -84,10 +85,19 @@ public class Users extends DatabaseTable {
         List<ContentValues> values = new ArrayList<ContentValues>();
 
         for (CommitterObject user : users) {
+            if (user == null) {
+                continue;
+            }
             ContentValues row = new ContentValues();
             row.put(C_ACCOUNT_ID, user.getAccountId());
             row.put(C_EMAIL, user.getEmail());
-            row.put(C_NAME, user.getName());
+            String name = user.getName();
+            if (name != null && name.length() > 0) {
+                row.put(C_NAME, name);
+            } else {
+                Log.w(TABLE, String.format("User with account id %d has no name.", user.getAccountId()));
+                row.put(C_NAME, "Unknown");
+            }
             values.add(row);
         }
 
