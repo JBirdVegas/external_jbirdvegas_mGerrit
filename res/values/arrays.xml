@@ -29,7 +29,7 @@
         <item>https://android-review.googlesource.com/</item>
         <item>https://gerrit-review.googlesource.com/</item>
         <item>http://review.cyanogenmod.org/</item>
-        <item>http://gerrit.paranoidandroid.co/</item>
+        <item>https://gerrit.paranoidandroid.co/</item>
     </string-array>
     <string-array name="status_entries">
         <item>@string/reviewable</item>
