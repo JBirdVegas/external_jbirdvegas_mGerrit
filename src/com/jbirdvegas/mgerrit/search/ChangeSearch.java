@@ -38,6 +38,6 @@ public class ChangeSearch extends SearchKeyword {
 
     @Override
     public String getEscapeArgument() {
-        return new StringBuilder().append(getParam()).append('%').toString();
+        return getParam() + '%';
     }
 }

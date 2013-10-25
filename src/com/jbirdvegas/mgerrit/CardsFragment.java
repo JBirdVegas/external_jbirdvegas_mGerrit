@@ -109,15 +109,6 @@ public abstract class CardsFragment extends Fragment
             cardUI.addCard(card);
         }
 
-        // Check if the fragment is attached to an activity
-        if (this.isAdded())
-        {
-            /*Toast.makeText(mParent,
-                    String.format(getString(R.string.found_cards_toast,
-                            count,
-                            (System.currentTimeMillis() - mTimerStart) / 1000)),
-                    Toast.LENGTH_LONG).show();*/
-        }
         cardUI.setSwipeable(false);
         cardUI.refresh();
     }
@@ -329,12 +320,7 @@ public abstract class CardsFragment extends Fragment
             }
         } catch (JSONException e) {
             String url = mUrl.toString();
-            Log.d(TAG, new StringBuilder(0)
-                    .append(getString(R.string.failed_to_parse_json_response))
-                    .append(' ')
-                    .append(url)
-                    .append('\n')
-                    .append(result).toString(), e);
+            Log.d(TAG, getString(R.string.failed_to_parse_json_response) + ' ' + url + '\n' + result, e);
         }
         return commitCardList;
     }

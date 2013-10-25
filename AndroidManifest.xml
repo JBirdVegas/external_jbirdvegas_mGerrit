@@ -28,7 +28,8 @@
         android:name=".TheApplication"
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher"
-        android:theme="@style/Theme.Custom">
+        android:theme="@style/Theme.Custom"
+        android:allowBackup="true">
         <activity
             android:name=".GerritControllerActivity"
             android:label="@string/app_name"

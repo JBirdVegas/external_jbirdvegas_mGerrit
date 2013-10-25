@@ -176,10 +176,7 @@ public class DefaultGerritReceivers {
         typeReceiver.put(HandshakeError.TYPE, errorReceiver);
         typeReceiver.put(ErrorDuringConnection.TYPE, errorReceiver);
 
-        Iterator<Map.Entry<String, BroadcastReceiver>> it = typeReceiver.entrySet().iterator();
-
-        while (it.hasNext()) {
-            Map.Entry<String, BroadcastReceiver> receiver = it.next();
+        for (Map.Entry<String, BroadcastReceiver> receiver : typeReceiver.entrySet()) {
             String type = receiver.getKey();
 
             if (l.contains(receiver.getKey())) {

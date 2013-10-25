@@ -609,6 +609,7 @@ public class JSONCommit implements Parcelable {
     }
 
     // Parcelable implementation
+    @SuppressWarnings("unchecked")
     public JSONCommit(Parcel parcel) {
         mKind = parcel.readString();
         mId = parcel.readString();

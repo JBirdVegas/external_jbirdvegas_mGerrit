@@ -195,7 +195,7 @@ public class DatabaseFactory extends ContentProvider {
         String groupby = DBParams.getGroupByCondition(uri);
 
         lock();
-        Cursor c = this.wdb.query(table, projection, selection, selectionArgs,
+        Cursor c = wdb.query(table, projection, selection, selectionArgs,
                 groupby, null, sortOrder, sLimit);
         unlock();
 
@@ -223,9 +223,9 @@ public class DatabaseFactory extends ContentProvider {
         Integer conflictAlgorithm = DBParams.getConflictParameter(uri);
 
         lock();
-        if (conflictAlgorithm == null) id = this.wdb.insert(table, null, values);
+        if (conflictAlgorithm == null) id = wdb.insert(table, null, values);
         else {
-            id = this.wdb.insertWithOnConflict(table, null, values, conflictAlgorithm);
+            id = wdb.insertWithOnConflict(table, null, values, conflictAlgorithm);
         }
         unlock();
 
@@ -247,7 +247,7 @@ public class DatabaseFactory extends ContentProvider {
 
         String table = getUriTable(uri);
         lock();
-        int rows = this.wdb.delete(table, selection, selectionArgs);
+        int rows = wdb.delete(table, selection, selectionArgs);
         unlock();
 
         if (rows > 0) {
@@ -286,15 +286,15 @@ public class DatabaseFactory extends ContentProvider {
         int numInserted = 0;
 
         lock();
-        this.wdb.beginTransaction();
+        wdb.beginTransaction();
         try {
             for (ContentValues cv : values) {
                 numInserted = (insert(table, cv, conflictAlgorithm, update)) ?
                         numInserted + 1 : numInserted;
             }
-            this.wdb.setTransactionSuccessful();
+            wdb.setTransactionSuccessful();
         } finally {
-            this.wdb.endTransaction();
+            wdb.endTransaction();
         }
         unlock();
 
@@ -317,10 +317,10 @@ public class DatabaseFactory extends ContentProvider {
 
         lock();
         if (conflictAlgorithm == null) {
-            id = this.wdb.insert(table, null, values);
+            id = wdb.insert(table, null, values);
         }
         else {
-            id = this.wdb.insertWithOnConflict(table, null, values, conflictAlgorithm);
+            id = wdb.insertWithOnConflict(table, null, values, conflictAlgorithm);
         }
         unlock();
 

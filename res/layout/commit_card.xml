@@ -83,16 +83,19 @@
             android:id="@+id/commit_card_moar_info"
             android:src="@drawable/ic_action_about"
             style="@style/ActionViewsStyle"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:contentDescription="@string/moar_info"/>
         <ImageView
             android:src="@drawable/ic_action_share"
             android:id="@+id/commit_card_share_info"
             style="@style/ActionViewsStyle"
-            android:layout_toLeftOf="@+id/commit_card_moar_info"/>
+            android:layout_toLeftOf="@+id/commit_card_moar_info"
+            android:contentDescription="@string/share"/>
         <ImageView
             android:src="@drawable/ic_menu_view"
             android:id="@+id/commit_card_view_in_browser"
             style="@style/ActionViewsStyle"
-            android:layout_toLeftOf="@+id/commit_card_share_info"/>
+            android:layout_toLeftOf="@+id/commit_card_share_info"
+            android:contentDescription="@string/view_in_browser"/>
     </RelativeLayout>
 </LinearLayout>

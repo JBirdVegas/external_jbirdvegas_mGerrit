@@ -81,6 +81,8 @@
     <string name="choose_diff_view">How would you like to view the diff?</string>
     <string name="stalker_mode_toast">Now stalking user:</string>
     <string name="share">Share</string>
+    <string name="view_in_browser">View this change in the default browser</string>
+    <string name="moar_info">More detailed information on this change</string>
     <string name="commit_shared_from_mgerrit" formatted="false">Commit %s shared from mGerrit!</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[Found %d commits in %d seconds]]></string>
     <string name="cancel">Cancel</string>
@@ -120,6 +122,8 @@
     <string name="projects_search_hint">Search projects</string>
     <string name="changes_search_hint">Search changes</string>
     <string name="failed_to_find_url">Failed to find project\'s URL</string>
+    <string name="change_status_update">A new change status was selected</string>
     <string name="invalid_gerrit_name">The Gerrit name set was invalid</string>
     <string name="invalid_gerrit_url">The Gerrit URL set was invalid</string>
+    <string name="gerrit_protocol">https://</string>
 </resources>

@@ -285,11 +285,7 @@ public class GerritControllerActivity extends FragmentActivity {
     public void onGerritChanged(String newGerrit) {
         mGerritWebsite = newGerrit;
         Toast.makeText(this,
-                new StringBuilder(0)
-                        .append(getString(R.string.using_gerrit_toast))
-                        .append(' ')
-                        .append(newGerrit)
-                        .toString(),
+                getString(R.string.using_gerrit_toast) + ' ' + newGerrit,
                 Toast.LENGTH_LONG).show();
         refreshTabs();
     }
@@ -297,7 +293,7 @@ public class GerritControllerActivity extends FragmentActivity {
     public void onProjectChanged(String newProject) {
         mCurrentProject = newProject;
         GerritURL.setProject(newProject);
-        CardsFragment.inProject = (newProject != null && newProject != "");
+        CardsFragment.inProject = (newProject != null && !newProject.equals(""));
         refreshTabs();
     }
 

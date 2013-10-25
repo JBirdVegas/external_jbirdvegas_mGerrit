@@ -98,7 +98,7 @@ public class GravatarHelper {
             @Override
             public void onResponse(Bitmap bitmap) {
                 textView.setCompoundDrawablesWithIntrinsicBounds(
-                        new BitmapDrawable(bitmap),
+                        new BitmapDrawable(textView.getResources(), bitmap),
                         null,
                         null,
                         null);

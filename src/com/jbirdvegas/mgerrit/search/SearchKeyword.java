@@ -97,11 +97,9 @@ public abstract class SearchKeyword {
      */
     private static SearchKeyword buildToken(String name, String param) {
 
-        Iterator<Entry<String, Class<? extends SearchKeyword>>> it = _KEYWORDS.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<String, Class<? extends SearchKeyword>> entry = it.next();
+        for (Entry<String, Class<? extends SearchKeyword>> entry : _KEYWORDS.entrySet()) {
             if (name.equalsIgnoreCase(entry.getKey())) {
-                Constructor<? extends SearchKeyword> constructor = null;
+                Constructor<? extends SearchKeyword> constructor;
                 try {
                     constructor = entry.getValue().getDeclaredConstructor(String.class);
                     return constructor.newInstance(param);

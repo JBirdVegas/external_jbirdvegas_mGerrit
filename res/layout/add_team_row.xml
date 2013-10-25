@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/add_team_url"
                 android:inputType="textUri"
-                android:text="https://"/>
+                android:text="@string/gerrit_protocol"/>
             </LinearLayout>
 
     <RadioButton

@@ -62,9 +62,7 @@ public abstract class GerritMessage {
     protected Intent packMessage(Map<String, String> map) {
         Intent intent = new Intent(getType());
 
-        Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, String> entry = it.next();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
             intent.putExtra(entry.getKey(), entry.getValue());
             intent.putExtra(URL, mUrl);
         }

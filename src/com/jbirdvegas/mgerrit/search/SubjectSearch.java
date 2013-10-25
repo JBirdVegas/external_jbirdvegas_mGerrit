@@ -39,7 +39,7 @@ public class SubjectSearch extends SearchKeyword {
 
     @Override
     public String getEscapeArgument() {
-        return new StringBuilder().append('%').append(getParam()).append('%').toString();
+        return "%" + getParam() + '%';
     }
 
 }

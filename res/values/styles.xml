@@ -79,15 +79,6 @@
         <item name="android:background">@color/background</item>
     </style>
 
-    <style name="Item.Sticky">
-        <item name="android:background">@color/background</item>
-        <item name="android:layout_height">@dimen/sticky_height</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textAppearance">?android:textAppearanceLarge</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/text_sticky</item>
-    </style>
-
     <style name="Theme.Custom" parent="android:style/Theme.Holo.Light">
         <item name="android:textColorPrimary">@color/actionbar_text</item>
     </style>
@@ -117,7 +108,5 @@
         <item name="android:paddingRight">8dip</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
-
-    <style name="CardText.Normal"></style>
 
 </resources>

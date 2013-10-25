@@ -25,7 +25,6 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +42,7 @@ public class Projects implements JsonDeserializer<Projects> {
             throws JsonParseException {
 
         JsonObject json = jsonElement.getAsJsonObject();
-        Iterator<Map.Entry<String, JsonElement>> it = json.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, JsonElement> project = it.next();
+        for (Map.Entry<String, JsonElement> project : json.entrySet()) {
             String path = project.getKey();
             JsonObject details = project.getValue().getAsJsonObject();
             String kind = details.get("kind").getAsString();
