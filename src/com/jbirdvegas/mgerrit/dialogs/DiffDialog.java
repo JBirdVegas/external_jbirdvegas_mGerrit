@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -33,10 +34,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.helpers.Base64Coder;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
 import com.jbirdvegas.mgerrit.objects.Diff;
-import org.apache.commons.codec.binary.ApacheBase64;
 
 import java.util.regex.Pattern;
 
@@ -90,7 +89,16 @@ public class DiffDialog extends AlertDialog.Builder {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String base64) {
+                        if (base64 == null) {
+                            Log.e(TAG, getContext().getString(R.string.return_was_null));
+                            return;
+                        }
                         String decoded = workAroundBadBase(base64);
+                        if (decoded == null) {
+                            Log.e(TAG, getContext().getString(R.string.failed_to_decode_base64));
+                            return;
+                        }
+
                         if (DIFF_DEBUG) {
                             Log.d(TAG, "[DEBUG-MODE]\n"
                                     + "url: " + weburl
@@ -115,25 +123,15 @@ public class DiffDialog extends AlertDialog.Builder {
 
     private String workAroundBadBase(String baseString) {
         if (baseString == null) {
-            return getContext().getString(R.string.return_was_null);
+            return null;
         }
         String failMessage = "Failed to decode Base64 using: ";
         try {
-            return new String(ApacheBase64.decodeBase64(baseString));
-        } catch (IllegalArgumentException badBase) {
-            Log.e(TAG, failMessage + "org.apache.commons.codec.binary.ApacheBase64", badBase);
-        }
-        try {
-            return new String(Base64.decode(baseString.getBytes(), Base64.URL_SAFE | Base64.NO_PADDING));
+            return new String(Base64.decode(baseString, Base64.NO_PADDING));
         } catch (IllegalArgumentException badBase) {
             Log.e(TAG, failMessage + "android.util.Base64", badBase);
         }
-        try {
-            return new String(Base64Coder.decode(baseString));
-        } catch (IllegalArgumentException badBase) {
-            Log.e(TAG, failMessage + "com.jbirdvegas.mgerrit.helpers.Base64Coder", badBase);
-        }
-        return getContext().getString(R.string.failed_to_decode_base64);
+        return null;
     }
 
     private void setTextView(String result) {
@@ -201,7 +199,7 @@ public class DiffDialog extends AlertDialog.Builder {
                                         + "\n"
                                         + "url: " + weburl
                                         + "\n==================================="
-                                        + new String(Base64.decode(s, Base64.URL_SAFE | Base64.NO_PADDING))
+                                        + new String(Base64.decode(s, Base64.NO_PADDING | Base64.URL_SAFE))
                                         + "===================================="
                                 );
                             }
