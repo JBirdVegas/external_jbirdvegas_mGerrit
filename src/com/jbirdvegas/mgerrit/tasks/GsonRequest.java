@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -62,7 +63,14 @@ public class GsonRequest<T> extends Request<T> {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        return super.getHeaders();
+        Map<String, String> map = super.getHeaders();
+
+        if (map == null) {
+            map = new HashMap<String, String>();
+        }
+        // Always request non-pretty printed JSON responses.
+        map.put("Accept", "application/json");
+        return map;
     }
 
     @Override
