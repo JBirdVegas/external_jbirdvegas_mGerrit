@@ -60,14 +60,15 @@ public class GsonRequest<T> extends Request<T> {
         this.listener = listener;
         this.trim = trimStart;
     }
-
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        Map<String, String> map = super.getHeaders();
+        // super.getHeaders() returns an empty AbstractMap<K, V> which
+        // throw UnsupportedOperation during calls to put(K, V)
+        HashMap<String, String> map = new HashMap<String, String>(0);
 
-        if (map == null) {
-            map = new HashMap<String, String>();
-        }
+        Map<String, String> headers = super.getHeaders();
+        if (headers != null)
+            map.putAll(headers);
         // Always request non-pretty printed JSON responses.
         map.put("Accept", "application/json");
         return map;
