@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -42,6 +43,13 @@ import android.view.Window;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.Fields;
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Logger;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.google.analytics.tracking.android.Tracker;
+import com.jbirdvegas.mgerrit.helpers.ROMHelper;
 import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
 import com.jbirdvegas.mgerrit.message.*;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
@@ -49,6 +57,7 @@ import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -87,6 +96,18 @@ public class GerritControllerActivity extends FragmentActivity {
     private PatchSetViewerFragment mChangeDetail;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        EasyTracker.getInstance(this).activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EasyTracker.getInstance(this).activityStop(this);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // check if caller has a gerrit instance start screen preference
@@ -97,6 +118,26 @@ public class GerritControllerActivity extends FragmentActivity {
             // just set the prefs and allow normal loading
             Prefs.setCurrentGerrit(this, suppliedGerritInstance);
         }
+
+        GoogleAnalytics googleAnalytics = GoogleAnalytics.getInstance(this);
+
+        String trackingId = getString(R.string.ga_trackingId);
+        Tracker tracker = googleAnalytics.getTracker(trackingId);
+        googleAnalytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
+        tracker.send(MapBuilder
+                .createAppView().build());
+
+        // keep a log of what ROM our users run
+        EasyTracker easyTracker = EasyTracker.getInstance(this);
+        easyTracker.send(MapBuilder
+                .createEvent(AnalyticsConstants.GA_APP_OPEN,     // Event category (required)
+                        AnalyticsConstants.GA_ROM_VERSION,  // Event action (required)
+                        ROMHelper.determineRom(this),   // Event label
+                        null)            // Event value (long)
+                .build());
+        // note this screen as viewed
+        easyTracker.send(MapBuilder
+                .createAppView().build());
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main);

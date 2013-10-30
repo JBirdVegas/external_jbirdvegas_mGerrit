@@ -35,6 +35,8 @@ import android.view.ViewGroup;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.fima.cardsui.views.CardUI;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetCommentsCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetMessageCard;
@@ -130,6 +132,7 @@ public class PatchSetViewerFragment extends Fragment {
     }
 
     private void executeGerritTask(final String query) {
+        final long start = System.currentTimeMillis();
         new GerritTask(mParent) {
             @Override
             public void onJSONResult(String s) {
@@ -139,6 +142,14 @@ public class PatchSetViewerFragment extends Fragment {
                             new JSONCommit(
                                     new JSONArray(s).getJSONObject(0),
                                     mContext));
+                    EasyTracker.getInstance(mParent).send(
+                            MapBuilder.createTiming(
+                                    AnalyticsConstants.GA_PERFORMANCE,
+                                    System.currentTimeMillis() - start,
+                                    AnalyticsConstants.GA_TIME_TO_LOAD,
+                                    AnalyticsConstants.GA_CARDS_LOAD_TIME)
+                             .build()
+                    );
                 } catch (JSONException e) {
                     Log.d(TAG, "Response from "
                             + query + " could not be parsed into cards :(", e);
@@ -222,6 +233,13 @@ public class PatchSetViewerFragment extends Fragment {
             changeID = Changes.getMostRecentChange(mParent, mStatus);
             if (changeID == null) {
                 // No changes to load data from
+                EasyTracker.getInstance(mParent).send(
+                        MapBuilder.createEvent(
+                                "PatchSetViewerFragment",
+                                "load_change",
+                                "null_changeID",
+                                null)
+                        .build());
                 return;
             }
         }
@@ -266,6 +284,18 @@ public class PatchSetViewerFragment extends Fragment {
             LocalBroadcastManager.getInstance(mParent).registerReceiver(mStatusReceiver,
                     new IntentFilter(ChangeLoadingFinished.ACTION));
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance(mParent).activityStart(mParent);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance(mParent).activityStop(mParent);
     }
 
     @Override
