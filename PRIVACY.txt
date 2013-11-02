@@ -1,0 +1,50 @@
+mGerrit Privacy Policy - Analytics
+==================================
+
+In order to help provide the best experience to users, prioritise new
+ features and identify and correct issues mGerrit uses Google Analytics
+ to collect certain information regarding how our users use the app.
+We will NEVER collect any personally identifiable information (this is
+ not permitted under the Google Analytics TOS anyway) and will not
+ collect any personal information or data that is shared with others
+ through mGerrit. If mGerrit accepts any usernames/passwords as part
+ of an authentication process now or in the future, these will only be
+ stored locally and not on any third-party server encrypted or otherwise.
+
+Information collected and how it is used
+----------------------------------------
+- The Current ROM being used:
+ Agregate data may be collected on what ROM is being used by the
+  user. This will be used to determine what ROMs people who are
+  most active on Gerrit use and to change the Gerrit instances which
+  mGerrit officially supports.
+- The current Gerrit that is being used
+ Agregate data used in a similar way to the data collected on the
+  current ROM being used. If one Gerrit instance that is not officially
+  supported is regularly used, officially supporting it may be considered
+  even if the server Gerrit version does not meet the minimum standard.
+- Data transfer statistics:
+ Statistics on how long the server takes to respond to requests, time
+  taken to process the responses and error rates can be collected. This
+  data can then be used to assist implementing data and batery optimisation
+  strategies such as reducing the data transfered when using mobile data
+  compared to a WiFi connection.
+- Decoding failures
+ Collecting data on failures processing server responses, particularly change
+  diffs will help improve the decoding algorithms used to decode similar
+  server respones.
+- Search queries and the number of results returned:
+ Collecting data on the way users write search queries will allow optimisation
+  of search processing in mGerrit, adding support for more keywords and aliasing
+  existing keywords.
+
+Open Source
+-----------
+mGerrit is an open source application, as a result we will not (and cannot) hide
+ any analytics tracking data from our users. Those that are particularly concerned
+ regarding what data is collected can search through the source code.
+When forking this project, it is advised to disable Google analytics to prevent
+ incorrect or invalid data being mixed up in data collected from users that installed
+ an official release of mGerrit signed with the Google play release key (either from
+ Google Play or built-in to a custom ROM such as AOKP).
+
