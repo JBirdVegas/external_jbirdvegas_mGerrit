@@ -442,6 +442,8 @@ public class GerritControllerActivity extends FragmentActivity {
             onProjectChanged(Prefs.getCurrentProject(this));
         } else if (key.equals(Prefs.TRACKING_USER)) {
             onUserTrackingChanged(Prefs.getTrackingUser(this));
+        } else if (key.equals(Prefs.ANIMATION_KEY)) {
+            mChangeList.getCurrentFragment().toggleAnimations(Prefs.getAnimationPreference(this));
         }
     }
 

@@ -35,6 +35,8 @@ import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
+import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
@@ -90,6 +92,10 @@ public abstract class CardsFragment extends Fragment
     private ListView mListView;
     // Adapter that binds data to the listview
     private ChangeListAdapter mAdapter;
+    // Wrapper for mAdapter, enabling animations
+    private SingleAnimationAdapter mAnimAdapter;
+    // Whether animations have been enabled
+    private boolean mAnimationsEnabled;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
@@ -130,7 +136,10 @@ public abstract class CardsFragment extends Fragment
         mListView = (ListView) mCurrentFragment.findViewById(R.id.commit_cards);
         mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card, null, from, to, 0);
         mAdapter.setViewBinder(new CommitCardBinder(mParent, mRequestQueue));
-        mListView.setAdapter(mAdapter);
+
+        /* If animations have been enabled, setup and use an animation adapter, otherwise use
+         *  the regular adapter. The data should always be bound to mAdapter */
+        toggleAnimations(Prefs.getAnimationPreference(mParent));
 
         mUrl = new GerritURL();
 
@@ -165,6 +174,11 @@ public abstract class CardsFragment extends Fragment
         super.onStart();
         LocalBroadcastManager.getInstance(mParent).registerReceiver(mSearchQueryListener,
                 new IntentFilter(CardsFragment.SEARCH_QUERY));
+
+        boolean animations = Prefs.getAnimationPreference(mParent);
+        if (animations != mAnimationsEnabled) {
+            toggleAnimations(animations);
+        }
     }
 
     @Override
@@ -263,6 +277,24 @@ public abstract class CardsFragment extends Fragment
             SyncTime.clear(mParent);
             sendRequest();
         }
+    }
+
+    /**
+     * Enables or disables listview animations. This simply toggles the
+     *  adapter, initialising a new adapter if necessary.
+     * @param enable Whether to enable animations on the listview
+     */
+    public void toggleAnimations(boolean enable) {
+        if (enable) {
+            if (mAnimAdapter == null) {
+                mAnimAdapter = new SwingBottomInAnimationAdapter(mAdapter);
+                mAnimAdapter.setAbsListView(mListView);
+            }
+            mListView.setAdapter(mAnimAdapter);
+        } else {
+            mListView.setAdapter(mAdapter);
+        }
+        mAnimationsEnabled = enable;
     }
 
     public void markDirty() { mIsDirty = true; }
