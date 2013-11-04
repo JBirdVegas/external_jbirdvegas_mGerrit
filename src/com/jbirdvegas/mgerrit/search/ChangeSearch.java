@@ -1,7 +1,5 @@
 package com.jbirdvegas.mgerrit.search;
 
-import com.jbirdvegas.mgerrit.database.UserChanges;
-
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
  *  Author: Evan Conway (P4R4N01D), 2013
@@ -18,6 +16,9 @@ import com.jbirdvegas.mgerrit.database.UserChanges;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+import com.jbirdvegas.mgerrit.database.UserChanges;
+
 public class ChangeSearch extends SearchKeyword {
 
     public static final String OP_NAME = "change";
@@ -37,7 +38,7 @@ public class ChangeSearch extends SearchKeyword {
     }
 
     @Override
-    public String getEscapeArgument() {
-        return getParam() + '%';
+    public String[] getEscapeArgument() {
+        return new String[] { getParam() + '%' };
     }
 }

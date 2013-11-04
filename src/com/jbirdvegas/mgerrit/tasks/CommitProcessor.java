@@ -48,7 +48,7 @@ class CommitProcessor extends SyncProcessor<JSONCommit[]> {
         long syncInterval = context.getResources().getInteger(R.integer.changes_sync_interval);
         long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, getQuery());
         boolean sync = isInSyncInterval(syncInterval, lastSync);
-        if (sync) return true;
+        if (!sync) return true;
 
         // Better just make sure that there are changes in the database
         return DatabaseTable.isEmpty(context, Changes.CONTENT_URI);

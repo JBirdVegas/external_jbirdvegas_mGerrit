@@ -30,7 +30,10 @@ public class TheApplication extends Application
 
     private SharedPreferences mPrefs;
 
-    public static final String PREF_CHANGE_TYPE = "Preference Changed";
+    public static final String PACKAGE_NAME = "com.jbirdvegas.mgerrit";
+
+    // This corresponds to an intent-filter action in the manifest
+    public static final String PREF_CHANGE_TYPE = PACKAGE_NAME + ".PREFERENCE_CHANGED";
     public static final String PREF_CHANGE_KEY = "Preference Key";
 
     @Override
@@ -66,6 +69,7 @@ public class TheApplication extends Application
     private void sendPreferenceChangedMessage(String key) {
         Intent intent = new Intent(PREF_CHANGE_TYPE);
         intent.putExtra(PREF_CHANGE_KEY, key);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

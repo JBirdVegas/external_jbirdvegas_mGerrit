@@ -73,6 +73,8 @@ public class PatchSetViewerFragment extends Fragment {
     private String mSelectedChange;
     private String mStatus;
 
+    public static final String NEW_CHANGE_SELECTED = "Change Selected";
+    public static final String EXPAND_TAG = "expand";
     public static final String CHANGE_ID = "changeID";
     public static final String STATUS = "queryStatus";
 
@@ -95,7 +97,7 @@ public class PatchSetViewerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.commit_list, container, false);
+        return inflater.inflate(R.layout.patch_set_list, container, false);
     }
 
     @Override

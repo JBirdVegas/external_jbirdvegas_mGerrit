@@ -28,7 +28,6 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 
 import java.util.List;
@@ -57,10 +56,6 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
         }
         TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);
         TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
-        name.setOnClickListener(
-                new TrackingClickListener(
-                        activity,
-                        values.get(position).getCommiterObject()));
         GravatarHelper.attachGravatarToTextView(name,
                 values.get(position).getEmail(),
                 mRequestQueue);

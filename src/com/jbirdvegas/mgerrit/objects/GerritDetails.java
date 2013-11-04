@@ -55,8 +55,7 @@ public class GerritDetails implements Comparable<GerritDetails> {
     }
 
     public boolean equals(String s) {
-        if (s == null) return false;
-        return gerritUrl.equals(s);
+        return s != null && gerritUrl.equals(s);
     }
 
     @Override

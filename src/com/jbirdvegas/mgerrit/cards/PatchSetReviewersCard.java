@@ -26,9 +26,9 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.RecyclableCard;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 
@@ -55,11 +55,7 @@ public class PatchSetReviewersCard extends RecyclableCard {
         // Locate the views if necessary (these views are constant)
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         if (convertView.getTag() == null) {
-            viewHolder = new ViewHolder();
-            viewHolder.reviewerLabel = (TextView) convertView.findViewById(R.id.patchset_labels_code_reviewer_title);
-            viewHolder.verifierLabel = (TextView) convertView.findViewById(R.id.patchset_labels_verified_reviewer_title);
-            viewHolder.reviewerList = (ViewGroup) convertView.findViewById(R.id.patchset_lables_reviewers);
-            viewHolder.verifierList = (ViewGroup) convertView.findViewById(R.id.patchset_lables_verifier);
+            viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         }
 
@@ -89,17 +85,19 @@ public class PatchSetReviewersCard extends RecyclableCard {
         }
     }
 
-    public View getReviewerView(Reviewer reviewer) {
+    public View getReviewerView(final Reviewer reviewer) {
         // Cannot use the viewholder here, we need to inflate views as needed
         LayoutInflater inflater = (LayoutInflater)
                 mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View root = inflater.inflate(R.layout.patchset_labels_list_item, null);
         TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);
         TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
-        name.setOnClickListener(
-                new TrackingClickListener(
-                        mContext,
-                        reviewer.getCommiterObject()));
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Prefs.setTrackingUser(mContext, reviewer.getCommiterObject());
+            }
+        });
         GravatarHelper.attachGravatarToTextView(name,
                 reviewer.getEmail(),
                 mRequestQueue);
@@ -146,5 +144,12 @@ public class PatchSetReviewersCard extends RecyclableCard {
         ViewGroup verifierList;
         TextView reviewerLabel;
         TextView verifierLabel;
+
+        public ViewHolder(View view) {
+            reviewerLabel = (TextView) view.findViewById(R.id.patchset_labels_code_reviewer_title);
+            verifierLabel = (TextView) view.findViewById(R.id.patchset_labels_verified_reviewer_title);
+            reviewerList = (ViewGroup) view.findViewById(R.id.patchset_lables_reviewers);
+            verifierList = (ViewGroup) view.findViewById(R.id.patchset_lables_verifier);
+        }
     }
 }

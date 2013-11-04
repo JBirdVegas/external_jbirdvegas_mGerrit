@@ -93,7 +93,7 @@ public class Changes extends DatabaseTable {
                 + C_TOPIC + " text, "
                 + C_COMMIT_NUMBER + " INTEGER NOT NULL, "
                 + "FOREIGN KEY (" + C_OWNER + ") REFERENCES "
-                    + Users.TABLE + "(" + Users.C_EMAIL + "), "
+                    + Users.TABLE + "(" + Users.C_ACCOUNT_ID + "), "
                 + "FOREIGN KEY (" + C_PROJECT + ") REFERENCES "
                     + ProjectsTable.TABLE + "(" + ProjectsTable.C_PATH + "))");
     }
@@ -124,21 +124,15 @@ public class Changes extends DatabaseTable {
 
         status = JSONCommit.Status.getStatusString(status);
 
-        Cursor cursor = null;
-        try {
-            cursor = context.getContentResolver().query(uri,
-                    new String[] { C_CHANGE_ID },
-                    C_STATUS + " = ?",
-                    new String[] { status },
-                    SORT_BY);
-            if (cursor.moveToFirst()) {
-                changeID = cursor.getString(0);
-            }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+        Cursor c = context.getContentResolver().query(uri,
+                new String[] { C_CHANGE_ID },
+                C_STATUS + " = ?",
+                new String[] { status },
+                SORT_BY);
+        if (c.moveToFirst()) {
+            changeID = c.getString(0);
         }
+        c.close();
         return changeID;
     }
 }

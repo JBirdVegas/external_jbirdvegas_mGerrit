@@ -29,11 +29,11 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.fima.cardsui.objects.RecyclableCard;
 import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.caches.BitmapLruCache;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
 import com.jbirdvegas.mgerrit.objects.CommitComment;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
@@ -81,9 +81,12 @@ public class PatchSetCommentsCard extends RecyclableCard {
         // set author name
         TextView authorTextView = (TextView) commentView.findViewById(R.id.comment_author_name);
         authorTextView.setText(comment.getAuthorObject().getName());
-        authorTextView.setOnClickListener(
-                new TrackingClickListener(mContext,
-                        comment.getAuthorObject()));
+        authorTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Prefs.setTrackingUser(mContext, mJsonCommit.getAuthorObject());
+            }
+        });
 
         authorTextView.setTag(comment.getAuthorObject());
         mPatchsetViewerFragment.registerViewForContextMenu(authorTextView);

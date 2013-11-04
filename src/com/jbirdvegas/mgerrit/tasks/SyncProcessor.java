@@ -118,7 +118,7 @@ abstract class SyncProcessor<T> {
 
     protected boolean isInSyncInterval(long syncInterval, long lastSync) {
         long timeNow = System.currentTimeMillis();
-        return (timeNow - lastSync > syncInterval);
+        return ((timeNow - lastSync) < syncInterval);
     }
 
     public void cancelOperation() {

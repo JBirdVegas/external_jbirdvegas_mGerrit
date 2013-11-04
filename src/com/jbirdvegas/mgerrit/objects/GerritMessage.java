@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public abstract class GerritMessage {

@@ -26,14 +26,11 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.RecyclableCard;
-import com.jbirdvegas.mgerrit.CardsFragment;
 import com.jbirdvegas.mgerrit.GerritControllerActivity;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
-import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.ChangedFile;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.Arrays;
@@ -42,20 +39,16 @@ import java.util.List;
 public class CommitCard extends RecyclableCard {
     private static final String TAG = CommitCard.class.getSimpleName();
 
-    private final CommitterObject mCommitterObject;
     private final RequestQueue mRequestQuery;
     private final GerritControllerActivity mActivity;
     private final int mGreen;
     private final int mRed;
     private JSONCommit mCommit;
-    private ChangeLogRange mChangeLogRange;
 
     public CommitCard(JSONCommit commit,
-                      CommitterObject committerObject,
                       RequestQueue requestQueue,
                       GerritControllerActivity activity) {
         this.mCommit = commit;
-        this.mCommitterObject = committerObject;
         this.mRequestQuery = requestQueue;
         this.mActivity = activity;
 
@@ -72,17 +65,7 @@ public class CommitCard extends RecyclableCard {
 
         ViewHolder viewHolder = (ViewHolder) commitCardView.getTag();
         if (commitCardView.getTag() == null) {
-            viewHolder = new ViewHolder();
-            viewHolder.owner = (TextView) commitCardView.findViewById(R.id.commit_card_commit_owner);
-            viewHolder.project = (TextView) commitCardView.findViewById(R.id.commit_card_project_name);
-            viewHolder.cardTitle = (TextView) commitCardView.findViewById(R.id.commit_card_title);
-            viewHolder.updated = (TextView) commitCardView.findViewById(R.id.commit_card_last_updated);
-            viewHolder.status = (TextView) commitCardView.findViewById(R.id.commit_card_commit_status);
-            viewHolder.browserView = (ImageView) commitCardView.findViewById(R.id.commit_card_view_in_browser);
-            viewHolder.shareView = (ImageView) commitCardView.findViewById(R.id.commit_card_share_info);
-            viewHolder.moarInfo = (ImageView) commitCardView.findViewById(R.id.commit_card_moar_info);
-            viewHolder.message = (TextView) commitCardView.findViewById(R.id.commit_card_message);
-            viewHolder.changedFiles = (TextView) commitCardView.findViewById(R.id.commit_card_changed_files);
+            viewHolder = new ViewHolder(commitCardView);
             commitCardView.setTag(viewHolder);
         }
 
@@ -90,32 +73,35 @@ public class CommitCard extends RecyclableCard {
         if (mCommit.getOwnerObject() != null) {
             viewHolder.owner.setText(mCommit.getOwnerObject().getName());
             viewHolder.owner.setTag(mCommit.getOwnerObject());
-            TrackingClickListener trackingClickListener =
-                    new TrackingClickListener(mActivity, mCommit.getOwnerObject());
-            if (CardsFragment.inProject) {
-                trackingClickListener.addProjectToStalk(mCommit.getProject());
-            }
-            viewHolder.owner.setOnClickListener(trackingClickListener);
+            viewHolder.owner.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Prefs.setTrackingUser(mActivity, mCommit.getOwnerObject());
+                }
+            });
             GravatarHelper.attachGravatarToTextView(viewHolder.owner,
                     mCommit.getOwnerObject().getEmail(),
                     mRequestQuery);
         }
 
         viewHolder.project.setText(mCommit.getProject());
-        TrackingClickListener trackingClickListener =
-                new TrackingClickListener(mActivity, mCommit.getProject(), mChangeLogRange);
-        if (mCommitterObject != null) {
-            trackingClickListener.addUserToStalk(mCommitterObject);
-        }
-        viewHolder.project.setOnClickListener(trackingClickListener);
+        viewHolder.project.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Prefs.setCurrentProject(mActivity, mCommit.getProject());
+            }
+        });
 
         viewHolder.cardTitle.setText(mCommit.getSubject());
         viewHolder.updated.setText(mCommit.getLastUpdatedDate(mActivity));
-        viewHolder.status.setText(mCommit.getStatus().toString());
-        if (mCommit.getStatus().toString().equals("MERGED")) {
-            viewHolder.status.setTextColor(mGreen);
-        } else if (mCommit.getStatus().toString().equals("ABANDONED")) {
-            viewHolder.status.setTextColor(mRed);
+
+        String statusText = mCommit.getStatus().toString();
+        if (statusText.equals("MERGED")) {
+            viewHolder.status.setBackgroundColor(mGreen);
+        } else if (statusText.equals("ABANDONED")) {
+            viewHolder.status.setBackgroundColor(mRed);
+        } else {
+            viewHolder.status.setBackgroundColor(mActivity.getResources().getColor(android.R.color.white));
         }
 
         View.OnClickListener cardListener = new View.OnClickListener() {
@@ -177,11 +163,6 @@ public class CommitCard extends RecyclableCard {
         return R.layout.commit_card;
     }
 
-    public CommitCard setChangeLogRange(ChangeLogRange logRange) {
-        mChangeLogRange = logRange;
-        return this;
-    }
-
     public void update(JSONCommit commit) {
         this.mCommit = commit;
     }
@@ -205,11 +186,24 @@ public class CommitCard extends RecyclableCard {
         TextView project;
         TextView cardTitle;
         TextView updated;
-        TextView status;
+        View status;
         ImageView browserView;
         ImageView shareView;
         ImageView moarInfo;
         TextView message;
         TextView changedFiles;
+
+        ViewHolder(View view) {
+            owner = (TextView) view.findViewById(R.id.commit_card_commit_owner);
+            project = (TextView) view.findViewById(R.id.commit_card_project_name);
+            cardTitle = (TextView) view.findViewById(R.id.commit_card_title);
+            updated = (TextView) view.findViewById(R.id.commit_card_last_updated);
+            status = view.findViewById(R.id.commit_card_commit_status);
+            browserView = (ImageView) view.findViewById(R.id.commit_card_view_in_browser);
+            shareView = (ImageView) view.findViewById(R.id.commit_card_share_info);
+            moarInfo = (ImageView) view.findViewById(R.id.commit_card_moar_info);
+            message = (TextView) view.findViewById(R.id.commit_card_message);
+            changedFiles = (TextView) view.findViewById(R.id.commit_card_changed_files);
+        }
     }
 }

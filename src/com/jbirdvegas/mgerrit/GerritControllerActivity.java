@@ -17,7 +17,6 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
-import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.DialogFragment;
 import android.app.SearchManager;
@@ -27,7 +26,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -44,20 +42,27 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.Fields;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Logger;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.Tracker;
+import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.helpers.ROMHelper;
 import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
-import com.jbirdvegas.mgerrit.message.*;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
+import com.jbirdvegas.mgerrit.message.ConnectionEstablished;
+import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
+import com.jbirdvegas.mgerrit.message.EstablishingConnection;
+import com.jbirdvegas.mgerrit.message.Finished;
+import com.jbirdvegas.mgerrit.message.HandshakeError;
+import com.jbirdvegas.mgerrit.message.InitializingDataTransfer;
+import com.jbirdvegas.mgerrit.message.ProgressUpdate;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
+import com.jbirdvegas.mgerrit.search.OwnerSearch;
+import com.jbirdvegas.mgerrit.search.ProjectSearch;
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -66,8 +71,6 @@ public class GerritControllerActivity extends FragmentActivity {
 
     private static final String TAG = GerritControllerActivity.class.getSimpleName();
     private static final String GERRIT_INSTANCE = "gerrit";
-
-    private CommitterObject mCommitterObject;
     private String mGerritWebsite;
     private GooFileObject mChangeLogStart;
     private GooFileObject mChangeLogStop;
@@ -80,7 +83,10 @@ public class GerritControllerActivity extends FragmentActivity {
 
     SharedPreferences mPrefs;
 
-    BroadcastReceiver mListener;
+    // Listener for preference changes
+    private BroadcastReceiver mPrefChangeListener;
+    // Listener for changes to which commit is selected
+    private BroadcastReceiver mChangeListener;
 
     private DefaultGerritReceivers receivers;
 
@@ -94,6 +100,11 @@ public class GerritControllerActivity extends FragmentActivity {
 
     // This will be null if mTwoPane is false (i.e. not tablet mode)
     private PatchSetViewerFragment mChangeDetail;
+
+    private SearchView searchView;
+    // Wrapper around searchView for modifying searchView before it is initialised
+    private SearchViewProperties mSearchViewProperties = new SearchViewProperties();
+
 
     @Override
     protected void onStart() {
@@ -163,33 +174,21 @@ public class GerritControllerActivity extends FragmentActivity {
         GerritURL.setGerrit(Prefs.getCurrentGerrit(this));
         GerritURL.setProject(Prefs.getCurrentProject(this));
 
-        mListener = new BroadcastReceiver() {
+        // Don't register listeners here. It is registered in onResume instead.
+        mChangeListener = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String key = intent.getStringExtra(TheApplication.PREF_CHANGE_KEY);
-                if (key.equals(Prefs.GERRIT_KEY))
-                    onGerritChanged(Prefs.getCurrentGerrit(GerritControllerActivity.this));
-                else if (key.equals(Prefs.CURRENT_PROJECT))
-                    onProjectChanged(Prefs.getCurrentProject(GerritControllerActivity.this));
+                String changeid = intent.getStringExtra(PatchSetViewerFragment.CHANGE_ID);
+                String status = intent.getStringExtra(PatchSetViewerFragment.STATUS);
+                boolean expand = intent.getBooleanExtra(PatchSetViewerFragment.EXPAND_TAG, false);
+                onChangeSelected(changeid, status, expand);
             }
         };
-        // Don't register listener here. It is registered in onResume instead.
 
         handleIntent(this.getIntent());
     }
 
     private void init() {
-        if (!CardsFragment.sSkipStalking) {
-            try {
-                mCommitterObject = getIntent()
-                        .getExtras()
-                        .getParcelable(CardsFragment.KEY_DEVELOPER);
-            } catch (NullPointerException npe) {
-                // non author specific view
-                // use default
-            }
-        }
-
         // ensure we are not tracking a project unintentionally
         if ("".equals(Prefs.getCurrentProject(this))) {
             Prefs.setCurrentProject(this, null);
@@ -221,8 +220,9 @@ public class GerritControllerActivity extends FragmentActivity {
                 Finished.TYPE,
                 HandshakeError.TYPE,
                 ErrorDuringConnection.TYPE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mListener,
-                new IntentFilter(TheApplication.PREF_CHANGE_TYPE));
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mChangeListener,
+                new IntentFilter(PatchSetViewerFragment.NEW_CHANGE_SELECTED));
     }
 
     @Override
@@ -239,7 +239,7 @@ public class GerritControllerActivity extends FragmentActivity {
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(true);
@@ -260,6 +260,7 @@ public class GerritControllerActivity extends FragmentActivity {
             }
         });
 
+        setupSearchQuery();
         return true;
     }
 
@@ -271,13 +272,14 @@ public class GerritControllerActivity extends FragmentActivity {
 
     private void handleIntent(Intent intent)
     {
-        // Searching is already handled when the query text changes.
-        if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
+        if (intent.getAction().equals(TheApplication.PREF_CHANGE_TYPE)) {
+            onPreferenceChanged(intent.getStringExtra(TheApplication.PREF_CHANGE_KEY));
+        } else if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            // Searching is already handled when the query text changes.
             init();
         }
     }
 
-    private AlertDialog alertDialog = null;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -323,19 +325,32 @@ public class GerritControllerActivity extends FragmentActivity {
         }
     }
 
-    public void onGerritChanged(String newGerrit) {
+    private void onGerritChanged(String newGerrit) {
         mGerritWebsite = newGerrit;
         Toast.makeText(this,
                 getString(R.string.using_gerrit_toast) + ' ' + newGerrit,
                 Toast.LENGTH_LONG).show();
+        hideChangelogOption(newGerrit);
+
+        // Unset the project - we don't track these across Gerrit instances
+        Prefs.setCurrentProject(this, null);
+        Prefs.clearTrackingUser(this);
+
         refreshTabs();
     }
 
-    public void onProjectChanged(String newProject) {
+    private void onProjectChanged(String newProject) {
+        String query = getSearchQuery();
+        query = SearchKeyword.replaceKeyword(query, new ProjectSearch(newProject));
+        mSearchViewProperties.setQuery(query, true);
         mCurrentProject = newProject;
-        GerritURL.setProject(newProject);
-        CardsFragment.inProject = (newProject != null && !newProject.equals(""));
-        refreshTabs();
+    }
+
+    private void onUserTrackingChanged(Integer userTracking) {
+        String query = getSearchQuery();
+        String user = userTracking == null ? "" : userTracking.toString();
+        query = SearchKeyword.replaceKeyword(query, new OwnerSearch(user));
+        mSearchViewProperties.setQuery(query, true);
     }
 
     /* Mark all of the tabs as dirty to trigger a refresh when they are next
@@ -346,15 +361,12 @@ public class GerritControllerActivity extends FragmentActivity {
         mChangeList.refreshTabs();
     }
 
-    public CommitterObject getCommitterObject() { return mCommitterObject; }
-    public void clearCommitterObject() { mCommitterObject = null; }
-
     @Override
     protected void onPause() {
         super.onPause();
         receivers.unregisterReceivers();
 
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mListener);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mChangeListener);
 
         Iterator<GerritTask> it = mGerritTasks.iterator();
         while (it.hasNext())
@@ -370,13 +382,13 @@ public class GerritControllerActivity extends FragmentActivity {
         super.onResume();
         registerReceivers();
 
-        // Manually check if the project changed (e.g. we are resuming from the Projects List)
-        String s = Prefs.getCurrentProject(this);
-        if (!s.equals(mCurrentProject)) onProjectChanged(s);
-
         // Manually check if the Gerrit source changed (from the Preferences)
-        s = Prefs.getCurrentGerrit(this);
+        String s = Prefs.getCurrentGerrit(this);
         if (!s.equals(mGerritWebsite)) onGerritChanged(s);
+
+        // Manually check if the project changed (e.g. we are resuming from the Projects List)
+        s = Prefs.getCurrentProject(this);
+        if (!s.equals(mCurrentProject)) onProjectChanged(s);
     }
 
     @Override
@@ -410,6 +422,8 @@ public class GerritControllerActivity extends FragmentActivity {
         arguments.putString(PatchSetViewerFragment.CHANGE_ID, changeID);
         arguments.putString(PatchSetViewerFragment.STATUS, status);
 
+        SelectedChange.setSelectedChange(this, changeID);
+
         if (mTwoPane) {
             mChangeDetail.setSelectedChange(changeID);
         } else if (expand) {
@@ -421,6 +435,20 @@ public class GerritControllerActivity extends FragmentActivity {
         }
     }
 
+    private void onPreferenceChanged(String key) {
+        if (key.equals(Prefs.GERRIT_KEY)) {
+            onGerritChanged(Prefs.getCurrentGerrit(this));
+        } else if (key.equals(Prefs.CURRENT_PROJECT)) {
+            onProjectChanged(Prefs.getCurrentProject(this));
+        } else if (key.equals(Prefs.TRACKING_USER)) {
+            onUserTrackingChanged(Prefs.getTrackingUser(this));
+        }
+    }
+
+    public String getSearchQuery() {
+        return mSearchViewProperties.getQuery();
+    }
+
     public ChangeListFragment getChangeList() {
         return mChangeList;
     }
@@ -430,5 +458,48 @@ public class GerritControllerActivity extends FragmentActivity {
      */
     public PatchSetViewerFragment getChangeDetail() {
         return mChangeDetail;
+    }
+
+    // Call this ONLY after the searchView has been initialised
+    private void setupSearchQuery() {
+        String oldQuery = searchView.getQuery().toString();
+        String query = mSearchViewProperties.mQuery;
+
+        if (!mCurrentProject.equals("")) {
+            query = SearchKeyword.replaceKeyword(query, new ProjectSearch(mCurrentProject));
+        }
+
+        Integer user = Prefs.getTrackingUser(this);
+        if (user != null) {
+            query = SearchKeyword.replaceKeyword(query, new OwnerSearch(user.toString()));
+        }
+
+        if (!oldQuery.equals(query)) {
+            mSearchViewProperties.setQuery(query, false); // Don't submit (it will be submitted initially)
+        }
+
+        searchView.setIconified(query.isEmpty());
+    }
+
+    // SearchView properties to be set and can be used by setupSearchQuery when the search
+    //  view is visible
+    class SearchViewProperties {
+        String mQuery = "";
+        private boolean mIconified;
+
+        void setQuery(String query, boolean submit) {
+            mQuery = query;
+            if (searchView != null) {
+                searchView.setQuery(mQuery, submit);
+                searchView.setIconified(query.isEmpty());
+            }
+        }
+        String getQuery() {
+            if (searchView != null) {
+                return searchView.getQuery().toString();
+            } else {
+                return mQuery;
+            }
+        }
     }
 }

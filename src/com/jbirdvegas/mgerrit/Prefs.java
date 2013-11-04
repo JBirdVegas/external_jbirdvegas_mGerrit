@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -39,11 +40,11 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     private static final CharSequence AOSP_VOLLEY = "open_source_aosp_volley";
     private static final CharSequence APACHE_COMMONS_KEY = "open_source_apache_commons";
     public static final String GERRIT_KEY = "gerrit_instances_key";
-    private static final String ANIMATION_KEY = "animation_key";
-    private static final String SAVED_GERRIT_INSTANCES_KEY = "saved_gerrit_instances";
+    public static final String ANIMATION_KEY = "animation_key";
     private static final String SERVER_TIMEZONE_KEY = "server_timezone";
     private static final String LOCAL_TIMEZONE_KEY = "local_timezone";
     public static final String CURRENT_PROJECT = "current_project";
+    public static final String TRACKING_USER = "committer_being_tracked";
     private CheckBoxPreference mAnimation;
 
     private Preference mGerritSwitcher;
@@ -151,19 +152,6 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         return true;
     }
 
-    public static Intent getStalkerIntent(Context activity, CommitterObject committerObject) {
-        return new Intent()
-                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
-                .putExtra(CardsFragment.KEY_DEVELOPER, committerObject)
-                .setClass(activity, GerritControllerActivity.class);
-    }
-
-    public static Intent getStalkerIntent(Context activity) {
-        return new Intent()
-                .addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT)
-                .setClass(activity, GerritControllerActivity.class);
-    }
-
     /**
      * Google Now style animation removal
      * @param context used to access SharedPreferences
@@ -186,10 +174,46 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     }
 
     public static void setCurrentProject(Context context, String project) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(CURRENT_PROJECT, project).commit();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String oldProject = prefs.getString(CURRENT_PROJECT, "");
+        if (!oldProject.equals(project)) {
+            prefs.edit().putString(CURRENT_PROJECT, project).commit();
+        }
     }
 
     public static String getCurrentProject(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(CURRENT_PROJECT, "");
+    }
+
+    public static void setTrackingUser(Context context, CommitterObject committer) {
+        setTrackingUser(context, committer.getAccountId());
+    }
+
+    /**
+     * Set a user to be tracked.
+     *  Do not set this to clear the tracked user, use {@link clearTrackingUser(Context)} instead.
+     * @param context used to access SharedPreferences
+     * @param committer The userid of the user to track
+     */
+    public static void setTrackingUser(Context context, Integer committer) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        int oldCommitter = prefs.getInt(TRACKING_USER, -1);
+        if (oldCommitter != committer) {
+            prefs.edit().putInt(TRACKING_USER, committer).commit();
+        }
+    }
+
+    /**
+     * Untrack the user currently being tracked
+     * @param context used to access SharedPreferences
+     */
+    public static void clearTrackingUser(Context context) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().remove(TRACKING_USER).commit();
+    }
+
+    public static Integer getTrackingUser(Context context) {
+        int userid = PreferenceManager.getDefaultSharedPreferences(context).getInt(TRACKING_USER, -1);
+        if (userid == -1) return null;
+        return userid;
     }
 }

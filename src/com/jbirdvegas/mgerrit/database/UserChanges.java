@@ -73,11 +73,11 @@ public class UserChanges extends DatabaseTable {
     public static final String C_TOPIC = Changes.C_TOPIC;
 
     // The legacy numeric ID of the change (used in the web address)
-    public static final String C_COMMIT_NUMBER = "_change_number";
+    public static final String C_COMMIT_NUMBER = Changes.C_COMMIT_NUMBER;
 
 
     // --- Columns in Users table ---
-    // The numeric ID of the account.
+    // The numeric ID of the account (Identical to UserChanges.C_OWNER)
     public static final String C_USER_ID = Users.C_ACCOUNT_ID;
 
     /* The email address the user prefers to be contacted through.
@@ -101,8 +101,8 @@ public class UserChanges extends DatabaseTable {
     // Sort by condition for querying results.
     public static final String SORT_BY = C_UPDATED + " DESC";
 
-    private static final String[] CHANGE_LIST_PROJECTION = new String[] {
-            C_CHANGE_ID, C_SUBJECT, C_PROJECT, C_UPDATED,
+    public static final String[] CHANGE_LIST_PROJECTION = new String[] {
+            Changes.TABLE + ".rowid AS _id", C_CHANGE_ID, C_SUBJECT, C_PROJECT, C_UPDATED,
             C_STATUS, C_TOPIC, C_USER_ID, C_EMAIL, C_NAME,
             C_COMMIT_NUMBER };
 
@@ -124,42 +124,6 @@ public class UserChanges extends DatabaseTable {
     {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE, ITEM_LIST);
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE + "/#", ITEM_ID);
-    }
-
-    /**
-     * List the commits for a given change status
-     * @param context Context for database access
-     * @param status The change status to search for
-     * @param committerID The email of the committer
-     * @param project The full path of the project to search for
-     * @return A CursorLoader
-     */
-    public static CursorLoader listCommits(Context context, String status, Integer committerID,
-                                           String project) {
-        StringBuilder builder = new StringBuilder();
-        List<String> bindArgs = new ArrayList<String>();
-        boolean addAnd = false;
-
-        if (committerID != null) {
-            builder.append(C_USER_ID).append(" = ?");
-            bindArgs.add(committerID.toString());
-            addAnd = true;
-        }
-
-        if (project != null) {
-            if (addAnd) builder.append(" AND ");
-            builder.append(C_PROJECT).append(" = ?");
-            bindArgs.add(project);
-        }
-
-        return findCommits(context, status, builder, bindArgs);
-    }
-
-    public static CursorLoader listCommits(Context context, String status, CommitterObject committer,
-                                           String project) {
-        Integer accountID = null;
-        if (committer != null)  accountID = committer.getAccountId();
-        return listCommits(context, status, accountID, project);
     }
 
     /** Insert the list of commits into the database **/
@@ -247,7 +211,17 @@ public class UserChanges extends DatabaseTable {
      */
     public static CursorLoader findCommits(Context context, String status,
                                            String query, List<String> args) {
-        StringBuilder builder = new StringBuilder(query);
+        StringBuilder builder;
+        if (query == null) {
+            builder = new StringBuilder("");
+        } else {
+            builder = new StringBuilder(query);
+        }
+
+        if (args == null) {
+            args = new ArrayList<String>();
+        }
+
         return findCommits(context, status, builder, args);
     }
 

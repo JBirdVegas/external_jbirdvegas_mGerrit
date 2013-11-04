@@ -141,4 +141,18 @@ public class Users extends DatabaseTable {
                 columns, C_EMAIL + " = ?", new String[] {email},
                 null);
     }
+
+    /**
+     * Get the details for the user with the given account id
+     * @param context Application context reference
+     * @param userid A user id
+     * @return A cursor object containing at most one row
+     */
+    public static Cursor getUser(Context context, Integer userid) {
+        String columns[] = { C_ACCOUNT_ID, C_NAME, C_EMAIL};
+        Uri uri = DBParams.fetchOneRow(CONTENT_URI);
+        return context.getContentResolver().query(uri,
+                columns, C_ACCOUNT_ID + " = ?", new String[] { userid.toString() },
+                null);
+    }
 }

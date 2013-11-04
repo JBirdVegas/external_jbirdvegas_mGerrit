@@ -27,9 +27,9 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.fima.cardsui.objects.RecyclableCard;
 import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.listeners.TrackingClickListener;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 public class PatchSetPropertiesCard extends RecyclableCard {
@@ -69,29 +69,33 @@ public class PatchSetPropertiesCard extends RecyclableCard {
                 viewHolder.owner,
                 mJSONCommit.getOwnerObject().getEmail(),
                 mRequestQuery);
-        viewHolder.owner.setOnClickListener(new TrackingClickListener(
-                mContext,
-                mJSONCommit.getOwnerObject()
-        ));
+        viewHolder.owner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Prefs.setTrackingUser(mContext, mJSONCommit.getOwnerObject());
+            }
+        });
         viewHolder.owner.setTag(mJSONCommit.getOwnerObject());
         setContextMenu(viewHolder.owner);
         setClicksToActionViews(
                 (ImageView) convertView.findViewById(R.id.properties_card_share_info),
                 (ImageView) convertView.findViewById(R.id.properties_card_view_in_browser));
         try {
-            // set text will throw NullPointer if
-            // we don't have author/committer objects
+            // set text will throw NPE if we don't have author/committer objects
             viewHolder.author.setText(mJSONCommit.getAuthorObject().getName());
-            viewHolder.author.setOnClickListener(
-                    new TrackingClickListener(
-                            mContext,
-                            mJSONCommit.getAuthorObject()));
+            viewHolder.author.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Prefs.setTrackingUser(mContext, mJSONCommit.getAuthorObject());
+                }
+            });
             viewHolder.committer.setText(mJSONCommit.getCommitterObject().getName());
-            viewHolder.committer.setOnClickListener(
-                    new TrackingClickListener(
-                            mContext,
-                            mJSONCommit.getCommitterObject()));
-            // setup contextmenu click actions
+            viewHolder.committer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Prefs.setTrackingUser(mContext, mJSONCommit.getCommitterObject());
+                }
+            });
             viewHolder.author.setTag(mJSONCommit.getAuthorObject());
             setContextMenu(viewHolder.author);
             viewHolder.committer.setTag(mJSONCommit.getCommitterObject());
