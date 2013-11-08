@@ -35,6 +35,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
     private final Context mContext;
     private final int mGreen;
     private final int mRed;
+    private final int mOrange;
 
     // Cursor indices
     private Integer useremail_index;
@@ -46,6 +47,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
 
         this.mGreen = context.getResources().getColor(R.color.text_green);
         this.mRed = context.getResources().getColor(R.color.text_red);
+        this.mOrange = context.getResources().getColor(android.R.color.holo_orange_light);
     }
 
     @Override
@@ -88,7 +90,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
             } else if (statusText.equals("ABANDONED")) {
                 view.setBackgroundColor(mRed);
             } else {
-                view.setBackgroundColor(mContext.getResources().getColor(android.R.color.white));
+                view.setBackgroundColor(mOrange);
             }
         } else {
             return false;
