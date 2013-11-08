@@ -213,6 +213,9 @@ public class GerritControllerActivity extends FragmentActivity {
 
     // Register to receive messages.
     private void registerReceivers() {
+        if (receivers == null) {
+            receivers = new DefaultGerritReceivers(this);
+        }
         receivers.registerReceivers(EstablishingConnection.TYPE,
                 ConnectionEstablished.TYPE,
                 InitializingDataTransfer.TYPE,
@@ -368,13 +371,16 @@ public class GerritControllerActivity extends FragmentActivity {
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mChangeListener);
 
-        Iterator<GerritTask> it = mGerritTasks.iterator();
-        while (it.hasNext())
-        {
-            GerritTask gerritTask = it.next();
-            if (gerritTask.getStatus() == AsyncTask.Status.FINISHED)
-                it.remove();
+        if (mGerritTasks != null) {
+            Iterator<GerritTask> it = mGerritTasks.iterator();
+            while (it.hasNext()) {
+                GerritTask gerritTask = it.next();
+                if (gerritTask.getStatus() == AsyncTask.Status.FINISHED) {
+                    it.remove();
+                }
+            }
         }
+
     }
 
     @Override
@@ -392,13 +398,17 @@ public class GerritControllerActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         super.onDestroy();
 
-        for (GerritTask gerritTask : mGerritTasks) gerritTask.cancel(true);
-        mGerritTasks.clear();
-        mGerritTasks = null;
+        // if screen gets disposed of before mGerritTasks is initialized
+        if (mGerritTasks != null) {
+            for (GerritTask gerritTask : mGerritTasks) {
+                gerritTask.cancel(true);
+            }
+            mGerritTasks.clear();
+            mGerritTasks = null;
+        }
     }
 
     // Hide the AOKP Changelog menu option when AOKP's Gerrit is not selected

@@ -35,6 +35,8 @@ import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
@@ -179,12 +181,14 @@ public abstract class CardsFragment extends Fragment
         if (animations != mAnimationsEnabled) {
             toggleAnimations(animations);
         }
+        EasyTracker.getInstance(getActivity()).activityStart(getActivity());
     }
 
     @Override
     public void onStop() {
         super.onStop();
         LocalBroadcastManager.getInstance(mParent).unregisterReceiver(mSearchQueryListener);
+        EasyTracker.getInstance(getActivity()).activityStop(getActivity());
     }
 
 
@@ -271,7 +275,20 @@ public abstract class CardsFragment extends Fragment
         if (!mIsDirty) return;
 
         mIsDirty = false;
-        getLoaderManager().restartLoader(0, null, this);
+        // if the Fragment has not yet attached to the Activity
+        // note this case and avoid crashing
+        // TODO find root cause
+        // symptom several rotations causes crash
+        if (this.isDetached()) {
+            EasyTracker easyTracker = EasyTracker.getInstance(getActivity());
+            easyTracker.send(MapBuilder.createEvent(AnalyticsConstants.GA_LOG_FAIL,
+                    AnalyticsConstants.GA_FAIL_UI,
+                    "CardsFragment was not attached to an Activity",
+                    null)
+                .build());
+        } else {
+            getLoaderManager().restartLoader(0, null, this);
+        }
 
         if (forceUpdate) {
             SyncTime.clear(mParent);
