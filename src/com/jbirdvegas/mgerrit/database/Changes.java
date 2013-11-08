@@ -59,6 +59,9 @@ public class Changes extends DatabaseTable {
     // The topic to which this change belongs.
     public static final String C_TOPIC = "topic";
 
+    // The name of the target branch. The refs/heads/ prefix is omitted.
+    public static final String C_BRANCH = "branch";
+
     public static final String[] PRIMARY_KEY = { C_CHANGE_ID };
 
     public static final int ITEM_LIST = UriType.ChangesList.ordinal();
@@ -91,6 +94,7 @@ public class Changes extends DatabaseTable {
                 + C_PROJECT + " text NOT NULL, "
                 + C_STATUS + " text DEFAULT '" + JSONCommit.KEY_STATUS_OPEN + "' NOT NULL, "
                 + C_TOPIC + " text, "
+                + C_BRANCH + " text, "
                 + C_COMMIT_NUMBER + " INTEGER NOT NULL, "
                 + "FOREIGN KEY (" + C_OWNER + ") REFERENCES "
                     + Users.TABLE + "(" + Users.C_ACCOUNT_ID + "), "

@@ -75,6 +75,9 @@ public class UserChanges extends DatabaseTable {
     // The legacy numeric ID of the change (used in the web address)
     public static final String C_COMMIT_NUMBER = Changes.C_COMMIT_NUMBER;
 
+    // The name of the target branch. The refs/heads/ prefix is omitted.
+    public static final String C_BRANCH = "branch";
+
 
     // --- Columns in Users table ---
     // The numeric ID of the account (Identical to UserChanges.C_OWNER)
@@ -144,6 +147,7 @@ public class UserChanges extends DatabaseTable {
             row.put(C_PROJECT, commit.getProject());
             row.put(C_STATUS, commit.getStatus().toString());
             row.put(C_TOPIC, commit.getTopic());
+            row.put(C_BRANCH, commit.getBranch());
             values.add(row);
 
             committers.add(commit.getOwnerObject());
