@@ -20,6 +20,11 @@ package com.jbirdvegas.mgerrit.helpers;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+
+import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
+import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.jbirdvegas.mgerrit.R;
 
 public class Tools {
@@ -75,5 +80,23 @@ public class Tools {
         return sb.toString();
     }
 
-
+    /**
+     * Enables or disables listview animations. This simply toggles the
+     *  adapter, initialising a new adapter if necessary.
+     * @param enable Whether to enable animations on the listview
+     */
+    public static boolean toggleAnimations(boolean enable, ListView lv,
+                                           SingleAnimationAdapter animAdapter,
+                                           BaseAdapter defaultAdapter) {
+        if (enable) {
+            if (animAdapter == null) {
+                animAdapter = new SwingBottomInAnimationAdapter(defaultAdapter);
+                animAdapter.setAbsListView(lv);
+            }
+            lv.setAdapter(animAdapter);
+        } else if (defaultAdapter != null) {
+            lv.setAdapter(defaultAdapter);
+        }
+        return enable;
+    }
 }

@@ -20,7 +20,10 @@ import com.fima.cardsui.StackAdapter;
 import com.fima.cardsui.objects.AbstractCard;
 import com.fima.cardsui.objects.Card;
 import com.fima.cardsui.objects.CardStack;
+import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 
 import java.util.ArrayList;
 
@@ -63,6 +66,7 @@ public class CardUI extends FrameLayout {
     private OnRenderedListener onRenderedListener;
     private StackAdapter mAdapter;
     private View mHeader;
+    private SingleAnimationAdapter mAnimAdapter = null;
 
     /**
      * Constructor
@@ -316,11 +320,12 @@ public class CardUI extends FrameLayout {
     //suppress this error message to be able to use spaces in higher api levels
     @SuppressLint("NewApi")
     public void refresh() {
-
         if (mAdapter == null) {
             mAdapter = new StackAdapter(mContext, mStacks, mSwipeable);
             if (mListView != null) {
-                mListView.setAdapter(mAdapter);
+                /* If animations have been enabled, setup and use an animation adapter, otherwise use
+                 *  the regular adapter. The data should always be bound to mAdapter */
+                Tools.toggleAnimations(Prefs.getAnimationPreference(mContext), mListView, mAnimAdapter, mAdapter);
             } else if (mTableLayout != null) {
                 TableRow tr = null;
                 for (int i = 0; i < mAdapter.getCount(); i += mColumnNumber) {
