@@ -38,12 +38,12 @@ import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
-import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
@@ -141,7 +141,8 @@ public abstract class CardsFragment extends Fragment
 
         /* If animations have been enabled, setup and use an animation adapter, otherwise use
          *  the regular adapter. The data should always be bound to mAdapter */
-        toggleAnimations(Prefs.getAnimationPreference(mParent));
+       mAnimationsEnabled = Tools.toggleAnimations(Prefs.getAnimationPreference(mParent),
+               mListView, mAnimAdapter, mAdapter);
 
         mUrl = new GerritURL();
 
@@ -302,16 +303,7 @@ public abstract class CardsFragment extends Fragment
      * @param enable Whether to enable animations on the listview
      */
     public void toggleAnimations(boolean enable) {
-        if (enable) {
-            if (mAnimAdapter == null) {
-                mAnimAdapter = new SwingBottomInAnimationAdapter(mAdapter);
-                mAnimAdapter.setAbsListView(mListView);
-            }
-            mListView.setAdapter(mAnimAdapter);
-        } else {
-            mListView.setAdapter(mAdapter);
-        }
-        mAnimationsEnabled = enable;
+        mAnimationsEnabled = Tools.toggleAnimations(enable, mListView, mAnimAdapter, mAdapter);
     }
 
     public void markDirty() { mIsDirty = true; }
