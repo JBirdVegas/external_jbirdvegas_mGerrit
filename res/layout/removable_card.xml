@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/content"
-        style="@style/CardTitle"
+        style="?attr/cardTitleStyle"
         android:gravity="center"
         android:layout_alignTop="@+id/removable_content_button"
         android:layout_centerHorizontal="true"/>

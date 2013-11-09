@@ -14,7 +14,7 @@
             android:paddingLeft="8dip"
             android:paddingRight="5dp"
             android:text="@string/commit_owner"
-            android:textAppearance="@style/CardText"
+            style="?attr/cardTextStyle"
             android:layout_gravity="center"
             android:textStyle="bold"/>
         <TextView
@@ -23,7 +23,7 @@
             android:paddingLeft="8dip"
             android:paddingRight="5dip"
             android:text="@string/commit_author"
-            android:textAppearance="@style/CardText"
+            style="?attr/cardTextStyle"
             android:textStyle="bold"
             android:layout_gravity="center"/>
         <TextView
@@ -32,7 +32,7 @@
             android:paddingLeft="8dip"
             android:paddingRight="5dp"
             android:text="@string/commit_committer"
-            android:textAppearance="@style/CardText"
+            style="?attr/cardTextStyle"
             android:textStyle="bold"
             android:layout_gravity="center"/>
 
@@ -49,14 +49,14 @@
             android:layout_height="wrap_content"
             android:id="@+id/prop_card_owner"
             android:layout_gravity="center"
-            android:textAppearance="@style/CardText"/>
+            style="?attr/cardTextStyle"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/prop_card_author"
             android:layout_gravity="center"
             android:paddingRight="8dip"
-            android:textAppearance="@style/CardText"/>
+            style="?attr/cardTextStyle"/>
 
 
         <TextView
@@ -65,6 +65,6 @@
             android:id="@+id/prop_card_committer"
             android:layout_gravity="center"
             android:paddingRight="8dip"
-            android:textAppearance="@style/CardText"/>
+            style="?attr/cardTextStyle"/>
     </LinearLayout>
 </LinearLayout>

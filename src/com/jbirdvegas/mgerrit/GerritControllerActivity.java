@@ -82,10 +82,6 @@ public class GerritControllerActivity extends FragmentActivity {
      */
     private Set<GerritTask> mGerritTasks;
 
-    SharedPreferences mPrefs;
-
-    // Listener for preference changes
-    private BroadcastReceiver mPrefChangeListener;
     // Listener for changes to which commit is selected
     private BroadcastReceiver mChangeListener;
 
@@ -105,6 +101,7 @@ public class GerritControllerActivity extends FragmentActivity {
     private SearchView searchView;
     // Wrapper around searchView for modifying searchView before it is initialised
     private SearchViewProperties mSearchViewProperties = new SearchViewProperties();
+    private int mTheme;
 
 
     @Override
@@ -121,7 +118,11 @@ public class GerritControllerActivity extends FragmentActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        mTheme = Prefs.getCurrentThemeID(this);
+        setTheme(mTheme);
+
         super.onCreate(savedInstanceState);
+
         // check if caller has a gerrit instance start screen preference
         String suppliedGerritInstance = getIntent().getStringExtra(GERRIT_INSTANCE);
         if (suppliedGerritInstance != null
@@ -168,7 +169,6 @@ public class GerritControllerActivity extends FragmentActivity {
         mChangeList = (ChangeListFragment) fm.findFragmentById(R.id.change_list_fragment);
 
         mGerritWebsite = Prefs.getCurrentGerrit(this);
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         /* Initially set the current Gerrit globally here.
          *  We can rely on callbacks to know when they change */
@@ -397,6 +397,14 @@ public class GerritControllerActivity extends FragmentActivity {
         // Manually check if the project changed (e.g. we are resuming from the Projects List)
         s = Prefs.getCurrentProject(this);
         if (!s.equals(mCurrentProject)) onProjectChanged(s);
+
+        // Apply the theme if it has changed
+        int themeId = Prefs.getCurrentThemeID(this);
+        if (themeId != mTheme) {
+            mTheme = themeId;
+            setTheme(themeId);
+            this.recreate();
+        }
     }
 
     @Override

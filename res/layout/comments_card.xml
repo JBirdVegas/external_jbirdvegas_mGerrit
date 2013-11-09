@@ -13,7 +13,7 @@
         android:id="@+id/comments_card_title"
         android:text="@string/comments_card_title"
         android:paddingLeft="8dip"
-        android:textAppearance="@style/CardTitle"
+        style="?attr/cardTitleStyle"
         android:textSize="20sp"/>
 
     <LinearLayout android:layout_width="match_parent"

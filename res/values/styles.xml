@@ -17,80 +17,53 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--
-          <style name="CardTitle">
-        <item name="android:id">@android:id/title</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:textSize">22sp</item>
-        <item name="android:textColor">@color/text_light</item>
-        <item name="android:fontFamily">sans-serif-thin</item>
+    <style name="Theme.Light" parent="android:style/Theme.Holo.Light">
+        <item name="android:textColorPrimary">@color/actionbar_text</item>
+        <item name="gerritIcon">@drawable/ic_menu_source</item>
+        <item name="projectsIcon">@drawable/ic_menu_project</item>
+        <item name="refreshIcon">@drawable/ic_action_refresh</item>
+        <item name="overflowIcon">@drawable/ic_action_overflow</item>
+        <item name="shareIcon">@drawable/ic_action_share</item>
+        <item name="mainBackgroundColor">@color/main_background</item>
+        <item name="cardTextStyle">@style/CardText.Light</item>
+        <item name="cardTitleStyle">@style/CardTitle.Light</item>
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="aboutIcon">@drawable/ic_action_about</item>
+        <item name="viewIcon">@drawable/ic_menu_view</item>
     </style>
-    -->
+
+    <style name="Theme.Dark" parent="android:style/Theme.Holo">
+        <item name="android:textColorPrimary">@color/actionbar_text_dark</item>
+        <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
+        <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
+        <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
+        <item name="overflowIcon">@drawable/ic_action_overflow_dark</item>
+        <item name="shareIcon">@android:drawable/ic_menu_share</item>
+        <item name="mainBackgroundColor">@color/main_background_dark</item>
+        <item name="cardTextStyle">@style/CardText.Dark</item>
+        <item name="cardTitleStyle">@style/CardTitle.Dark</item>
+        <item name="cardBackgroundColor">@color/card_background_dark</item>
+        <item name="aboutIcon">@drawable/ic_action_about_dark</item>
+        <item name="viewIcon">@android:drawable/ic_menu_view</item>
+    </style>
 
     <style name="CardText">
         <item name="android:textSize">@dimen/card_small_text</item>
-        <item name="android:textColor">@color/card_text</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">2</item>
     </style>
 
-    <style name="CardLightText" parent="@style/CardText">
-        <item name="android:textColor">@color/card_light_text</item>
+    <style name="CardText.Light">
+        <item name="android:textColor">@color/card_text</item>
+    </style>
+
+    <style name="CardText.Dark">
+        <item name="android:textColor">@color/card_text_dark</item>
     </style>
 
     <style name="CardText.Committer">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">16sp</item>
-    </style>
-
-    <style name="CardTitle" parent="@style/CardText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">@dimen/card_large_text</item>
-        <item name="android:textColor">@color/card_title_text</item>
-        <item name="android:textStyle">italic</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-    </style>
-
-    <style name="CardTitleBold" parent="@style/CardText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">@dimen/card_large_text</item>
-        <item name="android:textColor">@color/card_title_text</item>
-    </style>
-
-    <style name="StackTitle" parent="@style/CardText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">27sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/card_title_text</item>
-    </style>
-
-    <style name="Item">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">300dp</item>
-    </style>
-
-    <style name="Item.Top">
-        <item name="android:background">@color/background</item>
-    </style>
-
-    <style name="Theme.Custom" parent="android:style/Theme.Holo.Light">
-        <item name="android:textColorPrimary">@color/actionbar_text</item>
-    </style>
-
-    <style name="ActionViewsStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">8dp</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
-        <item name="android:layout_marginRight">4dp</item>
-        <item name="android:layout_marginLeft">4dp</item>
     </style>
 
     <style name="CardText.CommitOwnerText">
@@ -107,6 +80,40 @@
         <item name="android:paddingLeft">8dip</item>
         <item name="android:paddingRight">8dip</item>
         <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <style name="CardTitle" parent="style/CardText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/card_large_text</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+    </style>
+
+    <style name="CardTitle.Light" parent="style/CardTitle">
+        <item name="android:textColor">@color/card_title_text</item>
+    </style>
+
+    <style name="CardTitle.Dark" parent="style/CardTitle">
+        <item name="android:textColor">@color/card_light_text</item>
+    </style>
+
+    <style name="CardTitleBold" parent="style/CardText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/card_large_text</item>
+        <item name="android:textColor">@color/card_title_text</item>
+    </style>
+
+    <style name="ActionViewsStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
     </style>
 
 </resources>

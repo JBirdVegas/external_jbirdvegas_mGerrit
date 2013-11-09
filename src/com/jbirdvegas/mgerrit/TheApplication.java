@@ -63,6 +63,9 @@ public class TheApplication extends Application
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Prefs.GERRIT_KEY)) onGerritChanged(Prefs.getCurrentGerrit(this));
+        if (key.equals(Prefs.APP_THEME)) {
+            this.setTheme(Prefs.getCurrentThemeID(this));
+        }
         sendPreferenceChangedMessage(key);
     }
 

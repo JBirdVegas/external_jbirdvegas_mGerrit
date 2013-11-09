@@ -28,7 +28,7 @@
         android:text="@string/patchset_labels_code_reviewer_title"
         android:paddingLeft="8dip"
         android:paddingBottom="8dip"
-        android:textAppearance="@style/CardTitle"
+        style="?attr/cardTitleStyle"
         android:textSize="20sp"/>
 
     <LinearLayout
@@ -45,7 +45,7 @@
         android:paddingLeft="8dip"
         android:paddingTop="8dip"
         android:paddingBottom="8dip"
-        android:textAppearance="@style/CardTitle"
+        style="?attr/cardTitleStyle"
         android:textSize="20sp"/>
 
     <LinearLayout

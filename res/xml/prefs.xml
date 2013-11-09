@@ -22,6 +22,12 @@
         android:key="gerrit_instances_key"
         android:title="@string/choose_gerrit_instance"/>
 
+    <ListPreference
+        android:key="app_theme"
+        android:title="@string/change_theme"
+        android:entries="@array/themes_entries"
+        android:entryValues="@array/themes_entry_values" />
+
     <CheckBoxPreference
         android:key="animation_key"
         android:title="@string/google_now_style_animations_title"

@@ -37,7 +37,7 @@
         android:id="@+id/comment_message"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:textAppearance="@style/CardText"
+        style="?attr/cardTextStyle"
         android:textSize="@dimen/card_medium_text"
         android:autoLink="web"
         android:padding="@dimen/standard_padding"/>

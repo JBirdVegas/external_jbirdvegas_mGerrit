@@ -22,7 +22,7 @@
               android:layout_height="match_parent">
 
     <TextView
-        style="@style/CardText"
+        style="?attr/cardTextStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/message_card_last_update"

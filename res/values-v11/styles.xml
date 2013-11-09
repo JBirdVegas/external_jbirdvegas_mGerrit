@@ -17,21 +17,8 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--
-          <style name="CardTitle">
-        <item name="android:id">@android:id/title</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:textSize">22sp</item>
-        <item name="android:textColor">@color/text_light</item>
-        <item name="android:fontFamily">sans-serif-thin</item>
-    </style>
-    -->
-
     <style name="CardText">
         <item name="android:textSize">@dimen/card_small_text</item>
-        <item name="android:textColor">@color/card_text</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">2</item>
     </style>
@@ -54,34 +41,4 @@
         <item name="android:textColor">@color/card_title_text</item>
     </style>
 
-    <style name="StackTitle" parent="@style/CardText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">27sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/card_title_text</item>
-    </style>
-
-    <style name="Item">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">300dp</item>
-    </style>
-
-    <style name="Item.Top">
-        <item name="android:background">@color/background</item>
-    </style>
-
-    <style name="Theme.Custom" parent="android:style/Theme.Holo.Light">
-        <item name="android:textColorPrimary">@color/actionbar_text</item>
-    </style>
-
-    <style name="ActionViewsStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">8dp</item>
-        <item name="android:paddingLeft">4dp</item>
-        <item name="android:paddingRight">4dp</item>
-        <item name="android:layout_marginRight">4dp</item>
-        <item name="android:layout_marginLeft">4dp</item>
-    </style>
 </resources>

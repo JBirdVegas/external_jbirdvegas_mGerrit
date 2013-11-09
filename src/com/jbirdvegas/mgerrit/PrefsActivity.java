@@ -28,6 +28,8 @@ public class PrefsActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setTheme(Prefs.getCurrentThemeID(this));
+
         // Action bar Up affordance
         getActionBar().setDisplayHomeAsUpEnabled(true);
 

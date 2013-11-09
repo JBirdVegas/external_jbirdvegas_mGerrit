@@ -20,4 +20,23 @@
     <declare-styleable name="CardUI">
         <attr name="columnCount" format="integer"/>
     </declare-styleable>
+    <declare-styleable name="item">
+        <attr name="gerritIcon" format="reference"/>
+        <attr name="projectsIcon" format="reference"/>
+        <attr name="refreshIcon" format="reference"/>
+        <attr name="overflowIcon" format="reference"/>
+    </declare-styleable>
+    <declare-styleable name="LinearLayout">
+        <attr name="mainBackgroundColor" format="color"/>
+        <attr name="cardBackgroundColor" format="color"/>
+    </declare-styleable>
+    <declare-styleable name="TextView">
+        <attr name="cardTextStyle" format="reference" />
+        <attr name="cardTitleStyle" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="ImageView">
+        <attr name="aboutIcon" format="reference"/>
+        <attr name="shareIcon" format="reference"/>
+        <attr name="viewIcon" format="reference"/>
+    </declare-styleable>
 </resources>

@@ -13,7 +13,7 @@
         android:paddingLeft="8dip"
         android:paddingRight="8dip"
         android:id="@+id/prop_card_subject"
-        android:textAppearance="@style/CardTitle"
+        style="?attr/cardTitleStyle"
         android:textSize="22sp"/>
 
         <RelativeLayout
@@ -72,12 +72,12 @@
         android:layout_gravity="right"
         android:gravity="right">
         <ImageView
-            android:src="@drawable/ic_menu_view"
+            android:src="?attr/viewIcon"
             android:id="@+id/properties_card_view_in_browser"
             style="@style/ActionViewsStyle"/>
 
         <ImageView
-            android:src="@drawable/ic_action_share"
+            android:src="?attr/shareIcon"
             android:id="@+id/properties_card_share_info"
             style="@style/ActionViewsStyle"/>
     </LinearLayout>

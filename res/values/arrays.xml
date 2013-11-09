@@ -43,4 +43,12 @@
         <item>@string/status_explanation_merged</item>
         <item>@string/status_explanation_abandoned</item>
     </string-array>
+    <string-array name="themes_entries" translatable="false">
+        <item>@string/theme_light</item>
+        <item>@string/theme_dark</item>
+    </string-array>
+    <string-array name="themes_entry_values" translatable="false">
+        <item>@string/theme_light_value</item>
+        <item>@string/theme_dark_value</item>
+    </string-array>
 </resources>

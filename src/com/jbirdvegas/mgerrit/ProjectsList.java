@@ -59,6 +59,7 @@ public class ProjectsList extends Activity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        this.setTheme(Prefs.getCurrentThemeID(this));
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);

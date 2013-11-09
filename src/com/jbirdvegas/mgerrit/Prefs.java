@@ -21,6 +21,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -45,6 +46,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     private static final String LOCAL_TIMEZONE_KEY = "local_timezone";
     public static final String CURRENT_PROJECT = "current_project";
     public static final String TRACKING_USER = "committer_being_tracked";
+    public static final String APP_THEME = "app_theme";
     private CheckBoxPreference mAnimation;
 
     private Preference mGerritSwitcher;
@@ -98,6 +100,24 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         ListPreference localTimeZoneList = (ListPreference) findPreference(LOCAL_TIMEZONE_KEY);
         localTimeZoneList.setEntries(TimeZone.getAvailableIDs());
         localTimeZoneList.setEntryValues(zoneEntries);
+
+        Preference themeSelector = findPreference(APP_THEME);
+        setThemeSummary(themeSelector);
+        themeSelector.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                String summary = getReadableThemeName(o.toString());
+                if (summary != null){
+                    preference.setSummary(summary);
+                    getActivity().setTheme(getInternalTheme(o.toString()));
+                    getActivity().recreate();
+                } else {
+                    preference.setSummary("");
+                }
+
+                return true;
+            }
+        });
     }
 
     /**
@@ -215,5 +235,51 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         int userid = PreferenceManager.getDefaultSharedPreferences(context).getInt(TRACKING_USER, -1);
         if (userid == -1) return null;
         return userid;
+    }
+
+    private String getCurrentTheme(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(APP_THEME,
+                context.getResources().getString(R.string.theme_light_value));
+    }
+
+    public static int getCurrentThemeID(Context context) {
+        String themename = PreferenceManager.getDefaultSharedPreferences(context).getString(APP_THEME,
+                context.getResources().getString(R.string.theme_light_value));
+        Resources res = context.getResources();
+        if (themename.equalsIgnoreCase(res.getString(R.string.theme_dark_value))) {
+            return R.style.Theme_Dark;
+        } else {
+            return R.style.Theme_Light;
+        }
+    }
+
+    private String getReadableThemeName(String pref) {
+        Context context = getActivity();
+        String[] entries = context.getResources().getStringArray(R.array.themes_entries);
+        String[] entriesValues = context.getResources().getStringArray(R.array.themes_entry_values);
+        for (int i = 0; i < entries.length; i++) {
+            if (pref.equalsIgnoreCase(entriesValues[i])) {
+                return entries[i];
+            }
+        }
+        return null;
+    }
+
+    private void setThemeSummary(Preference preference) {
+        String summary = getReadableThemeName(getCurrentTheme(getActivity()));
+        if (summary != null) {
+            preference.setSummary(summary);
+        } else {
+            preference.setSummary("");
+        }
+    }
+
+    private int getInternalTheme(String pref) {
+        Resources res = getActivity().getResources();
+        if (pref.equalsIgnoreCase(res.getString(R.string.theme_dark_value))) {
+            return R.style.Theme_Dark;
+        } else {
+            return R.style.Theme_Light;
+        }
     }
 }

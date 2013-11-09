@@ -28,24 +28,24 @@
 
     <item
         android:id="@+id/menu_team_instance"
-        android:icon="@drawable/ic_menu_source"
+        android:icon="?attr/gerritIcon"
         android:showAsAction="ifRoom"
         android:title="@string/choose_gerrit_instance"/>
 
     <item android:id="@+id/menu_projects"
-          android:title="@string/menu_projects"
-          android:showAsAction="ifRoom"
-          android:icon="@drawable/ic_menu_project"/>
+        android:title="@string/menu_projects"
+        android:showAsAction="ifRoom"
+        android:icon="?attr/projectsIcon"/>
 
     <item
         android:id="@+id/menu_refresh"
-        android:icon="@drawable/ic_action_refresh"
+        android:icon="?attr/refreshIcon"
         android:title="@string/menu_refresh"
         android:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_save"
-        android:icon="@drawable/ic_action_overflow"
+        android:icon="?attr/overflowIcon"
         android:title="@string/menu_preferences"
         android:showAsAction="never"/>
 

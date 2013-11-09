@@ -35,6 +35,7 @@ public class PatchSetViewerActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.setTheme(Prefs.getCurrentThemeID(this));
         super.onCreate(savedInstanceState);
 
         // Show the Up button in the action bar.
