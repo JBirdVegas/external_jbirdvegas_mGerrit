@@ -28,6 +28,7 @@
     <string name="status_explanation_abandoned">更改被其所有者或管理员废弃。</string>
     <string name="patchset_labels_code_reviewer_title">代码评审者</string>
     <string name="patchset_labels_verified_reviewer_title">已审核</string>
+    <string name="dash" translatable="false">-</string>
     <string name="inserted">插入行</string>
     <string name="deleted">删除行</string>
     <string name="none_found">找不到</string>
@@ -75,6 +76,8 @@
     <string name="choose_diff_view">你想要查看差异吗？</string>
     <string name="stalker_mode_toast">现在跟踪用户：</string>
     <string name="share">分享</string>
+    <string name="view_in_browser">在默认浏览器中查看本变更</string>
+    <string name="moar_info">本变更的更多详细信息</string>
     <string name="commit_shared_from_mgerrit" formatted="false">分享提交 %s 来自mGerrit！</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[找到 %d 提交耗时 %d 秒]]></string>
     <string name="cancel">取消</string>
@@ -110,5 +113,9 @@
     <string name="remove_content">移除内容</string>
     <string name="connection_starting">开始 Gerrit 请求</string>
     <string name="projects_search_hint">搜索项目</string>
+    <string name="changes_search_hint">搜索变更</string>
     <string name="failed_to_find_url">失败，找不到项目URL</string>
+    <string name="change_status_update">一个新变更状态被选中</string>
+    <string name="invalid_gerrit_name">Gerrit名称设置无效</string>
+    <string name="invalid_gerrit_url">Gerrit地址设置无效</string>
 </resources>
