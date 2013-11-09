@@ -45,12 +45,28 @@ Supported keywords
 Currently the following keywords are supported:
 
 change:'ID'; changeid:'ID'
-Either a legacy numerical ID such as 15183, or a newer style Change-Id that was scraped out of the commit message.
+The change-Id that was scraped out of the commit message. Performs a partial match, so only the first few characters need to be specified.
 
 message:'MESSAGE'; subject:'MESSAGE'; intitle:'MESSAGE'
 Changes that match MESSAGE arbitrary string in the first line of the commit message. The string MESSAGE can be quoted (") which will
  only show changes that contain exactly the string MESSAGE. If the string is unquoted and contains spaces, only the first word will
  be used.
+
+owner:'USER'
+Changes originally submitted by USER. Identifier that uniquely identifies one account. The user can be:
+- a string of the format "Full Name <email@example.com>"
+- just the email address ("email@example")
+- a full name if it is unique ("Full Name")
+- an account ID ("18419")
+
+project:'PROJECT'
+Changes occurring in PROJECT. Exact match only.
+
+topic:'TOPIC'
+Changes whose designated topic at upload was TOPIC. This is often combined with branch: and project: keywords to select all related changes in a series.
+
+branch:'BRANCH'
+Changes for BRANCH. This is the short name shown in the web interface without the 'refs/heads/' prefix.
 
 
 License
