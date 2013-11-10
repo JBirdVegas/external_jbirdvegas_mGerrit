@@ -276,9 +276,10 @@ public class GerritControllerActivity extends FragmentActivity {
 
     private void handleIntent(Intent intent)
     {
-        if (intent.getAction().equals(TheApplication.PREF_CHANGE_TYPE)) {
+        String action = intent.getAction();
+        if (TheApplication.PREF_CHANGE_TYPE.equals(action)) {
             onPreferenceChanged(intent.getStringExtra(TheApplication.PREF_CHANGE_KEY));
-        } else if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
+        } else if (!Intent.ACTION_SEARCH.equals(action)) {
             // Searching is already handled when the query text changes.
             init();
         }
