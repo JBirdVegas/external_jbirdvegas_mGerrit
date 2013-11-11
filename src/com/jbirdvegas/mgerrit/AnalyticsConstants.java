@@ -11,4 +11,5 @@ public class AnalyticsConstants {
     public static final String GA_ROM_VERSION = "rom_version";
     public static final String GA_LOG_FAIL = "failure";
     public static final String GA_FAIL_UI = "fail_ui";
+    public static final String GA_THEME_SET_ON_OPEN = "ui_theme";
 }

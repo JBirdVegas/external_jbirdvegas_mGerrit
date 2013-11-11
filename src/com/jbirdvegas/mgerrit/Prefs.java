@@ -44,7 +44,6 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public static final String CURRENT_PROJECT = "current_project";
     public static final String TRACKING_USER = "committer_being_tracked";
     public static final String APP_THEME = "app_theme";
-    private CheckBoxPreference mAnimation;
 
     private Preference mGerritSwitcher;
 
@@ -250,7 +249,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         return userid;
     }
 
-    private String getCurrentTheme(Context context) {
+    public static String getCurrentTheme(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(APP_THEME,
                 context.getResources().getString(R.string.theme_light_value));
     }
