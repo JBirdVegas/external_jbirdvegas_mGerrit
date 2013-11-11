@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
@@ -36,10 +37,6 @@ import java.util.LinkedList;
 import java.util.TimeZone;
 
 public class Prefs extends PreferenceFragment implements Preference.OnPreferenceClickListener {
-    private static final CharSequence CARDS_UI_KEY = "open_source_lib_cards_ui";
-    private static final CharSequence NINE_OLD_ANDROIDS_KEY = "open_source_lib_nine_old_androids";
-    private static final CharSequence AOSP_VOLLEY = "open_source_aosp_volley";
-    private static final CharSequence APACHE_COMMONS_KEY = "open_source_apache_commons";
     public static final String GERRIT_KEY = "gerrit_instances_key";
     public static final String ANIMATION_KEY = "animation_key";
     private static final String SERVER_TIMEZONE_KEY = "server_timezone";
@@ -55,14 +52,9 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.prefs);
-        // View CardsUI website
-        findPreference(CARDS_UI_KEY).setOnPreferenceClickListener(this);
-        // View NineOldAndroids website
-        findPreference(NINE_OLD_ANDROIDS_KEY).setOnPreferenceClickListener(this);
-        // View AOSP's Volley website
-        findPreference(AOSP_VOLLEY).setOnPreferenceClickListener(this);
-        // View Apache Commons Codec
-        findPreference(APACHE_COMMONS_KEY).setOnPreferenceClickListener(this);
+
+        PreferenceCategory libraries = (PreferenceCategory) findPreference("libraries");
+        addLibraries(libraries);
 
         // select gerrit instance
         mGerritSwitcher = findPreference(GERRIT_KEY);
@@ -170,6 +162,27 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         launchWebsite.setData(Uri.parse((String) pref.getSummary()));
         startActivity(launchWebsite);
         return true;
+    }
+
+    /**
+     * Adds the list of libraries to the preferences, using string arrays
+     *  for the titles and the websites.
+     * @param libraries
+     */
+    private void addLibraries(PreferenceCategory libraries) {
+        Context context = getActivity();
+        String[] libraryTitles = context.getResources().getStringArray(R.array.library_titles);
+        String[] libraryWebsites = context.getResources().getStringArray(R.array.library_websites);
+
+        for (int i = 0; i < libraryTitles.length; i++) {
+            Preference pref = new Preference(context);
+            pref.setTitle(libraryTitles[i]);
+            if (i < libraryWebsites.length) {
+                pref.setSummary(libraryWebsites[i]);
+            }
+            pref.setOnPreferenceClickListener(this);
+            libraries.addPreference(pref);
+        }
     }
 
     /**

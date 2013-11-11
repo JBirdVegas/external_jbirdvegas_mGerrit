@@ -79,7 +79,6 @@
   <string name="download_rom_zip">Скачать zip-файл с прошивкой</string>
   <string name="failed_to_decode_base64">Не удалось расшифровать ответ Base64.</string>
   <string name="return_was_null">Нет ответа... Пожалуйста, используйте для просмотра браузер</string>
-  <string name="apache_commons_title">Apache Commons Codec v1.8</string>
   <string name="using_gerrit_toast">Использование Gerrit:</string>
   <string name="google_now_style_animations_title">Анимация карт</string>
   <string name="google_now_style_animations_summary">Включить анимацию в стиле Google Now при отрисовке карт</string>

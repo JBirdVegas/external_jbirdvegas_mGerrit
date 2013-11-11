@@ -53,11 +53,17 @@
     <string name="initializing_data_transfer">Initializing data transfer…</string>
     <string name="communications_error">Communication ERROR!!!</string>
     <string name="transferring_json_data">Transferring JSON encoded data…</string>
+
     <string name="open_source_libs">Open Source Libraries</string>
     <string name="cards_ui">CardsUI</string>
-    <string name="cards_ui_website" translatable="false">http://www.androidviews.net/2012/12/cardsui/</string>
+    <string name="cards_ui_website" translatable="false">https://github.com/Androguide/cardsui-for-android</string>
     <string name="nine_old_androids">NineOldAndroids</string>
     <string name="nine_old_androids_website" translatable="false">http://nineoldandroids.com/</string>
+    <string name="listview_animations">ListViewAnimations</string>
+    <string name="listview_animations_website" translatable="false">https://github.com/nhaarman/ListViewAnimations</string>
+    <string name="support_library">Support Library v4</string>
+    <string name="support_library_website" translatable="false">http://developer.android.com/tools/support-library/index.html</string>
+
     <string name="explain_status_title">Explain statuses</string>
     <string name="explain_status_summary">Brief explanation of the Status tabs meanings</string>
     <string name="menu_gerrit_instance">Gerrit Instance</string>
@@ -93,8 +99,6 @@
     <string name="download_rom_zip">Download ROM zip</string>
     <string name="failed_to_decode_base64">Failed to decode the Base64 response.</string>
     <string name="return_was_null">Response was null… Please view in browser</string>
-    <string name="apache_commons_title">Apache Commons Codec v1.8</string>
-    <string name="apache_commons_website" translatable="false">http://commons.apache.org/proper/commons-codec/</string>
     <string name="using_gerrit_toast">Using Gerrit:</string>
     <string name="google_now_style_animations_title">Animate cards</string>
     <string name="google_now_style_animations_summary">Enable Google Now style animations while drawing cards</string>

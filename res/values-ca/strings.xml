@@ -81,7 +81,6 @@
     <string name="download_rom_zip">Baixa un zip de ROM</string>
     <string name="failed_to_decode_base64">No s\'ha pogut descodificar la resposta Base64.</string>
     <string name="return_was_null">La resposta és nul·la... Visualitzeu-ho al navegador</string>
-    <string name="apache_commons_title">Apache Commons Codec v1.8</string>
     <string name="using_gerrit_toast">S\'està utilitzant Gerrit:</string>
     <string name="google_now_style_animations_title">Anima les targetes</string>
     <string name="google_now_style_animations_summary">Habilita les animacions a l\'estil Google Now en dibuixar les targetes</string>

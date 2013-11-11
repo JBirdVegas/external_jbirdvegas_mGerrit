@@ -82,7 +82,6 @@
     <string name="download_rom_zip">ROM zipをダウンロード</string>
     <string name="failed_to_decode_base64">Base64デコードに失敗しました</string>
     <string name="return_was_null">空応答でした… ブラウザで参照してください</string>
-    <string name="apache_commons_title">Apache Commons Codec v1.8</string>
     <string name="using_gerrit_toast">使用するGerrit:</string>
     <string name="google_now_style_animations_title">カードアニメーション</string>
     <string name="google_now_style_animations_summary">カードを表示するときGoogle Nowスタイルのアニメーションを有効にする</string>

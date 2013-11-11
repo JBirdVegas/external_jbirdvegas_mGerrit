@@ -88,7 +88,6 @@
     <string name="download_rom_zip">ROM 다운로드</string>
     <string name="failed_to_decode_base64">Failed to decode the Base64 response.</string>
     <string name="return_was_null">Responce was null… Please view in browser</string>
-    <string name="apache_commons_title">Apache Commons Codec v1.8</string>
     <string name="using_gerrit_toast">Using Gerrit:</string>
     <string name="google_now_style_animations_title">Animate cards</string>
     <string name="google_now_style_animations_summary">카드를 드로잉 할 때 구글나우 애니메이션 활성화</string>

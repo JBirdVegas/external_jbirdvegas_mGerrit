@@ -85,7 +85,6 @@
     <string name="download_rom_zip">ROM zip letöltése</string>
     <string name="failed_to_decode_base64">Sikertelen dekodolás Base64 válaszhoz.</string>
     <string name="return_was_null">Nulla válasz… Nézd meg böngészőben</string>
-    <string name="apache_commons_title">Apache Commons Codec v1.8</string>
     <string name="using_gerrit_toast">Használt Gerrit:</string>
     <string name="google_now_style_animations_title">Animált kártyák</string>
     <string name="google_now_style_animations_summary">Google Now stílusú animációk használata</string>
