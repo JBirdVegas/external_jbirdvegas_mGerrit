@@ -63,6 +63,8 @@
     <string name="listview_animations_website" translatable="false">https://github.com/nhaarman/ListViewAnimations</string>
     <string name="support_library">Support Library v4</string>
     <string name="support_library_website" translatable="false">http://developer.android.com/tools/support-library/index.html</string>
+    <string name="gson_library">Gson</string>
+    <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
 
     <string name="explain_status_title">Explain statuses</string>
     <string name="explain_status_summary">Brief explanation of the Status tabs meanings</string>

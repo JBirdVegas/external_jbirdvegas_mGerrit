@@ -53,6 +53,7 @@
     </string-array>
     <string-array name="library_titles" translatable="false">
         <item>@string/cards_ui</item>
+        <item>@string/gson_library</item>
         <item>@string/listview_animations</item>
         <item>@string/nine_old_androids</item>
         <item>@string/support_library</item>
@@ -61,6 +62,7 @@
 
     <string-array name="library_websites" translatable="false">
         <item>@string/cards_ui_website</item>
+        <item>@string/gson_library_website</item>
         <item>@string/listview_animations_website</item>
         <item>@string/nine_old_androids_website</item>
         <item>@string/support_library_website</item>
