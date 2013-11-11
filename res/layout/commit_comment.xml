@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:paddingLeft="@dimen/standard_padding"
     android:paddingRight="@dimen/standard_padding"
-    android:paddingTop="@dimen/standard_padding"
-    android:background="#f0f0f0">
+    android:paddingTop="@dimen/standard_padding">
 
     <LinearLayout
         android:layout_width="wrap_content"
