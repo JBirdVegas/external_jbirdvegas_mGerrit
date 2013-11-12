@@ -48,7 +48,7 @@ public abstract class GerritMessage {
 
     public void sendUpdateMessage()
     {
-        Map<String, String> m = new HashMap<String, String>();
+        Map<String, String> m = new HashMap<>();
         m.put(GerritMessage.MESSAGE, this.getMessage());
         Intent i = packMessage(m);
         sendMessage(i);

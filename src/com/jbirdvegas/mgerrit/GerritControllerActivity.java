@@ -217,7 +217,7 @@ public class GerritControllerActivity extends FragmentActivity {
             Log.d(TAG, "Changelog was null");
         }
 
-        mGerritTasks = new HashSet<GerritTask>();
+        mGerritTasks = new HashSet<>();
 
         receivers = new DefaultGerritReceivers(this);
     }

@@ -236,8 +236,8 @@ public class ProjectsList extends Activity
      */
     private Pair<String, String> splitQuery(String query) {
         String p[] = query.split(SEPERATOR, 2);
-        if (p.length < 2) return new Pair<String, String>(p[0], p[0]);
-        else return new Pair<String, String>(p[0], p[1]);
+        if (p.length < 2) return new Pair<>(p[0], p[0]);
+        else return new Pair<>(p[0], p[1]);
     }
 
     @Override

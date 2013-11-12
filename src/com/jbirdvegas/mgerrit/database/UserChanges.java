@@ -132,8 +132,8 @@ public class UserChanges extends DatabaseTable {
     /** Insert the list of commits into the database **/
     public static int insertCommits(Context context, List<JSONCommit> commits) {
 
-        List<ContentValues> values = new ArrayList<ContentValues>();
-        Set<CommitterObject> committers = new HashSet<CommitterObject>();
+        List<ContentValues> values = new ArrayList<>();
+        Set<CommitterObject> committers = new HashSet<>();
 
         for (JSONCommit commit : commits) {
             ContentValues row = new ContentValues(9);
@@ -173,7 +173,7 @@ public class UserChanges extends DatabaseTable {
     public static CursorLoader findCommitsWithSubject(Context context, String status,
                                                       String subject) {
         StringBuilder builder = new StringBuilder();
-        List<String> bindArgs = new ArrayList<String>();
+        List<String> bindArgs = new ArrayList<>();
 
         if (subject != null) {
             builder.append(" AND ").append(C_PROJECT).append(" LIKE ?");
@@ -223,7 +223,7 @@ public class UserChanges extends DatabaseTable {
         }
 
         if (args == null) {
-            args = new ArrayList<String>();
+            args = new ArrayList<>();
         }
 
         return findCommits(context, status, builder, args);

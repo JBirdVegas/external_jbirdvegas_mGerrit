@@ -126,7 +126,7 @@ public abstract class SearchKeyword {
      *  the database query
      */
     public static Set<SearchKeyword> constructTokens(String query) {
-        Set<SearchKeyword> set = new HashSet<SearchKeyword>();
+        Set<SearchKeyword> set = new HashSet<>();
         String currentToken = "";
 
         for (int i = 0, n = query.length(); i < n; i++) {

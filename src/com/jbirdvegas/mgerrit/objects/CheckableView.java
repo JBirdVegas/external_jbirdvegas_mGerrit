@@ -38,7 +38,7 @@ public class CheckableView extends RelativeLayout implements Checkable {
     public CheckableView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mIsChecked = false;
-        this.checkableViews = new ArrayList<Checkable>(5);
+        this.checkableViews = new ArrayList<>(5);
     }
 
     @Override

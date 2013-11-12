@@ -130,7 +130,7 @@ public class AOKPChangelog extends Activity {
             try {
                 JSONArray result = response.getJSONArray("list");
                 int resultsSize = result.length();
-                List<GooFileObject> filesList = new LinkedList<GooFileObject>();
+                List<GooFileObject> filesList = new LinkedList<>();
                 // skip the first result its the nightlies folder
                 for (int i = 0; resultsSize > i; i++) {
                     filesList.add(GooFileObject.getInstance(result.getJSONObject(i)));

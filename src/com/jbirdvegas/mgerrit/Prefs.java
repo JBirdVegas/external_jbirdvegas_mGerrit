@@ -79,7 +79,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         ListPreference serverTimeZoneList = (ListPreference) findPreference(SERVER_TIMEZONE_KEY);
         // Allow changing assumed TimeZone for server
         serverTimeZoneList.setEntryValues(TimeZone.getAvailableIDs());
-        LinkedList<CharSequence> timeZones = new LinkedList<CharSequence>();
+        LinkedList<CharSequence> timeZones = new LinkedList<>();
         for (String tz : TimeZone.getAvailableIDs()) {
             timeZones.add(TimeZone.getTimeZone(tz).getID());
         }

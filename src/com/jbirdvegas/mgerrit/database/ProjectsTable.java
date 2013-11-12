@@ -83,7 +83,7 @@ public class ProjectsTable extends DatabaseTable {
     /** Insert the list of projects into the database **/
     public static int insertProjects(Context context, List<Project> projects) {
 
-        List<ContentValues> projectValues = new ArrayList<ContentValues>();
+        List<ContentValues> projectValues = new ArrayList<>();
 
         for (Project project : projects) {
             ContentValues projectRow = new ContentValues(2);
@@ -157,7 +157,7 @@ public class ProjectsTable extends DatabaseTable {
     // Split a project's path (name) into its root and subproject
     private static Pair<String, String> splitPath(String projectPath) {
         String p[] = projectPath.split(SEPERATOR, 2);
-        if (p.length < 2) return new Pair<String, String>(p[0], "");
-        else return new Pair<String, String>(p[0], p[1]);
+        if (p.length < 2) return new Pair<>(p[0], "");
+        else return new Pair<>(p[0], p[1]);
     }
 }

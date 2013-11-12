@@ -58,15 +58,9 @@ public abstract class GerritTask extends AsyncTask<String, String, String> {
     private Context mContext;
     private long mCurrentFileLength = -1;
     private String mCurrentUrl;
-    private FailedGerritCallback mFailedGerritCallback;
 
     public GerritTask(Context context) {
         mContext = context;
-    }
-
-    public GerritTask(Context context, FailedGerritCallback failedGerritCallback) {
-        mContext = context;
-        mFailedGerritCallback = failedGerritCallback;
     }
 
     @Override

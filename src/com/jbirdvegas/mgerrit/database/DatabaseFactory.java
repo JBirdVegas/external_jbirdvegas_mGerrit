@@ -87,8 +87,8 @@ public class DatabaseFactory extends ContentProvider {
 
     public DatabaseFactory() {
         super();
-        if (mInstances == null) mInstances = new ArrayList<WeakReference<DatabaseFactory>>();
-        mInstances.add(new WeakReference<DatabaseFactory>(this));
+        if (mInstances == null) mInstances = new ArrayList<>();
+        mInstances.add(new WeakReference<>(this));
     }
 
     // Not static as this ensures getDatabase was called

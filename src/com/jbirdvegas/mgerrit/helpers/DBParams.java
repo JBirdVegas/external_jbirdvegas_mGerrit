@@ -79,7 +79,7 @@ public class DBParams {
     }
 
     public static Map<String, Integer> getParameters(Uri uri) {
-        Map<String, Integer> params = new HashMap<String, Integer>();
+        Map<String, Integer> params = new HashMap<>();
         Integer conflict = getConflictParameter(uri);
         if (conflict != null) params.put(TAG_CONFLICT, conflict);
 

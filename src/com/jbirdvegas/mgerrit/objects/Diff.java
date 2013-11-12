@@ -181,7 +181,7 @@ public class Diff {
     }
 
     // used to track index of tab chars
-    LinkedList<Integer> tabs = new LinkedList<Integer>();
+    LinkedList<Integer> tabs = new LinkedList<>();
 
     private String unescape(String s) {
         int i = 0, len = s.length(), realCounter = 0;

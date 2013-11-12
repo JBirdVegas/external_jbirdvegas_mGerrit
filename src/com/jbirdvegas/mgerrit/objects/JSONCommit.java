@@ -279,7 +279,7 @@ public class JSONCommit implements Parcelable {
                     if (DEBUG) {
                         Log.e(TAG, "Failed to get changed files list", je);
                     }
-                    mChangedFiles = new ArrayList<ChangedFile>(0);
+                    mChangedFiles = new ArrayList<>(0);
                     mChangedFiles.add(new ChangedFile(draftNotice));
                 }
 
@@ -310,7 +310,7 @@ public class JSONCommit implements Parcelable {
     }
 
     private List<CommitComment> makeMessagesList(JSONObject object) throws JSONException {
-        LinkedList<CommitComment> linkedList = new LinkedList<CommitComment>();
+        LinkedList<CommitComment> linkedList = new LinkedList<>();
         JSONArray messagesArray = object.getJSONArray(KEY_MESSAGES);
         for (int i = 0; messagesArray.length() > i; i++) {
             linkedList.add(CommitComment.getInstance(messagesArray.getJSONObject(i)));
@@ -430,7 +430,7 @@ public class JSONCommit implements Parcelable {
         JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
         JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
         JSONObject filesObject = revisionObject.getJSONObject(KEY_CHANGED_FILES);
-        List<ChangedFile> list = new ArrayList<ChangedFile>(0);
+        List<ChangedFile> list = new ArrayList<>(0);
         JSONArray keysArray = filesObject.names();
 
         /* If there are no files changed (i.e. a merge commit) then an empty
@@ -455,7 +455,7 @@ public class JSONCommit implements Parcelable {
 
     private List<Reviewer> getReviewers(JSONArray jsonArray)
             throws JSONException {
-        List<Reviewer> list = new ArrayList<Reviewer>(0);
+        List<Reviewer> list = new ArrayList<>(0);
         for (int i = 0; jsonArray.length() > i; i++) {
             JSONObject object = jsonArray.getJSONObject(i);
             try {

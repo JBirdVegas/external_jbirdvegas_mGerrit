@@ -21,7 +21,7 @@ public class EmoticonSupportHelper {
             = Spannable.Factory.getInstance();
 
     private static final Map<Pattern, Integer> emoticons
-            = new HashMap<Pattern, Integer>(0);
+            = new HashMap<>(0);
 
     static {
         // standard emoticons

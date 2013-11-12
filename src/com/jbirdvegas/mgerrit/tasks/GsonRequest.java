@@ -64,7 +64,7 @@ public class GsonRequest<T> extends Request<T> {
     public Map<String, String> getHeaders() throws AuthFailureError {
         // super.getHeaders() returns an empty AbstractMap<K, V> which
         // throw UnsupportedOperation during calls to put(K, V)
-        HashMap<String, String> map = new HashMap<String, String>(0);
+        HashMap<String, String> map = new HashMap<>(0);
 
         Map<String, String> headers = super.getHeaders();
         if (headers != null)

@@ -112,7 +112,7 @@ public class ChangeListFragment extends Fragment
                     }
                 });
 
-        mTitles = new ArrayList<CharSequence>();
+        mTitles = new ArrayList<>();
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
             mTitles.add(mSectionsPagerAdapter.getPageTitle(i));
     }
@@ -176,7 +176,7 @@ public class ChangeListFragment extends Fragment
     public Set<SearchKeyword> constructTokens(String query) {
         // Clear any previous searches that where made
         if (query == null || query.isEmpty()) {
-            return new HashSet<SearchKeyword>();
+            return new HashSet<>();
         }
 
         return SearchKeyword.constructTokens(query);
@@ -194,7 +194,7 @@ public class ChangeListFragment extends Fragment
         if (tokens != null && !tokens.isEmpty()) {
             String where = SearchKeyword.constructDbSearchQuery(tokens);
             if (where != null && !where.isEmpty()) {
-                ArrayList<String> bindArgs = new ArrayList<String>();
+                ArrayList<String> bindArgs = new ArrayList<>();
                 for (SearchKeyword token : tokens) {
                     bindArgs.addAll(Arrays.asList(token.getEscapeArgument()));
                 }

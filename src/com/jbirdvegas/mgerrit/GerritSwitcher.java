@@ -108,23 +108,23 @@ public class GerritSwitcher extends DialogFragment {
     }
 
     private void initialiseGerritList(Resources res) {
-        final ArrayList <String> teams = new ArrayList<String>();
+        final ArrayList <String> teams = new ArrayList<>();
         Collections.addAll(teams, res.getStringArray(R.array.gerrit_names));
 
-        final ArrayList<String> urls = new ArrayList<String>();
+        final ArrayList<String> urls = new ArrayList<>();
         Collections.addAll(urls, res.getStringArray(R.array.gerrit_webaddresses));
 
         GerritTeamsHelper teamsHelper = new GerritTeamsHelper();
         teams.addAll(teamsHelper.getGerritNamesList());
         urls.addAll(teamsHelper.getGerritUrlsList());
 
-        Set<GerritDetails> gerrits = new HashSet<GerritDetails>();
+        Set<GerritDetails> gerrits = new HashSet<>();
 
         int min = Math.min(teams.size(), urls.size());
         for (int i = 0; i < min; i++) {
             gerrits.add(new GerritDetails(teams.get(i), urls.get(i)));
         }
-        gerritData = new ArrayList<GerritDetails>(gerrits);
+        gerritData = new ArrayList<>(gerrits);
         Collections.sort(gerritData);
     }
 

@@ -211,7 +211,7 @@ public abstract class CardsFragment extends Fragment
 
     private List<CommitCard> generateChangeLog(ChangeLogRange logRange,
                                                String result) {
-        List<CommitCard> commitCardList = new LinkedList<CommitCard>();
+        List<CommitCard> commitCardList = new LinkedList<>();
         try {
             Log.d(TAG, "makeing changelog from ChangeLogRange: "+ logRange);
             JSONArray jsonArray = new JSONArray(result);
@@ -316,7 +316,7 @@ public abstract class CardsFragment extends Fragment
                 if (args.getStringArrayList("BIND_ARGS") != null) {
                     /* Create a copy as the findCommits function can modify the contents of bindArgs
                      *  and we want each receiver to use the bindArgs from the original broadcast */
-                    ArrayList<String> bindArgs = new ArrayList<String>();
+                    ArrayList<String> bindArgs = new ArrayList<>();
                     bindArgs.addAll(args.getStringArrayList("BIND_ARGS"));
                     return UserChanges.findCommits(mParent, getQuery(), databaseQuery, bindArgs);
                 }

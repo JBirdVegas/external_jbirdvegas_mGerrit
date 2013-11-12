@@ -142,9 +142,9 @@ public class GerritTeamsHelper {
     private final List<GerritInstance> getAllTeams() {
         File[] files = mExternalCacheDir.listFiles();
         if (files == null) {
-            return new LinkedList<GerritInstance>();
+            return new LinkedList<>();
         }
-        List<GerritInstance> instances = new LinkedList<GerritInstance>();
+        List<GerritInstance> instances = new LinkedList<>();
         for (File file : files) {
             try {
                 instances.add(readFileToGerritInstance(file));
@@ -156,7 +156,7 @@ public class GerritTeamsHelper {
     }
 
     private final List<String> getAllNames() {
-        List<String> names = new LinkedList<String>();
+        List<String> names = new LinkedList<>();
         for (GerritInstance instance : mInstanceList) {
             names.add(instance.getTeamName());
         }
@@ -164,7 +164,7 @@ public class GerritTeamsHelper {
     }
 
     private final List<String> getAllUrls() {
-        List<String> urls = new LinkedList<String>();
+        List<String> urls = new LinkedList<>();
         for (GerritInstance instance : mInstanceList) {
             urls.add(instance.getTeamUrl());
         }
