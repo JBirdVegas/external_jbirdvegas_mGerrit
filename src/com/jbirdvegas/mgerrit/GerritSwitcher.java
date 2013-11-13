@@ -188,7 +188,7 @@ public class GerritSwitcher extends DialogFragment {
      */
     private boolean removeItem(int position) {
         // If the placeholder is at this position, this cannot succeed.
-        if (position > gerritData.size()) {
+        if (position >= gerritData.size()) {
             return false;
         }
         // Cannot remove the currently selected Gerrit
