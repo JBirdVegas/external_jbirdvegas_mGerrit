@@ -43,6 +43,7 @@ public class CommitCard extends RecyclableCard {
     private final GerritControllerActivity mActivity;
     private final int mGreen;
     private final int mRed;
+    private final int mOrange;
     private JSONCommit mCommit;
 
     public CommitCard(JSONCommit commit,
@@ -54,6 +55,7 @@ public class CommitCard extends RecyclableCard {
 
         this.mGreen = mActivity.getResources().getColor(R.color.text_green);
         this.mRed = mActivity.getResources().getColor(R.color.text_red);
+        this.mOrange = mActivity.getResources().getColor(android.R.color.holo_orange_light);
     }
 
     @Override
@@ -101,14 +103,12 @@ public class CommitCard extends RecyclableCard {
         } else if (statusText.equals("ABANDONED")) {
             viewHolder.status.setBackgroundColor(mRed);
         } else {
-            viewHolder.status.setBackgroundColor(mActivity.getResources().getColor(android.R.color.white));
+            viewHolder.status.setBackgroundColor(mOrange);
         }
 
         View.OnClickListener cardListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // example website
-                // http://gerrit.aokp.co/changes/?q=7615&o=CURRENT_REVISION&o=CURRENT_COMMIT&o=CURRENT_FILES&o=DETAILED_LABELS
                 mActivity.onChangeSelected(mCommit.getChangeId(), mCommit.getStatus().toString(), true);
             }
         };
