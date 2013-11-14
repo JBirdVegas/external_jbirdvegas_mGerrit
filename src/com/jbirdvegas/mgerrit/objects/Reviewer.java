@@ -24,28 +24,25 @@ import com.google.gson.annotations.SerializedName;
 
 public class Reviewer implements Parcelable {
     public static final String NO_SCORE = "No score";
-    public static final String CODE_REVIEW_PLUS_TWO = "Looks good to me, approved";
-    public static final String CODE_REVIEW_PLUS_ONE = "Looks good to me, but someone else must approve";
-    public static final String CODE_REVIEW_MINUS_ONE = "I would prefer that you didn\u0027t submit this";
-    public static final String CODE_REVIEW_MINUS_TWO = "Do not submit";
-    public static final String VERIFIED_PLUS_ONE = "Verified";
-    public static final String VERIFIED_MINUS_ONE = "Fails";
 
     @SerializedName("value")
-    private String mValue;
+    private Integer mValue = 0;
+
     private CommitterObject mCommitter;
 
     @SerializedName("date")
     private final String mDate;
 
-    public Reviewer(String value, String name, String email) {
+    private String mLabel;
+
+    public Reviewer(Integer value, String name, String email) {
         mValue = value;
         mCommitter = CommitterObject.getInstance(name, email);
         mDate = null;
     }
 
     public Reviewer(Parcel parcel) {
-        mValue = parcel.readString();
+        mValue = parcel.readInt();
         mCommitter = new CommitterObject(parcel);
         mDate = null;
     }
@@ -54,7 +51,7 @@ public class Reviewer implements Parcelable {
         return mCommitter;
     }
 
-    public String getValue() {
+    public Integer getValue() {
         return mValue;
     }
 
@@ -73,9 +70,10 @@ public class Reviewer implements Parcelable {
     @Override
     public String toString() {
         return "Reviewer{" +
-                "value='" + mValue + '\'' +
-                ", name='" + mCommitter.getName() + '\'' +
-                ", email='" + mCommitter.getEmail() + '\'' +
+                "mValue=" + mValue +
+                ", mCommitter=" + mCommitter +
+                ", mDate='" + mDate + '\'' +
+                ", mLabel='" + mLabel + '\'' +
                 '}';
     }
 
@@ -86,7 +84,15 @@ public class Reviewer implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(mValue);
+        parcel.writeInt(mValue);
         mCommitter.writeToParcel(parcel, i);
+    }
+
+    public String getLabel() {
+        return mLabel;
+    }
+
+    public void setLabel(String label) {
+        this.mLabel = label;
     }
 }

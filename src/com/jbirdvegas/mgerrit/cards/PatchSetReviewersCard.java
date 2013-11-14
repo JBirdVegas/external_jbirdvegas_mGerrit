@@ -111,20 +111,20 @@ public class PatchSetReviewersCard extends RecyclableCard {
         return root;
     }
 
-    private void setColoredApproval(String value, TextView approval) {
+    private void setColoredApproval(Integer value, TextView approval) {
         int mGreen = mContext.getResources().getColor(R.color.text_green);
         int mRed = mContext.getResources().getColor(R.color.text_red);
         int plusStatus;
         if (value == null) {
-            value = "0";
+            value = 0;
         }
         try {
-            plusStatus = Integer.parseInt(value);
+            plusStatus = value;
             if (plusStatus >= 1) {
-                approval.setText('+' + value);
+                approval.setText('+' + value.toString());
                 approval.setTextColor(mGreen);
             } else if (plusStatus <= -1) {
-                approval.setText(value);
+                approval.setText(value.toString());
                 approval.setTextColor(mRed);
             } else {
                 approval.setText(Reviewer.NO_SCORE);

@@ -110,7 +110,7 @@ public abstract class CardsFragment extends Fragment
 
     private CommitCard getCommitCard(JSONObject jsonObject, Context context) {
         return new CommitCard(
-                new JSONCommit(jsonObject, context),
+                JSONCommit.getInstance(jsonObject, context),
                 mRequestQueue,
                 mParent);
     }

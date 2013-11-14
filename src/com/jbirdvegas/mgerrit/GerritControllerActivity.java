@@ -523,7 +523,6 @@ public class GerritControllerActivity extends FragmentActivity {
     //  view is visible
     class SearchViewProperties {
         String mQuery = "";
-        private boolean mIconified;
 
         void setQuery(String query, boolean submit) {
             mQuery = query;

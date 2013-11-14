@@ -34,7 +34,7 @@ import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.dialogs.DiffDialog;
 import com.jbirdvegas.mgerrit.helpers.Tools;
-import com.jbirdvegas.mgerrit.objects.ChangedFile;
+import com.jbirdvegas.mgerrit.objects.FileInfo;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.List;
@@ -56,12 +56,12 @@ public class PatchSetChangesCard extends RecyclableCard {
         mRed = mActivity.getResources().getColor(R.color.text_red);
     }
 
-    private View generateChangedFileView(final ChangedFile changedFile, final Context context) {
+    private View generateChangedFileView(final FileInfo fileInfo, final Context context) {
 
         LayoutInflater inflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View innerRootView = inflater.inflate(R.layout.patchset_file_changed_list_item, null);
-        innerRootView.setTag(changedFile);
+        innerRootView.setTag(fileInfo);
         TextView path = (TextView)
                 innerRootView.findViewById(R.id.changed_file_path);
         TextView inserted = (TextView)
@@ -72,32 +72,32 @@ public class PatchSetChangesCard extends RecyclableCard {
                 innerRootView.findViewById(R.id.inserted_text);
         TextView delText = (TextView)
                 innerRootView.findViewById(R.id.deleted_text);
-        String changedFilePath = changedFile.getPath();
-        int insertedInFile = changedFile.getInserted();
-        int deletedInFile = changedFile.getDeleted();
+        String changedFilePath = fileInfo.getPath();
+        int insertedInFile = fileInfo.getInserted();
+        int deletedInFile = fileInfo.getDeleted();
         if (VERBOSE) {
             Log.d(TAG, "File change stats Path=" + changedFilePath
                     + " inserted=" + insertedInFile
                     + " deleted=" + deletedInFile
-                    + " objectToString()=" + changedFile.toString());
+                    + " objectToString()=" + fileInfo.toString());
         }
         // we always have a path
         if (path != null) {
             path.setText(changedFilePath);
             // we may not have inserted lines so remove if unneeded
-            if (changedFile.getInserted() == Integer.MIN_VALUE) {
+            if (fileInfo.getInserted() == Integer.MIN_VALUE) {
                 inserted.setVisibility(View.GONE);
                 insText.setVisibility(View.GONE);
             } else {
-                inserted.setText('+' + String.valueOf(changedFile.getInserted()));
+                inserted.setText('+' + String.valueOf(fileInfo.getInserted()));
                 inserted.setTextColor(mGreen);
             }
             // we may not have deleted lines so remove if unneeded
-            if (changedFile.getDeleted() == Integer.MIN_VALUE) {
+            if (fileInfo.getDeleted() == Integer.MIN_VALUE) {
                 deleted.setVisibility(View.GONE);
                 delText.setVisibility(View.GONE);
             } else {
-                deleted.setText('-' + String.valueOf(changedFile.getDeleted()));
+                deleted.setText('-' + String.valueOf(fileInfo.getDeleted()));
                 deleted.setTextColor(mRed);
             }
         }
@@ -121,8 +121,8 @@ public class PatchSetChangesCard extends RecyclableCard {
                                 Prefs.getCurrentGerrit(mActivity),
                                 mCommit.getId());
                                 //mCommit.getCurrentRevision(),
-                                //URLEncoder.encode(((ChangedFile) view.getTag()).getPath()));
-                        launchDiffDialog(url, changedFile);
+                                //URLEncoder.encode(((FileInfo) view.getTag()).getPath()));
+                        launchDiffDialog(url, fileInfo);
                     }
                 });
 
@@ -137,7 +137,7 @@ public class PatchSetChangesCard extends RecyclableCard {
                                 Prefs.getCurrentGerrit(context),
                                 mCommit.getCommitNumber(),
                                 mCommit.getPatchSetNumber(),
-                                changedFile.getPath())));
+                                fileInfo.getPath())));
                         context.startActivity(browserIntent);
                     }
                 });
@@ -151,17 +151,17 @@ public class PatchSetChangesCard extends RecyclableCard {
     protected void applyTo(View convertView) {
 
         ViewGroup view = (ViewGroup) convertView;
-        List<ChangedFile> changedFileList = mCommit.getChangedFiles();
+        List<FileInfo> fileInfoList = mCommit.getChangedFiles();
         // its possible for this to be null so watch out
-        if (changedFileList == null) {
+        if (fileInfoList == null) {
             // EEK! just show a simple not found message
             // TODO Show some error message?
             Log.e(TAG, "Could not find the list of changed files for this commit.");
         } else {
-            for (ChangedFile changedFile : changedFileList) {
+            for (FileInfo fileInfo : fileInfoList) {
                 // generate and add the Changed File Views
                 if (view != null) {
-                    view.addView(generateChangedFileView(changedFile, mActivity));
+                    view.addView(generateChangedFileView(fileInfo, mActivity));
                 }
 
             }
@@ -174,9 +174,9 @@ public class PatchSetChangesCard extends RecyclableCard {
     }
 
     // creates the Diff viewer dialog
-    private void launchDiffDialog(String url, ChangedFile changedFile) {
+    private void launchDiffDialog(String url, FileInfo fileInfo) {
         Log.d(TAG, "Attempting to contact: " + url);
-        DiffDialog diffDialog = new DiffDialog(mActivity, url, changedFile);
+        DiffDialog diffDialog = new DiffDialog(mActivity, url, fileInfo);
         diffDialog.addExceptionCallback(new DiffDialog.DiffFailCallback() {
             @Override
             public void killDialogAndErrorOut(Exception e) {

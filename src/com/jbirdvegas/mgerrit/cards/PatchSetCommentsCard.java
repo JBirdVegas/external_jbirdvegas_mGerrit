@@ -37,7 +37,9 @@ import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.objects.CommitComment;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class PatchSetCommentsCard extends RecyclableCard {
 
@@ -56,7 +58,7 @@ public class PatchSetCommentsCard extends RecyclableCard {
 
     @Override
     protected void applyTo(View convertView) {
-        LinkedList<CommitComment> commentsList = (LinkedList<CommitComment>) mJsonCommit.getMessagesList();
+        List<CommitComment> commentsList = mJsonCommit.getMessagesList();
 
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         if (convertView.getTag() == null) {

@@ -30,7 +30,7 @@ import com.jbirdvegas.mgerrit.GerritControllerActivity;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.objects.ChangedFile;
+import com.jbirdvegas.mgerrit.objects.FileInfo;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.Arrays;
@@ -176,12 +176,12 @@ public class CommitCard extends RecyclableCard {
     }
 
     /**
-     * returns the ChangedFile list as a string
+     * returns the FileInfo list as a string
      *
      * @param fileList List of ChangedFiles
      * @return String representation of list
      */
-    private String buildChangedFilesString(List<ChangedFile> fileList) {
+    private String buildChangedFilesString(List<FileInfo> fileList) {
         return Arrays.toString(fileList.toArray());
     }
 

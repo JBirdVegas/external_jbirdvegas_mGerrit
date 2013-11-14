@@ -34,7 +34,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.objects.ChangedFile;
+import com.jbirdvegas.mgerrit.objects.FileInfo;
 import com.jbirdvegas.mgerrit.objects.Diff;
 
 import java.util.regex.Pattern;
@@ -46,7 +46,7 @@ public class DiffDialog extends AlertDialog.Builder {
     private final String mUrl;
     private final RequestQueue mRequestQueue;
     private View mRootView;
-    private final ChangedFile mChangedFile;
+    private final FileInfo mFileInfo;
     private String mLineSplit = System.getProperty("line.separator");
     private LayoutInflater mInflater;
     private TextView mDiffTextView;
@@ -56,11 +56,11 @@ public class DiffDialog extends AlertDialog.Builder {
         public void killDialogAndErrorOut(Exception e);
     }
 
-    public DiffDialog(Context context, String website, ChangedFile changedFile) {
+    public DiffDialog(Context context, String website, FileInfo fileInfo) {
         super(context);
         mRequestQueue = Volley.newRequestQueue(context);
         mUrl = website;
-        mChangedFile = changedFile;
+        mFileInfo = fileInfo;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mRootView = mInflater.inflate(R.layout.diff_dialog, null);
         setView(mRootView);
@@ -69,7 +69,7 @@ public class DiffDialog extends AlertDialog.Builder {
         mDiffTextView.setTextSize(18f);
         Log.d(TAG, "Calling url: " + mUrl);
         if (DIFF_DEBUG) {
-            debugRestDiffApi(context, mUrl, mChangedFile);
+            debugRestDiffApi(context, mUrl, mFileInfo);
         }
         // we can use volley here because we return
         // does not contain the magic number on the
@@ -142,13 +142,13 @@ public class DiffDialog extends AlertDialog.Builder {
         for (String change : filesChanged) {
             String concat;
             try {
-                concat = change.substring(2, change.lastIndexOf(mChangedFile.getPath())).trim();
+                concat = change.substring(2, change.lastIndexOf(mFileInfo.getPath())).trim();
                 concat = concat.split(" ")[0];
             } catch (StringIndexOutOfBoundsException notFound) {
                 Log.d(TAG, notFound.getMessage());
                 continue;
             }
-            if (concat.equals(mChangedFile.getPath())) {
+            if (concat.equals(mFileInfo.getPath())) {
                 builder.append(DIFF);
                 change.replaceAll("\n", mLineSplit);
                 currentDiff = new Diff(getContext(), change);
@@ -171,9 +171,9 @@ public class DiffDialog extends AlertDialog.Builder {
 
     }
 
-    private void debugRestDiffApi(Context context, String mUrl, ChangedFile mChangedFile) {
+    private void debugRestDiffApi(Context context, String mUrl, FileInfo mFileInfo) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        Log.d(TAG, "Targeting changed file: " + mChangedFile);
+        Log.d(TAG, "Targeting changed file: " + mFileInfo);
         requestQueue.add(getDebugRequest(mUrl, "/a"));
         requestQueue.add(getDebugRequest(mUrl, "/b"));
         requestQueue.add(getDebugRequest(mUrl, "/ab"));

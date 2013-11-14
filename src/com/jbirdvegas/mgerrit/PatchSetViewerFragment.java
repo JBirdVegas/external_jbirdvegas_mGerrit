@@ -141,7 +141,7 @@ public class PatchSetViewerFragment extends Fragment {
                 try {
                     mCardsUI.clearCards();
                     addCards(mCardsUI,
-                            new JSONCommit(
+                            JSONCommit.getInstance(
                                     new JSONArray(s).getJSONObject(0),
                                     mContext));
                     EasyTracker.getInstance(mParent).send(

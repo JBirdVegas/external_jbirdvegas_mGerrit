@@ -22,19 +22,19 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.tasks.Deserializers;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -71,37 +71,37 @@ public class JSONCommit implements Parcelable {
     public static final String KEY_PROJECT = "project";
     private static final String KEY_TOPIC = "topic";
     private static final String KEY_OWNER = "owner";
-    private static final String KEY_COMMITTER = "committer";
+    public static final String KEY_COMMITTER = "committer";
 
     // internal
     private static final String KEY_BRANCH = "branch";
     private static final String KEY_CHANGE_ID = "change_id";
-    private static final String KEY_SUBJECT = "subject";
+    public static final String KEY_SUBJECT = "subject";
     private static final String KEY_CREATED = "created";
     private static final String KEY_UPDATED = "updated";
     private static final String KEY_MERGEABLE = "mergeable";
     private static final String KEY_SORT_KEY = "_sortkey";
-    private static final String KEY_COMMIT_NUMBER = "_number";
+    public static final String KEY_COMMIT_NUMBER = "_number";
     private static final String KEY_MESSAGES = "messages";
     private static final String KEY_CURRENT_REVISION = "current_revision";
-    private static final String KEY_CHANGED_FILES = "files";
+    public static final String KEY_CHANGED_FILES = "files";
     private static final String KEY_LABELS = "labels";
     private static final String KEY_VERIFIED = "Verified";
     private static final String KEY_CODE_REVIEW = "Code-Review";
-    private static final String KEY_ALL = "all";
-    private static final String KEY_VALUE = "value";
-    private static final String KEY_REVISIONS = "revisions";
-    private static final String KEY_COMMIT = "commit";
+    public static final String KEY_REVISIONS = "revisions";
+    public static final String KEY_COMMIT = "commit";
     private static final String KEY_TIMEZONE = "tz";
-    private static final boolean DEBUG = false;
     private static final String GERRIT_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
     private static final String HUMAN_READABLE_DATE_FORMAT = "MMMM dd, yyyy '%s' hh:mm:ss aa";
 
     private TimeZone mServerTimeZone;
     private TimeZone mLocalTimeZone;
 
-    public List<CommitComment> getMessagesList() {
-        return mMessagesList;
+    private static Gson gson;
+    static {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Deserializers.addDeserializers(gsonBuilder);
+        gson = gsonBuilder.create();
     }
 
     public enum Status {
@@ -175,147 +175,20 @@ public class JSONCommit implements Parcelable {
         mWebAddress = String.format("%s#/c/%d/", Prefs.getCurrentGerrit(context), mCommitNumber);
     }
 
-    /**
-     * Default constructor holds a single commit represented by
-     * a json formatted response
-     *
-     * @param object JSONObject sent by mgerrit in response to a query
-     */
-    @SuppressWarnings("NestedTryStatement")
-    public JSONCommit(JSONObject object, Context context) {
-        mServerTimeZone = Prefs.getServerTimeZone(context);
-        mLocalTimeZone = Prefs.getLocalTimeZone(context);
-        try {
-            mKind = object.getString(KEY_KIND);
-            mId = object.getString(KEY_ID);
-            mProject = object.getString(KEY_PROJECT);
-            mBranch = object.getString(KEY_BRANCH);
-            mChangeId = object.getString(KEY_CHANGE_ID);
-            mSubject = object.getString(KEY_SUBJECT);
-            mStatus = Status.valueOf(object.getString(KEY_STATUS));
-            mCreatedDate = object.getString(KEY_CREATED);
-            mLastUpdatedDate = object.getString(KEY_UPDATED);
-            try {
-                mIsMergeable = object.getBoolean(KEY_MERGEABLE);
-            } catch (JSONException ignored) {
-                // object is either Abandoned or Merged
-                // ignore and move on
-                mIsMergeable = false;
-            }
-            mSortKey = object.getString(KEY_SORT_KEY);
-            mCommitNumber = object.getInt(KEY_COMMIT_NUMBER);
-            mOwnerObject = CommitterObject.getInstance(object.getJSONObject(KEY_OWNER));
-            mWebAddress = String.format("%s#/c/%d/",
-                    Prefs.getCurrentGerrit(context),
-                    mCommitNumber);
+    public static JSONCommit getInstance(JSONObject object, Context context) {
+        JSONCommit thisCommit = gson.fromJson(object.toString(), JSONCommit.class);
+        thisCommit.mServerTimeZone = Prefs.getServerTimeZone(context);
+        thisCommit.mLocalTimeZone = Prefs.getLocalTimeZone(context);
+        thisCommit.mWebAddress = String.format("%s#/c/%d/",
+                Prefs.getCurrentGerrit(context),
+                thisCommit.mCommitNumber);
 
-            // TODO: labels are not available >2.6
-            try {
-                // code review labels
-                // v2.5 labels only include the expected values -2, -1, 0, 1, 2
-                // v2.6 labels include verifiers and code reviewers
-                //      with their associated values
-                JSONObject labels = object.getJSONObject(KEY_LABELS);
-                mVerifiedReviewers = getReviewers(
-                        labels.getJSONObject(KEY_VERIFIED).getJSONArray(KEY_ALL));
-                mCodeReviewers = getReviewers(
-                        labels.getJSONObject(KEY_CODE_REVIEW).getJSONArray(KEY_ALL));
-            } catch (JSONException je) {
-                if (DEBUG)
-                    Log.e(TAG, "Failed to get reviewer labels", je);
-            }
-
-            /*
-            handle messages that may not exist
-
-            If we throw JSONException here then we did not
-            directly query the patchset and are only showing
-            the commit list. Don't bother trying to load the
-            rest as they are dependant on JSONObject "current_revision"
-            which does not exist past here
-
-             **
-             *  There is one other circumstance where the patchset
-             * was once public but the current revision of the patch
-             * set is a draft (we do not have authenticated actions
-             * permission) and therefor the information about the
-             * current revision is not public and hidden.
-             *
-             * This causes almost all fields to be null. This is a rare
-             * case but needs to be addressed in the catch block here
-             **
-            */
-            // string displayed instead of blank information we don't have
-            String draftNotice = context.getString(R.string.current_revision_is_draft_message);
-            try {
-                try {
-                    mMessagesList = makeMessagesList(object);
-                } catch(JSONException je) {
-                    if (DEBUG)
-                        Log.d(TAG, "could not find messages!", je);
-                }
-                // we did not directly query the patch set
-                try {
-                    mCurrentRevision = object.getString(KEY_CURRENT_REVISION);
-                } catch (JSONException je) {
-                    if (DEBUG)
-                        Log.d(TAG, "current_revision was a fail lets try looking for revision",
-                                je);
-                    mCurrentRevision = object.getString(KEY_REVISIONS);
-                }
-
-                try {
-                    mMessage = getMessageFromJSON(object, mCurrentRevision);
-                } catch (JSONException je) {
-                    if (DEBUG) {
-                        Log.e(TAG, "Failed to get message from commit", je);
-                    }
-                    mMessage = draftNotice;
-                }
-
-                try {
-                    mChangedFiles = getChangedFilesSet(object, mCurrentRevision);
-                } catch (JSONException je) {
-                    if (DEBUG) {
-                        Log.e(TAG, "Failed to get changed files list", je);
-                    }
-                    mChangedFiles = new ArrayList<>(0);
-                    mChangedFiles.add(new ChangedFile(draftNotice));
-                }
-
-                try {
-                    mAuthorObject = getCommitter(mCurrentRevision, KEY_AUTHOR, object);
-                    mCommitterObject = getCommitter(mCurrentRevision, KEY_COMMITTER, object);
-                } catch (JSONException je) {
-                    if (DEBUG) {
-                        Log.e(TAG, "Failed to get author/committer objects", je);
-                    }
-                }
-
-                mPatchSetNumber = getPatchSetNumberInternal(object, mCurrentRevision);
-            } catch (JSONException ignored) {
-                /* TODO: No code nested in this try block is outside of its own nested try block
-                 *  therefore, this catch block should never get executed.
-                 */
-                mPatchSetNumber = -1;
-                String unknown = context.getString(R.string.unknown);
-                mAuthorObject = CommitterObject.getInstance(unknown, unknown, null, null);
-                mCommitterObject = CommitterObject.getInstance(unknown, unknown, null, null);
-            }
-        } catch (JSONException e) {
-            if (DEBUG) {
-                Log.e(TAG, "Failed to parse JSONObject into useful data", e);
-            }
+        // Set draft notices if these fields are empty
+        thisCommit.mPatchSet.setMessage(context);
+        if (thisCommit.mFileInfos == null) {
+            thisCommit.mFileInfos = FileInfoList.setDraftNotice(context);
         }
-    }
-
-    private List<CommitComment> makeMessagesList(JSONObject object) throws JSONException {
-        LinkedList<CommitComment> linkedList = new LinkedList<>();
-        JSONArray messagesArray = object.getJSONArray(KEY_MESSAGES);
-        for (int i = 0; messagesArray.length() > i; i++) {
-            linkedList.add(CommitComment.getInstance(messagesArray.getJSONObject(i)));
-        }
-        return linkedList.isEmpty() ? new LinkedList<CommitComment>() : linkedList;
+        return thisCommit;
     }
 
     @SerializedName(JSONCommit.KEY_KIND)
@@ -363,114 +236,22 @@ public class JSONCommit implements Parcelable {
     @SerializedName(JSONCommit.KEY_OWNER)
     private CommitterObject mOwnerObject;
 
-    @SerializedName(JSONCommit.KEY_AUTHOR)
-    private CommitterObject mAuthorObject;
-
-    @SerializedName(JSONCommit.KEY_COMMITTER)
-    private CommitterObject mCommitterObject;
-
-    @SerializedName(JSONCommit.KEY_MESSAGE)
-    private String mMessage;
-
     @SerializedName(JSONCommit.KEY_CHANGED_FILES)
-    private List<ChangedFile> mChangedFiles;
+    private FileInfoList mFileInfos;
 
     @SerializedName(JSONCommit.KEY_WEBSITE)
     private String mWebAddress;
 
-    @SerializedName(JSONCommit.KEY_VERIFIED)
-    private List<Reviewer> mVerifiedReviewers;
+    @SerializedName(JSONCommit.KEY_LABELS)
+    private ReviewerList mReviewers;
 
-    @SerializedName(JSONCommit.KEY_CODE_REVIEW)
-    private List<Reviewer> mCodeReviewers;
+    private CommitInfo mPatchSet;
 
-    // Not serialised
-    private int mPatchSetNumber;
+    private int mPatchSetNumber = -1;
 
     @SerializedName(JSONCommit.KEY_MESSAGES)
     private List<CommitComment> mMessagesList;
 
-    private CommitterObject getCommitter(String currentRevision,
-                                         String authorOrCommitter,
-                                         JSONObject mainObject)
-            throws JSONException {
-        if (DEBUG) {
-            Log.v(TAG, "JSONObject we check for: " + mainObject);
-        }
-        JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
-        JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
-        JSONObject commitObject = revisionObject.getJSONObject(KEY_COMMIT);
-        JSONObject authorObject = commitObject.getJSONObject(authorOrCommitter);
-        return CommitterObject.getInstance(authorObject.getString(KEY_NAME),
-                authorObject.getString(KEY_EMAIL),
-                authorObject.getString(KEY_DATE),
-                authorObject.getString(KEY_TIMEZONE));
-    }
-
-    private String getMessageFromJSON(JSONObject mainObject,
-                                      String currentRevision)
-            throws JSONException {
-        JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
-        JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
-        JSONObject commitObject = revisionObject.getJSONObject(KEY_COMMIT);
-        return commitObject.getString(KEY_MESSAGE);
-    }
-
-    private int getPatchSetNumberInternal(JSONObject mainObject,
-                                          String currentRevision)
-            throws JSONException {
-        JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
-        JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
-        return revisionObject.getInt(KEY_COMMIT_NUMBER);
-    }
-
-    private List<ChangedFile> getChangedFilesSet(JSONObject mainObject,
-                                                 String currentRevision)
-            throws JSONException {
-        JSONObject allRevisions = mainObject.getJSONObject(KEY_REVISIONS);
-        JSONObject revisionObject = allRevisions.getJSONObject(currentRevision);
-        JSONObject filesObject = revisionObject.getJSONObject(KEY_CHANGED_FILES);
-        List<ChangedFile> list = new ArrayList<>(0);
-        JSONArray keysArray = filesObject.names();
-
-        /* If there are no files changed (i.e. a merge commit) then an empty
-         * list should be returned. */
-        if (keysArray == null) {
-            return list;
-        }
-
-        for (int i = 0; keysArray.length() > i; i++) {
-            try {
-                String path = (String) keysArray.get(i);
-                list.add(ChangedFile.parseFromJSONObject(path,
-                        filesObject.getJSONObject(path)));
-            } catch (JSONException e) {
-                if (DEBUG) {
-                    Log.e(TAG, "Failed to parse jsonObject", e);
-                }
-            }
-        }
-        return list;
-    }
-
-    private List<Reviewer> getReviewers(JSONArray jsonArray)
-            throws JSONException {
-        List<Reviewer> list = new ArrayList<>(0);
-        for (int i = 0; jsonArray.length() > i; i++) {
-            JSONObject object = jsonArray.getJSONObject(i);
-            try {
-                list.add(new Reviewer(object.getString(KEY_VALUE),
-                        object.getString(KEY_NAME),
-                        object.getString(KEY_EMAIL)));
-            } catch (JSONException je) {
-                list.add(new Reviewer(null,
-                        object.getString(KEY_NAME),
-                        object.getString(KEY_EMAIL)));
-            }
-            if (DEBUG) Log.v(TAG, "Found Reviewer: " + list.get(i).toString());
-        }
-        return list;
-    }
 
     public String getKind() {
         return mKind;
@@ -506,6 +287,10 @@ public class JSONCommit implements Parcelable {
 
     public String getLastUpdatedDate() {
         return mLastUpdatedDate;
+    }
+
+    public List<CommitComment> getMessagesList() {
+        return mMessagesList;
     }
 
     /**
@@ -565,31 +350,51 @@ public class JSONCommit implements Parcelable {
     }
 
     public CommitterObject getCommitterObject() {
-        return mCommitterObject;
+        return mPatchSet.getCommitterObject();
     }
 
     public String getMessage() {
-        return mMessage;
+        return mPatchSet.getMessage();
     }
 
-    public List<ChangedFile> getChangedFiles() {
-        return mChangedFiles;
+    public List<FileInfo> getChangedFiles() {
+        return mFileInfos.getFiles();
     }
 
     public String getWebAddress() {
         return mWebAddress;
     }
 
+    public Reviewer[] getReviewers() {
+        return mReviewers.getReviewers();
+    }
+
+    public void setReviewers(ReviewerList reviewerlist) {
+        this.mReviewers = reviewerlist;
+    }
+
     public List<Reviewer> getVerifiedReviewers() {
-        return mVerifiedReviewers;
+        ArrayList<Reviewer> rs = new ArrayList<>();
+        for (Reviewer r : mReviewers.getReviewers()) {
+            if (KEY_VERIFIED.equals(r.getLabel())) {
+                rs.add(r);
+            }
+        }
+        return rs;
     }
 
     public ArrayList<Reviewer> getCodeReviewers() {
-        return (ArrayList<Reviewer>) mCodeReviewers;
+        ArrayList<Reviewer> rs = new ArrayList<>();
+        for (Reviewer r : mReviewers.getReviewers()) {
+            if (KEY_CODE_REVIEW.equals(r.getLabel())) {
+                rs.add(r);
+            }
+        }
+        return rs;
     }
 
     public CommitterObject getAuthorObject() {
-        return mAuthorObject;
+        return mPatchSet.getAuthorObject();
     }
 
     public CommitterObject getOwnerObject() {
@@ -608,8 +413,23 @@ public class JSONCommit implements Parcelable {
         mStatus = Status.valueOf(status);
     }
 
+    public void setCurrentRevision(String currentRevision) {
+        this.mCurrentRevision = currentRevision;
+    }
+
+    public void setPatchSet(CommitInfo patchSet) {
+        this.mPatchSet = patchSet;
+    }
+
+    public void setChangedFiles(FileInfoList fileInfos) {
+        this.mFileInfos = fileInfos;
+    }
+
+    public void setPatchSetNumber(int patchSetNumber) {
+        this.mPatchSetNumber = patchSetNumber;
+    }
+
     // Parcelable implementation
-    @SuppressWarnings("unchecked")
     public JSONCommit(Parcel parcel) {
         mKind = parcel.readString();
         mId = parcel.readString();
@@ -625,13 +445,10 @@ public class JSONCommit implements Parcelable {
         mCommitNumber = parcel.readInt();
         mCurrentRevision = parcel.readString();
         mOwnerObject = parcel.readParcelable(CommitterObject.class.getClassLoader());
-        mAuthorObject = parcel.readParcelable(CommitterObject.class.getClassLoader());
-        mCommitterObject = parcel.readParcelable(CommitterObject.class.getClassLoader());
-        mMessage = parcel.readString();
-        mChangedFiles = parcel.readArrayList(ChangedFile.class.getClassLoader());
+        mPatchSet = parcel.readParcelable(CommitInfo.class.getClassLoader());
+        mFileInfos = parcel.readParcelable(FileInfoList.class.getClassLoader());
         mWebAddress = parcel.readString();
-        mVerifiedReviewers = parcel.readArrayList(ChangedFile.class.getClassLoader());
-        mCodeReviewers = parcel.readArrayList(ChangedFile.class.getClassLoader());
+        mReviewers = parcel.readParcelable(ReviewerList.class.getClassLoader());
         mPatchSetNumber = parcel.readInt();
         mMessagesList = parcel.readArrayList(CommitComment.class.getClassLoader());
     }
@@ -657,45 +474,40 @@ public class JSONCommit implements Parcelable {
         parcel.writeInt(mCommitNumber);
         parcel.writeString(mCurrentRevision);
         parcel.writeParcelable(mOwnerObject, 0);
-        parcel.writeParcelable(mAuthorObject, 0);
-        parcel.writeParcelable(mCommitterObject, 0);
-        parcel.writeString(mMessage);
-        parcel.writeTypedList(mChangedFiles);
+        parcel.writeParcelable(mPatchSet, 0);
+        parcel.writeParcelable(mFileInfos, 0);
         parcel.writeString(mWebAddress);
-        parcel.writeTypedList(mVerifiedReviewers);
-        parcel.writeTypedList(mCodeReviewers);
+        parcel.writeParcelable(mReviewers, 0);
         parcel.writeInt(mPatchSetNumber);
         parcel.writeTypedList(mMessagesList);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("JSONCommit{");
-        sb.append("mKind='").append(mKind).append('\'');
-        sb.append(", mId='").append(mId).append('\'');
-        sb.append(", mProject='").append(mProject).append('\'');
-        sb.append(", mBranch='").append(mBranch).append('\'');
-        sb.append(", mChangeId='").append(mChangeId).append('\'');
-        sb.append(", mSubject='").append(mSubject).append('\'');
-        sb.append(", mStatus=").append(mStatus);
-        sb.append(", mCreatedDate='").append(mCreatedDate).append('\'');
-        sb.append(", mLastUpdatedDate='").append(mLastUpdatedDate).append('\'');
-        sb.append(", mIsMergeable=").append(mIsMergeable);
-        sb.append(", mSortKey='").append(mSortKey).append('\'');
-        sb.append(", mCommitNumber=").append(mCommitNumber);
-        sb.append(", mCurrentRevision='").append(mCurrentRevision).append('\'');
-        sb.append(", mOwnerObject=").append(mOwnerObject);
-        sb.append(", mAuthorObject=").append(mAuthorObject);
-        sb.append(", mCommitterObject=").append(mCommitterObject);
-        sb.append(", mMessage='").append(mMessage).append('\'');
-        sb.append(", mChangedFiles=").append(mChangedFiles);
-        sb.append(", mWebAddress='").append(mWebAddress).append('\'');
-        sb.append(", mVerifiedReviewers=").append(mVerifiedReviewers);
-        sb.append(", mCodeReviewers=").append(mCodeReviewers);
-        sb.append(", mPatchSetNumber=").append(mPatchSetNumber);
-        sb.append(", mMessagesList=").append(mMessagesList);
-        sb.append(", Topic='").append(mTopic).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "JSONCommit{" +
+                "mServerTimeZone=" + mServerTimeZone +
+                ", mLocalTimeZone=" + mLocalTimeZone +
+                ", mKind='" + mKind + '\'' +
+                ", mId='" + mId + '\'' +
+                ", mProject='" + mProject + '\'' +
+                ", mBranch='" + mBranch + '\'' +
+                ", mTopic='" + mTopic + '\'' +
+                ", mChangeId='" + mChangeId + '\'' +
+                ", mSubject='" + mSubject + '\'' +
+                ", mStatus=" + mStatus +
+                ", mCreatedDate='" + mCreatedDate + '\'' +
+                ", mLastUpdatedDate='" + mLastUpdatedDate + '\'' +
+                ", mIsMergeable=" + mIsMergeable +
+                ", mSortKey='" + mSortKey + '\'' +
+                ", mCommitNumber=" + mCommitNumber +
+                ", mCurrentRevision='" + mCurrentRevision + '\'' +
+                ", mOwnerObject=" + mOwnerObject +
+                ", mFileInfos=" + mFileInfos +
+                ", mWebAddress='" + mWebAddress + '\'' +
+                ", mReviewers=" + mReviewers +
+                ", mPatchSet=" + mPatchSet +
+                ", mPatchSetNumber=" + mPatchSetNumber +
+                ", mMessagesList=" + mMessagesList +
+                '}';
     }
 }
