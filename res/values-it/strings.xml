@@ -1,0 +1,128 @@
+<!--
+  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2013
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">"mGerrit"</string>
+    <string name="reviewable">"esame"</string>
+    <string name="merged">"Mergiato"</string>
+    <string name="abandoned">"Abbandonati?"</string>
+    <string name="status_explanation_new">"Il cambiamento è ancora in fase di revisione."</string>
+    <string name="status_explanation_submitted">"Modifica è stata presentata ed è nella coda di unione. Si può essere in attesa di una o più dipendenze.
+    "</string>
+    <string name="status_explanation_merged">"Il cambiamento è stato unito al suo ramo."</string>
+    <string name="status_explanation_abandoned">"Change è stato abbandonato dal suo proprietario o amministratore."</string>
+    <string name="patchset_labels_code_reviewer_title">"Code-Revisori:"</string>
+    <string name="patchset_labels_verified_reviewer_title">"Verificato:"</string>
+    <string name="inserted">"Linee inseriti:"</string>
+    <string name="deleted">"Linee eliminati:"</string>
+    <string name="binary_file">"File binario"</string>
+    <string name="none_found">"Nessuno Trovato"</string>
+    <string name="please_try_again">"Si prega di tornare indietro e riprovare"</string>
+    <string name="menu_preferences">"Preferenze
+"</string>
+    <string name="menu_help">"Aiuto"</string>
+    <string name="choose_gerrit_instance">"Scegli squadra Gerrit grado"</string>
+    <string name="commit_committer">"Committer:"</string>
+    <string name="commit_author">"Autore:"</string>
+    <string name="commit_owner">"Proprietario"</string>
+    <string name="failed_to_parse_json_response">"Impossibile analizzare la risposta da"</string>
+    <string name="show_exception">"Mostra Eccezione"</string>
+    <string name="exit">"Esci"</string>
+    <string name="gerrit_call_failed">"Impossibile ottenere risposta utile da esempio Gerrit Verifica la connessione e riprovare.
+    "</string>
+    <string name="establishing_connection">"Creazione di una connessione ..."</string>
+    <string name="transferring">"Trasferimento di JSON dati codificati ..."</string>
+    <string formatted="false" name="downloading_status">"%d di %d byte scaricati \ t %d %% completato"</string>
+    <string name="connection_established">"Connessione stabilita"</string>
+    <string name="initializing_data_transfer">"Inizializzazione di trasferimento dati ..."</string>
+    <string name="communications_error">"Errore di comunicazione"</string>
+    <string name="transferring_json_data">"Trasferimento di JSON dati codificati ..."</string>
+
+    <string name="open_source_libs">"Aprire Biblioteche Fonte"</string>
+    <string name="cards_ui">"CardsUI"</string>
+    <string name="nine_old_androids">"NineOldAndroids"</string>
+    <string name="listview_animations">"ListViewAnimations"</string>
+    <string name="support_library">"Supporto Biblioteca v4"</string>
+
+    <string name="explain_status_title">"Spiega stati"</string>
+    <string name="explain_status_summary">"Breve spiegazione dello stato di schede significati"</string>
+    <string name="menu_gerrit_instance">"Gerrit grado"</string>
+    <string name="owner_gravatar">"Immagine del profilo Gravatar del proprietario"</string>
+    <string name="author_gravatar">"Immagine del profilo Gravatar dell'autore"</string>
+    <string name="committer_gravatar">"Immagine del profilo Gravatar del commit"</string>
+    <string name="menu_refresh">"Aggiorna"</string>
+    <string name="current_revision_is_draft_message">"Versione corrente è una bozza. Alcune informazioni non sarà disponibile
+    "</string>
+    <string name="comments_card_title">"Note:"</string>
+    <string name="unknown">"Sconosciuta"</string>
+    <string name="aosp_volley_title">"Volley di AOSP"</string>
+    <string name="developers_role">"Scegli il ruolo di sviluppatore per vederlo"</string>
+    <string name="commit_reviewer">"Impegnarsi Revisore"</string>
+    <string name="context_menu_reviewer">"Cambiamenti nella query di revisione."</string>
+    <string name="context_menu_owner">"Modifiche inizialmente presentati."</string>
+    <string name="context_menu_view_diff_dialog">"Visualizza diff in finestra"</string>
+    <string name="context_menu_diff_view_in_browser">"Visualizza diff in del browser"</string>
+    <string name="choose_diff_view">"Come ti piacerebbe vedere il diff?"</string>
+    <string name="stalker_mode_toast">"Ora lo stalking utente:"</string>
+    <string name="share">"raccomandare"</string>
+    <string name="view_in_browser">"Visualizza questo cambiamento nel browser predefinito"</string>
+    <string name="moar_info">"Informazioni più dettagliate su questo cambiamento"</string>
+    <string formatted="false" name="commit_shared_from_mgerrit">"Impegnarsi %s condivisi da mGerrit!"</string>
+    <string formatted="false" name="found_cards_toast">"&lt;! [CDATA [Found %d impegna in %d secondi"</string>
+    <string name="cancel">"Annulla"</string>
+    <string name="menu_projects">"Guarda da progetto"</string>
+    <string name="aokp_changelog">"AOKP Changelog"</string>
+    <string name="download_update">"Scarica"</string>
+    <string name="please_select_update_for_range">"Si prega di selezionare il file da visualizzare changelog"</string>
+    <string name="download_rom_zip">"Scarica zip ROM"</string>
+    <string name="failed_to_decode_base64">"Impossibile decodificare la risposta Base64."</string>
+    <string name="return_was_null">"Risposta è stata nulla ... Si prega di lettura"</string>
+    <string name="using_gerrit_toast">"Utilizzando Gerrit:"</string>
+    <string name="google_now_style_animations_title">"Animare le carte"</string>
+    <string name="google_now_style_animations_summary">"Abilitare Google ora animazioni stile mentre si disegna carte"</string>
+    <string name="loading">"Caricamento diff \ u2026"</string>
+    <string name="add_gerrit_team">"Nuovo Gerrit"</string>
+    <string name="please_enter_gerrit_name">"Inserisci il nome dell'istanza Gerrit"</string>
+    <string name="please_enter_gerrit_url">"Inserisci l'url Gerrit"</string>
+    <string name="add_team_url">"Nuovo Gerrit squadra URL"</string>
+    <string name="add_gerrit_name">"Nuovo Gerrit nome della squadra"</string>
+    <string name="save">"Salva"</string>
+    <string name="handshake_fail_message">"Stretta di mano Impossibile provare a installare il certificato del fornitore del dispositivo.
+    "</string>
+    <string name="caused_by">"Causati da:"</string>
+    <string name="at">"A"</string>
+    <string name="locales">"Localizzazione TimeZone"</string>
+    <string name="server_timezone_title">"TimeZone Server"</string>
+    <string name="local_timezone_title">"Fuso orario locale"</string>
+    <string name="server_timezone_summary">"Fuso orario locale in cui si trova Gerrit server."</string>
+    <string name="local_timezone_summary">"Il fuso orario fornito di default può essere impreciso. Utilizzare questa opzione per ignorare il fuso orario locale predefinita.
+    "</string>
+    <string name="patchset_labels_change_diff">"Cambiare Differenze"</string>
+    <string name="remove_content">"Rimuovere questo contenuto"</string>
+    <string name="connection_starting">"Partendo richiesta Gerrit"</string>
+    <string name="projects_search_hint">"Progetti di ricerca"</string>
+    <string name="changes_search_hint">"Cerca cambiamenti"</string>
+    <string name="failed_to_find_url">"Impossibile trovare URL del progetto"</string>
+    <string name="change_status_update">"È stato selezionato un nuovo cambiamento di stato"</string>
+    <string name="invalid_gerrit_name">"Il nome del set di Gerrit era valido"</string>
+    <string name="invalid_gerrit_url">"L'URL set Gerrit era valido"</string>
+    <string name="gerrit_protocol">"https://"</string>
+
+    <string name="change_theme">"Seleziona Tema"</string>
+    <string name="theme_light">"Tema chiaro"</string>
+    <string name="theme_dark">"Tema scuro"</string>
+</resources>
