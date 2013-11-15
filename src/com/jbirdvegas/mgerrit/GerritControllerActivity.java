@@ -108,12 +108,17 @@ public class GerritControllerActivity extends FragmentActivity {
     protected void onStart() {
         super.onStart();
         EasyTracker.getInstance(this).activityStart(this);
+
+        registerReceivers();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         EasyTracker.getInstance(this).activityStop(this);
+
+        receivers.unregisterReceivers();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mChangeListener);
     }
 
     @Override
@@ -379,9 +384,6 @@ public class GerritControllerActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        receivers.unregisterReceivers();
-
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mChangeListener);
 
         if (mGerritTasks != null) {
             Iterator<GerritTask> it = mGerritTasks.iterator();
@@ -398,7 +400,6 @@ public class GerritControllerActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceivers();
 
         // Manually check if the Gerrit source changed (from the Preferences)
         String s = Prefs.getCurrentGerrit(this);
