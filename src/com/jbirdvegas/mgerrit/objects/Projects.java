@@ -33,7 +33,7 @@ public class Projects implements JsonDeserializer<Projects> {
     private List<Project> projects;
 
     public Projects() {
-        projects = new ArrayList<Project>();
+        projects = new ArrayList<>();
     }
 
     @Override

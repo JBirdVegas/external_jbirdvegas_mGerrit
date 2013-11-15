@@ -60,30 +60,29 @@ public abstract class DatabaseTable {
      *  These should be used to define the ITEM_LIST and ITEM_ID constants in each table
      */
     enum UriType {
-        ProjectsList, ProjectsID,
-        UsersList, UsersID,
         ChangesList, ChangesID,
+        CommitMarkerList, CommitMarkerID,
         FileInfoList, FileInfoID,
         MessageInfoList, MessageInfoID,
+        ProjectsList, ProjectsID,
+        SelectedChangeList, SelectedChangeID,
         SyncTimeList, SyncTimeID,
         UsersChangesList, UsersChangesID,
-        CommitMarkerList, CommitMarkerID,
-        SelectedChangeList, SelectedChangeID
+        UsersList, UsersID,
     }
 
     // Add each DatabaseTable class here, we need to add the virtual tables as well
     public static ArrayList<Class<? extends DatabaseTable>> tables;
     static {
         tables = new ArrayList<>();
-        tables.add(ProjectsTable.class);
-        tables.add(Users.class);
         tables.add(Changes.class);
+        tables.add(CommitMarker.class);
         tables.add(FileInfo.class);
         tables.add(MessageInfo.class);
+        tables.add(ProjectsTable.class);
+        tables.add(SelectedChange.class);
         tables.add(SyncTime.class);
         tables.add(UserChanges.class);
-        tables.add(CommitMarker.class);
-        tables.add(SelectedChange.class);
     }
 
     /* Gathers information from the DatabaseTable classes to help implement the

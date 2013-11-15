@@ -78,6 +78,6 @@ public class OwnerSearch extends SearchKeyword {
             user_email[i] = m.group(0).trim();
             i++;
         }
-        return new Pair<String, String>(user_email[0], user_email[1]);
+        return new Pair<>(user_email[0], user_email[1]);
     }
 }

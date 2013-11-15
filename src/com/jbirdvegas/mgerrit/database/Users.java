@@ -82,7 +82,7 @@ public class Users extends DatabaseTable {
     /** Insert the list of users into the database **/
     public static int insertUsers(Context context, CommitterObject[] users) {
 
-        List<ContentValues> values = new ArrayList<ContentValues>();
+        List<ContentValues> values = new ArrayList<>();
 
         for (CommitterObject user : users) {
             if (user == null) {

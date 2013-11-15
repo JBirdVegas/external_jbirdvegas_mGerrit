@@ -106,7 +106,7 @@ abstract class SyncProcessor<T> {
         final String url = getUrl().toString();
         new StartingRequest(mContext, url).sendUpdateMessage();
 
-        GsonRequest request = new GsonRequest<T>(url, gson, getType(), 5,
+        GsonRequest request = new GsonRequest<>(url, gson, getType(), 5,
                listener, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {

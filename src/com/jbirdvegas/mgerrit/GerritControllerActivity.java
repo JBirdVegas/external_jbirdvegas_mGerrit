@@ -466,14 +466,19 @@ public class GerritControllerActivity extends FragmentActivity {
     }
 
     private void onPreferenceChanged(String key) {
-        if (key.equals(Prefs.GERRIT_KEY)) {
-            onGerritChanged(Prefs.getCurrentGerrit(this));
-        } else if (key.equals(Prefs.CURRENT_PROJECT)) {
-            onProjectChanged(Prefs.getCurrentProject(this));
-        } else if (key.equals(Prefs.TRACKING_USER)) {
-            onUserTrackingChanged(Prefs.getTrackingUser(this));
-        } else if (key.equals(Prefs.ANIMATION_KEY)) {
-            mChangeList.getCurrentFragment().toggleAnimations(Prefs.getAnimationPreference(this));
+        switch (key) {
+            case Prefs.GERRIT_KEY:
+                onGerritChanged(Prefs.getCurrentGerrit(this));
+                break;
+            case Prefs.CURRENT_PROJECT:
+                onProjectChanged(Prefs.getCurrentProject(this));
+                break;
+            case Prefs.TRACKING_USER:
+                onUserTrackingChanged(Prefs.getTrackingUser(this));
+                break;
+            case Prefs.ANIMATION_KEY:
+                mChangeList.getCurrentFragment().toggleAnimations(Prefs.getAnimationPreference(this));
+                break;
         }
     }
 

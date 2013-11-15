@@ -93,7 +93,7 @@ class DBHelper extends SQLiteOpenHelper {
     }
 
     private static void instantiateTables() {
-        mTables = new ArrayList<DatabaseTable>();
+        mTables = new ArrayList<>();
         for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
             try {
                 Method getTableInst = table.getDeclaredMethod("getInstance");

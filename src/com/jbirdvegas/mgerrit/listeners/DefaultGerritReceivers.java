@@ -162,10 +162,10 @@ public class DefaultGerritReceivers {
      */
     public void registerReceivers(String ... gerritMessageType) {
 
-        List<String> l = new ArrayList<String>();
+        List<String> l = new ArrayList<>();
         Collections.addAll(l, gerritMessageType);
 
-        HashMap<String, BroadcastReceiver> typeReceiver = new HashMap<String, BroadcastReceiver>();
+        HashMap<String, BroadcastReceiver> typeReceiver = new HashMap<>();
         typeReceiver.put(EstablishingConnection.TYPE, startReceiver);
         typeReceiver.put(StartingRequest.TYPE, startReceiver);
         typeReceiver.put(ConnectionEstablished.TYPE, runningReceiver);

@@ -98,12 +98,16 @@ public class CommitCard extends RecyclableCard {
         viewHolder.updated.setText(mCommit.getLastUpdatedDate(mActivity));
 
         String statusText = mCommit.getStatus().toString();
-        if (statusText.equals("MERGED")) {
-            viewHolder.status.setBackgroundColor(mGreen);
-        } else if (statusText.equals("ABANDONED")) {
-            viewHolder.status.setBackgroundColor(mRed);
-        } else {
-            viewHolder.status.setBackgroundColor(mOrange);
+        switch (statusText) {
+            case "MERGED":
+                viewHolder.status.setBackgroundColor(mGreen);
+                break;
+            case "ABANDONED":
+                viewHolder.status.setBackgroundColor(mRed);
+                break;
+            default:
+                viewHolder.status.setBackgroundColor(mOrange);
+                break;
         }
 
         View.OnClickListener cardListener = new View.OnClickListener() {
