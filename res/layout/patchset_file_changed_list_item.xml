@@ -42,6 +42,17 @@
             style="?attr/cardTextStyle"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:id="@+id/binary_text"
+            android:text="@string/binary_file"
+            android:paddingLeft="8dip"
+            android:paddingRight="8dip"
+            android:textSize="13sp"
+            android:visibility="gone"/>
+
+        <TextView
+            style="?attr/cardTextStyle"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
             android:text="@string/inserted"
             android:id="@+id/inserted_text"
             android:paddingLeft="8dip"

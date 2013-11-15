@@ -32,6 +32,7 @@
     <string name="dash" translatable="false">-</string>
     <string name="inserted">Inserted Lines:</string>
     <string name="deleted">Deleted Lines:</string>
+    <string name="binary_file">Binary file</string>
     <string name="none_found">None Found</string>
     <string name="please_try_again">Please back out and try again</string>
     <string name="menu_preferences">Preferences</string>

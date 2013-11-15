@@ -30,8 +30,10 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ReviewerList implements Parcelable {
 
@@ -50,9 +52,16 @@ public class ReviewerList implements Parcelable {
         in.readArrayList(this.getClass().getClassLoader());
     }
 
-    public Reviewer[] getReviewers() {
-        Reviewer[] reviewers = new Reviewer[mReviewers.size()];
-        return mReviewers.toArray(reviewers);
+    public List<Reviewer> getReviewers() {
+        return mReviewers;
+    }
+
+    public Set<String> getLabels() {
+        Set<String> set = new HashSet<String>();
+        for (Reviewer r : mReviewers) {
+            set.add(r.getLabel());
+        }
+        return set;
     }
 
     @Override

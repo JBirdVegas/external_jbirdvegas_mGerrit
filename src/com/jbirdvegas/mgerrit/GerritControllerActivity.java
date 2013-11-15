@@ -500,10 +500,15 @@ public class GerritControllerActivity extends FragmentActivity {
 
     // Call this ONLY after the searchView has been initialised
     private void setupSearchQuery() {
-        String oldQuery = searchView.getQuery().toString();
-        String query = mSearchViewProperties.mQuery;
 
-        if (!mCurrentProject.equals("")) {
+        String oldQuery = "";
+        if (searchView != null && searchView.getQuery() != null) {
+            oldQuery = searchView.getQuery().toString();
+        }
+        String query = "";
+        if (mSearchViewProperties != null) query = mSearchViewProperties.mQuery;
+
+        if (!mCurrentProject.isEmpty()) {
             query = SearchKeyword.replaceKeyword(query, new ProjectSearch(mCurrentProject));
         }
 
@@ -525,6 +530,7 @@ public class GerritControllerActivity extends FragmentActivity {
         String mQuery = "";
 
         void setQuery(String query, boolean submit) {
+            if (query == null) query = "";
             mQuery = query;
             if (searchView != null) {
                 searchView.setQuery(mQuery, submit);

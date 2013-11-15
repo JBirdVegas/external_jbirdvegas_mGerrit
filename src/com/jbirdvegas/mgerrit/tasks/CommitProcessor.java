@@ -26,6 +26,8 @@ import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 
+import java.util.List;
+
 class CommitProcessor extends SyncProcessor<JSONCommit> {
 
     CommitProcessor(Context context, GerritURL url) {
@@ -36,7 +38,9 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
     void insert(JSONCommit commit) {
         String changeid = commit.getChangeId();
 
-        Reviewers.insertReviewers(getContext(), changeid, commit.getReviewers());
+        Reviewer[] reviewers = reviewersToArray(commit);
+        Reviewers.insertReviewers(getContext(), changeid, reviewers);
+
         MessageInfo.insertMessages(getContext(), changeid, commit.getMessagesList());
         ChangedFiles.insertChangedFiles(getContext(), changeid, commit.getChangedFiles());
     }
@@ -49,5 +53,10 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
     @Override
     Class<JSONCommit> getType() {
         return JSONCommit.class;
+    }
+
+    private Reviewer[] reviewersToArray(JSONCommit commit) {
+        List<Reviewer> rs = commit.getReviewers();
+        return new Reviewer[rs.size()];
     }
 }

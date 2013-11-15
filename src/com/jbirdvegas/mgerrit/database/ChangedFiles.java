@@ -107,7 +107,7 @@ public class ChangedFiles extends DatabaseTable {
             row.put(C_FILENAME, file.getPath());
             row.put(C_INSERTED, file.getInserted());
             row.put(C_DELETED, file.getDeleted());
-            row.put(C_FILE_STATUS, file.getStatus());
+            row.put(C_FILE_STATUS, String.valueOf(file.getStatus()));
             row.put(C_BINARY, file.isBinary());
             values.add(row);
         }

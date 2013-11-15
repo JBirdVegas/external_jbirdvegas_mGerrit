@@ -365,7 +365,7 @@ public class JSONCommit implements Parcelable {
         return mWebAddress;
     }
 
-    public Reviewer[] getReviewers() {
+    public List<Reviewer> getReviewers() {
         return mReviewers.getReviewers();
     }
 
@@ -383,7 +383,7 @@ public class JSONCommit implements Parcelable {
         return rs;
     }
 
-    public ArrayList<Reviewer> getCodeReviewers() {
+    public List<Reviewer> getCodeReviewers() {
         ArrayList<Reviewer> rs = new ArrayList<>();
         for (Reviewer r : mReviewers.getReviewers()) {
             if (KEY_CODE_REVIEW.equals(r.getLabel())) {

@@ -35,10 +35,37 @@ public class FileInfo implements Parcelable {
     private int deleted = -1;
 
     @SerializedName(JSONCommit.KEY_STATUS)
-    private String status;
+    private Status status;
 
     @SerializedName("binary")
     private boolean isBinary = false;
+
+    // File status
+    public enum Status {
+        ADDED ("A"),
+        DELETED("D"),
+        RENAMED("R"),
+        COPIED("C"),
+        REWRITTEN("W"),
+        MODIFIED("M");
+
+        private final String statusCode;
+
+        Status(String statusCode) {
+            this.statusCode = statusCode;
+        }
+
+        public String getStatusCode() {
+            return statusCode;
+        }
+
+        public static Status getValue(final String value) {
+            if (value == null) return MODIFIED;
+            for (Status s : values())
+                if(value.equalsIgnoreCase(s.getStatusCode())) return s;
+            return MODIFIED;
+        };
+    };
 
     public FileInfo(String draft) {
         path = draft;
@@ -56,9 +83,9 @@ public class FileInfo implements Parcelable {
         return this.deleted;
     }
 
-    public String getStatus() { return status; }
+    public Status getStatus() { return status; }
 
-    public void setStatus(String status) { this.status = status; }
+    public void setStatus(Status status) { this.status = status; }
 
     public boolean isBinary() { return isBinary; }
 
@@ -67,6 +94,13 @@ public class FileInfo implements Parcelable {
     public static FileInfo deserialise(String _path, JsonObject object){
         FileInfo file = new Gson().fromJson(object, FileInfo.class);
         file.path = _path;
+
+        // Set the status
+        String statusValue = "";
+        if (object.has(JSONCommit.KEY_STATUS)) {
+            statusValue = object.get(JSONCommit.KEY_STATUS).getAsString();
+        }
+        file.status = Status.getValue(statusValue);
         return file;
     }
 
