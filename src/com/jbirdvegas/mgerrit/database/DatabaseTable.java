@@ -61,10 +61,12 @@ public abstract class DatabaseTable {
      */
     enum UriType {
         ChangesList, ChangesID,
+        ChangedFilesList, ChangedFilesID,
         CommitMarkerList, CommitMarkerID,
         FileInfoList, FileInfoID,
         MessageInfoList, MessageInfoID,
         ProjectsList, ProjectsID,
+        ReviewersList, ReviewersID,
         SelectedChangeList, SelectedChangeID,
         SyncTimeList, SyncTimeID,
         UsersChangesList, UsersChangesID,
@@ -76,13 +78,16 @@ public abstract class DatabaseTable {
     static {
         tables = new ArrayList<>();
         tables.add(Changes.class);
+        tables.add(ChangedFiles.class);
         tables.add(CommitMarker.class);
         tables.add(FileInfo.class);
         tables.add(MessageInfo.class);
         tables.add(ProjectsTable.class);
+        tables.add(Reviewers.class);
         tables.add(SelectedChange.class);
         tables.add(SyncTime.class);
         tables.add(UserChanges.class);
+        tables.add(Users.class);
     }
 
     /* Gathers information from the DatabaseTable classes to help implement the

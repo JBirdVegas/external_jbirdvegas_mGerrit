@@ -96,7 +96,7 @@ public class ChangedFiles extends DatabaseTable {
 
     public static int insertChangedFiles(Context context, String changeid, List<com.jbirdvegas.mgerrit.objects.FileInfo> diff) {
 
-        List<ContentValues> values = new ArrayList<ContentValues>();
+        List<ContentValues> values = new ArrayList<>();
 
         for (FileInfo file : diff) {
             if (file == null) {
