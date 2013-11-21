@@ -42,6 +42,10 @@ public class ROMHelper {
             return r.getString(R.string.carbon_rom_name);
         } else if (buildVersion.startsWith("MIUI")) {
             return r.getString(R.string.miui_rom_name);
+        } else if (buildVersion.startsWith("pac")) {
+            return r.getString(R.string.pac_rom_name);
+        } else if (buildVersion.startsWith("liquid")) {
+            return r.getString(R.string.liquid_rom_name);
         }
         return context.getResources().getString(R.string.other_rom_name);
     }

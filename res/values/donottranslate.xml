@@ -11,6 +11,7 @@
     <string name="miui_rom_name">MIUI</string>
     <string name="pa_rom_name">Paranoid Android</string>
     <string name="pac_rom_name">PAC ROM</string>
+    <string name="liquid_rom_name">LiquidSmooth</string>
     <string name="other_rom_name">AOSP/Other</string>
 
 </resources>
