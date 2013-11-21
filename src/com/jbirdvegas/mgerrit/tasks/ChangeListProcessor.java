@@ -20,15 +20,20 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.database.ChangedFiles;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.CommitMarker;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
+import com.jbirdvegas.mgerrit.database.MessageInfo;
+import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.objects.Reviewer;
 
 import java.util.Arrays;
+import java.util.List;
 
 class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
 
@@ -40,6 +45,20 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
     @Override
     void insert(JSONCommit[] commits) {
         UserChanges.insertCommits(getContext(), Arrays.asList(commits));
+
+        for (JSONCommit commit : commits) {
+            Reviewer[] reviewers = reviewersToArray(commit);
+            if (reviewers == null) {
+                // Assume we have not got change details for any of the commits
+                return;
+            }
+
+            String changeid = commit.getChangeId();
+            Reviewers.insertReviewers(getContext(), changeid, reviewers);
+
+            MessageInfo.insertMessages(getContext(), changeid, commit.getMessagesList());
+            ChangedFiles.insertChangedFiles(getContext(), changeid, commit.getChangedFiles());
+        }
     }
 
     @Override
@@ -93,5 +112,11 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
                 return commit;
         }
         return null;
+    }
+
+    private Reviewer[] reviewersToArray(JSONCommit commit) {
+        List<Reviewer> rs = commit.getReviewers();
+        if (rs == null) return null;
+        return new Reviewer[rs.size()];
     }
 }

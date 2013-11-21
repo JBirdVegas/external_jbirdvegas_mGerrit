@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.helpers;
  */
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
@@ -97,15 +98,15 @@ public class GravatarHelper {
         imageRequest.add(new ImageRequest(url, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap bitmap) {
+                Resources resources = textView.getResources();
                 textView.setCompoundDrawablesWithIntrinsicBounds(
-                        new BitmapDrawable(textView.getResources(), bitmap),
+                        new BitmapDrawable(resources, bitmap),
                         null,
                         null,
                         null);
-                Context context = textView.getContext();
                 textView.setCompoundDrawablePadding(
                         Math.round(
-                                context.getResources().getDimension(
+                                resources.getDimension(
                                         R.dimen.gravatar_image_padding)));
             }
         },

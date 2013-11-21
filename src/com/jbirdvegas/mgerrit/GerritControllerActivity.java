@@ -181,7 +181,6 @@ public class GerritControllerActivity extends FragmentActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
             mChangeDetail = (PatchSetViewerFragment) fm.findFragmentById(R.id.change_detail_fragment);
-            // TODO: In two-pane mode, list items should be given the 'activated' state when touched.
         }
         Prefs.setTabletMode(this, mTwoPane);
 
@@ -452,6 +451,10 @@ public class GerritControllerActivity extends FragmentActivity {
         arguments.putString(PatchSetViewerFragment.STATUS, status);
 
         SelectedChange.setSelectedChange(this, changeID);
+
+        if (mChangeList.getCurrentFragment() != null) {
+            mChangeList.getCurrentFragment().markChangeAsSelected(changeID);
+        }
 
         if (mTwoPane) {
             mChangeDetail.setSelectedChange(changeID);

@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 
@@ -42,6 +43,9 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
     private Integer changenum_index;
     private Integer status_index;
 
+    private String selectedChangeId;
+    private CommitCard selectedChangeView;
+
     public ChangeListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
         mContext = context;
@@ -50,26 +54,25 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
     @Override
     public void bindView(View view, Context context, final Cursor cursor) {
 
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-        if (view.getTag() == null) {
-            viewHolder = new ViewHolder(view);
-        }
+        setIndicies(cursor);
 
-        // These indices will not change regardless of the view
-        if (changeid_index == null) {
-            changeid_index = cursor.getColumnIndex(UserChanges.C_CHANGE_ID);
-        }
-        if (changenum_index == null) {
-            changenum_index = cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER);
-        }
-        if (status_index == null) {
-            status_index = cursor.getColumnIndex(UserChanges.C_STATUS);
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        if (viewHolder == null) {
+            viewHolder = new ViewHolder(view);
         }
 
         viewHolder.changeid = cursor.getString(changeid_index);
         viewHolder.changeStatus = cursor.getString(status_index);
         viewHolder.webAddress = getWebAddress(cursor.getInt(changenum_index));
         view.setTag(viewHolder);
+
+        if (viewHolder.changeid.equals(selectedChangeId)) {
+            CommitCard commitCard = (CommitCard) view;
+            commitCard.setChangeSelected(true);
+            selectedChangeView = commitCard;
+        } else {
+            ((CommitCard) view).setChangeSelected(false);
+        }
 
         View.OnClickListener cardListener = new View.OnClickListener() {
             @Override
@@ -80,16 +83,14 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
                 intent.putExtra(PatchSetViewerFragment.STATUS, vh.changeStatus);
                 intent.putExtra(PatchSetViewerFragment.EXPAND_TAG, true);
                 LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+
+                // Set this view as selected
+                setSelectedChangeId((CommitCard) view, vh.changeid);
             }
         };
 
-        if (viewHolder.moarInfo != null) {
-            viewHolder.moarInfo.setTag(viewHolder);
-            viewHolder.moarInfo.setOnClickListener(cardListener);
-        } else {
-            // Root view already has viewHolder tagged
-            view.setOnClickListener(cardListener);
-        }
+        // Root view already has viewHolder tagged
+        view.setOnClickListener(cardListener);
 
         viewHolder.shareView.setTag(viewHolder);
         viewHolder.shareView.setOnClickListener(new View.OnClickListener() {
@@ -132,19 +133,56 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
         return String.format("%s#/c/%d/", Prefs.getCurrentGerrit(mContext), commitNumber);
     }
 
-    private static class ViewHolder {
-        ImageView browserView;
-        ImageView shareView;
-        ImageView moarInfo;
+    /**
+     * Notify the adapter that a new changeid has been selected.
+     *  This will refresh the adapter, forcing each view to refresh
+     *  and ensuring that only the view specified has its change selected state set
+     * @param change The id of the change that was selected
+     */
+    public void setSelectedChangeId(String change) {
+        // Check if there is any work to do here
+        if (this.selectedChangeId != null && this.selectedChangeId.equals(change)) {
+            return;
+        }
 
-        String changeid;
-        String changeStatus;
-        String webAddress;
+        this.selectedChangeId = change;
+        /* We need to refresh the view that holds the selectedChange.
+         *  Since we cannot get the view and refresh it directly (it may be off-screen) we
+         *  have to refresh all the views in the adapter.
+         * Set the previous selected change view to unselected (even if it was recycled, we
+         *  will still refresh it.
+         */
+        if (selectedChangeView != null) {
+            selectedChangeView.setChangeSelected(false);
+            selectedChangeView = null;
+        }
+        this.notifyDataSetChanged();
+    }
 
-        ViewHolder(View view) {
-            browserView = (ImageView) view.findViewById(R.id.commit_card_view_in_browser);
-            shareView = (ImageView) view.findViewById(R.id.commit_card_share_info);
-            moarInfo = (ImageView) view.findViewById(R.id.commit_card_moar_info);
+    private void setSelectedChangeId(CommitCard card, String selectedChangeId) {
+        //  Only invalidate the view if the changeid matches (i.e. it hasn't already been recycled)
+        if (selectedChangeView != null) {
+            ViewHolder viewHolder = (ViewHolder) selectedChangeView.getTag();
+            if (viewHolder.changeid.equals(this.selectedChangeId)) {
+                selectedChangeView.setChangeSelected(false);
+            }
+        }
+
+        selectedChangeView = card;
+        this.selectedChangeId = selectedChangeId;
+        card.setChangeSelected(true);
+    }
+
+    private void setIndicies(Cursor cursor) {
+        // These indices will not change regardless of the view
+        if (changeid_index == null) {
+            changeid_index = cursor.getColumnIndex(UserChanges.C_CHANGE_ID);
+        }
+        if (changenum_index == null) {
+            changenum_index = cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER);
+        }
+        if (status_index == null) {
+            status_index = cursor.getColumnIndex(UserChanges.C_STATUS);
         }
     }
 
@@ -160,5 +198,19 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
         status_index = null;
 
         return super.swapCursor(c);
+    }
+
+    private static class ViewHolder {
+        ImageView browserView;
+        ImageView shareView;
+
+        String changeid;
+        String changeStatus;
+        String webAddress;
+
+        ViewHolder(View view) {
+            browserView = (ImageView) view.findViewById(R.id.commit_card_view_in_browser);
+            shareView = (ImageView) view.findViewById(R.id.commit_card_share_info);
+        }
     }
 }

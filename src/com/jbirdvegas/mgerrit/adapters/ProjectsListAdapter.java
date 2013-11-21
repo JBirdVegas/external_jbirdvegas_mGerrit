@@ -55,6 +55,11 @@ public class ProjectsListAdapter extends SimpleCursorTreeAdapter
          *  not always be the case, so please ensure the Cursor is properly managed.
          */
 
+        /* We cannot start a loader and return null here as the group onClick listener will always
+         *  think there are no children. Also, it causes alot of possible NPEs when trying to set
+         *  the children cursor later.
+         */
+
         // TODO: The column index will always be constant here
         String root = groupCursor.getString(groupCursor.getColumnIndex(ProjectsTable.C_ROOT));
         return ProjectsTable.getSubprojects(mContext, root, mSubproject);

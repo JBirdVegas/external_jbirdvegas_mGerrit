@@ -21,7 +21,8 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:paddingBottom="8dip">
+              android:paddingBottom="8dip"
+              android:background="?attr/cardBackgroundColor">
 
     <TextView
         style="@style/CardText.Normal"

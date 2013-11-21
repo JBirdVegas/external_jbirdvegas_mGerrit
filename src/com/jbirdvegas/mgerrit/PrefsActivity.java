@@ -33,6 +33,8 @@ public class PrefsActivity extends Activity
         // Action bar Up affordance
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
+        setTitle(R.string.menu_preferences);
+
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new Prefs())

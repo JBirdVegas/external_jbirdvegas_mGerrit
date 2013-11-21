@@ -16,11 +16,12 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-<LinearLayout
+<com.jbirdvegas.mgerrit.cards.CommitCard
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="?attr/clickableCardBackground">
 
     <View
         android:id="@+id/commit_card_commit_status"
@@ -34,8 +35,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:background="?attr/cardBackgroundColor">
+        android:gravity="center">
 
         <TextView
             style="?attr/cardTitleStyle"
@@ -86,16 +86,11 @@
             android:layout_gravity="right"
             android:gravity="end">
             <ImageView
-                android:id="@+id/commit_card_moar_info"
-                android:src="?attr/aboutIcon"
-                style="@style/ActionViewsStyle"
-                android:layout_alignParentRight="true"
-                android:contentDescription="@string/moar_info"/>
-            <ImageView
                 android:src="?attr/shareIcon"
                 android:id="@+id/commit_card_share_info"
                 style="@style/ActionViewsStyle"
                 android:layout_toLeftOf="@+id/commit_card_moar_info"
+                android:layout_alignWithParentIfMissing="true"
                 android:contentDescription="@string/share"/>
             <ImageView
                 android:src="?attr/viewIcon"
@@ -105,4 +100,4 @@
                 android:contentDescription="@string/view_in_browser"/>
         </RelativeLayout>
     </LinearLayout>
-</LinearLayout>
+</com.jbirdvegas.mgerrit.cards.CommitCard>

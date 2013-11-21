@@ -44,4 +44,10 @@
     <color name="card_background">#ffffff</color>
     <color name="card_background_dark">#ff1F1F1F</color>
 
+    <color name="card_pressed">#e3e3e3</color>
+    <color name="card_pressed_dark">#101010</color>
+
+    <color name="card_selected">#ffececec</color>
+    <color name="card_selected_dark">#ff0f0f0f</color>
+
 </resources>

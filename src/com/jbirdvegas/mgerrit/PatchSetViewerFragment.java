@@ -31,6 +31,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ViewSwitcher;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -44,11 +46,13 @@ import com.jbirdvegas.mgerrit.cards.PatchSetPropertiesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetReviewersCard;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.tasks.GerritService;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
 
 import org.json.JSONArray;
@@ -63,6 +67,7 @@ import org.json.JSONException;
 public class PatchSetViewerFragment extends Fragment {
     private static final String TAG = PatchSetViewerFragment.class.getSimpleName();
 
+    private ViewSwitcher mViewSwitcher;
     private CardUI mCardsUI;
     private RequestQueue mRequestQueue;
     private Activity mParent;
@@ -88,7 +93,7 @@ public class PatchSetViewerFragment extends Fragment {
              *  has been loaded. */
             if (compareStatus(status, getStatus()) || action.equals(StatusSelected.ACTION)) {
                 setStatus(status);
-                loadChange();
+                loadChange(false);
             }
         }
     };
@@ -110,29 +115,42 @@ public class PatchSetViewerFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mParent = this.getActivity();
         mContext = mParent.getApplicationContext();
-
-        if (getArguments() != null) {
-            mSelectedChange = getArguments().getString(CHANGE_ID);
-            setStatus(getArguments().getString(STATUS));
-            SelectedChange.setSelectedChange(mContext, mSelectedChange, mStatus);
-        } else {
-            /** This should be the default value of {@link ChangeListFragment.mSelectedStatus } */
-            setStatus(JSONCommit.Status.NEW.toString());
-        }
     }
 
-    private void init()
-    {
+    private void init() {
         View currentFragment = this.getView();
 
         mCardsUI = (CardUI) currentFragment.findViewById(R.id.commit_cards);
-        mRequestQueue = Volley.newRequestQueue(mParent);
+        mViewSwitcher = (ViewSwitcher) currentFragment.findViewById(R.id.vs_patchset);
 
+        mRequestQueue = Volley.newRequestQueue(mParent);
         mUrl = new GerritURL();
-        loadChange();
+
+        Button retryButton = (Button) currentFragment.findViewById(R.id.btn_retry);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                executeGerritTask(mUrl.toString());
+            }
+        });
+
+        if (getArguments() == null) {
+            /** This should be the default value of {@link ChangeListFragment.mSelectedStatus } */
+            setStatus(JSONCommit.Status.NEW.toString());
+            loadChange(true);
+        } else {
+            setStatus(getArguments().getString(STATUS));
+            String changeid = getArguments().getString(CHANGE_ID);
+            if (changeid != null && !changeid.isEmpty()) {
+                setSelectedChange(changeid);
+            }
+        }
     }
 
     private void executeGerritTask(final String query) {
+        // If we aren't connected, there's nothing to do here
+        if (!switchViews()) return;
+
         final long start = System.currentTimeMillis();
         new GerritTask(mParent) {
             @Override
@@ -160,6 +178,11 @@ public class PatchSetViewerFragment extends Fragment {
     }
 
     private void addCards(CardUI ui, JSONCommit jsonCommit) {
+        if (!Prefs.isTabletMode(mParent)) {
+            String s = mParent.getResources().getString(R.string.change_detail_heading);
+            mParent.setTitle(String.format(s, jsonCommit.getCommitNumber()));
+        }
+
         // Properties card
         Log.d(TAG, "Loading Properties Card...");
         ui.addCard(new PatchSetPropertiesCard(jsonCommit, this, mRequestQueue, mParent), true);
@@ -195,44 +218,48 @@ public class PatchSetViewerFragment extends Fragment {
     }
 
     /**
-     * Set the change id to load details for
+     * Set the change id to load details for and load the change
      * @param changeID A valid change id
      */
     public void setSelectedChange(String changeID) {
         if (changeID == null || changeID.length() < 0) {
             return; // Invalid changeID
-        } else if (changeID == mSelectedChange) {
+        } else if (changeID.equals(mSelectedChange)) {
             return; // Same change selected, no need to do anything.
         }
 
         SelectedChange.setSelectedChange(mContext, changeID);
-        loadChange(changeID);
-    }
-
-    /**
-     * Load the details for a given change id and display it.
-     * @param changeID A valid change id
-     */
-    private void loadChange(String changeID) {
         this.mSelectedChange = changeID;
         mUrl.setChangeID(mSelectedChange);
         mUrl.requestChangeDetail(true);
         executeGerritTask(mUrl.toString());
+
+        /*
+         * Requires Gerrit version 2.8
+         * /changes/{change-id}/detail with arguments was introduced in version 2.8,
+         * so this will not be able to get the files changed or the full commit message
+         * in prior Gerrit versions.
+         */
+        GerritService.sendRequest(mParent, GerritService.DataType.Commit, mUrl);
     }
 
     /**
-     * Determine the changeid to load and call {@link #loadChange(String)}
+     * Determine the changeid to load and send an intent to load the change.
+     *  By sending an intent, the main activity is notified (GerritControllerActivity
+     *  on tablets. This can then tell the change list adapter that we have selected
+     *  a change.
+     *  @param direct true: load this change directly, false: send out an intent
      */
-    private void loadChange() {
+    private void loadChange(boolean direct) {
         if (mStatus == null) {
             // Without the status we cannot find a changeid to load data for
             return;
         }
 
         String changeID = SelectedChange.getSelectedChange(mContext, mStatus);
-        if (changeID == null) {
+        if (changeID == null || changeID.isEmpty()) {
             changeID = Changes.getMostRecentChange(mParent, mStatus);
-            if (changeID == null) {
+            if (changeID == null || changeID.isEmpty()) {
                 // No changes to load data from
                 EasyTracker.getInstance(mParent).send(
                         MapBuilder.createEvent(
@@ -245,7 +272,14 @@ public class PatchSetViewerFragment extends Fragment {
             }
         }
 
-        loadChange(changeID);
+        if (direct) setSelectedChange(changeID);
+        else {
+            Intent intent = new Intent(PatchSetViewerFragment.NEW_CHANGE_SELECTED);
+            intent.putExtra(PatchSetViewerFragment.CHANGE_ID, changeID);
+            intent.putExtra(PatchSetViewerFragment.STATUS, mStatus);
+            intent.putExtra(PatchSetViewerFragment.EXPAND_TAG, true);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        }
     }
 
     /**
@@ -358,5 +392,17 @@ public class PatchSetViewerFragment extends Fragment {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
         return true;
+    }
+
+    private boolean switchViews() {
+        boolean isconn = Tools.isConnected(mParent);
+        if (isconn) {
+            // Switch to first child
+            if (mViewSwitcher.getDisplayedChild() != 0) mViewSwitcher.showPrevious();
+        } else {
+            // Switch to second child
+            if (mViewSwitcher.getDisplayedChild() != 1) mViewSwitcher.showNext();
+        }
+        return isconn;
     }
 }

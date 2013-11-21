@@ -44,6 +44,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public static final String CURRENT_PROJECT = "current_project";
     public static final String TRACKING_USER = "committer_being_tracked";
     public static final String APP_THEME = "app_theme";
+    private static final String TABLET_MODE = "tablet_layout_mode";
 
     private Preference mGerritSwitcher;
 
@@ -293,5 +294,15 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         } else {
             return R.style.Theme_Light;
         }
+    }
+
+    public static boolean isTabletMode(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(TABLET_MODE, false);
+    }
+
+    public static void setTabletMode(Context context, boolean tabletMode) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit().putBoolean(TABLET_MODE, tabletMode).commit();
     }
 }

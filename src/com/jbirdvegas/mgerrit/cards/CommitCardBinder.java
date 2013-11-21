@@ -29,13 +29,20 @@ import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
+import com.jbirdvegas.mgerrit.helpers.Tools;
+
+import java.util.TimeZone;
 
 public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
     private final RequestQueue mRequestQuery;
     private final Context mContext;
+
+    private final int mOrange;
     private final int mGreen;
     private final int mRed;
-    private final int mOrange;
+
+    private final TimeZone mServerTimeZone;
+    private final TimeZone mLocalTimeZone;
 
     // Cursor indices
     private Integer useremail_index;
@@ -45,9 +52,12 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
         this.mRequestQuery = requestQueue;
         this.mContext = context;
 
+        this.mOrange = context.getResources().getColor(android.R.color.holo_orange_light);
         this.mGreen = context.getResources().getColor(R.color.text_green);
         this.mRed = context.getResources().getColor(R.color.text_red);
-        this.mOrange = context.getResources().getColor(android.R.color.holo_orange_light);
+
+        mServerTimeZone = Prefs.getServerTimeZone(context);
+        mLocalTimeZone = Prefs.getLocalTimeZone(context);
     }
 
     @Override
@@ -96,10 +106,22 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
                     view.setBackgroundColor(mOrange);
                     break;
             }
+        } else if (view.getId() == R.id.commit_card_last_updated) {
+            String lastUpdated = cursor.getString(columnIndex);
+            TextView textView = (TextView) view;
+            textView.setText(prettyPrintDate(mContext, lastUpdated));
         } else {
             return false;
         }
         return true;
+    }
+
+    /**
+     * PrettyPrint the Gerrit provided timestamp format into a more human readable format
+     */
+    @SuppressWarnings("SimpleDateFormatWithoutLocale")
+    private String prettyPrintDate(Context context, String date) {
+       return Tools.prettyPrintDate(context, date, mServerTimeZone, mLocalTimeZone);
     }
 
     // When the cursor changes, these may not be valid

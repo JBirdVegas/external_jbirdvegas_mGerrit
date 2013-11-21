@@ -20,6 +20,9 @@ package com.jbirdvegas.mgerrit.cards;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,17 +56,24 @@ public class PatchSetPropertiesCard extends RecyclableCard {
 
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         if (convertView.getTag() == null) {
-            viewHolder = new ViewHolder();
-
-            viewHolder.subject = (TextView) convertView.findViewById(R.id.prop_card_subject);
-            viewHolder.owner = (TextView) convertView.findViewById(R.id.prop_card_owner);
-            viewHolder.author = (TextView) convertView.findViewById(R.id.prop_card_author);
-            viewHolder.committer = (TextView) convertView.findViewById(R.id.prop_card_committer);
+            viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         }
 
         viewHolder.subject.setText(mJSONCommit.getSubject());
-        viewHolder.owner.setText(mJSONCommit.getOwnerObject().getName());
+        viewHolder.branch.setText(mJSONCommit.getBranch());
+
+        setImageCaption(viewHolder.owner, R.string.commit_owner, mJSONCommit.getOwnerObject().getName());
+        setImageCaption(viewHolder.committer, R.string.commit_owner, mJSONCommit.getOwnerObject().getName());
+
+        String topic = mJSONCommit.getTopic();
+        if (topic != null && !topic.isEmpty()) {
+            viewHolder.topic.setText(topic);
+            viewHolder.topic.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.topic.setVisibility(View.GONE);
+        }
+
         // attach owner's gravatar
         GravatarHelper.attachGravatarToTextView(
                 viewHolder.owner,
@@ -82,14 +92,17 @@ public class PatchSetPropertiesCard extends RecyclableCard {
                 (ImageView) convertView.findViewById(R.id.properties_card_view_in_browser));
         try {
             // set text will throw NPE if we don't have author/committer objects
-            viewHolder.author.setText(mJSONCommit.getAuthorObject().getName());
+            setImageCaption(viewHolder.author, R.string.commit_author,
+                    mJSONCommit.getAuthorObject().getName());
             viewHolder.author.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Prefs.setTrackingUser(mContext, mJSONCommit.getAuthorObject());
                 }
             });
-            viewHolder.committer.setText(mJSONCommit.getCommitterObject().getName());
+
+            setImageCaption(viewHolder.committer, R.string.commit_committer,
+                    mJSONCommit.getCommitterObject().getName());
             viewHolder.committer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -150,10 +163,36 @@ public class PatchSetPropertiesCard extends RecyclableCard {
         mPatchSetViewerFragment.registerViewForContextMenu(textView);
     }
 
+    private void setImageCaption(TextView textView, int resID, String authorName) {
+        String title = mContext.getResources().getString(resID);
+        if (title == null || authorName == null) return;
+
+        SpannableString text = new SpannableString(title + "\n" + authorName);
+        text.setSpan(new TextAppearanceSpan(mContext, R.style.CardText_CommitOwnerText),
+                0, title.length(), 0);
+
+        int end = title.length()+1;
+        text.setSpan(new TextAppearanceSpan(mContext, R.style.CardText_CommitOwnerDetails),
+                end, end+authorName.length(), 0);
+
+        textView.setText(text, TextView.BufferType.SPANNABLE);
+    }
+
     private static class ViewHolder {
         TextView subject;
         TextView owner;
         TextView author;
         TextView committer;
+        TextView branch;
+        TextView topic;
+
+        ViewHolder(View view) {
+            subject = (TextView) view.findViewById(R.id.prop_card_subject);
+            owner = (TextView) view.findViewById(R.id.prop_card_owner);
+            author = (TextView) view.findViewById(R.id.prop_card_author);
+            committer = (TextView) view.findViewById(R.id.prop_card_committer);
+            branch = (TextView) view.findViewById(R.id.prop_card_branch);
+            topic = (TextView) view.findViewById(R.id.prop_card_topic);
+        }
     }
 }

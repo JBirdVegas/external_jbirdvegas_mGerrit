@@ -27,7 +27,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,6 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
-import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
@@ -47,20 +45,9 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
-import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
-import com.jbirdvegas.mgerrit.tasks.GerritTask;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -108,13 +95,6 @@ public abstract class CardsFragment extends Fragment
         setup();
     }
 
-    private CommitCard getCommitCard(JSONObject jsonObject, Context context) {
-        return new CommitCard(
-                JSONCommit.getInstance(jsonObject, context),
-                mRequestQueue,
-                mParent);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -153,19 +133,6 @@ public abstract class CardsFragment extends Fragment
 
     private void setup()
     {
-        try {
-            mChangelogRange = mParent.getIntent()
-                    .getExtras()
-                    .getParcelable(AOKPChangelog.KEY_CHANGELOG);
-            if (mChangelogRange != null) {
-                loadChangeLog(mChangelogRange);
-                return;
-            }
-        } catch (NullPointerException npe) {
-            // not making a changelog
-            if (DEBUG) Log.w(TAG, "Not making changelog");
-        }
-
         sendRequest();
 
         // We cannot use the search query here as the SearchView may not have been initialised yet.
@@ -190,68 +157,6 @@ public abstract class CardsFragment extends Fragment
         super.onStop();
         LocalBroadcastManager.getInstance(mParent).unregisterReceiver(mSearchQueryListener);
         EasyTracker.getInstance(getActivity()).activityStop(getActivity());
-    }
-
-
-    private void loadChangeLog(final ChangeLogRange logRange) {
-        new GerritTask(mParent)
-        {
-            @Override
-            public void onJSONResult(String s)
-            {
-                /* This is broke at the moment. This will likely be supported by
-                 *  age interval searching when implemented */
-                /*drawCardsFromList(
-                        generateChangeLog(
-                                logRange, s),
-                        mCards);*/
-            }
-        }.execute(mUrl.toString());
-    }
-
-    private List<CommitCard> generateChangeLog(ChangeLogRange logRange,
-                                               String result) {
-        List<CommitCard> commitCardList = new LinkedList<>();
-        try {
-            Log.d(TAG, "makeing changelog from ChangeLogRange: "+ logRange);
-            JSONArray jsonArray = new JSONArray(result);
-            int arraySize = jsonArray.length();
-            CommitCard commitCard = null;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-            for (int i = 0; arraySize > i; i++) {
-                commitCard = getCommitCard(jsonArray.getJSONObject(i),
-                        mParent.getApplicationContext());
-                try {
-                    String formattedDate = commitCard
-                            .getJsonCommit().getLastUpdatedDate(mParent.getApplicationContext());
-                    String subStringDate = formattedDate
-                            .substring(0, formattedDate.length() - 10);
-                    Date commitDate  = sdf.parse(subStringDate);
-                    if (CHATTY) {
-                        Log.d(TAG, String.format("min: %s max: %s finding: %s",
-                                mChangelogRange.startTime(), mChangelogRange.endTime(), commitDate));
-                    }
-                    if (mChangelogRange.isInRange(commitDate.getTime())) {
-                        commitCardList.add(commitCard);
-                        if (CHATTY) {
-                            Log.d(TAG, "Commit included in changelog! "
-                                    + commitCard.getJsonCommit().getSubject());
-                        }
-                    } else {
-                        if (CHATTY) {
-                            Log.d(TAG, "Commit Excluded from changelog! "
-                                    + commitCard.getJsonCommit().getSubject());
-                        }
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (JSONException e) {
-            String url = mUrl.toString();
-            Log.d(TAG, getString(R.string.failed_to_parse_json_response) + ' ' + url + '\n' + result, e);
-        }
-        return commitCardList;
     }
 
     /**
@@ -307,6 +212,10 @@ public abstract class CardsFragment extends Fragment
     }
 
     public void markDirty() { mIsDirty = true; }
+
+    public void markChangeAsSelected(String changeid) {
+        mAdapter.setSelectedChangeId(changeid);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

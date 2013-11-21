@@ -16,11 +16,11 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="wrap_content"
-              android:layout_height="match_parent">
+<ViewSwitcher
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/vs_patchset">
 
     <com.fima.cardsui.views.CardUI
         android:id="@+id/commit_cards"
@@ -30,4 +30,30 @@
         android:paddingBottom="8dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="8.0dp"/>
-</LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="12sp"
+        android:layout_marginRight="12sp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textErrorMessage"
+            android:textSize="18sp"
+            android:text="@string/not_connected"
+            android:layout_marginLeft="4sp"
+            android:drawableLeft="?attr/warningIcon" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_retry"
+            android:text="Retry"
+            android:layout_below="@id/textErrorMessage"
+            android:layout_marginTop="16sp"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
+</ViewSwitcher>
