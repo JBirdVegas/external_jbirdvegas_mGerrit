@@ -17,12 +17,12 @@
 
 <resources>
     <string name="app_name">"mGerrit"</string>
-    <string name="reviewable">"esame"</string>
-    <string name="merged">"Mergiato"</string>
-    <string name="abandoned">"Abbandonati?"</string>
+    <string name="reviewable">"Aperto"</string>
+    <string name="merged">"Unito"</string>
+    <string name="abandoned">"Abbandonato"</string>
     <string name="status_explanation_new">"Il cambiamento è ancora in fase di revisione."</string>
-    <string name="status_explanation_submitted">"Modifica è stata presentata ed è nella coda di unione. Si può essere in attesa di una o più dipendenze.
-    "</string>
+    <string name="status_explanation_submitted">"Modifica è stata presentata ed è nella coda di unione.
+        Si può essere in attesa di una o più dipendenze."</string>
     <string name="status_explanation_merged">"Il cambiamento è stato unito al suo ramo."</string>
     <string name="status_explanation_abandoned">"Change è stato abbandonato dal suo proprietario o amministratore."</string>
     <string name="patchset_labels_code_reviewer_title">"Code-Revisori:"</string>
@@ -32,8 +32,7 @@
     <string name="binary_file">"File binario"</string>
     <string name="none_found">"Nessuno Trovato"</string>
     <string name="please_try_again">"Si prega di tornare indietro e riprovare"</string>
-    <string name="menu_preferences">"Preferenze
-"</string>
+    <string name="menu_preferences">"Preferenze"</string>
     <string name="menu_help">"Aiuto"</string>
     <string name="choose_gerrit_instance">"Scegli squadra Gerrit grado"</string>
     <string name="commit_committer">"Committer:"</string>
@@ -42,8 +41,7 @@
     <string name="failed_to_parse_json_response">"Impossibile analizzare la risposta da"</string>
     <string name="show_exception">"Mostra Eccezione"</string>
     <string name="exit">"Esci"</string>
-    <string name="gerrit_call_failed">"Impossibile ottenere risposta utile da esempio Gerrit Verifica la connessione e riprovare.
-    "</string>
+    <string name="gerrit_call_failed">"Impossibile ottenere risposta utile da esempio Gerrit Verifica la connessione e riprovare."</string>
     <string name="establishing_connection">"Creazione di una connessione ..."</string>
     <string name="transferring">"Trasferimento di JSON dati codificati ..."</string>
     <string formatted="false" name="downloading_status">"%d di %d byte scaricati \ t %d %% completato"</string>
@@ -65,8 +63,7 @@
     <string name="author_gravatar">"Immagine del profilo Gravatar dell'autore"</string>
     <string name="committer_gravatar">"Immagine del profilo Gravatar del commit"</string>
     <string name="menu_refresh">"Aggiorna"</string>
-    <string name="current_revision_is_draft_message">"Versione corrente è una bozza. Alcune informazioni non sarà disponibile
-    "</string>
+    <string name="current_revision_is_draft_message">"Versione corrente è una bozza. Alcune informazioni non sarà disponibile"</string>
     <string name="comments_card_title">"Note:"</string>
     <string name="unknown">"Sconosciuta"</string>
     <string name="aosp_volley_title">"Volley di AOSP"</string>
@@ -101,16 +98,15 @@
     <string name="add_team_url">"Nuovo Gerrit squadra URL"</string>
     <string name="add_gerrit_name">"Nuovo Gerrit nome della squadra"</string>
     <string name="save">"Salva"</string>
-    <string name="handshake_fail_message">"Stretta di mano Impossibile provare a installare il certificato del fornitore del dispositivo.
-    "</string>
+    <string name="handshake_fail_message">"Stretta di mano Impossibile provare a installare il certificato del fornitore del dispositivo."</string>
     <string name="caused_by">"Causati da:"</string>
     <string name="at">"A"</string>
     <string name="locales">"Localizzazione TimeZone"</string>
     <string name="server_timezone_title">"TimeZone Server"</string>
     <string name="local_timezone_title">"Fuso orario locale"</string>
     <string name="server_timezone_summary">"Fuso orario locale in cui si trova Gerrit server."</string>
-    <string name="local_timezone_summary">"Il fuso orario fornito di default può essere impreciso. Utilizzare questa opzione per ignorare il fuso orario locale predefinita.
-    "</string>
+    <string name="local_timezone_summary">"Il fuso orario fornito di default può essere impreciso.
+        Utilizzare questa opzione per ignorare il fuso orario locale predefinita."</string>
     <string name="patchset_labels_change_diff">"Cambiare Differenze"</string>
     <string name="remove_content">"Rimuovere questo contenuto"</string>
     <string name="connection_starting">"Partendo richiesta Gerrit"</string>
