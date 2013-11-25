@@ -138,4 +138,5 @@
     <!-- Seriously, DO NOT Translate these, they are used for reading the shared preferences -->
     <string name="theme_light_value" translatable="false">Light</string>
     <string name="theme_dark_value" translatable="false">Dark</string>
+    <string name="gerrit_help">Gerrit help</string>
 </resources>

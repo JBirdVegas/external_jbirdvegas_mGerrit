@@ -22,9 +22,12 @@ import android.app.DialogFragment;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -92,7 +95,7 @@ public class GerritControllerActivity extends FragmentActivity {
     private Menu mMenu;
 
     // Indicates if we are running this in tablet mode.
-    private boolean mTwoPane;
+    private boolean mTwoPane = false;
     private ChangeListFragment mChangeList;
 
     // This will be null if mTwoPane is false (i.e. not tablet mode)
@@ -180,6 +183,7 @@ public class GerritControllerActivity extends FragmentActivity {
             mChangeDetail = (PatchSetViewerFragment) fm.findFragmentById(R.id.change_detail_fragment);
             // TODO: In two-pane mode, list items should be given the 'activated' state when touched.
         }
+        Prefs.setTabletMode(this, mTwoPane);
 
         mChangeList = (ChangeListFragment) fm.findFragmentById(R.id.change_list_fragment);
 
@@ -312,13 +316,7 @@ public class GerritControllerActivity extends FragmentActivity {
                 startActivity(intent);
                 return true;
             case R.id.menu_help:
-                Builder builder = new Builder(this);
-                builder.setTitle(R.string.menu_help);
-                LayoutInflater layoutInflater = this.getLayoutInflater();
-                View dialog = layoutInflater.inflate(R.layout.dialog_help, null);
-                builder.setView(dialog);
-                builder.create();
-                builder.show();
+                showHelpDialog();
                 return true;
             case R.id.menu_refresh:
                 refreshTabs();
@@ -496,6 +494,25 @@ public class GerritControllerActivity extends FragmentActivity {
      */
     public PatchSetViewerFragment getChangeDetail() {
         return mChangeDetail;
+    }
+
+    private void showHelpDialog() {
+        Builder builder = new Builder(this);
+        builder.setTitle(R.string.menu_help);
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        View dialog = layoutInflater.inflate(R.layout.dialog_help, null);
+        builder.setView(dialog);
+        builder.setNeutralButton(getString(R.string.gerrit_help),
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(mGerritWebsite + "Documentation/index.html"));
+                startActivity(browserIntent);
+            }
+        });
+        builder.create();
+        builder.show();
     }
 
     // Call this ONLY after the searchView has been initialised
