@@ -73,7 +73,6 @@
     <string name="share">Sdílet</string>
     <string name="commit_shared_from_mgerrit" formatted="false">Požadavek %s sdílen přes mGerrit!</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[Nalezeno %d požadavů za %d sekund]]></string>
-    <string name="cancel">Zrušit</string>
     <string name="menu_projects">Zobrazit podle projektu</string>
     <string name="aokp_changelog">AOKP seznam změn</string>
     <string name="download_update">Stáhnout</string>
@@ -90,7 +89,6 @@
     <string name="please_enter_gerrit_url">Vložit url adresu Gerritu</string>
     <string name="add_team_url">Adresa nového Gerrti týmu.</string>
     <string name="add_gerrit_name">Jméno nového Gerrit týmu</string>
-    <string name="save">Uložit</string>
     <string name="handshake_fail_message">Chyba načtení, není potřeba nainstalovat na zařízení certifikát?</string>
     <string name="caused_by">Způsobeno:</string>
     <string name="at">v</string>

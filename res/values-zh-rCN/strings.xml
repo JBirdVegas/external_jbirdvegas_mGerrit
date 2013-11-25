@@ -79,7 +79,6 @@
     <string name="moar_info">本变更的更多详细信息</string>
     <string name="commit_shared_from_mgerrit" formatted="false">分享提交 %s 来自mGerrit！</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[找到 %d 提交耗时 %d 秒]]></string>
-    <string name="cancel">取消</string>
     <string name="menu_projects">按项目查看</string>
     <string name="aokp_changelog">AOKP 更新日志</string>
     <string name="download_update">下载</string>
@@ -96,7 +95,6 @@
     <string name="please_enter_gerrit_url">请输入Gerrit的地址</string>
     <string name="add_team_url">新Gerrit团队地址</string>
     <string name="add_gerrit_name">新Gerrit团队名称</string>
-    <string name="save">保存</string>
     <string name="handshake_fail_message">尝试在你的设备上安装提供者证书失败。
     </string>
     <string name="caused_by">引起原因：</string>

@@ -80,7 +80,6 @@
     <string name="share">공유</string>
     <string name="commit_shared_from_mgerrit" formatted="false">Commit %s shared from mGerrit!</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[Found %d commits in %d seconds]]></string>
-    <string name="cancel">취소</string>
     <string name="menu_projects">프로젝트보기</string>
     <string name="aokp_changelog">AOKP 체인지로그</string>
     <string name="download_update">다운로드</string>

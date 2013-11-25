@@ -32,15 +32,16 @@
     <string name="binary_file">"File binario"</string>
     <string name="none_found">"Nessuno Trovato"</string>
     <string name="please_try_again">"Si prega di tornare indietro e riprovare"</string>
-    <string name="menu_preferences">"Preferenze"</string>
-    <string name="menu_help">"Aiuto"</string>
+    <string name="menu_preferences">"Impostazioni"</string>
+    <string name="menu_help">"Guida"</string>
+    <string name="menu_refresh">"Aggiorna"</string>
     <string name="choose_gerrit_instance">"Scegli squadra Gerrit grado"</string>
     <string name="commit_committer">"Committer:"</string>
     <string name="commit_author">"Autore:"</string>
     <string name="commit_owner">"Proprietario"</string>
     <string name="failed_to_parse_json_response">"Impossibile analizzare la risposta da"</string>
     <string name="show_exception">"Mostra Eccezione"</string>
-    <string name="exit">"Esci"</string>
+    <string name="exit">"uscita"</string>
     <string name="gerrit_call_failed">"Impossibile ottenere risposta utile da esempio Gerrit Verifica la connessione e riprovare."</string>
     <string name="establishing_connection">"Creazione di una connessione ..."</string>
     <string name="transferring">"Trasferimento di JSON dati codificati ..."</string>
@@ -62,10 +63,9 @@
     <string name="owner_gravatar">"Immagine del profilo Gravatar del proprietario"</string>
     <string name="author_gravatar">"Immagine del profilo Gravatar dell'autore"</string>
     <string name="committer_gravatar">"Immagine del profilo Gravatar del commit"</string>
-    <string name="menu_refresh">"Aggiorna"</string>
     <string name="current_revision_is_draft_message">"Versione corrente è una bozza. Alcune informazioni non sarà disponibile"</string>
     <string name="comments_card_title">"Note:"</string>
-    <string name="unknown">"Sconosciuta"</string>
+    <string name="unknown">Sconosciuto</string>
     <string name="aosp_volley_title">"Volley di AOSP"</string>
     <string name="developers_role">"Scegli il ruolo di sviluppatore per vederlo"</string>
     <string name="commit_reviewer">"Impegnarsi Revisore"</string>
@@ -75,12 +75,11 @@
     <string name="context_menu_diff_view_in_browser">"Visualizza diff in del browser"</string>
     <string name="choose_diff_view">"Come ti piacerebbe vedere il diff?"</string>
     <string name="stalker_mode_toast">"Ora lo stalking utente:"</string>
-    <string name="share">"raccomandare"</string>
+    <string name="share">"Condividi"</string>
     <string name="view_in_browser">"Visualizza questo cambiamento nel browser predefinito"</string>
     <string name="moar_info">"Informazioni più dettagliate su questo cambiamento"</string>
     <string formatted="false" name="commit_shared_from_mgerrit">"Impegnarsi %s condivisi da mGerrit!"</string>
     <string formatted="false" name="found_cards_toast">"&lt;! [CDATA [Found %d impegna in %d secondi"</string>
-    <string name="cancel">"Annulla"</string>
     <string name="menu_projects">"Guarda da progetto"</string>
     <string name="aokp_changelog">"AOKP Changelog"</string>
     <string name="download_update">"Scarica"</string>
@@ -97,7 +96,6 @@
     <string name="please_enter_gerrit_url">"Inserisci l'url Gerrit"</string>
     <string name="add_team_url">"Nuovo Gerrit squadra URL"</string>
     <string name="add_gerrit_name">"Nuovo Gerrit nome della squadra"</string>
-    <string name="save">"Salva"</string>
     <string name="handshake_fail_message">"Stretta di mano Impossibile provare a installare il certificato del fornitore del dispositivo."</string>
     <string name="caused_by">"Causati da:"</string>
     <string name="at">"A"</string>

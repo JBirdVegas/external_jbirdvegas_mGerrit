@@ -74,7 +74,6 @@
     <string name="share">共有</string>
     <string name="commit_shared_from_mgerrit" formatted="false">コミット %s mGerritから共有!</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[%dコミットを %d秒で見つけました]]></string>
-    <string name="cancel">キャンセル</string>
     <string name="menu_projects">プロジェクト一覧</string>
     <string name="aokp_changelog">AOKP変更履歴</string>
     <string name="download_update">ダウンロード</string>
@@ -91,7 +90,6 @@
     <string name="please_enter_gerrit_url">Gerrit URLを入力して下さい</string>
     <string name="add_team_url">GerritチームURL</string>
     <string name="add_gerrit_name">Gerritチーム名</string>
-    <string name="save">保存</string>
     <string name="handshake_fail_message">認証に失敗しました。プロバイダの証明書を端末にインストールしてみてください。</string>
     <string name="caused_by">原因:</string>
     <string name="at">-</string>

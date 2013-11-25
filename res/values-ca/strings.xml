@@ -73,7 +73,6 @@
     <string name="share">Comparteix</string>
     <string name="commit_shared_from_mgerrit" formatted="false">S\'ha compartit la validació %s des d\'mGerrit!</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[S\'ha trobat %d validacions en %d segons]]></string>
-    <string name="cancel">Cancel·la</string>
     <string name="menu_projects">Visualització per projecte</string>
     <string name="aokp_changelog">Registre de canvis d\'AOKP</string>
     <string name="download_update">Baixa</string>
@@ -90,7 +89,6 @@
     <string name="please_enter_gerrit_url">Introduïu l\'url Gerrit</string>
     <string name="add_team_url">URL de l\'equip Gerrit nou.</string>
     <string name="add_gerrit_name">Nom de l\'equip Gerrit nou</string>
-    <string name="save">Desa</string>
     <string name="handshake_fail_message">Ha fallat el reconeixement, intenteu instal·lar el certificat del proveïdor al dispositiu.</string>
     <string name="caused_by">Causat per:</string>
     <string name="at">a</string>

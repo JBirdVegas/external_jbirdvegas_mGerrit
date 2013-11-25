@@ -71,7 +71,6 @@
   <string name="share">Поделиться</string>
   <string name="commit_shared_from_mgerrit" formatted="false">Изменение %s отправлено через mGerrit!</string>
   <string name="found_cards_toast" formatted="false"><![CDATA[Найдено %d изменений за %d секунд]]></string>
-  <string name="cancel">Отменить</string>
   <string name="menu_projects">По проектам</string>
   <string name="aokp_changelog">Список изменений АОКР</string>
   <string name="download_update">Скачать</string>
@@ -88,7 +87,6 @@
   <string name="please_enter_gerrit_url">Пожалуйста, введите URL-адрес Gerrit</string>
   <string name="add_team_url">URL-адрес новой команды Gerrit.</string>
   <string name="add_gerrit_name">Имя новой команды Gerrit</string>
-  <string name="save">Сохранить</string>
   <string name="handshake_fail_message">Не удалось, попробуйте установить сертификат провайдера на устройство.
     </string>
   <string name="caused_by">Причина:</string>

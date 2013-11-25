@@ -94,7 +94,6 @@
     <string name="moar_info">More detailed information on this change</string>
     <string name="commit_shared_from_mgerrit" formatted="false">Commit %s shared from mGerrit!</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[Found %d commits in %d seconds]]></string>
-    <string name="cancel">Cancel</string>
     <string name="menu_projects">View by project</string>
     <string name="aokp_changelog">AOKP Changelog</string>
     <string name="download_update">Download</string>
@@ -111,7 +110,6 @@
     <string name="please_enter_gerrit_url">Please enter the Gerrit url</string>
     <string name="add_team_url">New Gerrit team URL</string>
     <string name="add_gerrit_name">New Gerrit team name</string>
-    <string name="save">Save</string>
     <string name="handshake_fail_message">Failed handshake try installing provider\'s certificate on your device.
     </string>
     <string name="caused_by">Caused by:</string>
