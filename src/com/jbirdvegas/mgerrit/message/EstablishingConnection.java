@@ -6,7 +6,6 @@ import android.content.Intent;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 
-import java.util.Iterator;
 import java.util.Map;
 
 /*

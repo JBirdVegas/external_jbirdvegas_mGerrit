@@ -167,13 +167,12 @@ public class CommitterObject implements Parcelable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        else if (o == null) return false;
+        else if (o == null || getClass() != o.getClass()) return false;
 
         CommitterObject that = (CommitterObject) o;
 
-        if (mAccountId != that.mAccountId) return false;
+        return mAccountId == that.mAccountId;
 
-        return true;
     }
 
     @Override

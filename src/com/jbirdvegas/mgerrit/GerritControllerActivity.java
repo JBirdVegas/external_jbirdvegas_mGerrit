@@ -210,7 +210,7 @@ public class GerritControllerActivity extends FragmentActivity {
 
     private void init() {
         // ensure we are not tracking a project unintentionally
-        if ("".equals(Prefs.getCurrentProject(this))) {
+        if (Prefs.getCurrentProject(this).isEmpty()) {
             Prefs.setCurrentProject(this, null);
         }
         mCurrentProject = Prefs.getCurrentProject(this);

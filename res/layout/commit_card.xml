@@ -16,16 +16,17 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <View
         android:id="@+id/commit_card_commit_status"
         android:layout_height="match_parent"
         android:layout_width="6dp"
-        android:background="?attr/cardBackgroundColor"
+        android:background="@android:color/transparent"
         android:paddingRight="2dp"/>
 
     <LinearLayout

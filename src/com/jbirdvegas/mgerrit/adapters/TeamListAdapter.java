@@ -39,7 +39,6 @@ import java.util.List;
 public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
 
     private LayoutInflater mInflator;
-    private ViewHolder gerritPlaceholder;
     private String gerritName, gerritUrl = "https://";
 
     private List<GerritDetails> data;
@@ -142,7 +141,6 @@ public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
                 viewHolder.gerritEditUrl = (EditText) convertView.findViewById(R.id.add_team_url_edittext);
                 convertView.setTag(viewHolder);
             }
-            gerritPlaceholder = viewHolder;
 
             rowData = getItem(position);
 

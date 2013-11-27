@@ -111,6 +111,6 @@ public class PatchSetCommentsCard extends RecyclableCard {
     }
 
     private static class ViewHolder {
-        static ViewGroup viewGroup;
+        ViewGroup viewGroup;
     }
 }

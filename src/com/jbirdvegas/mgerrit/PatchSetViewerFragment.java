@@ -68,7 +68,6 @@ public class PatchSetViewerFragment extends Fragment {
     private Activity mParent;
     private Context mContext;
 
-    private View mCurrentFragment;
     private GerritURL mUrl;
     private String mSelectedChange;
     private String mStatus;
@@ -124,9 +123,9 @@ public class PatchSetViewerFragment extends Fragment {
 
     private void init()
     {
-        mCurrentFragment = this.getView();
+        View currentFragment = this.getView();
 
-        mCardsUI = (CardUI) mCurrentFragment.findViewById(R.id.commit_cards);
+        mCardsUI = (CardUI) currentFragment.findViewById(R.id.commit_cards);
         mRequestQueue = Volley.newRequestQueue(mParent);
 
         mUrl = new GerritURL();
