@@ -51,19 +51,19 @@ public final class Deserializers {
                                     JsonDeserializationContext jsonDeserializationContext)
                 throws JsonParseException {
 
-                Reviewer reviewer = new Gson().fromJson(jsonElement, type);
-                reviewer.setCommitter(new Gson().fromJson(jsonElement, CommitterObject.class));
-                return reviewer;
-            }
-        };
+            Reviewer reviewer = new Gson().fromJson(jsonElement, type);
+            reviewer.setCommitter(new Gson().fromJson(jsonElement, CommitterObject.class));
+            return reviewer;
+        }
+    };
 
     // Custom deserializer to get all the reviewers and their associated labels
     private static final JsonDeserializer<ReviewerList> d_reviewers = new JsonDeserializer<ReviewerList>() {
 
         @Override
         public ReviewerList deserialize(JsonElement jsonElement,
-                                    Type type,
-                                    JsonDeserializationContext jsonDeserializationContext)
+                                        Type type,
+                                        JsonDeserializationContext jsonDeserializationContext)
                 throws JsonParseException {
 
             ArrayList<Reviewer> reviewers = new ArrayList<>();
@@ -88,8 +88,8 @@ public final class Deserializers {
 
         @Override
         public JSONCommit deserialize(JsonElement jsonElement,
-                                    Type type,
-                                    JsonDeserializationContext jsonDeserializationContext)
+                                      Type type,
+                                      JsonDeserializationContext jsonDeserializationContext)
                 throws JsonParseException {
 
             Gson gson = new Gson();
@@ -115,12 +115,17 @@ public final class Deserializers {
             String currentRevision = commit.getCurrentRevision();
             if (currentRevision == null) return commit;
 
-            // Set the author and committer objects
             JsonObject revisionsObj = object.get(JSONCommit.KEY_REVISIONS).getAsJsonObject();
             JsonObject psObj = revisionsObj.get(currentRevision).getAsJsonObject();
-            commit.setPatchSetNumber(psObj.get(JSONCommit.KEY_COMMIT_NUMBER).getAsInt());
-            JsonObject commitObj = psObj.get(JSONCommit.KEY_COMMIT).getAsJsonObject();
-            commit.setPatchSet(gson.fromJson(commitObj, CommitInfo.class));
+
+            if (psObj.has(JSONCommit.KEY_COMMIT_NUMBER)) {
+                commit.setPatchSetNumber(psObj.get(JSONCommit.KEY_COMMIT_NUMBER).getAsInt());
+            }
+
+            if (psObj.has(JSONCommit.KEY_COMMIT)) {
+                JsonObject commitObj = psObj.get(JSONCommit.KEY_COMMIT).getAsJsonObject();
+                commit.setPatchSet(gson.fromJson(commitObj, CommitInfo.class));
+            }
 
             // Add the changed files
             if (psObj.has(JSONCommit.KEY_CHANGED_FILES)) {
