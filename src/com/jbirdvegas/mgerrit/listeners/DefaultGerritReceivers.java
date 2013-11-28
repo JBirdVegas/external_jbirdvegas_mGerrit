@@ -147,7 +147,7 @@ public class DefaultGerritReceivers {
             Toast.makeText(context,
                     String.format("%s with webaddress: %s", message, url),
                     Toast.LENGTH_LONG).show();
-            Tools.showErrorDialog(context, exception);
+            Tools.showErrorDialog(mActivity, exception);
 
             if (mRequestsRunning.decrementAndGet() <= 0) {
                 mActivity.setProgressBarIndeterminateVisibility(false);
