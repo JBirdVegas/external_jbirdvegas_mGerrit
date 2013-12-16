@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.search;
 import android.util.Log;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,6 +50,7 @@ public abstract class SearchKeyword {
         _CLASSES.add(OwnerSearch.class);
         _CLASSES.add(TopicSearch.class);
         _CLASSES.add(BranchSearch.class);
+        _CLASSES.add(AgeSearch.class);
 
         // This will load the class calling the class's static block
         for (Class<? extends SearchKeyword> clazz : _CLASSES) {
@@ -60,17 +62,25 @@ public abstract class SearchKeyword {
         }
     }
 
+    // TODO: All keywords are currently getting these operators. Make an overridable method
+    //  to determine whether a keyword supports an operator. Or assume '=' and ignore it
+    //  if it doesn't.
+    /** Supported searching operators - these are used directly in the SQL query */
+    protected static String[] operators = { "=", "<", ">", "<=", ">=" };
+
     public SearchKeyword(String name, String param) {
-        this.mOpName = name;
-        this.mOpParam = param;
+        this(name, null, param);
     }
 
+    // We can allow nulls for the parameter but not the name
     public SearchKeyword(String name, String operator, String param) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException(String.format("The keyword name of %s was not valid", name));
+        }
         mOpName = name;
         mOperator = operator;
         mOpParam = param;
     }
-
 
 
     protected static void registerKeyword(String opName, Class<? extends SearchKeyword> clazz) {
@@ -83,17 +93,24 @@ public abstract class SearchKeyword {
 
     @Override
     public String toString() {
+        // Keywords with empty parameters are ignored
+        if (mOpParam == null || mOpParam.isEmpty()) return "";
+
         StringBuilder builder = new StringBuilder().append(mOpName).append(":\"");
         if (mOperator != null) builder.append(mOperator);
         builder.append(mOpParam).append("\"");
         return builder.toString();
     }
 
+    protected static boolean isParameterValid(String param) {
+        return param != null && !param.isEmpty();
+    }
+
     /**
      * Build a search keyword given a name and its parameter
-     * @param name
-     * @param param
-     * @return
+     * @param name The name of the keyword (a key of _KEYWORDS)
+     * @param param Arguments for the token - will not be processed
+     * @return A search keyword matching name:param
      */
     private static SearchKeyword buildToken(String name, String param) {
 
@@ -127,33 +144,27 @@ public abstract class SearchKeyword {
      */
     public static Set<SearchKeyword> constructTokens(String query) {
         Set<SearchKeyword> set = new HashSet<>();
-        String currentToken = "";
+        StringBuilder currentToken = new StringBuilder();
 
         for (int i = 0, n = query.length(); i < n; i++) {
             char c = query.charAt(i);
             if (Character.isWhitespace(c)) {
                 if (currentToken.length() > 0) {
-                    addToSetIfNotNull(buildToken(currentToken), set);
-                    currentToken = "";
+                    addToSetIfNotNull(buildToken(currentToken.toString()), set);
+                    currentToken.setLength(0);
                 }
             } else if (c == '"') {
-                int index = query.indexOf('"', i + 1);
-                // We don't want to store the quotation marks
-                currentToken += query.substring(i + 1, index);
-                i = index; // We have processed this many characters
+                i = processTo(query, currentToken, i, '"');
             } else if (c == '{') {
-                int index = query.indexOf('}', i + 1);
-                // We don't want to store these braces
-                currentToken += query.substring(i + 1, index);
-                i = index; // We have processed this many characters
+                i = processTo(query, currentToken, i, '}');
             } else {
-                currentToken += c;
+                currentToken.append(c);
             }
         }
 
         // Have to check if a token was terminated by end of string
         if (currentToken.length() > 0) {
-            addToSetIfNotNull(buildToken(currentToken), set);
+            addToSetIfNotNull(buildToken(currentToken.toString()), set);
         }
         return set;
     }
@@ -202,10 +213,30 @@ public abstract class SearchKeyword {
             }
         }
 
-        if (!keyword.getParam().equals("")) {
+        if (isParameterValid(keyword.getParam())) {
             tokens.add(keyword);
         }
         return SearchKeyword.getQuery(tokens);
+    }
+
+    public static String addKeyword(String query, SearchKeyword keyword) {
+        if (keyword != null && !keyword.getParam().isEmpty()) {
+            Set<SearchKeyword> tokens = SearchKeyword.constructTokens(query);
+            tokens.add(keyword);
+            return SearchKeyword.getQuery(tokens);
+        }
+        return query;
+    }
+
+    public static String removeKeyword(String query, Class<? extends SearchKeyword> clazz) {
+        Constructor<? extends SearchKeyword> constructor;
+        try {
+            constructor = clazz.getDeclaredConstructor(String.class);
+            return replaceKeyword(query, constructor.newInstance((Object) null));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return query;
     }
 
     public static int findKeyword(Set<SearchKeyword> tokens, Class<? extends SearchKeyword> clazz) {
@@ -215,5 +246,27 @@ public abstract class SearchKeyword {
             else i++;
         }
         return -1;
+    }
+
+    protected static String extractOperator(String param) {
+        String op = "=";
+        for (String operator : operators) {
+            if (param.startsWith(operator)) op = operator;
+        }
+        // '==' also refers to '='
+        if (param.startsWith("==")) op = "=";
+        return op;
+    }
+
+    private static int processTo(String query, StringBuilder currentToken, int i, char token) {
+        if (i + 1 >= query.length()) {
+            return i + 1;
+        } else {
+            int index = query.indexOf(token, i + 1);
+            if (index < 0) return i + 1;
+            // We don't want to store these braces
+            currentToken.append(query.substring(i + 1, index));
+            return index;
+        }
     }
 }

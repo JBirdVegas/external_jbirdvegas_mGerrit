@@ -214,15 +214,13 @@ public class GerritControllerActivity extends FragmentActivity {
         }
         mCurrentProject = Prefs.getCurrentProject(this);
 
-        try {
-            mChangeLogStart = getIntent()
-                    .getExtras()
-                    .getParcelable(AOKPChangelog.KEY_CHANGELOG_START);
-            mChangeLogStop = getIntent()
-                    .getExtras()
-                    .getParcelable(AOKPChangelog.KEY_CHANGELOG_STOP);
-        } catch (NullPointerException npe) {
-            Log.d(TAG, "Changelog was null");
+        Intent intent = getIntent();
+        if (intent != null) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                mChangeLogStart = extras.getParcelable(AOKPChangelog.KEY_CHANGELOG_START);
+                mChangeLogStop = extras.getParcelable(AOKPChangelog.KEY_CHANGELOG_STOP);
+            }
         }
 
         mGerritTasks = new HashSet<>();

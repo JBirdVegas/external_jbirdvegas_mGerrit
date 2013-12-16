@@ -68,6 +68,36 @@ Changes whose designated topic at upload was TOPIC. This is often combined with 
 branch:'BRANCH'
 Changes for BRANCH. This is the short name shown in the web interface without the 'refs/heads/' prefix.
 
+age:'OP''AGE'
+    Amount of time that has expired since the change was last updated with a review comment or new patch set. Unlike the Gerrit web interface, this supports both specifing absolute and relative times.
+Absolute:
+ 'AGE' must be of a form specified by the ISO standard, where the date is mandatory and the time is optional. YYYY-MM-DDTHH:mm:ss fits this format
+Relative:
+'AGE' can be provided as a period of time since the current time, for example to view changes 2 days ago use:
+	age:"2 days"
+The age must be specified to include a unit suffix, for example "age:2d"
+The supported unit suffices are:
+    -    s, sec, secs, second, seconds
+    -   m, min, mins, minute, minutes
+    -   h, hr, hrs, hour, hours
+    -   d, day, days
+    -   w, week, weeks
+    -   mon, mons, mth, mths, month, months
+    -   y, yr, yrs, year, years
+Multiple units can be specified in a single query, but they must be seperated with a space. The order of the units is not important. A space between the unit and its suffix is optional. 
+The following query is valid:
+	age:">2 years 4 days 3w  1d 2m"
+
+The supported operators are:
+    - '<': Search for changes earlier than (before) the given time
+    - '>': Search for changes later than (after) the given time
+    - '<=': Search for changes earlier than or equal to the given time
+    - '>=': Search for changes later than or equal to the given time
+    - '=': Default. Search for changes equal to the given time give or take one unit from the shortest time interval. For example the search:
+	age:"=5 weeks 2 days"	is equivilant to	age:">5 weeks 1 days" age:"<5 weeks 3 days"
+Note: Specifying the same unit multiple times in a single keyword stacks, with the value accumulating. For example:
+	age:"5 weeks 2w"		is equivilant to	age:"5 weeks"
+
 
 License
 -------
