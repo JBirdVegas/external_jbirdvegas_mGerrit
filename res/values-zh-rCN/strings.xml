@@ -26,10 +26,12 @@
     </string>
     <string name="status_explanation_merged">更改已合并到其分支。</string>
     <string name="status_explanation_abandoned">更改被其所有者或管理员废弃。</string>
+    <string name="status_explanation_draft">更改是一个草稿，它只包含草稿补丁集。</string>
     <string name="patchset_labels_code_reviewer_title">代码评审者</string>
     <string name="patchset_labels_verified_reviewer_title">已审核</string>
     <string name="inserted">插入行</string>
     <string name="deleted">删除行</string>
+    <string name="binary_file">二进制文件</string>
     <string name="none_found">找不到</string>
     <string name="please_try_again">请返回并重试</string>
     <string name="menu_preferences">偏好</string>
@@ -115,4 +117,12 @@
     <string name="change_status_update">一个新变更状态被选中</string>
     <string name="invalid_gerrit_name">Gerrit名称设置无效</string>
     <string name="invalid_gerrit_url">Gerrit地址设置无效</string>
+    <string name="change_detail_heading" formatted="false">更改 %d</string>
+    <string name="commit_branch">分支：</string>
+    <string name="commit_topic">主题：</string>
+    <string name="change_theme">选择主题</string>
+    <string name="theme_light">亮色主题</string>
+    <string name="theme_dark">暗色主题</string>
+    <string name="gerrit_help">Gerrit 帮助</string>
+    <string name="not_connected">当前没有网络链接。请稍后再试。</string>
 </resources>
