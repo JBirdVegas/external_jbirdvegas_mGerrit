@@ -40,8 +40,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.SEARCH" />
-                <action android:name="com.jbirdvegas.mgerrit.PREFERENCE_CHANGED" />
-                <category android:name="android.intent.category.DEFAULT" />
+
             </intent-filter>
             <meta-data android:name="android.app.searchable"
                        android:resource="@xml/changes_searchable"/>
@@ -53,7 +52,14 @@
         <activity android:name=".AOKPChangelog"
                   android:allowTaskReparenting="true"
                   android:parentActivityName=".GerritControllerActivity"
-                  android:exported="true"/>
+                  android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                       android:resource="@xml/changes_searchable"/>
+        </activity>
         <activity android:name=".ProjectsList"
                   android:parentActivityName=".GerritControllerActivity"
                   android:launchMode="singleTop">

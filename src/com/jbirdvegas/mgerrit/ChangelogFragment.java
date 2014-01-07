@@ -1,0 +1,170 @@
+package com.jbirdvegas.mgerrit;
+
+/*
+ * Copyright (C) 2013 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (P4R4N01D), 2013
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.Toast;
+import android.widget.ViewSwitcher;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.jbirdvegas.mgerrit.adapters.GooFileArrayAdapter;
+import com.jbirdvegas.mgerrit.objects.GooFileObject;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class ChangelogFragment extends Fragment {
+
+    private static final String TAG = "ChangelogFragment";
+    private FragmentActivity mParent;
+    private RequestQueue mRequestQueue;
+    private String mQuery;
+
+    Spinner mUpdatesList;
+    private GooFileArrayAdapter gooAdapter;
+    private ImageView mSaveBtn;
+    private ViewSwitcher mViewSwitcher;
+
+    public ChangelogFragment() { }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.changelog_card, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
+
+        mParent = this.getActivity();
+        mRequestQueue = Volley.newRequestQueue(mParent);
+
+        mViewSwitcher = (ViewSwitcher) mParent.findViewById(R.id.vs_changelog_card);
+        if (mViewSwitcher.getDisplayedChild() != 0) mViewSwitcher.showPrevious();
+
+        mUpdatesList = (Spinner) mParent.findViewById(R.id.changelog);
+        mSaveBtn = (ImageView) mParent.findViewById(R.id.goo_download_zip_button);
+        mSaveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSaveClicked(v);
+            }
+        });
+
+        mUpdatesList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                GooFileObject buildObject = (GooFileObject) parent.getItemAtPosition(position);
+                GooFileObject previousBuild = null;
+                if (position + 1 < parent.getCount()) {
+                    previousBuild = (GooFileObject) parent.getItemAtPosition(position + 1);
+                }
+                ((ChangelogActivity) mParent).onBuildSelected(previousBuild, buildObject);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Not used
+            }
+        });
+
+
+        findDates();
+    }
+
+    private void findDates() {
+        // use Volley to get our packages list
+        Log.d(TAG, "Calling: " + mQuery);
+
+        mRequestQueue.add(
+                new JsonObjectRequest(
+                        Request.Method.GET,
+                        mQuery,
+                        null,
+                        new gooImResponseListener(),
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                Log.e(TAG, "Failed to get recent upload dates from goo.im!", volleyError);
+                                mParent.setProgressBarIndeterminateVisibility(false);
+                            }
+                        }));
+        mRequestQueue.start();
+    }
+
+    private void setupList(List<GooFileObject> gooFilesList) {
+        gooAdapter = new GooFileArrayAdapter(mParent,
+                R.layout.goo_files_list_item,
+                gooFilesList);
+        mUpdatesList.setAdapter(gooAdapter);
+    }
+
+    public void setQuery(String query) {
+        mQuery = query;
+    }
+
+    class gooImResponseListener implements Response.Listener<JSONObject> {
+        @Override
+        public void onResponse(JSONObject response) {
+            mViewSwitcher.showNext();
+
+            Toast.makeText(mParent,
+                    R.string.please_select_update_for_range,
+                    Toast.LENGTH_LONG).show();
+            try {
+                JSONArray result = response.getJSONArray("list");
+                int resultsSize = result.length();
+                List<GooFileObject> filesList = new LinkedList<>();
+
+                for (int i = 0; resultsSize > i; i++) {
+                    filesList.add(GooFileObject.getInstance(result.getJSONObject(i)));
+                }
+                setupList(filesList);
+            } catch (Exception e) {
+                Log.e("ErrorListener", e.getLocalizedMessage());
+            }
+        }
+    }
+
+    public void onSaveClicked(View view) {
+        GooFileObject build = (GooFileObject) mUpdatesList.getSelectedItem();
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(build.getShortUrl()));
+        startActivity(intent);
+    }
+}

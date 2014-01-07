@@ -32,10 +32,13 @@ import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
+import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 public class ChangeListAdapter extends SimpleCursorAdapter {
 
+    private final String mStatus;
     Context mContext;
 
     // Cursor indices
@@ -46,9 +49,13 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
     private String selectedChangeId;
     private CommitCard selectedChangeView;
 
-    public ChangeListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
+    public ChangeListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags,
+                             String status) {
         super(context, layout, c, from, to, flags);
         mContext = context;
+
+        mStatus = JSONCommit.Status.getStatusString(status);
+        selectedChangeId = SelectedChange.getSelectedChange(context, mStatus);
     }
 
     @Override

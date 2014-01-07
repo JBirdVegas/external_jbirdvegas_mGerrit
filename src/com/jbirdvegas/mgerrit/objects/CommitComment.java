@@ -22,6 +22,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,39 +31,24 @@ public class CommitComment implements Parcelable {
     private static final String KEY_REVISION_NUMBER = "_revision_number";
     private static final boolean DEBUG = false;
     private static final String TAG = CommitComment.class.getSimpleName();
-    private JSONObject mJsonObject;
+
+    @SerializedName(CommitComment.KEY_REVISION_NUMBER)
     private int mRevisionNumber;
+
+    @SerializedName(JSONCommit.KEY_MESSAGE)
     private String mMessage;
+
+    @SerializedName(JSONCommit.KEY_DATE)
     private String mDate;
+
+    @SerializedName(JSONCommit.KEY_AUTHOR)
     private CommitterObject mAuthorObject;
+
+    @SerializedName(JSONCommit.KEY_ID)
     private String mId;
 
-    public CommitComment(JSONObject jsonObject) {
-        mJsonObject = jsonObject;
-        try {
-            mId = jsonObject.getString(JSONCommit.KEY_ID);
-            mAuthorObject = new Gson().fromJson(jsonObject.getJSONObject(JSONCommit.KEY_AUTHOR).toString(), CommitterObject.class);
-            mDate = jsonObject.getString(JSONCommit.KEY_DATE);
-            mMessage = jsonObject.getString(JSONCommit.KEY_MESSAGE);
-            mRevisionNumber = jsonObject.getInt(KEY_REVISION_NUMBER);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static CommitComment getInstance(JSONObject jsonObject) {
-        if (DEBUG) {
-            try {
-                Log.d(TAG, "CommitComment RawJSON: " + jsonObject.toString(4));
-            } catch (JSONException e) {
-                Log.e(TAG, "DEBUG FAILED!", e);
-            }
-        }
-        return new CommitComment(jsonObject);
-    }
-
-    public JSONObject getJsonObject() {
-        return mJsonObject;
+        return new Gson().fromJson(jsonObject.toString(), CommitComment.class);
     }
 
     public int getRevisionNumber() {
@@ -86,16 +72,11 @@ public class CommitComment implements Parcelable {
     }
 
     public CommitComment(Parcel parcel) {
-        try {
-            mJsonObject = new JSONObject(parcel.readString());
-            mId = parcel.readString();
-            mAuthorObject = parcel.readParcelable(CommitterObject.class.getClassLoader());
-            mDate = parcel.readString();
-            mMessage = parcel.readString();
-            mRevisionNumber = parcel.readInt();
-        } catch (JSONException e) {
-            Log.e(TAG, "Failed to create object from Parcel!", e);
-        }
+        mId = parcel.readString();
+        mAuthorObject = parcel.readParcelable(CommitterObject.class.getClassLoader());
+        mDate = parcel.readString();
+        mMessage = parcel.readString();
+        mRevisionNumber = parcel.readInt();
     }
 
     @Override
@@ -105,7 +86,6 @@ public class CommitComment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(mJsonObject.toString());
         parcel.writeString(mId);
         parcel.writeParcelable(mAuthorObject, 0);
         parcel.writeString(mDate);

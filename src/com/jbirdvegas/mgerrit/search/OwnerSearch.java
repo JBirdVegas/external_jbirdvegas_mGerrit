@@ -36,6 +36,10 @@ public class OwnerSearch extends SearchKeyword {
         super(OP_NAME, param);
     }
 
+    public OwnerSearch(Integer param) {
+        super(OP_NAME, param == null ? null : param.toString());
+    }
+
     @Override
     public String buildSearch() {
         String param = getParam();

@@ -21,8 +21,7 @@
 
     <item
         android:id="@+id/menu_search"
-        android:actionViewClass="android.widget.SearchView"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="?attr/searchIcon"
         android:showAsAction="ifRoom"
         android:title="@string/changes_search_hint"/>
 

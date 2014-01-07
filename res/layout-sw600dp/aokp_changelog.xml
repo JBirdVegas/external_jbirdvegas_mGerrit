@@ -20,9 +20,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_weight="0.5"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <com.jbirdvegas.mgerrit.GerritSearchView
         android:id="@+id/search"
@@ -31,32 +31,54 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:visibility="gone"
         android:queryHint="@string/changes_search_hint" />
 
     <LinearLayout
         android:id="@+id/mainLayout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/search"
         android:baselineAligned="false"
         android:orientation="horizontal">
 
-        <fragment
-            android:id="@+id/change_list_fragment"
-            android:name="com.jbirdvegas.mgerrit.ChangeListFragment"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            tools:layout="@layout/change_list" />
+            android:background="?attr/mainBackgroundColor"
+            android:orientation="vertical">
+
+            <fragment
+                android:id="@+id/changelog_fragment"
+                android:name="com.jbirdvegas.mgerrit.ChangelogFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="8dp"
+                tools:layout="@layout/changelog_card"/>
+
+            <fragment
+                android:id="@+id/change_list_fragment"
+                android:name="com.jbirdvegas.mgerrit.MergedTab"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                tools:layout="@layout/commit_list"/>
+        </LinearLayout>
 
         <fragment
             android:id="@+id/change_detail_fragment"
             android:name="com.jbirdvegas.mgerrit.PatchSetViewerFragment"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            tools:layout="@layout/commit_list" />
+            tools:layout="@layout/commit_list"/>
 
     </LinearLayout>
 </RelativeLayout>

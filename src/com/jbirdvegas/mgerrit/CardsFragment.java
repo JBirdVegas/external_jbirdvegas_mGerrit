@@ -24,6 +24,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
@@ -43,11 +44,12 @@ import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
-import com.jbirdvegas.mgerrit.objects.ChangeLogRange;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -55,8 +57,6 @@ public abstract class CardsFragment extends Fragment
     public static final String KEY_OWNER = "owner";
     public static final String KEY_REVIEWER = "reviewer";
 
-    private static final boolean DEBUG = true;
-    private static final boolean CHATTY = false;
     public static final String SEARCH_QUERY = "SEARCH";
     protected String TAG = "CardsFragment";
 
@@ -64,8 +64,7 @@ public abstract class CardsFragment extends Fragment
 
     private RequestQueue mRequestQueue;
 
-    private ChangeLogRange mChangelogRange;
-    private GerritControllerActivity mParent;
+    private FragmentActivity mParent;
 
     // Indicates that this fragment will need to be refreshed
     private boolean mIsDirty = false;
@@ -74,7 +73,10 @@ public abstract class CardsFragment extends Fragment
     private BroadcastReceiver mSearchQueryListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            getLoaderManager().restartLoader(0, intent.getExtras(), CardsFragment.this);
+            String to = intent.getStringExtra(GerritSearchView.KEY_TO);
+            if (mParent.getClass().getSimpleName().equals(to)) {
+                getLoaderManager().restartLoader(0, intent.getExtras(), CardsFragment.this);
+            }
         }
     };
 
@@ -82,7 +84,7 @@ public abstract class CardsFragment extends Fragment
     // Adapter that binds data to the listview
     private ChangeListAdapter mAdapter;
     // Wrapper for mAdapter, enabling animations
-    private SingleAnimationAdapter mAnimAdapter;
+    private SingleAnimationAdapter mAnimAdapter = null;
     // Whether animations have been enabled
     private boolean mAnimationsEnabled;
 
@@ -103,7 +105,7 @@ public abstract class CardsFragment extends Fragment
 
     private void init(Bundle savedInstanceState)
     {
-        mParent = (GerritControllerActivity) this.getActivity();
+        mParent = this.getActivity();
         View mCurrentFragment = this.getView();
         mRequestQueue = Volley.newRequestQueue(mParent);
 
@@ -116,7 +118,8 @@ public abstract class CardsFragment extends Fragment
                 UserChanges.C_PROJECT, UserChanges.C_UPDATED, UserChanges.C_STATUS };
 
         mListView = (ListView) mCurrentFragment.findViewById(R.id.commit_cards);
-        mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card, null, from, to, 0);
+        mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card, null, from, to, 0,
+                getQuery());
         mAdapter.setViewBinder(new CommitCardBinder(mParent, mRequestQueue));
 
         /* If animations have been enabled, setup and use an animation adapter, otherwise use
@@ -214,7 +217,7 @@ public abstract class CardsFragment extends Fragment
     public void markDirty() { mIsDirty = true; }
 
     public void markChangeAsSelected(String changeid) {
-        mAdapter.setSelectedChangeId(changeid);
+        if (mAdapter != null) mAdapter.setSelectedChangeId(changeid);
     }
 
     @Override
@@ -246,4 +249,5 @@ public abstract class CardsFragment extends Fragment
         // Broadcast that we have finished loading changes
         new ChangeLoadingFinished(mParent, getQuery()).sendUpdateMessage();
     }
+
 }

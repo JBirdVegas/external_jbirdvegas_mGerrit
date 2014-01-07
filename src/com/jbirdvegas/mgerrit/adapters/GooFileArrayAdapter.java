@@ -1,14 +1,12 @@
 package com.jbirdvegas.mgerrit.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
+
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
 
@@ -33,16 +31,30 @@ import java.util.List;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-public class GooFileArrayAdapter extends ArrayAdapter<GooFileObject> {
+public class GooFileArrayAdapter extends BaseAdapter {
     private final Context mContext;
     private final int mLayoutResourceId;
     private final List<GooFileObject> mGooFilesList;
 
     public GooFileArrayAdapter(Context context, int layoutResourceId, List<GooFileObject> objects) {
-        super(context, layoutResourceId, objects);
         this.mContext = context;
         this.mLayoutResourceId = layoutResourceId;
         this.mGooFilesList = objects;
+    }
+
+    @Override
+    public int getCount() {
+        return mGooFilesList.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return mGooFilesList.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
     }
 
     @Override
@@ -51,28 +63,23 @@ public class GooFileArrayAdapter extends ArrayAdapter<GooFileObject> {
         if (root == null) {
             LayoutInflater inflater = (LayoutInflater)
                     mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            root = inflater.inflate(R.layout.goo_files_list_item, null);
+            root = inflater.inflate(mLayoutResourceId, null);
             TextView fileName = (TextView) root.findViewById(R.id.goo_file_name);
             TextView fileUpdate = (TextView) root.findViewById(R.id.goo_file_date);
-            ImageView downloadZip = (ImageView) root.findViewById(R.id.goo_download_zip_button);
             final GooFileObject file = mGooFilesList.get(position);
             fileName.setText(file.getFileName());
             long unixDate = file.getModified();
             DateFormat df = new SimpleDateFormat("MM-dd-yyyy");
             fileUpdate.setText(df.format(new Date(unixDate)));
-            downloadZip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse(file.getShortUrl()));
-                    mContext.startActivity(intent);
-                }
-            });
         }
         return root;
     }
 
     public List<GooFileObject> getGooFilesList() {
         return mGooFilesList;
+    }
+
+    public GooFileObject getObjectAtPostition(int position) {
+        return (GooFileObject) getItem(position);
     }
 }
