@@ -67,6 +67,8 @@
     <string name="support_library_website" translatable="false">http://developer.android.com/tools/support-library/index.html</string>
     <string name="gson_library">Gson</string>
     <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
+    <string name="jodatime">Joda-Time</string>
+    <string name="jodatime_website" translatable="false">http://www.joda.org/joda-time</string>
 
     <string name="explain_status_title">Explain statuses</string>
     <string name="explain_status_summary">Brief explanation of the Status tabs meanings</string>
