@@ -125,4 +125,6 @@
     <string name="theme_dark">暗色主题</string>
     <string name="gerrit_help">Gerrit 帮助</string>
     <string name="not_connected">当前没有网络链接。请稍后再试。</string>
+    <string name="aokp_changelog_card_title">最近AOKP编译版本</string>
+    <string name="changelog_loading">正在搜索最近编译版本&#8230;</string>
 </resources>
