@@ -89,8 +89,7 @@
                 android:src="?attr/shareIcon"
                 android:id="@+id/commit_card_share_info"
                 style="@style/ActionViewsStyle"
-                android:layout_toLeftOf="@+id/commit_card_moar_info"
-                android:layout_alignWithParentIfMissing="true"
+                android:layout_alignParentRight="true"
                 android:contentDescription="@string/share"/>
             <ImageView
                 android:src="?attr/viewIcon"

@@ -78,7 +78,7 @@ public class GooFileObject implements Parcelable {
             mGappsLink = jsonObject.getString("gapps_link");
             mGappsMd5 = jsonObject.getString("gapps_md5");
         } catch (Exception e) {
-            Log.e(TAG, "Failed to get Gapps Link!");
+            Log.w(TAG, "Failed to get Gapps Link!");
             mGappsLink = null;
             mGappsMd5 = null;
         }

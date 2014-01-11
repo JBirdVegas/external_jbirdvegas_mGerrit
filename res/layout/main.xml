@@ -16,11 +16,27 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-<fragment
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/change_list_fragment"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.jbirdvegas.mgerrit.ChangeListFragment"
-    tools:layout="@layout/change_list" />
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <com.jbirdvegas.mgerrit.GerritSearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/search"
+        android:queryHint="@string/changes_search_hint"
+        style="?attr/android:actionBarStyle"
+        android:visibility="gone"/>
+
+    <fragment
+        android:id="@+id/change_list_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:name="com.jbirdvegas.mgerrit.ChangeListFragment"
+        tools:layout="@layout/change_list"
+        android:layout_weight="1"/>
+
+</LinearLayout>

@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ import com.jbirdvegas.mgerrit.caches.BitmapLruCache;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.objects.CommitComment;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.ArrayList;
@@ -47,13 +49,14 @@ public class PatchSetCommentsCard extends RecyclableCard {
     private final PatchSetViewerFragment mPatchsetViewerFragment;
     private RequestQueue mRequestQuery;
     private Context mContext;
+    private final FragmentActivity mActivity;
 
     public PatchSetCommentsCard(JSONCommit jsonCommit, PatchSetViewerFragment fragment, RequestQueue requestQueue) {
         mJsonCommit = jsonCommit;
         mPatchsetViewerFragment = fragment;
         mRequestQuery = requestQueue;
-
         mContext = fragment.getActivity();
+        mActivity = (FragmentActivity) mContext;
     }
 
     @Override
@@ -86,7 +89,7 @@ public class PatchSetCommentsCard extends RecyclableCard {
         authorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Prefs.setTrackingUser(mContext, mJsonCommit.getAuthorObject());
+                setTrackingUser(comment.getAuthorObject());
             }
         });
 
@@ -103,6 +106,11 @@ public class PatchSetCommentsCard extends RecyclableCard {
         gravatar.setImageUrl(GravatarHelper.getGravatarUrl(comment.getAuthorObject().getEmail()),
                 new ImageLoader(mRequestQuery, new BitmapLruCache(mContext)));
         return commentView;
+    }
+
+    private void setTrackingUser(CommitterObject user) {
+        Prefs.setTrackingUser(mContext, user);
+        if (!Prefs.isTabletMode(mContext)) mActivity.finish();
     }
 
     @Override

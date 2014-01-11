@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.cards;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
@@ -33,6 +34,7 @@ import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 public class PatchSetPropertiesCard extends RecyclableCard {
@@ -40,15 +42,17 @@ public class PatchSetPropertiesCard extends RecyclableCard {
     private final PatchSetViewerFragment mPatchSetViewerFragment;
     private final RequestQueue mRequestQuery;
     private final Context mContext;
+    private final FragmentActivity mActivity;
 
     public PatchSetPropertiesCard(JSONCommit commit,
-                                  PatchSetViewerFragment activity,
+                                  PatchSetViewerFragment fragment,
                                   RequestQueue requestQueue,
                                   Context context) {
         this.mJSONCommit = commit;
-        this.mPatchSetViewerFragment = activity;
+        this.mPatchSetViewerFragment = fragment;
         this.mRequestQuery = requestQueue;
         this.mContext = context;
+        this.mActivity = (FragmentActivity) mContext;
     }
 
     @Override
@@ -82,7 +86,7 @@ public class PatchSetPropertiesCard extends RecyclableCard {
         viewHolder.owner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Prefs.setTrackingUser(mContext, mJSONCommit.getOwnerObject());
+                setTrackingUser(mJSONCommit.getOwnerObject());
             }
         });
         viewHolder.owner.setTag(mJSONCommit.getOwnerObject());
@@ -97,7 +101,7 @@ public class PatchSetPropertiesCard extends RecyclableCard {
             viewHolder.author.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Prefs.setTrackingUser(mContext, mJSONCommit.getAuthorObject());
+                    setTrackingUser(mJSONCommit.getAuthorObject());
                 }
             });
 
@@ -106,7 +110,7 @@ public class PatchSetPropertiesCard extends RecyclableCard {
             viewHolder.committer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Prefs.setTrackingUser(mContext, mJSONCommit.getCommitterObject());
+                    setTrackingUser(mJSONCommit.getCommitterObject());
                 }
             });
             viewHolder.author.setTag(mJSONCommit.getAuthorObject());
@@ -176,6 +180,11 @@ public class PatchSetPropertiesCard extends RecyclableCard {
                 end, end+authorName.length(), 0);
 
         textView.setText(text, TextView.BufferType.SPANNABLE);
+    }
+
+    private void setTrackingUser(CommitterObject user) {
+        Prefs.setTrackingUser(mContext, user);
+        if (!Prefs.isTabletMode(mContext)) mActivity.finish();
     }
 
     private static class ViewHolder {

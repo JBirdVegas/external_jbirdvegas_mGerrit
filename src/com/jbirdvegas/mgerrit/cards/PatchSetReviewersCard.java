@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.fima.cardsui.objects.RecyclableCard;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 
@@ -40,6 +42,7 @@ public class PatchSetReviewersCard extends RecyclableCard {
 
     private final RequestQueue mRequestQueue;
     private final Context mContext;
+    private final FragmentActivity mActivity;
     private JSONCommit mJSONCommit;
 
     public PatchSetReviewersCard(JSONCommit commit,
@@ -48,6 +51,7 @@ public class PatchSetReviewersCard extends RecyclableCard {
         mJSONCommit = commit;
         mRequestQueue = requestQueue;
         mContext = context;
+        mActivity = (FragmentActivity) mContext;
     }
 
     @Override
@@ -95,7 +99,7 @@ public class PatchSetReviewersCard extends RecyclableCard {
         name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Prefs.setTrackingUser(mContext, reviewer.getCommiterObject());
+                setTrackingUser(reviewer.getCommiterObject());
             }
         });
         GravatarHelper.attachGravatarToTextView(name,
@@ -132,6 +136,11 @@ public class PatchSetReviewersCard extends RecyclableCard {
         } catch (NumberFormatException nfe) {
             Log.e(TAG, "Failed to grab reviewers approval");
         }
+    }
+
+    private void setTrackingUser(CommitterObject user) {
+        Prefs.setTrackingUser(mContext, user);
+        if (!Prefs.isTabletMode(mContext)) mActivity.finish();
     }
 
     @Override
