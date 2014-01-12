@@ -17,6 +17,7 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,7 +37,6 @@ import android.widget.ListView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
 import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
@@ -45,11 +45,9 @@ import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
-import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -74,8 +72,8 @@ public abstract class CardsFragment extends Fragment
         @Override
         public void onReceive(Context context, Intent intent) {
             String to = intent.getStringExtra(GerritSearchView.KEY_TO);
-            if (mParent.getClass().getSimpleName().equals(to)) {
-                getLoaderManager().restartLoader(0, intent.getExtras(), CardsFragment.this);
+            if (isAdded() && mParent.getClass().getSimpleName().equals(to)) {
+                getLoaderManager().restartLoader(0, null, CardsFragment.this);
             }
         }
     };
@@ -87,6 +85,7 @@ public abstract class CardsFragment extends Fragment
     private SingleAnimationAdapter mAnimAdapter = null;
     // Whether animations have been enabled
     private boolean mAnimationsEnabled;
+    private GerritSearchView mSearchView;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
@@ -132,6 +131,8 @@ public abstract class CardsFragment extends Fragment
         // Need the account id of the owner here to maintain FK db constraint
         mUrl.setRequestDetailedAccounts(true);
         mUrl.setStatus(getQuery());
+
+        mSearchView = (GerritSearchView) mParent.findViewById(R.id.search);
     }
 
     private void setup()
@@ -179,23 +180,20 @@ public abstract class CardsFragment extends Fragment
         mParent.startService(it);
     }
 
+    /**
+     * Refresh this fragment if it was marked as dirty by restarting the loader
+     * @param forceUpdate If set, forces an update of the data from the server.
+     *                    This can be independent of refreshing, so this method
+     *                    can be used to force an update.
+     */
     protected void refresh(boolean forceUpdate)
     {
-        if (!mIsDirty) return;
-
-        mIsDirty = false;
-        // if the Fragment has not yet attached to the Activity
-        // note this case and avoid crashing
-        // TODO find root cause
-        // symptom several rotations causes crash
-        if (this.isDetached()) {
-            EasyTracker easyTracker = EasyTracker.getInstance(getActivity());
-            easyTracker.send(MapBuilder.createEvent(AnalyticsConstants.GA_LOG_FAIL,
-                    AnalyticsConstants.GA_FAIL_UI,
-                    "CardsFragment was not attached to an Activity",
-                    null)
-                .build());
-        } else {
+        /* If the fragment has been attached to an activity, refresh it.
+         *  Otherwise it will be refreshed when it is attached by checking
+         *  whether it is marked as dirty.
+         */
+        if (this.isAdded() && mIsDirty) {
+            mIsDirty = false;
             getLoaderManager().restartLoader(0, null, this);
         }
 
@@ -203,6 +201,17 @@ public abstract class CardsFragment extends Fragment
             SyncTime.clear(mParent);
             sendRequest();
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        /* Refresh if necessary. As the fragment has just been attached,
+         *  we can assume it is added here */
+        if (!mIsDirty) return;
+        mIsDirty = false;
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     /**
@@ -222,6 +231,13 @@ public abstract class CardsFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (args == null) {
+            args = mSearchView.getLastProcessedQuery();
+            String to = args.getString(GerritSearchView.KEY_TO);
+            if (!mParent.getClass().getSimpleName().equals(to))
+                args = null;
+        }
+
         if (args != null) {
             String databaseQuery = args.getString("WHERE");
             if (databaseQuery != null && !databaseQuery.isEmpty()) {

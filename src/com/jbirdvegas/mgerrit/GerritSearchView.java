@@ -53,12 +53,16 @@ public class GerritSearchView extends SearchView
 
     Set<SearchKeyword> mAdditionalKeywords;
 
+    private Bundle mProcessedQuery;
+
     public GerritSearchView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         setOnQueryTextListener(this);
         setupCancelButton();
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        mProcessedQuery = new Bundle();
     }
 
     @Override
@@ -129,6 +133,7 @@ public class GerritSearchView extends SearchView
         Set<SearchKeyword> newTokens = safeMerge(tokens, mAdditionalKeywords);
 
         Bundle bundle = new Bundle();
+        bundle.putString(KEY_TO, getContext().getClass().getSimpleName());
         String where = "";
         ArrayList<String> bindArgs = new ArrayList<>();
 
@@ -143,9 +148,11 @@ public class GerritSearchView extends SearchView
             }
         }
 
-        bundle.putString(KEY_WHERE, where);
-        bundle.putStringArrayList(KEY_BINDARGS, bindArgs);
-        bundle.putString(KEY_TO, getContext().getClass().getSimpleName());
+        // Processed a query, put it in a bundle to be retrieved later
+        mProcessedQuery.clear();
+        mProcessedQuery.putString(KEY_WHERE, where);
+        mProcessedQuery.putStringArrayList(KEY_BINDARGS, bindArgs);
+        mProcessedQuery.putString(KEY_TO, getContext().getClass().getSimpleName());
 
         Intent intent = new Intent(CardsFragment.SEARCH_QUERY);
         intent.putExtras(bundle);
@@ -222,6 +229,10 @@ public class GerritSearchView extends SearchView
         String currentQuery = getQuery().toString();
         String query = SearchKeyword.replaceKeyword(currentQuery, keyword);
         if (!query.equals(currentQuery)) this.setQuery(query, submit);
+    }
+
+    public Bundle getLastProcessedQuery() {
+        return mProcessedQuery;
     }
 
     @Override
