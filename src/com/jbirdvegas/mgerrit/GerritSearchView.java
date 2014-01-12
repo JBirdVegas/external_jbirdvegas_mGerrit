@@ -29,6 +29,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
 import com.jbirdvegas.mgerrit.search.OwnerSearch;
 import com.jbirdvegas.mgerrit.search.ProjectSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
@@ -176,7 +178,12 @@ public class GerritSearchView extends SearchView
                     toggleVisibility();
                 }
             });
-        } catch (ReflectiveOperationException e) {
+        } catch (Exception e) {
+            EasyTracker.getInstance(mContext).send(MapBuilder.createEvent(
+                    "GerritSearchView",
+                    "setupCancelButton",
+                    "search_button_reflection_visibility",
+                    null).build());
             e.printStackTrace();
         }
     }
