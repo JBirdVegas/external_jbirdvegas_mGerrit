@@ -19,70 +19,91 @@ package com.jbirdvegas.mgerrit.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GooFileObject implements Parcelable {
-    private static final String TAG = GooFileObject.class.getSimpleName();
+
     // fields available from goo json api
+
+    @SerializedName("id")
     private int mId;
+
+    @SerializedName("filename")
     private String mFileName;
+
+    @SerializedName("path")
     private String mPath;
+
+    @SerializedName("folder")
     private String mFolder;
+
+    @SerializedName("md5")
     private String mMd5;
+
+    @SerializedName("type")
     private String mType;
+
+    @SerializedName("description")
     private String mDescription;
+
+    @SerializedName("is_flashable")
     private boolean mIsFlashable;
+
+    @SerializedName("modified")
     private long mModified;
+
+    @SerializedName("downloads")
     private long mDownloads;
+
+    @SerializedName("status")
     private int mStatus;
+
+    @SerializedName("additional_info")
     private String mAdditionalInfo;
+
+    @SerializedName("short_url")
     private String mShortUrl;
+
+    @SerializedName("developer_id")
     private int mDeveloperId;
+
+    @SerializedName("ro_developerid")
     private String mRO_DeveloperId;
+
+    @SerializedName("ro_board")
     private String mRO_Board;
+
+    @SerializedName("ro_rom")
     private String mRO_Rom;
+
+    @SerializedName("ro_version")
     private int mRO_Version;
+
+    @SerializedName("gapps_package")
     private long mGappsPackage;
+
+    @SerializedName("incremental_file")
     private int mIncrementalFile;
+
+    @SerializedName("gapps_link")
     private String mGappsLink;
+
+    @SerializedName("gapps_md5")
     private String mGappsMd5;
 
     public static GooFileObject getInstance(JSONObject jsonObject) throws JSONException {
-        return new GooFileObject(jsonObject);
+        GooFileObject object = new Gson().fromJson(jsonObject.toString(), GooFileObject.class);
+        if (object.mShortUrl == null || object.mShortUrl.isEmpty()) {
+            object.mShortUrl = "http://goo.im" + object.mPath;
+        }
+        return object;
     }
 
-    private GooFileObject(JSONObject jsonObject) throws JSONException {
-        mId = jsonObject.getInt("id");
-        mFileName = jsonObject.getString("filename");
-        mPath = jsonObject.getString("path");
-        mFolder = jsonObject.getString("folder");
-        mMd5 = jsonObject.getString("md5");
-        mType = jsonObject.getString("type");
-        mDescription = jsonObject.getString("description");
-        mIsFlashable = "1".equals(jsonObject.getString("is_flashable"));
-        mModified = jsonObject.getLong("modified");
-        mDownloads = jsonObject.getLong("downloads");
-        mStatus = jsonObject.getInt("status");
-        mAdditionalInfo = jsonObject.getString("additional_info");
-        mShortUrl = jsonObject.getString("short_url");
-        mDeveloperId = jsonObject.getInt("developer_id");
-        mRO_DeveloperId = jsonObject.getString("ro_developerid");
-        mRO_Board = jsonObject.getString("ro_board");
-        mRO_Rom = jsonObject.getString("ro_rom");
-        mRO_Version = jsonObject.getInt("ro_version");
-        mGappsPackage = jsonObject.getLong("gapps_package");
-        mIncrementalFile = jsonObject.getInt("incremental_file");
-        try {
-            mGappsLink = jsonObject.getString("gapps_link");
-            mGappsMd5 = jsonObject.getString("gapps_md5");
-        } catch (Exception e) {
-            Log.w(TAG, "Failed to get Gapps Link!");
-            mGappsLink = null;
-            mGappsMd5 = null;
-        }
-    }
     @Override
     public String toString() {
         return new StringBuilder(0)
