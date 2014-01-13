@@ -45,9 +45,9 @@
         <fragment
             android:id="@+id/change_list_fragment"
             android:name="com.jbirdvegas.mgerrit.ChangeListFragment"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
+            android:layout_weight="1"
             tools:layout="@layout/change_list" />
 
         <fragment
@@ -55,7 +55,7 @@
             android:name="com.jbirdvegas.mgerrit.PatchSetViewerFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
+            android:layout_weight="1"
             tools:layout="@layout/commit_list" />
 
     </LinearLayout>
