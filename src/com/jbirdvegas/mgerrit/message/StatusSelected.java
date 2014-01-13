@@ -41,7 +41,7 @@ public class StatusSelected {
     }
 
     public String getMessage() {
-        return String.format("Selected change status %s.", mStatus);
+        return mContext.getString(R.string.change_status_update);
     }
 
     public void sendUpdateMessage() {

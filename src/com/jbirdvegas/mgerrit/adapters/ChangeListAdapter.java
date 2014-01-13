@@ -147,6 +147,9 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
      * @param change The id of the change that was selected
      */
     public void setSelectedChangeId(String change) {
+        // Check if pre-condition is statisfied
+        if (change == null || change.isEmpty()) return;
+
         // Check if there is any work to do here
         if (this.selectedChangeId != null && this.selectedChangeId.equals(change)) {
             return;

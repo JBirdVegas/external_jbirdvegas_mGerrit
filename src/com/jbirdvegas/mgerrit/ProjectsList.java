@@ -183,7 +183,7 @@ public class ProjectsList extends Activity
 
     private void setProject(String root, String subproject) {
         String project;
-        if (subproject.equals("")) project = root;
+        if (subproject.isEmpty()) project = root;
         else project = root + SEPERATOR + subproject;
         Prefs.setCurrentProject(getApplicationContext(), project);
         this.finish();

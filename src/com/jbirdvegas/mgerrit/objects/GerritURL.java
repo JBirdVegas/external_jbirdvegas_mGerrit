@@ -1,22 +1,5 @@
 package com.jbirdvegas.mgerrit.objects;
 
-/*
- * Copyright (C) 2013 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (P4R4N01D), 2013
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -126,13 +109,13 @@ public class GerritURL implements Parcelable
             .append(sGerritBase)
             .append(StaticWebAddress.getQuery());
 
-        if (!"".equals(mChangeID))
+        if (mChangeID != null && !mChangeID.isEmpty())
         {
             builder.append(mChangeID);
             addPlus = true;
         }
 
-        if (!"".equals(mStatus))
+        if (mStatus != null && !mStatus.isEmpty())
         {
             builder.append(JSONCommit.KEY_STATUS)
                     .append(":")
@@ -140,7 +123,7 @@ public class GerritURL implements Parcelable
             addPlus = true;
         }
 
-        if (!"".equals(mCommitterState) && !"".equals(mEmail))
+        if (mCommitterState != null && !mCommitterState.isEmpty() && mEmail != null && !mEmail.isEmpty())
         {
             if (addPlus) builder.append('+');
             builder.append(mCommitterState)
@@ -150,7 +133,7 @@ public class GerritURL implements Parcelable
         }
 
         try {
-            if (!"".equals(sProject))
+            if (sProject != null && !sProject.isEmpty())
             {
                 if (addPlus) builder.append('+');
                 builder.append(JSONCommit.KEY_PROJECT)
@@ -161,7 +144,7 @@ public class GerritURL implements Parcelable
             e.printStackTrace();
         }
 
-        if (!"".equals(mSortkey)) {
+        if (mSortkey != null && !mSortkey.isEmpty()) {
             builder.append("&P=").append(mSortkey);
         }
 
@@ -226,22 +209,26 @@ public class GerritURL implements Parcelable
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(sGerritBase);
         dest.writeString(sProject);
+        dest.writeString(mChangeID);
         dest.writeString(mStatus);
         dest.writeString(mEmail);
         dest.writeString(mCommitterState);
         dest.writeInt(mListProjects ? 1 : 0);
         dest.writeInt(mRequestDetailedAccounts ? 1 : 0);
         dest.writeString(mSortkey);
+        dest.writeInt(mRequestChangeDetail ? 1 : 0);
     }
 
     public GerritURL(Parcel in) {
         sGerritBase = in.readString();
         sProject = in.readString();
+        mChangeID = in.readString();
         mStatus = in.readString();
         mEmail = in.readString();
         mCommitterState = in.readString();
         mListProjects = in.readInt() == 1;
         mRequestDetailedAccounts = in.readInt() == 1;
         mSortkey = in.readString();
+        mRequestChangeDetail = in.readInt() == 1;
     }
 }

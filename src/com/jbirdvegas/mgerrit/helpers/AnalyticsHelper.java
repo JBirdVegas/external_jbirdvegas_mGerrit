@@ -1,4 +1,4 @@
-package com.jbirdvegas.mgerrit;
+package com.jbirdvegas.mgerrit.helpers;
 
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
@@ -17,7 +17,12 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
-public class AnalyticsConstants {
+import android.content.Context;
+
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
+
+public class AnalyticsHelper {
     public static final String GA_PERFORMANCE = "performance";
     public static final String GA_TIME_TO_LOAD = "time_to_load";
     public static final String GA_CARDS_LOAD_TIME = "cards_loading";
@@ -26,4 +31,15 @@ public class AnalyticsConstants {
     public static final String GA_LOG_FAIL = "failure";
     public static final String GA_FAIL_UI = "fail_ui";
     public static final String GA_THEME_SET_ON_OPEN = "ui_theme";
+
+    public static void sendAnalyticsEvent(Context context,
+                                          String category, String action, String label, Long value) {
+        EasyTracker easyTracker = EasyTracker.getInstance(context);
+        easyTracker.send(MapBuilder
+                .createEvent(category, action, label, value)
+                .build());
+        // note this screen as viewed
+        easyTracker.send(MapBuilder.createAppView().build());
+    }
+
 }

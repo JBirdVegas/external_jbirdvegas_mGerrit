@@ -60,6 +60,7 @@ public class GsonRequest<T> extends Request<T> {
         this.listener = listener;
         this.trim = trimStart;
     }
+
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         // super.getHeaders() returns an empty AbstractMap<K, V> which

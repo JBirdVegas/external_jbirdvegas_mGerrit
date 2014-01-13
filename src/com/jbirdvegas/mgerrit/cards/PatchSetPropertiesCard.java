@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
 import android.view.View;
 import android.widget.ImageView;
