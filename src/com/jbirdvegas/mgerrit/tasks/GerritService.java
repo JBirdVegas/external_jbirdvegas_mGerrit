@@ -25,6 +25,8 @@ import android.util.Log;
 
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 
+import org.jetbrains.annotations.NotNull;
+
 public class GerritService extends IntentService {
 
     public static final String TAG = "GerritService";
@@ -40,7 +42,7 @@ public class GerritService extends IntentService {
     public GerritService() { super(TAG); }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleIntent(@NotNull Intent intent) {
         mCurrentUrl = intent.getParcelableExtra(URL_KEY);
         SyncProcessor processor;
 

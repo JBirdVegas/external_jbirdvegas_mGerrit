@@ -17,12 +17,13 @@ package com.jbirdvegas.mgerrit.helpers;
  *  limitations under the License.
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Helper class for content providers that operate on databases.
@@ -58,7 +59,7 @@ public class DBParams {
                 .build();
     }
 
-    public static Integer getConflictParameter(Uri uri) {
+    public static Integer getConflictParameter(@NotNull Uri uri) {
         String conflictAlgorithm = uri.getQueryParameter(TAG_CONFLICT);
         if (conflictAlgorithm == null) return null;
         else if (conflictAlgorithm.equals("REPLACE")) {

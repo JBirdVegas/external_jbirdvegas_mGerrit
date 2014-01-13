@@ -36,6 +36,7 @@ import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.FileInfo;
 import com.jbirdvegas.mgerrit.objects.Diff;
+import org.jetbrains.annotations.Contract;
 
 import java.util.regex.Pattern;
 
@@ -121,6 +122,7 @@ public class DiffDialog extends AlertDialog.Builder {
         );
     }
 
+    @Contract("null -> null")
     private String workAroundBadBase(String baseString) {
         if (baseString == null) {
             return null;

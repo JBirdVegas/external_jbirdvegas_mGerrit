@@ -17,7 +17,10 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
+import org.jetbrains.annotations.Nullable;
+
 public class StaticWebAddress {
+    @Nullable
     private static String GERRIT_INSTANCE_WEBSITE = null;
     public static final String HTTP_GERRIT_AOKP_CO = "http://gerrit.aokp.co/";
     private static final String CHANGES_QUERY = "changes/?q=";

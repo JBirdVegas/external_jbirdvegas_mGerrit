@@ -31,6 +31,8 @@ import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -106,7 +108,8 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
         }
     }
 
-    private JSONCommit findCommit(JSONCommit[] commits, String changeID) {
+    private JSONCommit findCommit(JSONCommit[] commits,
+                                  @NotNull String changeID) {
         for (JSONCommit commit : commits) {
             if (changeID.equals(commit.getChangeId()))
                 return commit;
@@ -114,6 +117,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
         return null;
     }
 
+    @Nullable
     private Reviewer[] reviewersToArray(JSONCommit commit) {
         List<Reviewer> rs = commit.getReviewers();
         if (rs == null) return null;

@@ -26,6 +26,7 @@ import android.net.Uri;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import org.jetbrains.annotations.Nullable;
 
 public class CommitMarker extends DatabaseTable {
     // Table name
@@ -84,6 +85,7 @@ public class CommitMarker extends DatabaseTable {
     /**
      * Given the status for a change list, get its corresponding search key
      */
+    @Nullable
     public static String getSortKeyForQuery(Context context, String status) {
         Uri uri = DBParams.fetchOneRow(CONTENT_URI);
         status = JSONCommit.Status.getStatusString(status);

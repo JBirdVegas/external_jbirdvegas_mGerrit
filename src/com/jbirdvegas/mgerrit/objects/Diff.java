@@ -26,6 +26,7 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import com.jbirdvegas.mgerrit.R;
+import org.jetbrains.annotations.Contract;
 
 import java.util.LinkedList;
 
@@ -78,6 +79,7 @@ public class Diff {
                 .append(" }").toString();
     }
 
+    @Contract("null -> null")
     private SpannableString spanColoredText(String incoming) {
         if (incoming == null)
             return null;

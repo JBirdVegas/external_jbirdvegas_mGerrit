@@ -1,6 +1,7 @@
 package com.jbirdvegas.mgerrit.helpers;
 
 import android.util.Log;
+import org.jetbrains.annotations.Contract;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -29,7 +30,8 @@ public class MD5Helper {
         return sb.toString();
     }
 
-    @SuppressWarnings({"ReturnOfNull", "StaticMethodOnlyUsedInOneClass"})
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
+    @Contract("null -> null")
     public static String md5Hex(String message) {
         try {
             MessageDigest md =

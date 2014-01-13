@@ -19,6 +19,7 @@ dependencies {
     compile files('libs/libGoogleAnalyticsServices.jar')
     compile files('libs/com.haarman.listviewanimations-2.5.1.jar')
     compile files('libs/joda-time-2.3.jar')
+    compile files('libs/annotations.jar')
     compile 'com.google.code.gson:gson:2.2.4'
 }
 

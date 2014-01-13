@@ -33,7 +33,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
@@ -46,6 +45,7 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -236,7 +236,7 @@ public abstract class CardsFragment extends Fragment
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         if (args == null) {
             args = mSearchView.getLastProcessedQuery();
             String to = args.getString(GerritSearchView.KEY_TO);

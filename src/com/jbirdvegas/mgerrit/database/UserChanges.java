@@ -182,24 +182,6 @@ public class UserChanges extends DatabaseTable {
         return findCommits(context, status, builder, bindArgs);
     }
 
-    /**
-     * List the commits that start with the given change id
-     * @param context Context for database access
-     * @param changeID
-     * @return
-     */
-    public static CursorLoader findCommitWithChangeID(Context context, String changeID) {
-
-        if (changeID == null) return null;
-
-        StringBuilder where = new StringBuilder().append(Changes.TABLE).append(".").append(C_OWNER)
-                .append(" = ").append(Users.TABLE).append(".").append(C_USER_ID)
-                .append(" AND ").append(C_CHANGE_ID).append(" LIKE ?");
-
-        return new CursorLoader(context, CONTENT_URI, CHANGE_LIST_PROJECTION,
-                where.toString(), new String[] { changeID + "%" }, SORT_BY);
-    }
-
     // Removes the extraneous 0s off the milliseconds in server timestamps
     private static String trimDate(String date) {
         return date.substring(0, date.length() - 6);

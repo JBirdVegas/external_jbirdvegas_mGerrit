@@ -25,6 +25,7 @@ import android.net.Uri;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.FileInfo;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,7 @@ public class ChangedFiles extends DatabaseTable {
     // Sort by condition for querying results.
     public static final String SORT_BY = ChangedFiles.C_FILENAME + " ASC";
 
+    @Nullable
     private static ChangedFiles mInstance = null;
 
     public static ChangedFiles getInstance() {
