@@ -46,6 +46,7 @@ import com.jbirdvegas.mgerrit.cards.PatchSetPropertiesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetReviewersCard;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
+import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
@@ -163,10 +164,10 @@ public class PatchSetViewerFragment extends Fragment {
                                     mContext));
                     EasyTracker.getInstance(mParent).send(
                             MapBuilder.createTiming(
-                                    AnalyticsConstants.GA_PERFORMANCE,
+                                    AnalyticsHelper.GA_PERFORMANCE,
                                     System.currentTimeMillis() - start,
-                                    AnalyticsConstants.GA_TIME_TO_LOAD,
-                                    AnalyticsConstants.GA_CARDS_LOAD_TIME)
+                                    AnalyticsHelper.GA_TIME_TO_LOAD,
+                                    AnalyticsHelper.GA_CARDS_LOAD_TIME)
                              .build()
                     );
                 } catch (JSONException e) {
@@ -239,8 +240,8 @@ public class PatchSetViewerFragment extends Fragment {
          * /changes/{change-id}/detail with arguments was introduced in version 2.8,
          * so this will not be able to get the files changed or the full commit message
          * in prior Gerrit versions.
+         */
         GerritService.sendRequest(mParent, GerritService.DataType.Commit, mUrl);
-        */
     }
 
     /**
@@ -261,13 +262,8 @@ public class PatchSetViewerFragment extends Fragment {
             changeID = Changes.getMostRecentChange(mParent, mStatus);
             if (changeID == null || changeID.isEmpty()) {
                 // No changes to load data from
-                EasyTracker.getInstance(mParent).send(
-                        MapBuilder.createEvent(
-                                "PatchSetViewerFragment",
-                                "load_change",
-                                "null_changeID",
-                                null)
-                        .build());
+                AnalyticsHelper.sendAnalyticsEvent(mParent, "PatchSetViewerFragment",
+                        "load_change", "null_changeID", null);
                 return;
             }
         }

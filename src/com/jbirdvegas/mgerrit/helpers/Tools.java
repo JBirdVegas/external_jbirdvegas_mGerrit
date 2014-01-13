@@ -28,7 +28,6 @@ import android.widget.ListView;
 import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.text.DateFormat;
 import java.text.ParseException;

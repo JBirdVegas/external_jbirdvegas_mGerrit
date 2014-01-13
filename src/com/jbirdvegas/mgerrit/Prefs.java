@@ -66,11 +66,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
             public boolean onPreferenceChange(Preference preference, Object o) {
                 preference.setSummary((CharSequence) o);
                 Toast.makeText(preference.getContext(),
-                        new StringBuilder(0)
-                                .append(getString(R.string.using_gerrit_toast))
-                                .append(' ')
-                                .append(o)
-                                .toString(),
+                        getString(R.string.using_gerrit_toast) + ' ' + o,
                         Toast.LENGTH_LONG).show();
                 return true;
             }

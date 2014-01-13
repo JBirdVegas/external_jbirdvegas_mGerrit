@@ -24,7 +24,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
-import com.jbirdvegas.mgerrit.GerritControllerActivity;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.UserChanges;

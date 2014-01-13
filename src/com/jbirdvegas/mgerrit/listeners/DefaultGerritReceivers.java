@@ -18,17 +18,14 @@ package com.jbirdvegas.mgerrit.listeners;
  */
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.Window;
 import android.widget.Toast;
 
-import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ConnectionEstablished;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;

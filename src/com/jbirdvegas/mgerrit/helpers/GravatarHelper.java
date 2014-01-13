@@ -17,7 +17,6 @@ package com.jbirdvegas.mgerrit.helpers;
  *  limitations under the License.
  */
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;

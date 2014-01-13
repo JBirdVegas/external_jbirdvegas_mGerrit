@@ -18,7 +18,9 @@ package com.jbirdvegas.mgerrit.tasks;
  */
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.jbirdvegas.mgerrit.objects.GerritURL;
@@ -58,5 +60,21 @@ public class GerritService extends IntentService {
         // Call the SyncProcessor to fetch the data if necessary
         boolean needsSync = processor.isSyncRequired();
         if (needsSync) processor.fetchData();
+    }
+
+    /**
+     * Start the updater to check for an update if necessary
+     */
+    public static void sendRequest(Context context, DataType dataType, Bundle bundle) {
+        Intent it = new Intent(context, GerritService.class);
+        it.putExtra(GerritService.DATA_TYPE_KEY, dataType);
+        it.putExtras(bundle);
+        context.startService(it);
+    }
+
+    public static void sendRequest(Context context, DataType dataType, GerritURL url) {
+        Bundle b = new Bundle();
+        b.putParcelable(GerritService.URL_KEY, url);
+        GerritService.sendRequest(context, dataType, b);
     }
 }
