@@ -66,6 +66,8 @@ public abstract class CardsFragment extends Fragment
 
     // Indicates that this fragment will need to be refreshed
     private boolean mIsDirty = false;
+    // Indicates whether a request to force an update is pending
+    private boolean mNeedsForceUpdate = false;
 
     // Broadcast receiver to receive processed search query changes
     private BroadcastReceiver mSearchQueryListener = new BroadcastReceiver() {
@@ -174,6 +176,11 @@ public abstract class CardsFragment extends Fragment
      * Start the updater to check for an update if necessary
      */
     private void sendRequest() {
+        if (mNeedsForceUpdate) {
+            mNeedsForceUpdate = false;
+            SyncTime.clear(mParent);
+        }
+
         Intent it = new Intent(mParent, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
         it.putExtra(GerritService.URL_KEY, mUrl);
@@ -197,10 +204,8 @@ public abstract class CardsFragment extends Fragment
             getLoaderManager().restartLoader(0, null, this);
         }
 
-        if (forceUpdate) {
-            SyncTime.clear(mParent);
-            sendRequest();
-        }
+        mNeedsForceUpdate = forceUpdate;
+        if (this.isAdded() && forceUpdate) sendRequest();
     }
 
     @Override
@@ -212,6 +217,7 @@ public abstract class CardsFragment extends Fragment
         if (!mIsDirty) return;
         mIsDirty = false;
         getLoaderManager().restartLoader(0, null, this);
+        if (mNeedsForceUpdate) sendRequest();
     }
 
     /**
