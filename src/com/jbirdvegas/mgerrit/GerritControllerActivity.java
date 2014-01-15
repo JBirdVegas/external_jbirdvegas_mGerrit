@@ -58,6 +58,8 @@ import com.jbirdvegas.mgerrit.message.InitializingDataTransfer;
 import com.jbirdvegas.mgerrit.message.ProgressUpdate;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
+import com.jbirdvegas.mgerrit.views.GerritSearchView;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;

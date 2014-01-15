@@ -33,9 +33,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.FileInfo;
 import com.jbirdvegas.mgerrit.objects.Diff;
+import com.jbirdvegas.mgerrit.views.DiffTextView;
+
 import org.jetbrains.annotations.Contract;
 
 import java.util.regex.Pattern;
@@ -44,13 +47,9 @@ public class DiffDialog extends AlertDialog.Builder {
     private static final String TAG = DiffDialog.class.getSimpleName();
     private static final String DIFF = "\n\nDIFF\n\n";
     private static final boolean DIFF_DEBUG = false;
-    private final String mUrl;
-    private final RequestQueue mRequestQueue;
-    private View mRootView;
     private final FileInfo mFileInfo;
     private String mLineSplit = System.getProperty("line.separator");
-    private LayoutInflater mInflater;
-    private TextView mDiffTextView;
+    private DiffTextView mDiffTextView;
     private DiffFailCallback mDiffFailCallback;
 
     public interface DiffFailCallback {
@@ -59,24 +58,24 @@ public class DiffDialog extends AlertDialog.Builder {
 
     public DiffDialog(Context context, String website, FileInfo fileInfo) {
         super(context);
-        mRequestQueue = Volley.newRequestQueue(context);
-        mUrl = website;
+
+        context.setTheme(Prefs.getCurrentThemeID(context));
+
         mFileInfo = fileInfo;
-        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mRootView = mInflater.inflate(R.layout.diff_dialog, null);
-        setView(mRootView);
-        mDiffTextView = (TextView) mRootView.findViewById(R.id.diff_view_diff);
-        mDiffTextView.setText(R.string.loading);
-        mDiffTextView.setTextSize(18f);
-        Log.d(TAG, "Calling url: " + mUrl);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View rootView = inflater.inflate(R.layout.diff_dialog, null);
+        setView(rootView);
+        mDiffTextView = (DiffTextView) rootView.findViewById(R.id.diff_view_diff);
+
         if (DIFF_DEBUG) {
-            debugRestDiffApi(context, mUrl, mFileInfo);
+            Log.d(TAG, "Calling url: " + website);
+            debugRestDiffApi(context, website, mFileInfo);
         }
-        // we can use volley here because we return
-        // does not contain the magic number on the
-        // first line. return is just the Base64 formatted
-        // return
-        mRequestQueue.add(getBase64StringRequest(mUrl));
+
+        /* we can use volley here because we return does not contain the magic number on the
+         * first line. return is just the Base64 formatted return */
+        RequestQueue mRequestQueue = Volley.newRequestQueue(context);
+        mRequestQueue.add(getBase64StringRequest(website));
         mRequestQueue.start();
     }
 
@@ -143,17 +142,15 @@ public class DiffDialog extends AlertDialog.Builder {
         Diff currentDiff = null;
         for (String change : filesChanged) {
             String concat;
-            try {
-                concat = change.substring(2, change.lastIndexOf(mFileInfo.getPath())).trim();
-                concat = concat.split(" ")[0];
-            } catch (StringIndexOutOfBoundsException notFound) {
-                Log.d(TAG, notFound.getMessage());
-                continue;
-            }
+            int index = change.lastIndexOf(mFileInfo.getPath());
+            if (index < 0) continue;
+
+            concat = change.substring(2, index).trim().split(" ", 2)[0];
             if (concat.equals(mFileInfo.getPath())) {
                 builder.append(DIFF);
                 change.replaceAll("\n", mLineSplit);
-                currentDiff = new Diff(getContext(), change);
+
+                currentDiff = new Diff(getContext(), change, mDiffTextView);
                 builder.append(change);
             }
         }

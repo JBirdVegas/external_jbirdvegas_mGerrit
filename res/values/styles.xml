@@ -98,4 +98,21 @@
         <item name="android:layout_marginLeft">4dp</item>
     </style>
 
+    <style name="Diff">
+        <item name="added">@color/text_green</item>
+        <item name="pathInfo">@color/text_orange</item>
+    </style>
+    <style name="Diff.Light">
+        <item name="removed">@color/text_light_red</item>
+        <item name="rangeInfo">@color/text_purple</item>
+        <item name="origHeader">@color/text_brown</item>
+        <item name="newHeader">@color/text_blue</item>
+    </style>
+    <style name="Diff.Dark">
+        <item name="removed">@color/text_red</item>
+        <item name="rangeInfo">@color/text_purple_light</item>
+        <item name="origHeader">@color/text_brown_light</item>
+        <item name="newHeader">@color/text_blue_light</item>
+    </style>
+
 </resources>

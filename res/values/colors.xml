@@ -34,9 +34,15 @@
     <color name="main_background_dark">#000000</color>
 
     <color name="text_brown">#663300</color>
+    <color name="text_brown_light">#AA3300</color>
     <color name="text_green">#ff669900</color>
     <color name="text_orange">#ee8800</color>
     <color name="text_red">#ffCC0000</color>
+    <color name="text_light_red">#faa</color>
+    <color name="text_purple">#FF800080</color>
+    <color name="text_purple_light">#FFD000D0</color>
+    <color name="text_blue">#FF0000FF</color>
+    <color name="text_blue_light">#ff7f9eff</color>
 
     <color name="actionbar_text">#ff555555</color>
     <color name="actionbar_text_dark">#ffAAAAAA</color>

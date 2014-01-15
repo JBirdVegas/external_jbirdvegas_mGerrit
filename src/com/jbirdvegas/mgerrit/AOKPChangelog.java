@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
 import com.jbirdvegas.mgerrit.search.AgeSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
+import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
 import java.util.HashSet;
 

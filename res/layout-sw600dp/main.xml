@@ -24,7 +24,7 @@
     android:layout_weight="0.5"
     android:orientation="vertical">
 
-    <com.jbirdvegas.mgerrit.GerritSearchView
+    <com.jbirdvegas.mgerrit.views.GerritSearchView
         android:id="@+id/search"
         style="?attr/android:actionBarStyle"
         android:layout_width="match_parent"

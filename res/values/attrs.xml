@@ -45,4 +45,15 @@
         <attr name="viewIcon" format="reference"/>
         <attr name="saveIcon" format="reference"/>
     </declare-styleable>
+
+    <attr name="diffStyle" format="reference" />
+    <declare-styleable name="DiffTextView">
+        <attr name="added" format="color" />
+        <attr name="removed" format="color" />
+        <attr name="rangeInfo" format="color" />
+        <attr name="origHeader" format="color" />
+        <attr name="newHeader" format="color" />
+        <attr name="pathInfo" format="color" />
+    </declare-styleable>
+
 </resources>

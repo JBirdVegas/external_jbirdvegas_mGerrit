@@ -45,6 +45,8 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
+import com.jbirdvegas.mgerrit.views.GerritSearchView;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;

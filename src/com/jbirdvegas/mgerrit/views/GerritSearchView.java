@@ -1,4 +1,4 @@
-package com.jbirdvegas.mgerrit;
+package com.jbirdvegas.mgerrit.views;
 
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
@@ -30,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
+import com.jbirdvegas.mgerrit.CardsFragment;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.search.OwnerSearch;
 import com.jbirdvegas.mgerrit.search.ProjectSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;

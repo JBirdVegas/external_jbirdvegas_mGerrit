@@ -9,12 +9,15 @@
         android:layout_height="wrap_content"
         android:fillViewport="true">
 
-        <TextView
+        <com.jbirdvegas.mgerrit.views.DiffTextView
             android:paddingTop="@dimen/diff_view_padding_top"
             android:padding="@dimen/default_left_card_start"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/diff_view_diff"
-            android:layout_gravity="left"/>
+            android:layout_gravity="left"
+            android:textSize="@dimen/text_size_large"
+            android:text="@string/loading"
+            style="?attr/diffStyle"/>
     </HorizontalScrollView>
 </ScrollView>

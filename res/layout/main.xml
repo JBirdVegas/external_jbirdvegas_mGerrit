@@ -23,7 +23,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical">
 
-    <com.jbirdvegas.mgerrit.GerritSearchView
+    <com.jbirdvegas.mgerrit.views.GerritSearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/search"
