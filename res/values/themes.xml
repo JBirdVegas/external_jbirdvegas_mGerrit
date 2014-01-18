@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2014 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2014
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<resources>
+    <style name="Theme.Light" parent="android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/ActionBar.Light</item>
+        <item name="android:textColorPrimary">@color/actionbar_text</item>
+        <item name="gerritIcon">@drawable/ic_menu_source</item>
+        <item name="projectsIcon">@drawable/ic_menu_project</item>
+        <item name="refreshIcon">@drawable/ic_action_refresh</item>
+        <item name="overflowIcon">@drawable/ic_action_overflow</item>
+        <item name="shareIcon">@drawable/ic_action_share</item>
+        <item name="mainBackgroundColor">@color/main_background</item>
+        <item name="cardTextStyle">@style/CardText.Light</item>
+        <item name="cardTitleStyle">@style/CardTitle.Light</item>
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="clickableCardBackground">@drawable/card_background_states</item>
+        <item name="viewIcon">@drawable/ic_menu_view</item>
+        <item name="warningIcon">@drawable/ic_action_warning</item>
+        <item name="saveIcon">@drawable/ic_action_save</item>
+        <item name="searchIcon">@drawable/ic_action_search</item>
+        <item name="diffStyle">@style/Diff.Light</item>
+    </style>
+
+    <style name="Theme.Dark" parent="android:style/Theme.Holo">
+        <item name="android:actionBarStyle">@style/ActionBar.Dark</item>
+        <item name="android:textColorPrimary">@color/actionbar_text_dark</item>
+        <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
+        <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
+        <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
+        <item name="overflowIcon">@drawable/ic_action_overflow_dark</item>
+        <item name="shareIcon">@android:drawable/ic_menu_share</item>
+        <item name="mainBackgroundColor">@color/main_background_dark</item>
+        <item name="cardTextStyle">@style/CardText.Dark</item>
+        <item name="cardTitleStyle">@style/CardTitle.Dark</item>
+        <item name="cardBackgroundColor">@color/card_background_dark</item>
+        <item name="clickableCardBackground">@drawable/card_background_states_dark</item>
+        <item name="viewIcon">@android:drawable/ic_menu_view</item>
+        <item name="warningIcon">@drawable/ic_action_warning_dark</item>
+        <item name="saveIcon">@drawable/ic_action_save_dark</item>
+        <item name="searchIcon">@drawable/ic_action_search_dark</item>
+        <item name="diffStyle">@style/Diff.Dark</item>
+    </style>
+</resources>

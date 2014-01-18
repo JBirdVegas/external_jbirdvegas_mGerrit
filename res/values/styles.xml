@@ -16,46 +16,9 @@
   -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <style name="Theme.Light" parent="android:style/Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/ActionBar.Light</item>
-        <item name="android:textColorPrimary">@color/actionbar_text</item>
-        <item name="gerritIcon">@drawable/ic_menu_source</item>
-        <item name="projectsIcon">@drawable/ic_menu_project</item>
-        <item name="refreshIcon">@drawable/ic_action_refresh</item>
-        <item name="overflowIcon">@drawable/ic_action_overflow</item>
-        <item name="shareIcon">@drawable/ic_action_share</item>
-        <item name="mainBackgroundColor">@color/main_background</item>
-        <item name="cardTextStyle">@style/CardText.Light</item>
-        <item name="cardTitleStyle">@style/CardTitle.Light</item>
-        <item name="cardBackgroundColor">@color/card_background</item>
-        <item name="clickableCardBackground">@drawable/card_background_states</item>
-        <item name="viewIcon">@drawable/ic_menu_view</item>
-        <item name="warningIcon">@drawable/ic_action_warning</item>
-        <item name="saveIcon">@drawable/ic_action_save</item>
-        <item name="searchIcon">@drawable/ic_action_search</item>
+    <style name="ActionBar" parent="android:Widget.Holo.ActionBar">
+        <item name="android:indeterminateProgressStyle">@style/IndeterminateProgress</item>
     </style>
-
-    <style name="Theme.Dark" parent="android:style/Theme.Holo">
-        <item name="android:actionBarStyle">@style/ActionBar.Dark</item>
-        <item name="android:textColorPrimary">@color/actionbar_text_dark</item>
-        <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
-        <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
-        <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
-        <item name="overflowIcon">@drawable/ic_action_overflow_dark</item>
-        <item name="shareIcon">@android:drawable/ic_menu_share</item>
-        <item name="mainBackgroundColor">@color/main_background_dark</item>
-        <item name="cardTextStyle">@style/CardText.Dark</item>
-        <item name="cardTitleStyle">@style/CardTitle.Dark</item>
-        <item name="cardBackgroundColor">@color/card_background_dark</item>
-        <item name="clickableCardBackground">@drawable/card_background_states_dark</item>
-        <item name="viewIcon">@android:drawable/ic_menu_view</item>
-        <item name="warningIcon">@drawable/ic_action_warning_dark</item>
-        <item name="saveIcon">@drawable/ic_action_save_dark</item>
-        <item name="searchIcon">@drawable/ic_action_search_dark</item>
-    </style>
-
-    <style name="ActionBar" parent="android:Widget.Holo.ActionBar" />
 
     <style name="ActionBar.Light">
         <item name="android:background">@drawable/ab_transparent</item>
@@ -63,6 +26,14 @@
 
     <style name="ActionBar.Dark">
         <item name="android:background">@drawable/ab_transparent_dark</item>
+    </style>
+
+    <!-- Resize the action bar activity indicator to match the other action items -->
+    <style name="IndeterminateProgress" parent="@android:style/Widget.Holo.ProgressBar.Small">
+        <item name="android:minWidth">32dp</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:width">48dp</item>
+        <item name="android:height">48dp</item>
     </style>
 
     <style name="CardText">
