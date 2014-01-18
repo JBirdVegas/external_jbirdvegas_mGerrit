@@ -74,12 +74,4 @@ public class GooFileArrayAdapter extends BaseAdapter {
         }
         return root;
     }
-
-    public List<GooFileObject> getGooFilesList() {
-        return mGooFilesList;
-    }
-
-    public GooFileObject getObjectAtPostition(int position) {
-        return (GooFileObject) getItem(position);
-    }
 }

@@ -39,6 +39,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.adapters.GooFileArrayAdapter;
+import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
 
 import org.json.JSONArray;
@@ -83,7 +84,7 @@ public class ChangelogFragment extends Fragment {
         mSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onSaveClicked(v);
+                onSaveClicked();
             }
         });
 
@@ -103,7 +104,6 @@ public class ChangelogFragment extends Fragment {
                 // Not used
             }
         });
-
 
         findDates();
     }
@@ -162,9 +162,28 @@ public class ChangelogFragment extends Fragment {
         }
     }
 
-    public void onSaveClicked(View view) {
+    public void onSaveClicked() {
+
         GooFileObject build = (GooFileObject) mUpdatesList.getSelectedItem();
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(build.getShortUrl()));
-        startActivity(intent);
+        if (build != null) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(formUrl(build)));
+            startActivity(intent);
+        } else {
+            // Failed to parse GooFileObject
+            logFailure(null);
+        }
+    }
+
+    protected String formUrl(GooFileObject build) {
+        return build.getShortUrl() != null
+                ? build.getShortUrl() : "http://goo.im/" + build.getPath();
+    }
+
+    private void logFailure(GooFileObject file) {
+        AnalyticsHelper.sendAnalyticsEvent(getActivity(), AnalyticsHelper.GA_LOG_FAIL,
+                AnalyticsHelper.ACTION_CHANGELOG_SAVE_FAIL,
+                file == null ? AnalyticsHelper.EVENT_CHANGELOG_FILE_NULL
+                        : AnalyticsHelper.EVENT_CHANGELOG_SHORT_URL_NULL
+                , null);
     }
 }

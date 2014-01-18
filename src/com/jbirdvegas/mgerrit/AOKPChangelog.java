@@ -91,7 +91,12 @@ public class AOKPChangelog extends FragmentActivity implements ChangelogActivity
 
     public void onBuildSelected(GooFileObject earlier, GooFileObject later) {
         HashSet<SearchKeyword> set = new HashSet<>(2);
-        set.add(new AgeSearch(earlier.getModified(), "<="));
+        // if user selects the oldest build; earlier Object will be null
+        if (earlier != null) {
+            set.add(new AgeSearch(earlier.getModified(), "<="));
+        } else {
+            set.add(new AgeSearch(0, "<="));
+        }
         set.add(new AgeSearch(later.getModified(), ">="));
         mSearchView.injectKeywords(set);
     }

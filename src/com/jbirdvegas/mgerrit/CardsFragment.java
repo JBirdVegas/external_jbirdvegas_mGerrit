@@ -106,8 +106,7 @@ public abstract class CardsFragment extends Fragment
         return inflater.inflate(R.layout.commit_list, container, false);
     }
 
-    private void init(Bundle savedInstanceState)
-    {
+    private void init(Bundle savedInstanceState) {
         mParent = this.getActivity();
         View mCurrentFragment = this.getView();
         mRequestQueue = Volley.newRequestQueue(mParent);
