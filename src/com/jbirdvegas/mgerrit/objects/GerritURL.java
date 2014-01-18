@@ -2,8 +2,8 @@ package com.jbirdvegas.mgerrit.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import com.jbirdvegas.mgerrit.StaticWebAddress;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -92,6 +92,7 @@ public class GerritURL implements Parcelable
     }
 
     @Override
+    @Nullable
     public String toString()
     {
         boolean addPlus = false;
@@ -163,6 +164,7 @@ public class GerritURL implements Parcelable
         return mStatus;
     }
 
+    @Nullable
     public String getQuery() {
         if (mStatus == null) return null;
         else {

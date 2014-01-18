@@ -31,6 +31,10 @@ import android.util.Log;
 
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
+import org.jetbrains.annotations.NotNull;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -140,7 +144,7 @@ public class DatabaseFactory extends ContentProvider {
     /** This should be called when the Gerrit source changes to modify all database references to
      *  use the new database source.
      */
-    public static void changeGerrit(Context context, String newGerrit) {
+    public static void changeGerrit(@NotNull Context context, String newGerrit) {
         Log.d("DatabaseFactory", "Switching Gerrit instance to: " + newGerrit);
 
         /* Currently all the members of this class are static so it is only relevant
@@ -160,7 +164,7 @@ public class DatabaseFactory extends ContentProvider {
         DatabaseFactory.getDatabase(context, newGerrit);
     }
 
-    public static void getDatabase(Context context, String gerrit) {
+    public static void getDatabase(@NotNull Context context, @NotNull String gerrit) {
         String dbName = DBHelper.getDatabaseName(gerrit);
         DatabaseFactory.dbHelper = new DBHelper(context, dbName);
         // Ensure the database is open and we have a reference to it before
@@ -203,7 +207,7 @@ public class DatabaseFactory extends ContentProvider {
         return c;
     }
 
-    @Override
+    @Override @Contract("null -> fail")
     public String getType(Uri uri) {
         int result = URI_MATCHER.match(uri);
 
@@ -212,9 +216,9 @@ public class DatabaseFactory extends ContentProvider {
         else throw new IllegalArgumentException("Unsupported URI: " + uri);
     }
 
-    @Override
+    @Override  @Contract("null -> fail")
     public Uri insert(Uri uri, ContentValues values) {
-        long id = -1;
+        long id;
 
         if (!isUriList(uri))
             throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);
@@ -230,9 +234,8 @@ public class DatabaseFactory extends ContentProvider {
         unlock();
 
         if (id > 0) {
-            Uri itemUri = uri;
             // notify all listeners of changes and return itemUri:
-            itemUri = ContentUris.withAppendedId(uri, id);
+            Uri itemUri = ContentUris.withAppendedId(uri, id);
             getContext().getContentResolver().notifyChange(itemUri, null);
             return itemUri;
         }
@@ -240,7 +243,7 @@ public class DatabaseFactory extends ContentProvider {
         return null;
     }
 
-    @Override
+    @Override  @Contract("null -> fail")
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         if (!isUriList(uri))
             selection = handleID(uri, selection);
@@ -257,7 +260,7 @@ public class DatabaseFactory extends ContentProvider {
         return rows;
     }
 
-    @Override
+    @Override  @Contract("null -> fail")
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int updateCount = 0, result = URI_MATCHER.match(uri);
 
@@ -275,8 +278,8 @@ public class DatabaseFactory extends ContentProvider {
         return updateCount;
     }
 
-    @Override
-    public int bulkInsert(Uri uri, ContentValues[] values) {
+    @Override  @Contract("null -> fail")
+    public int bulkInsert(Uri uri, @NotNull ContentValues[] values) {
         String table = getUriTable(uri);
 
         Map<String, Integer> params = DBParams.getParameters(uri);
@@ -333,6 +336,7 @@ public class DatabaseFactory extends ContentProvider {
      * @return The internal name of the table
      * @throws IllegalArgumentException When the uri does not match a valid table
      */
+    @Contract("null -> fail")
     private static String getUriTable(Uri uri) throws IllegalArgumentException {
         int result = URI_MATCHER.match(uri);
 

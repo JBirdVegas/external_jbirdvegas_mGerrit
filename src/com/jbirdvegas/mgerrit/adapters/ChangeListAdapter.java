@@ -26,7 +26,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
-
 import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
@@ -35,6 +34,7 @@ import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import org.jetbrains.annotations.NotNull;
 
 public class ChangeListAdapter extends SimpleCursorAdapter {
 
@@ -183,7 +183,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
         card.setChangeSelected(true);
     }
 
-    private void setIndicies(Cursor cursor) {
+    private void setIndicies(@NotNull Cursor cursor) {
         // These indices will not change regardless of the view
         if (changeid_index == null) {
             changeid_index = cursor.getColumnIndex(UserChanges.C_CHANGE_ID);

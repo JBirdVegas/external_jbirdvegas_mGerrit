@@ -28,12 +28,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
-
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.jbirdvegas.mgerrit.search.OwnerSearch;
 import com.jbirdvegas.mgerrit.search.ProjectSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
+import org.jetbrains.annotations.Nullable;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -122,7 +125,7 @@ public class GerritSearchView extends SearchView
      *  the loader to perform the query
      * @param query The search query text
      */
-    private Set<SearchKeyword> constructTokens(String query) {
+    private Set<SearchKeyword> constructTokens(@Nullable String query) {
         // An empty query will result in an empty set
         if (query == null || query.isEmpty()) {
             return new HashSet<>();
@@ -131,6 +134,7 @@ public class GerritSearchView extends SearchView
         return SearchKeyword.constructTokens(query);
     }
 
+    @Contract("null -> true")
     private boolean processTokens(final Set<SearchKeyword> tokens) {
         Set<SearchKeyword> newTokens = safeMerge(tokens, mAdditionalKeywords);
 

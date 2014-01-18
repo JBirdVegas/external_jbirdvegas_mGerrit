@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.os.Build;
 import com.android.volley.toolbox.ImageLoader;
+import org.jetbrains.annotations.Contract;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class BitmapLruCache implements ImageLoader.ImageCache {
         this.map = new LinkedHashMap<>(0, 0.75f, true);
     }
 
+    @Contract("null -> fail")
     private Bitmap get(String key) {
         if (key == null) {
             throw new NullPointerException("key == null");
@@ -54,6 +56,7 @@ public class BitmapLruCache implements ImageLoader.ImageCache {
         return null;
     }
 
+    @Contract("null, null -> fail")
     private void set(String key, Bitmap bitmap) {
         if (key == null || bitmap == null) {
             throw new NullPointerException("key == null || bitmap == null");

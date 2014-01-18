@@ -29,6 +29,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.jbirdvegas.mgerrit.R;
+import org.jetbrains.annotations.Contract;
 
 public class GravatarHelper {
     private static final String TAG = GravatarHelper.class.getSimpleName();
@@ -48,6 +49,7 @@ public class GravatarHelper {
         }
     }
 
+    @Contract("null -> null")
     public static String getGravatarUrl(String email) {
         if (email != null) {
             String emailMd5 = MD5Helper.md5Hex(email.trim().toLowerCase());

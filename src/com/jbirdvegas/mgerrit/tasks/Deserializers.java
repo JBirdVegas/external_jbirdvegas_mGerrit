@@ -32,6 +32,8 @@ import com.jbirdvegas.mgerrit.objects.Projects;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 import com.jbirdvegas.mgerrit.objects.ReviewerList;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -138,7 +140,7 @@ public final class Deserializers {
     };
 
     // Register all of the custom deserializers here
-    public static void addDeserializers(GsonBuilder gsonBuilder) {
+    public static void addDeserializers(@NotNull GsonBuilder gsonBuilder) {
         gsonBuilder.registerTypeAdapter(Projects.class, new Projects());
         gsonBuilder.registerTypeAdapter(Reviewer.class, d_reviewer);
         gsonBuilder.registerTypeAdapter(ReviewerList.class, d_reviewers);

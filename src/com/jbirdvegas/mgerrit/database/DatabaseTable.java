@@ -23,6 +23,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.SparseArray;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 /**
@@ -141,7 +143,7 @@ public abstract class DatabaseTable {
      * @param uri The Uri of the table to search
      * @return whether there are any rows in the given table
      */
-    public static boolean isEmpty(Context context, Uri uri) {
+    public static boolean isEmpty(@NotNull Context context, @NotNull Uri uri) {
         Cursor cursor = context.getContentResolver().query(uri, new String[] { "count(*)" },
                 null, null, null);
         if (cursor == null) return true;

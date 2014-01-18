@@ -33,6 +33,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
+import org.jetbrains.annotations.Contract;
 
 import java.util.LinkedList;
 import java.util.TimeZone;
@@ -150,6 +151,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
      * @param pref selected library preference
      * @return true if launch was successful
      */
+    @Contract("null -> false")
     private boolean launchWebsite(Preference pref) {
         if (pref == null
                 || !((String) pref.getSummary()).contains("http")) {

@@ -29,6 +29,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.tasks.Deserializers;
 
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -366,6 +367,7 @@ public class JSONCommit implements Parcelable {
         return mWebAddress;
     }
 
+    @Nullable
     public List<Reviewer> getReviewers() {
         if (mReviewers == null) return null;
         return mReviewers.getReviewers();

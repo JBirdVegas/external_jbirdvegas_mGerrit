@@ -29,6 +29,7 @@ import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -74,7 +75,8 @@ public class PatchSetReviewersAdapter extends ArrayAdapter<Reviewer> {
         return root;
     }
 
-    private void setColoredApproval(Integer value, TextView approval) {
+    private void setColoredApproval(@Nullable Integer value,
+                                    TextView approval) {
         int mGreen = this.getContext().getResources().getColor(R.color.text_green);
         int mRed = this.getContext().getResources().getColor(R.color.text_red);
         int plusStatus = 0;

@@ -58,6 +58,7 @@ import com.jbirdvegas.mgerrit.message.InitializingDataTransfer;
 import com.jbirdvegas.mgerrit.message.ProgressUpdate;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.tasks.GerritTask;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -79,6 +80,7 @@ public class GerritControllerActivity extends FragmentActivity {
     // Listener for whenever the Gerrit changes
     private BroadcastReceiver mGerritListener;
 
+    @Nullable
     private DefaultGerritReceivers receivers;
 
     private Menu mMenu;

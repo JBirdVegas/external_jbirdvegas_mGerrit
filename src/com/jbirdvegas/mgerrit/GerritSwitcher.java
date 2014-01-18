@@ -36,6 +36,8 @@ import com.jbirdvegas.mgerrit.adapters.TeamListAdapter;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
 import com.jbirdvegas.mgerrit.objects.GerritDetails;
 
+import org.jetbrains.annotations.Contract;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -174,6 +176,7 @@ public class GerritSwitcher extends DialogFragment {
     }
 
     // Validator for URLs
+    @Contract("null -> false")
     private boolean isUrlValid(String url) {
         return (url != null)
                 && (URLUtil.isHttpUrl(url)

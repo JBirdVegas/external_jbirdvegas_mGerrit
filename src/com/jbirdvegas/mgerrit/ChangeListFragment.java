@@ -17,30 +17,21 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
-
 import com.jbirdvegas.mgerrit.message.StatusSelected;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
-import com.jbirdvegas.mgerrit.search.OwnerSearch;
-import com.jbirdvegas.mgerrit.search.ProjectSearch;
-import com.jbirdvegas.mgerrit.search.SearchKeyword;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ChangeListFragment extends Fragment {
 
@@ -182,6 +173,7 @@ public class ChangeListFragment extends Fragment {
         // The ViewPager monitors the current tab position so we can get the
         //  ViewPager from the enclosing class and use the fragment recording
         //  to get the current fragment
+        @Nullable
         public CardsFragment getCurrentFragment() {
             int pos = mViewPager.getCurrentItem();
             return getFragment(pos);
