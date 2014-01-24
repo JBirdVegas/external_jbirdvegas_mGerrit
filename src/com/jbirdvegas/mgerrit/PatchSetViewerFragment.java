@@ -232,14 +232,6 @@ public class PatchSetViewerFragment extends Fragment {
         mUrl.setChangeID(mSelectedChange);
         mUrl.requestChangeDetail(true);
         executeGerritTask(mUrl.toString());
-
-        /*
-         * Requires Gerrit version 2.8
-         * /changes/{change-id}/detail with arguments was introduced in version 2.8,
-         * so this will not be able to get the files changed or the full commit message
-         * in prior Gerrit versions.
-         */
-        GerritService.sendRequest(mParent, GerritService.DataType.Commit, mUrl);
     }
 
     /**

@@ -135,7 +135,7 @@ public class PatchSetChangesCard extends RecyclableCard {
                                 mCommit.getId());
                                 //mCommit.getCurrentRevision(),
                                 //URLEncoder.encode(((FileInfo) view.getTag()).getPath()));
-                        launchDiffDialog(url, fileInfo);
+                        launchDiffDialog(url, fileInfo.getPath());
                     }
                 });
 
@@ -187,9 +187,9 @@ public class PatchSetChangesCard extends RecyclableCard {
     }
 
     // creates the Diff viewer dialog
-    private void launchDiffDialog(String url, FileInfo fileInfo) {
+    private void launchDiffDialog(String url, String path) {
         Log.d(TAG, "Attempting to contact: " + url);
-        DiffDialog diffDialog = new DiffDialog(mActivity, url, fileInfo);
+        DiffDialog diffDialog = new DiffDialog(mActivity, url, path);
         diffDialog.addExceptionCallback(new DiffDialog.DiffFailCallback() {
             @Override
             public void killDialogAndErrorOut(Exception e) {
