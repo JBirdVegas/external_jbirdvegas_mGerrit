@@ -15,7 +15,7 @@
         android:text="@string/comments_card_title"
         android:paddingLeft="8dip"
         style="?attr/cardTitleStyle"
-        android:textSize="20sp"/>
+        android:textSize="@dimen/text_size_larger"/>
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"

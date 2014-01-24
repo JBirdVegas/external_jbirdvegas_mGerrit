@@ -38,9 +38,9 @@
         android:name="com.jbirdvegas.mgerrit.ChangelogFragment"
         android:id="@+id/changelog_fragment"
         tools:layout="@layout/changelog_card"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"/>
+        android:layout_marginTop="@dimen/changelog_padding_vert"
+        android:layout_marginLeft="@dimen/changelog_padding_horiz"
+        android:layout_marginRight="@dimen/changelog_padding_horiz"/>
 
     <fragment
         android:layout_width="match_parent"

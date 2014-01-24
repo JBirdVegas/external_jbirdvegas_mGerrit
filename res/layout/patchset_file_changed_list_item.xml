@@ -33,7 +33,7 @@
         android:paddingLeft="8dip"
         android:paddingRight="8dip"
         android:paddingBottom="8dip"
-        android:textSize="16sp"/>
+        android:textSize="@dimen/text_size_medium"/>
 
     <RelativeLayout
         android:orientation="horizontal"
@@ -45,9 +45,9 @@
             android:layout_width="wrap_content"
             android:id="@+id/binary_text"
             android:text="@string/binary_file"
-            android:paddingLeft="8dip"
-            android:paddingRight="8dip"
-            android:textSize="13sp"
+            android:paddingLeft="@dimen/standard_padding"
+            android:paddingRight="@dimen/standard_padding"
+            android:textSize="@dimen/text_size_micro"
             android:visibility="gone"/>
 
         <TextView
@@ -56,9 +56,9 @@
             android:layout_width="wrap_content"
             android:text="@string/inserted"
             android:id="@+id/inserted_text"
-            android:paddingLeft="8dip"
-            android:paddingRight="8dip"
-            android:textSize="13sp"/>
+            android:paddingLeft="@dimen/standard_padding"
+            android:paddingRight="@dimen/standard_padding"
+            android:textSize="@dimen/text_size_micro"/>
 
         <TextView
             style="?attr/cardTextStyle"
@@ -67,9 +67,9 @@
             android:id="@+id/changed_file_inserted"
             android:gravity="right"
             android:layout_gravity="right"
-            android:paddingLeft="8dip"
-            android:paddingRight="8dip"
-            android:textSize="14sp"
+            android:paddingLeft="@dimen/standard_padding"
+            android:paddingRight="@dimen/standard_padding"
+            android:textSize="@dimen/text_size_micro"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_toRightOf="@+id/inserted_text"/>
@@ -79,10 +79,10 @@
             android:layout_height="wrap_content"
             android:text="@string/deleted"
             android:id="@+id/deleted_text"
-            android:paddingLeft="8dip"
-            android:paddingRight="8dip"
+            android:paddingLeft="@dimen/standard_padding"
+            android:paddingRight="@dimen/standard_padding"
             style="?attr/cardTextStyle"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_size_micro"
             android:layout_below="@id/inserted_text"/>
 
         <TextView
@@ -91,10 +91,10 @@
             android:id="@+id/changed_file_deleted"
             android:gravity="right"
             android:layout_gravity="right"
-            android:paddingLeft="8dip"
-            android:paddingRight="8dip"
+            android:paddingLeft="@dimen/standard_padding"
+            android:paddingRight="@dimen/standard_padding"
             style="?attr/cardTextStyle"
-            android:textSize="13sp"
+            android:textSize="@dimen/text_size_micro"
             android:layout_alignParentRight="true"
             android:layout_toRightOf="@+id/deleted_text"
             android:layout_below="@id/inserted_text"/>

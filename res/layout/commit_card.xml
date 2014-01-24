@@ -26,9 +26,9 @@
     <View
         android:id="@+id/commit_card_commit_status"
         android:layout_height="match_parent"
-        android:layout_width="6dp"
+        android:layout_width="@dimen/card_stroke_width"
         android:background="@android:color/transparent"
-        android:paddingRight="2dp"/>
+        android:paddingRight="@dimen/commit_card_stroke_padding"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -56,28 +56,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/commit_card_project_name"
             style="@style/CardText"
-            android:textSize="18sp"/>
+            android:textSize="@dimen/text_size_large"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/commit_card_last_updated"
             style="@style/CardText" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/commit_card_message"
-            android:paddingTop="10dp"
-            style="@style/CardText"
-            android:visibility="gone"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/commit_card_changed_files"
-            style="@style/CardText"
-            android:visibility="gone"/>
 
         <RelativeLayout
             android:layout_height="wrap_content"

@@ -12,24 +12,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
+        android:paddingLeft="@dimen/standard_padding"
+        android:paddingRight="@dimen/standard_padding"
         android:id="@+id/prop_card_subject"
         style="?attr/cardTitleStyle"
-        android:textSize="22sp"/>
+        tools:text="Commit Subject"/>
 
     <TextView
-        style="@style/CardText.CommitOwnerDetails"
+        style="@style/CardText.CommitOwnerText"
         android:id="@+id/prop_card_owner"
         tools:text="@string/commit_owner"/>
 
     <TextView
-        style="@style/CardText.CommitOwnerDetails"
+        style="@style/CardText.CommitOwnerText"
         android:id="@+id/prop_card_author"
         tools:text="@string/commit_author"/>
 
     <TextView
-        style="@style/CardText.CommitOwnerDetails"
+        style="@style/CardText.CommitOwnerText"
         android:id="@+id/prop_card_committer"
         tools:text="@string/commit_committer"/>
 

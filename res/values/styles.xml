@@ -37,7 +37,7 @@
     </style>
 
     <style name="CardText">
-        <item name="android:textSize">@dimen/card_small_text</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">2</item>
     </style>
@@ -58,15 +58,15 @@
     <style name="CardText.CommitOwnerText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">8dip</item>
+        <item name="android:padding">@dimen/prop_label_padding_left</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="CardText.CommitOwnerDetails">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingLeft">8dip</item>
-        <item name="android:paddingRight">8dip</item>
+        <item name="android:paddingLeft">@dimen/standard_padding</item>
+        <item name="android:paddingRight">@dimen/standard_padding</item>
         <item name="android:paddingTop">5dip</item>
         <item name="android:paddingBottom">5dip</item>
     </style>
@@ -74,10 +74,10 @@
     <style name="CardTitle" parent="style/CardText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">@dimen/card_large_text</item>
+        <item name="android:textSize">@dimen/text_size_x_large</item>
         <item name="android:textStyle">italic</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingLeft">@dimen/standard_padding</item>
+        <item name="android:paddingRight">@dimen/standard_padding</item>
     </style>
 
     <style name="CardTitle.Light" parent="style/CardTitle">
@@ -98,6 +98,13 @@
         <item name="android:layout_marginLeft">4dp</item>
     </style>
 
+    <style name="GerritUrl">
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:textColor">@color/card_text</item>
+        <item name="android:textSize">@dimen/text_size_micro</item>
+        <item name="android:focusable">false</item>
+    </style>
+
     <style name="Diff">
         <item name="added">@color/text_green</item>
         <item name="pathInfo">@color/text_orange</item>
@@ -113,6 +120,18 @@
         <item name="rangeInfo">@color/text_purple_light</item>
         <item name="origHeader">@color/text_brown_light</item>
         <item name="newHeader">@color/text_blue_light</item>
+    </style>
+
+    <style name="Help"/>
+    <style name="Help.Label">
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+    </style>
+    <style name="Help.Text">
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingTop">2dip</item>
     </style>
 
 </resources>

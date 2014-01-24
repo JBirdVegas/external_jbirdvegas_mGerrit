@@ -18,7 +18,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="CardText">
-        <item name="android:textSize">@dimen/card_small_text</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">2</item>
         <item name="android:fontFamily">sans-serif-thin</item>
@@ -41,7 +41,7 @@
     <style name="CardTitle" parent="@style/CardText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">@dimen/card_large_text</item>
+        <item name="android:textSize">@dimen/text_size_x_large</item>
         <item name="android:textStyle">italic</item>
     </style>
 

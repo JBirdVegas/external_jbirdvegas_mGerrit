@@ -5,60 +5,41 @@
               android:orientation="vertical">
 
     <TextView
+        style="@style/Help.Label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="8dip"
         android:text="@string/reviewable"
-        android:textStyle="bold"
-        android:textSize="18sp"
         android:textColor="@color/text_orange"/>
 
     <TextView
+        style="@style/Help.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="2dip"
         android:text="@string/status_explanation_new"/>
 
     <TextView
+        style="@style/Help.Label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="10dip"
         android:text="@string/merged"
-        android:textStyle="bold"
-        android:textSize="18sp"
         android:textColor="@color/text_green"/>
 
     <TextView
+        style="@style/Help.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="2dip"
         android:text="@string/status_explanation_merged"/>
 
     <TextView
+        style="@style/Help.Label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="10dip"
         android:text="@string/abandoned"
-        android:textStyle="bold"
-        android:textSize="18sp"
         android:textColor="@color/text_red"/>
 
     <TextView
+        style="@style/Help.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingBottom="8dip"
-        android:paddingTop="2dip"
         android:text="@string/status_explanation_abandoned"/>
 </LinearLayout>

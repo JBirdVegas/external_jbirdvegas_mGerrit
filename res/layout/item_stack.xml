@@ -14,7 +14,7 @@
         android:fontFamily="sans-serif"
         android:paddingTop="8dp"
         android:textColor="@color/card_title_text"
-        android:textSize="16sp"
+        android:textSize="@dimen/text_size_medium"
         android:visibility="gone"/>
 
     <RelativeLayout

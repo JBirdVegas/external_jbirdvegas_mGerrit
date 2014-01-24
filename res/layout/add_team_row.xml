@@ -4,8 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="6dp"
-    android:paddingRight="6dp">
+    android:paddingLeft="@dimen/checkable_view_padding"
+    android:paddingRight="@dimen/checkable_view_padding">
 
     <LinearLayout
         android:orientation="horizontal"

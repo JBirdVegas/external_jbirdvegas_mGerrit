@@ -27,11 +27,11 @@
         android:id="@+id/commit_cards"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
+        android:paddingTop="@dimen/cards_list_padding_vert"
+        android:paddingBottom="@dimen/cards_list_padding_vert"
+        android:paddingLeft="@dimen/cards_list_padding_horiz"
+        android:paddingRight="@dimen/cards_list_padding_horiz"
         android:divider="@android:color/transparent"
-        android:dividerHeight="8.0dp"
+        android:dividerHeight="@dimen/cards_list_divider_height"
         android:fastScrollEnabled="true"/>
 </LinearLayout>

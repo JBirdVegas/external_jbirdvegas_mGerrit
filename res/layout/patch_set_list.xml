@@ -26,34 +26,34 @@
         android:id="@+id/commit_cards"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="@dimen/cards_list_padding_vert"
+        android:paddingBottom="@dimen/cards_list_padding_vert"
         android:divider="@android:color/transparent"
-        android:dividerHeight="8.0dp"/>
+        android:dividerHeight="@dimen/cards_list_divider_height"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginLeft="12sp"
-        android:layout_marginRight="12sp">
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textErrorMessage"
-            android:textSize="18sp"
+            android:textSize="@dimen/text_size_large"
             android:text="@string/not_connected"
-            android:layout_marginLeft="4sp"
+            android:layout_marginLeft="4dp"
             android:drawableLeft="?attr/warningIcon" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btn_retry"
-            android:text="Retry"
+            android:text="@string/retry_label"
             android:layout_below="@id/textErrorMessage"
-            android:layout_marginTop="16sp"
+            android:layout_marginTop="16dp"
             android:layout_centerHorizontal="true"/>
     </RelativeLayout>
 </ViewSwitcher>
