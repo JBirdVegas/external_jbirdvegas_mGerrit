@@ -72,7 +72,8 @@ public class DiffDialog extends AlertDialog.Builder {
             debugRestDiffApi(getContext(), mUrl, mPath);
         }
 
-        new ZipRequest(mUrl, new Response.Listener<String>() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(new ZipRequest(mUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
                 if (s != null)  setTextView(s);
@@ -86,7 +87,8 @@ public class DiffDialog extends AlertDialog.Builder {
             public void onErrorResponse(VolleyError volleyError) {
                 mDiffTextView.setText("Failed to load diff :(");
             }
-        });
+        }));
+        requestQueue.start();
     }
 
     public DiffDialog addExceptionCallback(DiffFailCallback failCallback) {
