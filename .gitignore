@@ -18,3 +18,7 @@ taskArtifacts/
 .gradle/
 mGerrit_release.keystore
 signing.properties
+caches/
+daemon/
+gradle/caches/
+gradle/daemon/
