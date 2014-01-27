@@ -19,29 +19,25 @@ package com.jbirdvegas.mgerrit.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CommitComment implements Parcelable {
     private static final String KEY_REVISION_NUMBER = "_revision_number";
-    private static final boolean DEBUG = false;
-    private static final String TAG = CommitComment.class.getSimpleName();
 
     @SerializedName(CommitComment.KEY_REVISION_NUMBER)
     private int mRevisionNumber;
 
-    @SerializedName(JSONCommit.KEY_MESSAGE)
+    @SerializedName(CommitInfo.KEY_MESSAGE)
     private String mMessage;
 
     @SerializedName(JSONCommit.KEY_DATE)
     private String mDate;
 
-    @SerializedName(JSONCommit.KEY_AUTHOR)
+    @SerializedName(CommitInfo.KEY_AUTHOR)
     private CommitterObject mAuthorObject;
 
     @SerializedName(JSONCommit.KEY_ID)

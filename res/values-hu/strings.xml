@@ -26,8 +26,8 @@
     </string>
     <string name="status_explanation_merged">Változás hozzáadva az ághoz.</string>
     <string name="status_explanation_abandoned">Változás elavult a tulajdonosnak vagy a rendszergazdának.</string>
-    <string name="patchset_labels_code_reviewer_title">Code-Bírálók:</string>
-    <string name="patchset_labels_verified_reviewer_title">Ellenörző:</string>
+    <string name="patchset_labels_code_reviewer">Code-Bírálók:</string>
+    <string name="patchset_labels_verified_reviewer">Ellenörző:</string>
     <string name="inserted">Beszúrt sorok:</string>
     <string name="deleted">Törölt sorok:</string>
     <string name="none_found">Semmit nem talál</string>

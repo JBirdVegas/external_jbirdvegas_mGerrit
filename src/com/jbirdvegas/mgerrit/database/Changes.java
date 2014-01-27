@@ -139,4 +139,17 @@ public class Changes extends DatabaseTable {
         c.close();
         return changeID;
     }
+
+    public static Integer getChangeNumberForChange(Context context, String changeID) {
+        Uri uri = DBParams.fetchOneRow(CONTENT_URI);
+        Integer changeNo = null;
+
+        Cursor c = context.getContentResolver().query(uri,
+                new String[] { C_COMMIT_NUMBER },
+                C_CHANGE_ID + " = ?",
+                new String[] { changeID },
+                null);
+        if (c.moveToFirst()) changeNo = c.getInt(0);
+        return changeNo;
+    }
 }

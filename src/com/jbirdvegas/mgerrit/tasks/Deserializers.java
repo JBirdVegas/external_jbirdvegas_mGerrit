@@ -120,21 +120,7 @@ public final class Deserializers {
             JsonObject revisionsObj = object.get(JSONCommit.KEY_REVISIONS).getAsJsonObject();
             JsonObject psObj = revisionsObj.get(currentRevision).getAsJsonObject();
 
-            if (psObj.has(JSONCommit.KEY_COMMIT_NUMBER)) {
-                commit.setPatchSetNumber(psObj.get(JSONCommit.KEY_COMMIT_NUMBER).getAsInt());
-            }
-
-            if (psObj.has(JSONCommit.KEY_COMMIT)) {
-                JsonObject commitObj = psObj.get(JSONCommit.KEY_COMMIT).getAsJsonObject();
-                commit.setPatchSet(gson.fromJson(commitObj, CommitInfo.class));
-            }
-
-            // Add the changed files
-            if (psObj.has(JSONCommit.KEY_CHANGED_FILES)) {
-                JsonObject filesObj = psObj.get(JSONCommit.KEY_CHANGED_FILES).getAsJsonObject();
-                commit.setChangedFiles(FileInfoList.deserialize(filesObj));
-            }
-
+            commit.setPatchSet(CommitInfo.deserialise(psObj, commit.getChangeId()));
             return commit;
         }
     };

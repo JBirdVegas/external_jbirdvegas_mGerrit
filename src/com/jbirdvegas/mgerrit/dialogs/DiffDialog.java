@@ -35,9 +35,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.objects.FileInfo;
 import com.jbirdvegas.mgerrit.objects.Diff;
-import com.jbirdvegas.mgerrit.tasks.ZipRequest;
 import com.jbirdvegas.mgerrit.views.DiffTextView;
+
+import org.jetbrains.annotations.Contract;
 
 import java.util.regex.Pattern;
 
@@ -45,55 +47,87 @@ public class DiffDialog extends AlertDialog.Builder {
     private static final String TAG = DiffDialog.class.getSimpleName();
     private static final String DIFF = "\n\nDIFF\n\n";
     private static final boolean DIFF_DEBUG = false;
-    private final String mUrl;
-    private final String mPath;
-
     private String mLineSplit = System.getProperty("line.separator");
     private DiffTextView mDiffTextView;
     private DiffFailCallback mDiffFailCallback;
+
+    private final String mFilePath;
 
     public interface DiffFailCallback {
         public void killDialogAndErrorOut(Exception e);
     }
 
-    public DiffDialog(Context context, String website, String path) {
+    public DiffDialog(Context context, String website, String filePath) {
         super(context);
         context.setTheme(Prefs.getCurrentThemeID(context));
-        mUrl = website + "?zip";
-        mPath = path;
-
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rootView = inflater.inflate(R.layout.diff_dialog, null);
         setView(rootView);
+
+        mFilePath = filePath;
         mDiffTextView = (DiffTextView) rootView.findViewById(R.id.diff_view_diff);
 
-        if (DIFF_DEBUG) {
-            Log.d(TAG, "Calling url: " + website);
-            debugRestDiffApi(getContext(), mUrl, mPath);
-        }
-
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-        requestQueue.add(new ZipRequest(mUrl, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                if (s != null)  setTextView(s);
-                else if (mDiffFailCallback != null) {
-                    mDiffFailCallback.killDialogAndErrorOut(
-                            new NullPointerException("Failed to get diff!"));
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                mDiffTextView.setText("Failed to load diff :(");
-            }
-        }));
-        requestQueue.start();
+        /* we can use volley here because we return does not contain the magic number on the
+         * first line. return is just the Base64 formatted return */
+        RequestQueue mRequestQueue = Volley.newRequestQueue(context);
+        mRequestQueue.add(getBase64StringRequest(website));
+        mRequestQueue.start();
     }
 
     public DiffDialog addExceptionCallback(DiffFailCallback failCallback) {
         mDiffFailCallback = failCallback;
         return this;
+    }
+
+    private StringRequest getBase64StringRequest(final String weburl) {
+        return new StringRequest(weburl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String base64) {
+                        if (base64 == null) {
+                            Log.e(TAG, getContext().getString(R.string.return_was_null));
+                            return;
+                        }
+                        String decoded = workAroundBadBase(base64);
+                        if (decoded == null) {
+                            Log.e(TAG, getContext().getString(R.string.failed_to_decode_base64));
+                            return;
+                        }
+
+                        if (DIFF_DEBUG) {
+                            Log.d(TAG, "[DEBUG-MODE]\n"
+                                    + "url: " + weburl
+                                    + "\n==================================="
+                                    + decoded
+                                    + "====================================");
+                        }
+                        setTextView(decoded);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.e(TAG, "Failed to download the diff", volleyError);
+                        if (mDiffFailCallback != null) {
+                            mDiffFailCallback.killDialogAndErrorOut(volleyError);
+                        }
+                    }
+                }
+        );
+    }
+
+    @Contract("null -> null")
+    private String workAroundBadBase(String baseString) {
+        if (baseString == null) {
+            return null;
+        }
+        String failMessage = "Failed to decode Base64 using: ";
+        try {
+            return new String(Base64.decode(baseString, Base64.NO_PADDING));
+        } catch (IllegalArgumentException badBase) {
+            Log.e(TAG, failMessage + "android.util.Base64", badBase);
+        }
+        return null;
     }
 
     private void setTextView(String result) {
@@ -103,11 +137,11 @@ public class DiffDialog extends AlertDialog.Builder {
         Diff currentDiff = null;
         for (String change : filesChanged) {
             String concat;
-            int index = change.lastIndexOf(mPath);
+            int index = change.lastIndexOf(mFilePath);
             if (index < 0) continue;
 
             concat = change.substring(2, index).trim().split(" ", 2)[0];
-            if (concat.equals(mPath)) {
+            if (concat.equals(mFilePath)) {
                 builder.append(DIFF);
                 change.replaceAll("\n", mLineSplit);
 
@@ -131,13 +165,13 @@ public class DiffDialog extends AlertDialog.Builder {
 
     }
 
-    private void debugRestDiffApi(Context context, String url, String path) {
+    private void debugRestDiffApi(Context context, String mUrl, FileInfo mFileInfo) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        Log.d(TAG, "Targeting changed file: " + path);
-        requestQueue.add(getDebugRequest(url, "/a"));
-        requestQueue.add(getDebugRequest(url, "/b"));
-        requestQueue.add(getDebugRequest(url, "/ab"));
-        requestQueue.add(getDebugRequest(url, "/"));
+        Log.d(TAG, "Targeting changed file: " + mFileInfo);
+        requestQueue.add(getDebugRequest(mUrl, "/a"));
+        requestQueue.add(getDebugRequest(mUrl, "/b"));
+        requestQueue.add(getDebugRequest(mUrl, "/ab"));
+        requestQueue.add(getDebugRequest(mUrl, "/"));
         requestQueue.start();
     }
 

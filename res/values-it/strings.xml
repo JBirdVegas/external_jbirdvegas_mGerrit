@@ -25,8 +25,8 @@
         Si può essere in attesa di una o più dipendenze."</string>
     <string name="status_explanation_merged">"Il cambiamento è stato unito al suo ramo."</string>
     <string name="status_explanation_abandoned">"Change è stato abbandonato dal suo proprietario o amministratore."</string>
-    <string name="patchset_labels_code_reviewer_title">"Code-Revisori:"</string>
-    <string name="patchset_labels_verified_reviewer_title">"Verificato:"</string>
+    <string name="patchset_labels_code_reviewer">"Code-Revisori:"</string>
+    <string name="patchset_labels_verified_reviewer">"Verificato:"</string>
     <string name="inserted">"Linee inseriti:"</string>
     <string name="deleted">"Linee eliminati:"</string>
     <string name="binary_file">"File binario"</string>

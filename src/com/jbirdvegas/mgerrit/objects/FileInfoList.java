@@ -38,7 +38,7 @@ import java.util.Set;
 public class FileInfoList implements Parcelable {
 
     // This list of changed files
-    @SerializedName(JSONCommit.KEY_CHANGED_FILES)
+    @SerializedName(CommitInfo.KEY_CHANGED_FILES)
     List<FileInfo> mList;
 
     private FileInfoList(List<FileInfo> fileList) {
@@ -57,7 +57,7 @@ public class FileInfoList implements Parcelable {
         List<FileInfo> newList = new ArrayList<>();
         Set<Map.Entry<String, JsonElement>> entries = object.entrySet();
         for (Map.Entry<String, JsonElement> entry : entries) {
-            newList.add(FileInfo.deserialise(entry.getKey(), entry.getValue().getAsJsonObject()));
+            newList.add(FileInfo.deserialise(entry.getValue().getAsJsonObject(), entry.getKey()));
 
         }
         return new FileInfoList(newList);

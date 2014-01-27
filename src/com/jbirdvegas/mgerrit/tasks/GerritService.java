@@ -49,7 +49,7 @@ public class GerritService extends IntentService {
         // Determine which SyncProcessor to use here
         DataType dataType = (DataType) intent.getSerializableExtra(DATA_TYPE_KEY);
         if (dataType == DataType.Project) {
-            processor = new ProjectListProcessor(this, mCurrentUrl);
+            processor = new ProjectListProcessor(this);
         } else if (dataType == DataType.Commit) {
             processor = new ChangeListProcessor(this, mCurrentUrl);
         } else if (dataType == DataType.CommitDetails) {

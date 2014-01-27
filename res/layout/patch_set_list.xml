@@ -16,44 +16,30 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-<ViewSwitcher
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/vs_patchset">
+    android:background="?attr/mainBackgroundColor"
+    android:id="@+id/patchset"
+    android:orientation="vertical">
 
-    <com.fima.cardsui.views.CardUI
+    <include
+        layout="@layout/network_disconnected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ExpandableListView
         android:id="@+id/commit_cards"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/cards_list_padding_vert"
         android:paddingBottom="@dimen/cards_list_padding_vert"
+        android:paddingLeft="@dimen/cards_list_padding_horiz"
+        android:paddingRight="@dimen/cards_list_padding_horiz"
         android:divider="@android:color/transparent"
-        android:dividerHeight="@dimen/cards_list_divider_height"/>
+        android:dividerHeight="@dimen/cards_list_divider_height"
+        android:childDivider="@android:color/transparent"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textErrorMessage"
-            android:textSize="@dimen/text_size_large"
-            android:text="@string/not_connected"
-            android:layout_marginLeft="4dp"
-            android:drawableLeft="?attr/warningIcon" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_retry"
-            android:text="@string/retry_label"
-            android:layout_below="@id/textErrorMessage"
-            android:layout_marginTop="16dp"
-            android:layout_centerHorizontal="true"/>
-    </RelativeLayout>
-</ViewSwitcher>
+</LinearLayout>

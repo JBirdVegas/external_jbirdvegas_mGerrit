@@ -56,14 +56,6 @@ public class ReviewerList implements Parcelable {
         return mReviewers;
     }
 
-    public Set<String> getLabels() {
-        Set<String> set = new HashSet<>();
-        for (Reviewer r : mReviewers) {
-            set.add(r.getLabel());
-        }
-        return set;
-    }
-
     @Override
     public String toString() {
         return "ReviewerList{" +

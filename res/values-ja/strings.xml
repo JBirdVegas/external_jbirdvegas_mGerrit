@@ -24,8 +24,8 @@
     <string name="status_explanation_submitted">変更は提出されてマージ中です。ひとつ以上の依存関係が解消されるのを待っています。</string>
     <string name="status_explanation_merged">変更はブランチにマージされました。</string>
     <string name="status_explanation_abandoned">変更はオーナーまたは管理者によって取り下げられました。</string>
-    <string name="patchset_labels_code_reviewer_title">コードレビュー:</string>
-    <string name="patchset_labels_verified_reviewer_title">検証:</string>
+    <string name="patchset_labels_code_reviewer">コードレビュー:</string>
+    <string name="patchset_labels_verified_reviewer">検証:</string>
     <string name="inserted">挿入行:</string>
     <string name="deleted">削除行:</string>
     <string name="none_found">見つかりません</string>

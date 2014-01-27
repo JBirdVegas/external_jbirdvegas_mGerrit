@@ -1,44 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?attr/cardBackgroundColor"
     android:paddingLeft="@dimen/standard_padding"
     android:paddingRight="@dimen/standard_padding"
     android:paddingTop="@dimen/standard_padding">
 
     <LinearLayout
+        android:id="@+id/comment_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/comment_gravatar"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:contentDescription="@string/author_gravatar"
-            android:padding="@dimen/standard_padding"/>
+            android:padding="@dimen/standard_padding"
+            />
 
-        <TextView
-            style="@style/CardText.Committer"
-            android:id="@+id/comment_author_name"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:paddingRight="@dimen/standard_padding"
-            android:paddingTop="@dimen/standard_padding"
-            android:paddingBottom="@dimen/standard_padding"
-            android:gravity="center"
-            android:layout_gravity="center"/>
+            android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/comment_author_name"
+                style="@style/CardText.Committer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/standard_padding"
+                tools:text="John Smith"/>
+
+            <TextView
+                android:id="@+id/comment_timestamp"
+                style="@style/CardText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                tools:text="January 1 1970, 12:00"/>
+        </LinearLayout>
     </LinearLayout>
 
     <TextView
         android:id="@+id/comment_message"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:textSize="@dimen/text_size_large"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/comment_details"
         android:autoLink="web"
-        android:padding="@dimen/standard_padding"/>
-
-</LinearLayout>
-
+        android:padding="@dimen/standard_padding"
+        android:textSize="@dimen/text_size_large"
+        tools:text="Patch Set 1:"/>
+</RelativeLayout>

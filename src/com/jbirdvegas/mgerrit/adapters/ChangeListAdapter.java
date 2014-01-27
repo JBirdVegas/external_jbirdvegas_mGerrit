@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
@@ -55,7 +56,12 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
         mContext = context;
 
         mStatus = JSONCommit.Status.getStatusString(status);
-        selectedChangeId = SelectedChange.getSelectedChange(context, mStatus);
+        Pair<String, Integer> change = SelectedChange.getSelectedChange(context, mStatus);
+
+        if (change != null) {
+            // We only need the changeid
+            selectedChangeId = change.first;
+        }
     }
 
     @Override

@@ -66,10 +66,11 @@ public class Reviewers extends DatabaseTable {
     public void create(String TAG, SQLiteDatabase db) {
         // Specify a conflict algorithm here so we don't have to worry about it later
         db.execSQL("create table " + TABLE + " ("
-                + C_USER + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
+                + C_USER + " INTEGER, "
                 + C_CHANGE_ID + " text, "
-                + C_CODE_REVIEW + " text NOT NULL DEFAULT 0, "
-                + C_VERIFIED + " text NOT NULL DEFAULT 0)");
+                + C_CODE_REVIEW + " text DEFAULT 0, "
+                + C_VERIFIED + " text DEFAULT 0, "
+                + "PRIMARY KEY (" + C_USER + ", " + C_CHANGE_ID + ") ON CONFLICT REPLACE)");
     }
 
     public static void addURIMatches(UriMatcher _urim) {
@@ -82,6 +83,7 @@ public class Reviewers extends DatabaseTable {
 
         List<ContentValues> values = new ArrayList<>();
 
+        // Make sure all the rows are inserted first
         for (Reviewer reviewer : reviewers) {
             if (reviewer == null) {
                 continue;
@@ -89,13 +91,31 @@ public class Reviewers extends DatabaseTable {
             ContentValues row = new ContentValues();
             row.put(C_USER, reviewer.getCommiterObject().getAccountId());
             row.put(C_CHANGE_ID, changeid);
-            //row.put(C_CODE_REVIEW, reviewer.getValue());
             values.add(row);
         }
 
-        Uri uri = DBParams.insertWithReplace(CONTENT_URI);
-
+        Uri uri = DBParams.insertWithIgnore(CONTENT_URI);
         ContentValues valuesArray[] = new ContentValues[values.size()];
-        return context.getContentResolver().bulkInsert(uri, values.toArray(valuesArray));
+        int retval = context.getContentResolver().bulkInsert(uri, values.toArray(valuesArray));
+
+        // Update each row with the verified/code-review status
+        for (Reviewer reviewer : reviewers) {
+            if (reviewer == null) {
+                continue;
+            }
+            ContentValues row = new ContentValues();
+
+            Reviewer.Label label = reviewer.getLabel();
+            if (label == Reviewer.Label.CodeReview) row.put(C_CODE_REVIEW, reviewer.getValue());
+            else row.put(C_VERIFIED, reviewer.getValue());
+
+            int user = reviewer.getCommiterObject().getAccountId();
+
+            context.getContentResolver().update(CONTENT_URI, row,
+                    C_USER + " =  ? AND " + C_CHANGE_ID + " = ?",
+                    new String[] { String.valueOf(user), changeid });
+        }
+
+        return retval;
     }
 }

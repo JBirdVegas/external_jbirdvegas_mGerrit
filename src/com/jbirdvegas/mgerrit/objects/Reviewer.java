@@ -33,7 +33,18 @@ public class Reviewer implements Parcelable {
     @SerializedName("date")
     private final String mDate;
 
-    private String mLabel;
+    public enum Label { CodeReview("Code-Review"), Verified("Verified");
+        String name;
+
+        Label(String s) {
+            name = s;
+        }
+
+        public static Label getLabelFromString(String s) {
+            if (s.equals(CodeReview.name)) return CodeReview;
+            else return Verified;
+        }
+    } private Label mLabel;
 
     public Reviewer(Integer value, String name, String email) {
         mValue = value;
@@ -88,11 +99,15 @@ public class Reviewer implements Parcelable {
         mCommitter.writeToParcel(parcel, i);
     }
 
-    public String getLabel() {
+    public Label getLabel() {
         return mLabel;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(Label label) {
         this.mLabel = label;
+    }
+
+    public void setLabel(String s) {
+        this.mLabel = Label.getLabelFromString(s);
     }
 }

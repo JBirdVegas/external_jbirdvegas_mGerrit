@@ -27,8 +27,6 @@
     <string name="status_explanation_merged">更改已合并到其分支。</string>
     <string name="status_explanation_abandoned">更改被其所有者或管理员废弃。</string>
     <string name="status_explanation_draft">更改是一个草稿，它只包含草稿补丁集。</string>
-    <string name="patchset_labels_code_reviewer_title">代码评审者</string>
-    <string name="patchset_labels_verified_reviewer_title">已审核</string>
     <string name="inserted">插入行</string>
     <string name="deleted">删除行</string>
     <string name="binary_file">二进制文件</string>

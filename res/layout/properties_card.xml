@@ -18,20 +18,27 @@
         style="?attr/cardTitleStyle"
         tools:text="Commit Subject"/>
 
-    <TextView
-        style="@style/CardText.CommitOwnerText"
-        android:id="@+id/prop_card_owner"
-        tools:text="@string/commit_owner"/>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/CardText.CommitOwnerText"
+            android:id="@+id/commit_last_update_text"
+            android:text="@string/commit_updated"/>
+
+        <TextView
+            style="@style/CardText.CommitOwnerDetails"
+            android:id="@+id/prop_card_last_update"
+            android:layout_toRightOf="@id/commit_last_update_text"/>
+    </RelativeLayout>
 
     <TextView
         style="@style/CardText.CommitOwnerText"
         android:id="@+id/prop_card_author"
         tools:text="@string/commit_author"/>
-
-    <TextView
-        style="@style/CardText.CommitOwnerText"
-        android:id="@+id/prop_card_committer"
-        tools:text="@string/commit_committer"/>
 
 
     <RelativeLayout
@@ -42,7 +49,6 @@
             style="@style/CardText.CommitOwnerText"
             android:id="@+id/commit_branch_text"
             android:text="@string/commit_branch"/>
-
 
         <TextView
             style="@style/CardText.CommitOwnerDetails"
@@ -55,19 +61,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left|center_vertical"
-        android:paddingTop="10dp">
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:id="@+id/prop_card_topic_container">
 
         <TextView
             style="@style/CardText.CommitOwnerText"
             android:id="@+id/commit_topic_text"
-            android:text="@string/commit_topic"
-            android:visibility="gone"/>
+            android:text="@string/commit_topic"/>
 
         <TextView
             style="@style/CardText.CommitOwnerDetails"
             android:id="@+id/prop_card_topic"
-            android:layout_toRightOf="@+id/commit_topic_text"
-            android:visibility="gone"/>
+            android:layout_toRightOf="@+id/commit_topic_text"/>
     </RelativeLayout>
 
     <LinearLayout

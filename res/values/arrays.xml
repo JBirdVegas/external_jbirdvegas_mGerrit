@@ -56,7 +56,6 @@
         <item>@string/theme_dark_value</item>
     </string-array>
     <string-array name="library_titles" translatable="false">
-        <item>@string/cards_ui</item>
         <item>@string/gson_library</item>
         <item>@string/jodatime</item>
         <item>@string/listview_animations</item>
@@ -66,7 +65,6 @@
     </string-array>
 
     <string-array name="library_websites" translatable="false">
-        <item>@string/cards_ui_website</item>
         <item>@string/gson_library_website</item>
         <item>@string/jodatime_website</item>
         <item>@string/listview_animations_website</item>

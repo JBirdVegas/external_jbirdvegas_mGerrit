@@ -20,6 +20,7 @@
     <dimen name="sticky_height">120dp</dimen>
     <dimen name="gravatar_image_padding">4dip</dimen>
     <dimen name="standard_padding">8dip</dimen>
+    <dimen name="extra_padding">16dip</dimen>
     <dimen name="default_left_card_start">5dip</dimen>
     <dimen name="reviewer_padding_top">2dip</dimen>
     <dimen name="reviewer_padding_left_indent">15dip</dimen>
@@ -47,6 +48,6 @@
     <dimen name="cards_list_padding_horiz">12dp</dimen>
     <dimen name="cards_list_divider_height">8.0dp</dimen>
     <dimen name="changelog_padding_vert">8dp</dimen>
-
+    <dimen name="card_subitem_indent">@dimen/standard_padding</dimen>
 
 </resources>

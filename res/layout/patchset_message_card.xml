@@ -24,18 +24,6 @@
     android:background="?attr/cardBackgroundColor">
 
     <TextView
-        style="?attr/cardTextStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/message_card_last_update"
-        android:layout_gravity="center"
-        android:gravity="center_horizontal"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:paddingTop="6dip"
-        android:paddingBottom="8dip" />
-
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/message_card_message"

@@ -24,8 +24,8 @@
     <string name="status_explanation_submitted">Změna byla odeslána a je ve frontě ke sloučení. Možná čeká na nějaké závislosti.</string>
     <string name="status_explanation_merged">Změna byla sloučena do branche.</string>
     <string name="status_explanation_abandoned">Změna byla zamítnuta majitelem nebo správcem.</string>
-    <string name="patchset_labels_code_reviewer_title">Revidenti kódu:</string>
-    <string name="patchset_labels_verified_reviewer_title">Ověřeno:</string>
+    <string name="patchset_labels_code_reviewer">Revidenti kódu:</string>
+    <string name="patchset_labels_verified_reviewer">Ověřeno:</string>
     <string name="inserted">Vložené řádky:</string>
     <string name="deleted">Smazané řádky:</string>
     <string name="none_found">Nic nenalzeneo</string>

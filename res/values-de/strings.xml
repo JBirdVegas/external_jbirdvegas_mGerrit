@@ -23,8 +23,6 @@
   <string name="status_explanation_submitted">Änderung wurde eingereicht und befindet sich in der Warteschlange. Es wird auf eine oder mehrere Abhängigkeiten gewartet.</string>
   <string name="status_explanation_merged">Änderung wurde in den Zweig zusammengeführt.</string>
   <string name="status_explanation_abandoned">Änderung wurde von seinen Besitzer oder Administrator aufgegeben.</string>
-  <string name="patchset_labels_code_reviewer_title">Code-Überprüfer:</string>
-  <string name="patchset_labels_verified_reviewer_title">Überprüft:</string>
   <string name="inserted">Eingefügte Zeilen:</string>
   <string name="deleted">Gelöschte Zeilen:</string>
   <string name="none_found">Nichts gefunden</string>

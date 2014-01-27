@@ -28,8 +28,8 @@
     <string name="status_explanation_merged">Change has been merged to its branch.</string>
     <string name="status_explanation_abandoned">Change was abandoned by its owner or administrator.</string>
     <string name="status_explanation_draft">Change is a draft change that only consists of draft patchsets.</string>
-    <string name="patchset_labels_code_reviewer_title">Code-Reviewers:</string>
-    <string name="patchset_labels_verified_reviewer_title">Verified:</string>
+    <string name="patchset_labels_code_reviewer">Code-Review:</string>
+    <string name="patchset_labels_verified_reviewer">Verified:</string>
     <string name="dash" translatable="false">-</string>
     <string name="inserted">Inserted Lines:</string>
     <string name="deleted">Deleted Lines:</string>
@@ -57,8 +57,6 @@
     <string name="transferring_json_data">Transferring JSON encoded data…</string>
 
     <string name="open_source_libs">Open Source Libraries</string>
-    <string name="cards_ui">CardsUI</string>
-    <string name="cards_ui_website" translatable="false">https://github.com/Androguide/cardsui-for-android</string>
     <string name="nine_old_androids">NineOldAndroids</string>
     <string name="nine_old_androids_website" translatable="false">http://nineoldandroids.com/</string>
     <string name="listview_animations">ListViewAnimations</string>
@@ -152,4 +150,11 @@
     <string name="aokp_changelog_card_title">Recent AOKP Builds</string>
     <string name="changelog_loading">Searching for recent builds&#8230;</string>
     <string name="retry_label">Retry</string>
+    <string name="header_properties">Properties</string>
+    <string name="header_commit_message">Commit Message</string>
+    <string name="header_changed_files">Changed Files</string>
+    <string name="header_reviewers">Reviewers</string>
+    <string name="header_comments">Comments</string>
+    <string name="commit_updated">Updated:</string>
+    <string name="renamed_label">Renamed from:</string>
 </resources>

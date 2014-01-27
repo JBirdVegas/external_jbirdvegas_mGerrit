@@ -17,11 +17,22 @@ package com.jbirdvegas.mgerrit.database;
  *  limitations under the License.
  */
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-public class FileInfo extends DatabaseTable {
+import com.jbirdvegas.mgerrit.helpers.DBParams;
+import com.jbirdvegas.mgerrit.objects.FileInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Contains information about a file in a patch set (revision)
+ */
+public class FileInfoTable extends DatabaseTable {
 
     // Table name
     public static final String TABLE = "FileInfo";
@@ -29,6 +40,9 @@ public class FileInfo extends DatabaseTable {
     // --- Columns ---
     // The Change-Id of the change.
     public static final String C_CHANGE_ID = "change_id";
+
+    // The patch set number.
+    public static final String C_PATCH_SET_NUMBER = "psNumber";
 
     public static final String C_FILE_NAME = "filename";
 
@@ -61,10 +75,10 @@ public class FileInfo extends DatabaseTable {
     // Sort by condition for querying results.
     public static final String SORT_BY = C_FILE_NAME + " ASC";
 
-    private static FileInfo mInstance = null;
+    private static FileInfoTable mInstance = null;
 
-    public static FileInfo getInstance() {
-        if (mInstance == null) mInstance = new FileInfo();
+    public static FileInfoTable getInstance() {
+        if (mInstance == null) mInstance = new FileInfoTable();
         return mInstance;
     }
 
@@ -73,20 +87,51 @@ public class FileInfo extends DatabaseTable {
         // Specify a conflict algorithm here so we don't have to worry about it later
         db.execSQL("create table " + TABLE + " ("
                 + C_CHANGE_ID + " text NOT NULL, "
+                + C_PATCH_SET_NUMBER + " INTEGER NOT NULL, "
                 + C_FILE_NAME + " text NOT NULL, "
                 + C_ISBINARY + " INTEGER DEFAULT 0 NOT NULL, "
                 + C_OLDPATH + " text, "
-                + C_LINES_INSERTED + " INTEGER, "
-                + C_LINES_DELETED + " INTEGER, "
+                + C_LINES_INSERTED + " INTEGER DEFAULT 0, "
+                + C_LINES_DELETED + " INTEGER DEFAULT 0, "
                 + C_STATUS + " text NOT NULL, "
                 + "PRIMARY KEY (" + C_CHANGE_ID + ", " + C_FILE_NAME + ") ON CONFLICT REPLACE, "
                 + "FOREIGN KEY (" + C_CHANGE_ID + ") REFERENCES "
-                + Changes.TABLE + "(" + Changes.C_CHANGE_ID + "))");
+                + Changes.TABLE + "(" + Changes.C_CHANGE_ID + "), "
+                + "FOREIGN KEY (" + C_PATCH_SET_NUMBER + ") REFERENCES "
+                + Revisions.TABLE + "(" + Revisions.C_PATCH_SET_NUMBER + "))");
     }
 
-    public static void addURIMatches(UriMatcher _urim)
-    {
+    public static void addURIMatches(UriMatcher _urim) {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE, ITEM_LIST);
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE + "/#", ITEM_ID);
+    }
+
+    public static int insertChangedFiles(Context context, String changeid, String patchset,
+                                         List<FileInfo> diff) {
+
+        List<ContentValues> values = new ArrayList<>();
+
+        for (FileInfo file : diff) {
+            if (file == null) {
+                continue;
+            }
+            ContentValues row = new ContentValues(6);
+            row.put(C_CHANGE_ID, changeid);
+            row.put(C_FILE_NAME, file.getPath());
+
+            String oldPath = file.getOldPath();
+            if (oldPath != null && !oldPath.isEmpty()) row.put(C_OLDPATH, oldPath);
+
+            row.put(C_PATCH_SET_NUMBER, patchset);
+            row.put(C_LINES_INSERTED, file.getInserted());
+            row.put(C_LINES_DELETED, file.getDeleted());
+            row.put(C_STATUS, String.valueOf(file.getStatus()));
+            row.put(C_ISBINARY, file.isBinary());
+            values.add(row);
+        }
+
+        Uri uri = DBParams.insertWithReplace(CONTENT_URI);
+        ContentValues valuesArray[] = new ContentValues[values.size()];
+        return context.getContentResolver().bulkInsert(uri, values.toArray(valuesArray));
     }
 }

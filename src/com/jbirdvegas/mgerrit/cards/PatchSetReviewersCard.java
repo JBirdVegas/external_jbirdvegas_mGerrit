@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,36 +27,41 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
-import com.fima.cardsui.objects.RecyclableCard;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.database.UserReviewers;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
-import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-public class PatchSetReviewersCard extends RecyclableCard {
-    private static final String TAG = "PatchSetReviewersCard";
+public class PatchSetReviewersCard implements CardBinder {
     private static final boolean DEBUG = true;
 
     private final RequestQueue mRequestQueue;
     private final Context mContext;
     private final FragmentActivity mActivity;
-    private JSONCommit mJSONCommit;
+    private final LayoutInflater mInflater;
+    private Integer mCodeReview_index;
+    private Integer mVerified_index;
+    private Integer mReviewerId_index;
+    private Integer mReviewerEmail_index;
+    private Integer mReviewerName_index;
 
-    public PatchSetReviewersCard(JSONCommit commit,
-                                 RequestQueue requestQueue,
-                                 Context context) {
-        mJSONCommit = commit;
+    public PatchSetReviewersCard(Context context, RequestQueue requestQueue) {
         mRequestQueue = requestQueue;
         mContext = context;
         mActivity = (FragmentActivity) mContext;
+        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
-    protected void applyTo(View convertView) {
+    public View setViewValue(Cursor cursor, View convertView, ViewGroup parent) {
+
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.patchset_labels_card, null);
+        }
+
         // Locate the views if necessary (these views are constant)
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         if (convertView.getTag() == null) {
@@ -63,102 +69,87 @@ public class PatchSetReviewersCard extends RecyclableCard {
             convertView.setTag(viewHolder);
         }
 
-        // Get the data
-        List<Reviewer> reviewerList = mJSONCommit.getCodeReviewers();
-        List<Reviewer> verifierList = mJSONCommit.getVerifiedReviewers();
+        setIndicies(cursor);
 
-        // Bind the data, inflating views as needed
-        viewHolder.reviewerList.removeAllViews();
-        if (reviewerList != null) {
-            for (Reviewer reviewer : reviewerList) {
-                viewHolder.reviewerList.addView(getReviewerView(reviewer));
-            }
-            viewHolder.reviewerLabel.setVisibility(View.VISIBLE);
-        } else {
-            viewHolder.reviewerLabel.setVisibility(View.GONE);
-        }
-
-        viewHolder.verifierList.removeAllViews();
-        if (verifierList != null) {
-            for (Reviewer reviewer : verifierList) {
-                viewHolder.verifierList.addView(getReviewerView(reviewer));
-            }
-            viewHolder.verifierLabel.setVisibility(View.VISIBLE);
-        } else {
-            viewHolder.verifierLabel.setVisibility(View.GONE);
-        }
-    }
-
-    public View getReviewerView(final Reviewer reviewer) {
-        // Cannot use the viewholder here, we need to inflate views as needed
-        LayoutInflater inflater = (LayoutInflater)
-                mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View root = inflater.inflate(R.layout.patchset_labels_list_item, null);
-        TextView approval = (TextView) root.findViewById(R.id.labels_card_approval);
-        TextView name = (TextView) root.findViewById(R.id.labels_card_reviewer_name);
-        name.setOnClickListener(new View.OnClickListener() {
+        TextView reviewer = viewHolder.reviewer;
+        reviewer.setTag(cursor.getInt(mReviewerId_index));
+        viewHolder.reviewer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setTrackingUser(reviewer.getCommiterObject());
+                int reviewerId = (int) v.getTag();
+                setTrackingUser(reviewerId);
             }
         });
-        GravatarHelper.attachGravatarToTextView(name,
-                reviewer.getEmail(),
-                mRequestQueue);
-        if (DEBUG) {
-            Log.d(TAG, new StringBuilder(0)
-                    .append("Found Reviewer: ")
-                    .append(reviewer.toString()).toString());
-        }
-        setColoredApproval(reviewer.getValue(), approval);
-        name.setText(reviewer.getName());
-        return root;
+
+        GravatarHelper.attachGravatarToTextView(reviewer,
+                cursor.getString(mReviewerEmail_index), mRequestQueue);
+        reviewer.setText(cursor.getString(mReviewerName_index));
+
+        setColoredApproval(cursor.getInt(mCodeReview_index), viewHolder.codeReview,
+                viewHolder.codeReviewLayout);
+        setColoredApproval(cursor.getInt(mVerified_index), viewHolder.verified,
+                viewHolder.verifiedLayout);
+
+        return convertView;
     }
 
-    private void setColoredApproval(Integer value, TextView approval) {
+    private void setColoredApproval(Integer value, TextView approval, ViewGroup container) {
         int mGreen = mContext.getResources().getColor(R.color.text_green);
         int mRed = mContext.getResources().getColor(R.color.text_red);
-        int plusStatus;
-        if (value == null) {
-            value = 0;
-        }
-        try {
-            plusStatus = value;
-            if (plusStatus >= 1) {
-                approval.setText('+' + value.toString());
-                approval.setTextColor(mGreen);
-            } else if (plusStatus <= -1) {
-                approval.setText(value.toString());
-                approval.setTextColor(mRed);
-            } else {
-                approval.setText(Reviewer.NO_SCORE);
-            }
-        } catch (NumberFormatException nfe) {
-            Log.e(TAG, "Failed to grab reviewers approval");
+        if (value == null) value = 0;
+        if (value >= 1) {
+            if (container != null) container.setVisibility(View.VISIBLE);
+            approval.setText('+' + value.toString());
+            approval.setTextColor(mGreen);
+        } else if (value <= -1) {
+            if (container != null) container.setVisibility(View.VISIBLE);
+            approval.setText(value.toString());
+            approval.setTextColor(mRed);
+        } else if (container != null) {
+            container.setVisibility(View.GONE);
+        } else {
+            approval.setText(Reviewer.NO_SCORE);
         }
     }
 
-    private void setTrackingUser(CommitterObject user) {
+    private void setTrackingUser(Integer user) {
         Prefs.setTrackingUser(mContext, user);
         if (!Prefs.isTabletMode(mContext)) mActivity.finish();
     }
 
-    @Override
-    protected int getCardLayoutId() {
-        return R.layout.patchset_labels_card;
+    private void setIndicies(@NotNull Cursor cursor) {
+        // These indices will not change regardless of the view
+        if (mReviewerId_index == null) {
+            mReviewerId_index = cursor.getColumnIndex(UserReviewers.C_REVIEWER_ID);
+        }
+        if (mReviewerEmail_index == null) {
+            mReviewerEmail_index = cursor.getColumnIndex(UserReviewers.C_EMAIL);
+        }
+        if (mReviewerName_index == null) {
+            mReviewerName_index = cursor.getColumnIndex(UserReviewers.C_NAME);
+        }
+        if (mCodeReview_index == null) {
+            mCodeReview_index = cursor.getColumnIndex(UserReviewers.C_CODE_REVIEW);
+        }
+        if (mVerified_index == null) {
+            mVerified_index = cursor.getColumnIndex(UserReviewers.C_VERIFIED);
+        }
     }
 
+
     private static class ViewHolder {
-        ViewGroup reviewerList;
-        ViewGroup verifierList;
-        TextView reviewerLabel;
-        TextView verifierLabel;
+        TextView reviewer;
+        ViewGroup codeReviewLayout;
+        TextView codeReview;
+        ViewGroup verifiedLayout;
+        TextView verified;
 
         public ViewHolder(View view) {
-            reviewerLabel = (TextView) view.findViewById(R.id.patchset_labels_code_reviewer_title);
-            verifierLabel = (TextView) view.findViewById(R.id.patchset_labels_verified_reviewer_title);
-            reviewerList = (ViewGroup) view.findViewById(R.id.patchset_lables_reviewers);
-            verifierList = (ViewGroup) view.findViewById(R.id.patchset_lables_verifier);
+            reviewer = (TextView) view.findViewById(R.id.labels_card_reviewer_name);
+            codeReviewLayout = (ViewGroup) view.findViewById(R.id.labels_card_code_review_layout);
+            codeReview = (TextView) view.findViewById(R.id.labels_card_code_review);
+            verifiedLayout = (ViewGroup) view.findViewById(R.id.labels_card_verified_layout);
+            verified = (TextView) view.findViewById(R.id.labels_card_verified);
         }
     }
 }

@@ -190,20 +190,12 @@ public class ProjectsList extends Activity
     }
 
     private void startService() {
-
-        GerritURL url = new GerritURL();
-
-        // This is just a precaution in case it has not been set yet
-        GerritURL.setGerrit(Prefs.getCurrentGerrit(this));
-        url.listProjects();
-
         Intent it = new Intent(this, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Project);
-        it.putExtra(GerritService.URL_KEY, url);
         startService(it);
     }
 
-    /* We load the data on a seperate thread (AsyncTaskLoader) but what to do
+    /* We load the data on a separate thread (AsyncTaskLoader) but what to do
      *  on the main thread? Probably best to block (with a alert dialog) like
      *  the old implementation did, then unblock once all the data has been
      *  downloaded and we can start binding data to views.

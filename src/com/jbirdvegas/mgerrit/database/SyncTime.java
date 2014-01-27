@@ -64,8 +64,7 @@ public class SyncTime extends DatabaseTable {
                 + "PRIMARY KEY (" + C_KEY + ", " + C_QUERY + ") ON CONFLICT REPLACE)");
     }
 
-    public static void addURIMatches(UriMatcher _urim)
-    {
+    public static void addURIMatches(UriMatcher _urim) {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE, ITEM_LIST);
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE + "/#", ITEM_ID);
     }
@@ -82,7 +81,7 @@ public class SyncTime extends DatabaseTable {
     }
 
     public static void setValue(Context context, String key, long value, String query) {
-        ContentValues contentValues = new ContentValues(2);
+        ContentValues contentValues = new ContentValues(3);
         contentValues.put(C_KEY, key);
         contentValues.put(C_QUERY, query);
         contentValues.put(C_VALUE, value);

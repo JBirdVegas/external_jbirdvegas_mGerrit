@@ -25,6 +25,11 @@ import com.google.gson.annotations.SerializedName;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Generic data container for a user. This combines both the AccountInfo
+ *  and GitPerson info objects into one. As a result, some of these fields will
+ *  be null.
+ */
 public class CommitterObject implements Parcelable {
     private static final String OWNER = "owner";
 

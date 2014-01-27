@@ -23,12 +23,12 @@ public class GerritURL implements Parcelable
     private String mEmail = "";
     private String mCommitterState = "";
     private boolean mRequestDetailedAccounts = false;
-    private boolean mListProjects = false;
     private String mSortkey = "";
     private boolean mRequestChangeDetail = false;
     private String mChangeID = "";
+    private int mChangeNo = 0;
 
-    // Default constructor to facilitate instanciation
+    // Default constructor to facilitate instantiation
     public GerritURL() {
         super();
     }
@@ -70,16 +70,15 @@ public class GerritURL implements Parcelable
         mRequestDetailedAccounts = requestDetailedAccounts;
     }
 
-    // Setting this will ignore all change related parts of the query URL
-    public void listProjects() {
-        mListProjects = true;
-    }
-
     public void requestChangeDetail(boolean request) {
         mRequestChangeDetail = request;
         if (request) {
             mRequestDetailedAccounts = false;
         }
+    }
+
+    public void setChangeNumber(int changeNumber) {
+        mChangeNo = changeNumber;
     }
 
     /**
@@ -102,18 +101,21 @@ public class GerritURL implements Parcelable
             throw new NullPointerException("Base Gerrit URL is null, did you forget to set one?");
         }
 
-        if (mListProjects) {
-            return sGerritBase + "projects/?d";
-        }
+        StringBuilder builder = new StringBuilder(0).append(sGerritBase);
 
-        StringBuilder builder = new StringBuilder(0)
-            .append(sGerritBase)
-            .append(StaticWebAddress.getQuery());
-
-        if (mChangeID != null && !mChangeID.isEmpty())
-        {
-            builder.append(mChangeID);
-            addPlus = true;
+        if (mRequestChangeDetail) {
+            if (mChangeNo > 0) {
+                builder.append("changes/").append(mChangeNo).append("/detail/")
+                        .append(JSONCommit.CURRENT_PATCHSET_ARGS);
+            }
+            // Cannot request change detail without a change id.
+            else return "";
+        } else {
+            builder.append(StaticWebAddress.getQuery());
+            if (mChangeID != null && !mChangeID.isEmpty()) {
+                builder.append(mChangeID);
+                addPlus = true;
+            }
         }
 
         if (mStatus != null && !mStatus.isEmpty())
@@ -147,10 +149,6 @@ public class GerritURL implements Parcelable
 
         if (mSortkey != null && !mSortkey.isEmpty()) {
             builder.append("&P=").append(mSortkey);
-        }
-
-        if (mRequestChangeDetail) {
-            builder.append(JSONCommit.CURRENT_PATCHSET_ARGS);
         }
 
         if (mRequestDetailedAccounts) {
@@ -212,10 +210,10 @@ public class GerritURL implements Parcelable
         dest.writeString(sGerritBase);
         dest.writeString(sProject);
         dest.writeString(mChangeID);
+        dest.writeInt(mChangeNo);
         dest.writeString(mStatus);
         dest.writeString(mEmail);
         dest.writeString(mCommitterState);
-        dest.writeInt(mListProjects ? 1 : 0);
         dest.writeInt(mRequestDetailedAccounts ? 1 : 0);
         dest.writeString(mSortkey);
         dest.writeInt(mRequestChangeDetail ? 1 : 0);
@@ -225,10 +223,10 @@ public class GerritURL implements Parcelable
         sGerritBase = in.readString();
         sProject = in.readString();
         mChangeID = in.readString();
+        mChangeNo = in.readInt();
         mStatus = in.readString();
         mEmail = in.readString();
         mCommitterState = in.readString();
-        mListProjects = in.readInt() == 1;
         mRequestDetailedAccounts = in.readInt() == 1;
         mSortkey = in.readString();
         mRequestChangeDetail = in.readInt() == 1;

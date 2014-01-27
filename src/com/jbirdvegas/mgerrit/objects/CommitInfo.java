@@ -21,24 +21,53 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import com.jbirdvegas.mgerrit.R;
 
-public class CommitInfo implements Parcelable {
+import java.util.List;
 
-    @SerializedName(JSONCommit.KEY_AUTHOR)
+/**
+ * Contains information about a revision or patch set. This condenses both
+ *  the RevisionInfo and CommitInfo objects together into the one level
+ */
+public class CommitInfo implements Parcelable{
+
+    /** The Change-Id of the change. */
+    private String mChangeId;
+
+    public static final String KEY_COMMIT = "commit";
+    /**The commit ID of the current patch set of this change.
+     * Don't set the @SerialisedName as there is a name conflict here */
+    private String mCommit;
+
+    public static final String KEY_AUTHOR = "author";
+    @SerializedName(CommitInfo.KEY_AUTHOR)
     private CommitterObject mAuthorObject;
 
-    @SerializedName(JSONCommit.KEY_COMMITTER)
+    public static final String KEY_COMMITTER = "committer";
+    @SerializedName(CommitInfo.KEY_COMMITTER)
     private CommitterObject mCommitterObject;
 
-    @SerializedName(JSONCommit.KEY_MESSAGE)
+    public static final String KEY_MESSAGE = "message";
+    @SerializedName(CommitInfo.KEY_MESSAGE)
     private String mMessage;
 
     @SerializedName(JSONCommit.KEY_SUBJECT)
     private String mSubject;
 
+    @SerializedName("_number")
     private String mPatchSetNumber;
+
+    public static final String KEY_CHANGED_FILES = "files";
+    // Information about the files in this patch set.
+    @SerializedName(CommitInfo.KEY_CHANGED_FILES)
+    private FileInfoList mFileInfos;
+
+    @SerializedName("draft")
+    private boolean mIsDraft;
+
 
     public CommitInfo(Parcel in) {
         mAuthorObject = in.readParcelable(CommitterObject.class.getClassLoader());
@@ -46,10 +75,46 @@ public class CommitInfo implements Parcelable {
         mMessage = in.readString();
         mSubject = in.readString();
         mPatchSetNumber = in.readString();
+        mChangeId = in.readString();
+        mCommit = in.readString();
+        mFileInfos = in.readParcelable(FileInfoList.class.getClassLoader());
+        mIsDraft = in.readInt() == 1;
     }
 
-    public String getPatchSetNumber() {
-        return mPatchSetNumber;
+    public static CommitInfo deserialise(JsonObject object, String changeId) {
+        CommitInfo revision = new Gson().fromJson(object, CommitInfo.class);
+        revision.mChangeId = changeId;
+
+        // Add the changed files
+        if (object.has(CommitInfo.KEY_CHANGED_FILES)) {
+            JsonObject filesObj = object.get(CommitInfo.KEY_CHANGED_FILES).getAsJsonObject();
+            revision.mFileInfos = FileInfoList.deserialize(filesObj);
+        }
+
+        // Some objects are nested here
+        if (object.has(CommitInfo.KEY_COMMIT)) {
+            JsonObject commitObj = object.get(KEY_COMMIT).getAsJsonObject();
+            CommitInfo r2 = new Gson().fromJson(commitObj, CommitInfo.class);
+            merge(revision, r2);
+
+            if (commitObj.has(KEY_COMMIT)) {
+                revision.mCommit = commitObj.get(KEY_COMMIT).getAsString();
+            }
+        }
+
+        return revision;
+    }
+
+    /**
+     * Merge two CommitInfo objects together, modifying the first
+     * @param a The commitInfo object to be modified
+     * @param b Secondary commitInfo object to be merged into a
+     */
+    private static void merge(CommitInfo a, final CommitInfo b) {
+        a.mAuthorObject = b.mAuthorObject == null ? a.mAuthorObject : b.mAuthorObject;
+        a.mCommitterObject = b.mCommitterObject == null ? a.mCommitterObject : b.mCommitterObject;
+        a.mMessage = b.mMessage == null ? a.mMessage : b.mMessage;
+        a.mSubject = b.mSubject == null ? a.mSubject : b.mSubject;
     }
 
     public CommitterObject getAuthorObject() {
@@ -64,24 +129,37 @@ public class CommitInfo implements Parcelable {
         return mMessage;
     }
 
-    public String getSubject() {
-        return mSubject;
-    }
-
     protected void setMessage(Context context) {
         if (mMessage == null) {
             this.mMessage = context.getString(R.string.current_revision_is_draft_message);
         }
     }
 
+    public String getChangeId() { return mChangeId; }
+
+    public String getCommit() { return mCommit; }
+
+    public String getSubject() { return mSubject; }
+
+    public String getPatchSetNumber() { return mPatchSetNumber; }
+
+    public boolean isIsDraft() { return mIsDraft; }
+
+    public List<FileInfo> getChangedFiles() { return mFileInfos.getFiles(); }
+    public void setChangedFiles(FileInfoList fileInfos) { this.mFileInfos = fileInfos; }
+
     @Override
     public String toString() {
         return "CommitInfo{" +
-                "mAuthorObject=" + mAuthorObject +
+                "mChangeId='" + mChangeId + '\'' +
+                ", mCommit='" + mCommit + '\'' +
+                ", mAuthorObject=" + mAuthorObject +
                 ", mCommitterObject=" + mCommitterObject +
                 ", mMessage='" + mMessage + '\'' +
                 ", mSubject='" + mSubject + '\'' +
                 ", mPatchSetNumber='" + mPatchSetNumber + '\'' +
+                ", mFileInfos=" + mFileInfos +
+                ", mIsDraft=" + mIsDraft +
                 '}';
     }
 
@@ -97,5 +175,9 @@ public class CommitInfo implements Parcelable {
         dest.writeString(mMessage);
         dest.writeString(mSubject);
         dest.writeString(mPatchSetNumber);
+        dest.writeString(mChangeId);
+        dest.writeString(mCommit);
+        dest.writeParcelable(mFileInfos, 0);
+        dest.writeInt(mIsDraft ? 1 : 0);
     }
 }

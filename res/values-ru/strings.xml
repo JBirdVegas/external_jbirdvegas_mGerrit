@@ -23,8 +23,8 @@
   <string name="status_explanation_submitted">Изменение принято и находится в очереди на добавление. Возможно, ожидается доработка зависящих от него файлов.</string>
   <string name="status_explanation_merged">Изменение добавлено в соответствующую ветку.</string>
   <string name="status_explanation_abandoned">Изменение убрано владельцем или администратором.</string>
-  <string name="patchset_labels_code_reviewer_title">Обзор кодов:</string>
-  <string name="patchset_labels_verified_reviewer_title">Проверено:</string>
+  <string name="patchset_labels_code_reviewer">Обзор кодов:</string>
+  <string name="patchset_labels_verified_reviewer">Проверено:</string>
   <string name="inserted">Вставленные строки:</string>
   <string name="deleted">Удалённые строки:</string>
   <string name="none_found">Не найдено</string>

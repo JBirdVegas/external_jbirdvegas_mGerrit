@@ -23,6 +23,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.v4.content.CursorLoader;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.CommitComment;
@@ -80,7 +81,7 @@ public class MessageInfo extends DatabaseTable {
         db.execSQL("create table " + TABLE + " ("
                 + C_CHANGE_ID + " text NOT NULL, "
                 + C_MESSAGE_ID + " text NOT NULL, "
-                + C_AUTHOR + " text, "
+                + C_AUTHOR + " INTEGER, "
                 + C_TIMESTAMP + " INTEGER NOT NULL, "
                 + C_MESSAGE + " TEXT NOT NULL, "
                 + C_REVISION_NUMBER + " INTEGER, "
@@ -118,10 +119,5 @@ public class MessageInfo extends DatabaseTable {
         Uri uri = DBParams.insertWithReplace(CONTENT_URI);
         ContentValues valuesArray[] = new ContentValues[values.size()];
         return context.getContentResolver().bulkInsert(uri, values.toArray(valuesArray));
-    }
-
-    public static Cursor getMessagesForChange(Context context, String changeid) {
-        return context.getContentResolver().query(CONTENT_URI,
-                null, C_CHANGE_ID + " = ?", new String[] { changeid }, SORT_BY);
     }
 }

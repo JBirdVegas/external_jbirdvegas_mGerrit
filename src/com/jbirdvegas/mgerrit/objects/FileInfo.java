@@ -28,6 +28,9 @@ public class FileInfo implements Parcelable {
 
     private String path;
 
+    @SerializedName("old_path")
+    private String oldPath;
+
     @SerializedName(JSONCommit.KEY_INSERTED)
     private int inserted = -1;
 
@@ -61,8 +64,11 @@ public class FileInfo implements Parcelable {
 
         public static Status getValue(final String value) {
             if (value == null) return MODIFIED;
-            for (Status s : values())
-                if(value.equalsIgnoreCase(s.getStatusCode())) return s;
+            for (Status s : values()) {
+                if (value.equalsIgnoreCase(s.getStatusCode())) return s;
+                else if (value.equalsIgnoreCase(s.name())) return s;
+            }
+
             return MODIFIED;
         };
     }
@@ -74,6 +80,8 @@ public class FileInfo implements Parcelable {
     public String getPath() {
         return this.path;
     }
+
+    public String getOldPath() { return oldPath; }
 
     public int getInserted() {
         return this.inserted;
@@ -89,9 +97,7 @@ public class FileInfo implements Parcelable {
 
     public boolean isBinary() { return isBinary; }
 
-    public void setBinary(boolean binary) { this.isBinary = binary; }
-
-    public static FileInfo deserialise(String _path, JsonObject object){
+    public static FileInfo deserialise(JsonObject object, String _path) {
         FileInfo file = new Gson().fromJson(object, FileInfo.class);
         file.path = _path;
 
@@ -108,9 +114,10 @@ public class FileInfo implements Parcelable {
     public String toString() {
         return "FileInfo{" +
                 "path='" + path + '\'' +
+                ", oldPath='" + oldPath + '\'' +
                 ", inserted=" + inserted +
                 ", deleted=" + deleted +
-                ", status='" + status + '\'' +
+                ", status=" + status +
                 ", isBinary=" + isBinary +
                 '}';
     }
@@ -123,12 +130,14 @@ public class FileInfo implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(path);
+        parcel.writeString(oldPath);
         parcel.writeInt(inserted);
         parcel.writeInt(deleted);
     }
 
     public FileInfo(Parcel parcel) {
         path = parcel.readString();
+        oldPath = parcel.readString();
         inserted = parcel.readInt();
         deleted = parcel.readInt();
     }

@@ -17,42 +17,72 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="wrap_content"
+              android:background="?attr/cardBackgroundColor"
               android:orientation="vertical"
-              android:paddingBottom="12dip"
-              android:background="?attr/cardBackgroundColor">
+              android:paddingBottom="8dip">
 
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/labels_card_reviewer_name"
+        style="@style/CardText.CommitOwnerText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/patchset_labels_code_reviewer_title"
-        android:text="@string/patchset_labels_code_reviewer_title"
-        android:paddingLeft="8dip"
-        android:paddingBottom="8dip"
-        style="?attr/cardTitleStyle"
-        android:textSize="@dimen/text_size_larger"/>
+        android:paddingLeft="2dp"
+        android:singleLine="true"
+        tools:text="Reviewer's name here"/>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/labels_card_code_review_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/patchset_lables_reviewers"/>
+        android:layout_marginLeft="@dimen/card_subitem_indent"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:id="@+id/patchset_labels_verified_reviewer_title"
-        android:text="@string/patchset_labels_verified_reviewer_title"
-        android:paddingLeft="8dip"
-        android:paddingTop="8dip"
-        android:paddingBottom="8dip"
-        style="?attr/cardTitleStyle"
-        android:textSize="@dimen/text_size_larger"/>
+        <TextView
+            style="?attr/cardTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="@string/patchset_labels_code_reviewer"/>
+
+        <TextView
+            android:id="@+id/labels_card_code_review"
+            style="?attr/cardTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/standard_padding"
+            android:singleLine="true"
+            tools:text="+2"/>
+    </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/labels_card_verified_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/patchset_lables_verifier"/>
+        android:layout_marginLeft="@dimen/card_subitem_indent"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            style="?attr/cardTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.00"
+            android:singleLine="true"
+            android:text="@string/patchset_labels_verified_reviewer"/>
+
+        <TextView
+            android:id="@+id/labels_card_verified"
+            style="?attr/cardTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/standard_padding"
+            android:singleLine="true"
+            tools:text="+1"/>
+    </LinearLayout>
+
 </LinearLayout>

@@ -19,12 +19,15 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
 
-import com.jbirdvegas.mgerrit.database.ChangedFiles;
+import com.jbirdvegas.mgerrit.database.FileInfoTable;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
+import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -40,9 +43,8 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
 
         Reviewer[] reviewers = reviewersToArray(commit);
         Reviewers.insertReviewers(getContext(), changeid, reviewers);
-
+        Revisions.insertRevision(getContext(), commit.getPatchSet());
         MessageInfo.insertMessages(getContext(), changeid, commit.getMessagesList());
-        ChangedFiles.insertChangedFiles(getContext(), changeid, commit.getChangedFiles());
     }
 
     @Override
@@ -55,8 +57,10 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
         return JSONCommit.class;
     }
 
-    private Reviewer[] reviewersToArray(JSONCommit commit) {
+    @Nullable
+    protected static Reviewer[] reviewersToArray(JSONCommit commit) {
         List<Reviewer> rs = commit.getReviewers();
-        return new Reviewer[rs.size()];
+        if (rs == null) return null;
+        return rs.toArray(new Reviewer[rs.size()]);
     }
 }

@@ -39,6 +39,8 @@
         <attr name="cardTextStyle" format="reference"/>
         <attr name="cardTitleStyle" format="reference"/>
         <attr name="warningIcon" format="reference"/>
+        <attr name="changeInsertedStyle" format="reference" />
+        <attr name="changeDeletedStyle" format="reference" />
     </declare-styleable>
     <declare-styleable name="ImageView">
         <attr name="shareIcon" format="reference"/>
@@ -55,5 +57,4 @@
         <attr name="newHeader" format="color" />
         <attr name="pathInfo" format="color" />
     </declare-styleable>
-
 </resources>

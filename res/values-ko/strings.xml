@@ -29,8 +29,8 @@
     <string name="status_explanation_abandoned">Change was abandoned by its owner or administrator.</string>
     <string name="view_in_browser">브라우저</string>
     <string name="moar_info">추가 정보</string>
-    <string name="patchset_labels_code_reviewer_title">코드 검토자</string>
-    <string name="patchset_labels_verified_reviewer_title">검증</string>
+    <string name="patchset_labels_code_reviewer">코드 검토자</string>
+    <string name="patchset_labels_verified_reviewer">검증</string>
     <string name="inserted">삽입 된 행</string>
     <string name="deleted">삭제 된 행</string>
     <string name="none_found">찾을 수 없음</string>

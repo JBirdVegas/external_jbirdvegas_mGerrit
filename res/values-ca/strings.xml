@@ -26,8 +26,8 @@
     <string name="status_explanation_abandoned">El canvi ha estat abandonat pel seu propietari o l\'administrador.</string>
     <string name="view_in_browser">Navegador</string>
     <string name="moar_info">Més Info!</string>
-    <string name="patchset_labels_code_reviewer_title">Revisors del codi</string>
-    <string name="patchset_labels_verified_reviewer_title">Verificat</string>
+    <string name="patchset_labels_code_reviewer">Revisors del codi</string>
+    <string name="patchset_labels_verified_reviewer">Verificat</string>
     <string name="inserted">Línies inserides</string>
     <string name="deleted">Línies suprimides</string>
     <string name="none_found">No se n\'ha trobat cap</string>

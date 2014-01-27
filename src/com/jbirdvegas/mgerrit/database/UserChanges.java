@@ -76,7 +76,7 @@ public class UserChanges extends DatabaseTable {
     public static final String C_COMMIT_NUMBER = Changes.C_COMMIT_NUMBER;
 
     // The name of the target branch. The refs/heads/ prefix is omitted.
-    public static final String C_BRANCH = "branch";
+    public static final String C_BRANCH = Changes.C_BRANCH;
 
 
     // --- Columns in Users table ---
@@ -92,8 +92,8 @@ public class UserChanges extends DatabaseTable {
 
 
     // --- Content Provider stuff ---
-    public static final int ITEM_LIST = UriType.UsersChangesList.ordinal();
-    public static final int ITEM_ID = UriType.UsersChangesID.ordinal();
+    public static final int ITEM_LIST = UriType.UserChangesList.ordinal();
+    public static final int ITEM_ID = UriType.UserChangesID.ordinal();
 
     public static final Uri CONTENT_URI = Uri.parse(DatabaseFactory.BASE_URI + TABLE);
 
@@ -106,7 +106,7 @@ public class UserChanges extends DatabaseTable {
 
     public static final String[] CHANGE_LIST_PROJECTION = new String[] {
             Changes.TABLE + ".rowid AS _id", C_CHANGE_ID, C_SUBJECT, C_PROJECT, C_UPDATED,
-            C_STATUS, C_TOPIC, C_USER_ID, C_EMAIL, C_NAME,
+            C_STATUS, C_TOPIC, C_USER_ID, C_EMAIL, C_NAME, C_BRANCH,
             C_COMMIT_NUMBER };
 
     private static UserChanges mInstance = null;
@@ -234,6 +234,20 @@ public class UserChanges extends DatabaseTable {
 
         return new CursorLoader(context, CONTENT_URI, CHANGE_LIST_PROJECTION,
                 where.toString(), bindArgs.toArray(valuesArray), SORT_BY);
+    }
+
+    /**
+     * Get the commit properties for a change.
+     * @param context Context for database access
+     * @param changeid The Change-Id of the change to get the properties
+     * @return A CursorLoader
+     */
+    public static CursorLoader getCommitProperties(Context context, String changeid) {
+        Uri uri = DBParams.fetchOneRow(CONTENT_URI);
+        return new CursorLoader(context, uri, CHANGE_LIST_PROJECTION,
+                C_CHANGE_ID + " = ? AND " + Changes.TABLE + "." + Changes.C_OWNER
+                        + " = " + Users.TABLE + "." + Users.C_ACCOUNT_ID,
+                new String[] { changeid }, null);
     }
 
     @Override

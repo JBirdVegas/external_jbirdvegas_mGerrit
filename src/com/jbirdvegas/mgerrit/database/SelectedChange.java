@@ -23,6 +23,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Pair;
 
 
 // Database table to store the last selected changeid for each status
@@ -33,6 +34,9 @@ public class SelectedChange extends DatabaseTable {
     // --- Columns ---
     // The Change-Id of the change.
     public static final String C_CHANGE_ID = "change_id";
+
+    // The legacy change number of the change
+    public static final String C_CHANGE_NO = "change_number";
 
     //The status of the change (NEW, SUBMITTED, MERGED, ABANDONED, DRAFT).
     public static final String C_STATUS = "status";
@@ -59,6 +63,7 @@ public class SelectedChange extends DatabaseTable {
         // Specify a conflict algorithm here so we don't have to worry about it later
         db.execSQL("create table " + TABLE + " ("
                 + C_CHANGE_ID + " text, "
+                + C_CHANGE_NO + " INTEGER, "
                 + C_STATUS + " text PRIMARY KEY ON CONFLICT REPLACE)");
     }
 
@@ -68,24 +73,31 @@ public class SelectedChange extends DatabaseTable {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE + "/#", ITEM_ID);
     }
 
-    public static String getSelectedChange(Context context, String status) {
+    public static Pair<String, Integer> getSelectedChange(Context context, String status) {
         Cursor c = context.getContentResolver().query(CONTENT_URI,
-                new String[] { C_CHANGE_ID },
+                new String[] { C_CHANGE_ID, C_CHANGE_NO },
                 C_STATUS + " = ?",
                 new String[] { status },
                 null);
         if (!c.moveToFirst()) return null;
-        else return c.getString(0);
+        else return new Pair<>(c.getString(0), c.getInt(1));
     }
 
-    public static void setSelectedChange(Context context, String changeid) {
+    public static Integer setSelectedChange(Context context, String changeid) {
+        Integer changeno = Changes.getChangeNumberForChange(context, changeid);
+        setSelectedChange(context, changeid, changeno);
+        return changeno;
+    }
+
+    public static void setSelectedChange(Context context, String changeid, int changeno) {
         String status = Changes.getChangeStatus(context, changeid);
-        setSelectedChange(context, changeid, status);
+        setSelectedChange(context, changeid, changeno, status);
     }
 
-    public static void setSelectedChange(Context context, String changeid, String status) {
+    public static void setSelectedChange(Context context, String changeid, int changeno, String status) {
         ContentValues contentValues = new ContentValues(2);
         contentValues.put(C_CHANGE_ID, changeid);
+        contentValues.put(C_CHANGE_NO, changeno);
         contentValues.put(C_STATUS, status);
         context.getContentResolver().insert(CONTENT_URI, contentValues);
     }

@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
 
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
@@ -34,9 +35,10 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
 
     private final String mUrl;
 
-    ProjectListProcessor(Context context, GerritURL url) {
-        super(context, url);
-        mUrl = url.toString();
+    ProjectListProcessor(Context context) {
+        super(context);
+        String gerrit = Prefs.getCurrentGerrit(context);
+        mUrl = gerrit + "projects/?d";
     }
 
     @Override
@@ -50,7 +52,7 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     boolean isSyncRequired() {
         Context context = getContext();
         long syncInterval = context.getResources().getInteger(R.integer.projects_sync_interval);
-        long lastSync = SyncTime.getValueForQuery(context, SyncTime.CHANGES_LIST_SYNC_TIME, mUrl);
+        long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, mUrl);
         boolean sync = isInSyncInterval(syncInterval, lastSync);
         if (sync) return true;
 
@@ -67,5 +69,10 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     void doPostProcess(Projects data) {
         SyncTime.setValue(mContext, SyncTime.PROJECTS_LIST_SYNC_TIME,
                 System.currentTimeMillis(), mUrl);
+    }
+
+    @Override
+    protected void fetchData() {
+        super.fetchData(mUrl);
     }
 }

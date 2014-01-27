@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -28,97 +29,121 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.fima.cardsui.objects.RecyclableCard;
-import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.caches.BitmapLruCache;
+import com.jbirdvegas.mgerrit.database.UserMessage;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.objects.CommitComment;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
-import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-public class PatchSetCommentsCard extends RecyclableCard {
+public class PatchSetCommentsCard implements CardBinder {
 
-    private JSONCommit mJsonCommit;
-    private final PatchSetViewerFragment mPatchsetViewerFragment;
     private RequestQueue mRequestQuery;
     private Context mContext;
     private final FragmentActivity mActivity;
+    private final LayoutInflater mInflater;
 
-    public PatchSetCommentsCard(JSONCommit jsonCommit, PatchSetViewerFragment fragment, RequestQueue requestQueue) {
-        mJsonCommit = jsonCommit;
-        mPatchsetViewerFragment = fragment;
+    // Cursor indices
+    private Integer message_index;
+    private Integer authorId_index;
+    private Integer authorName_index;
+    private Integer authorEmail_index;
+    private Integer timestamp_index;
+
+
+    public PatchSetCommentsCard(Context context, RequestQueue requestQueue) {
         mRequestQuery = requestQueue;
-        mContext = fragment.getActivity();
-        mActivity = (FragmentActivity) mContext;
+        mContext = context;
+        mActivity = (FragmentActivity) context;
+        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    @Override
-    protected void applyTo(View convertView) {
-        List<CommitComment> commentsList = mJsonCommit.getMessagesList();
+    public View setViewValue(Cursor cursor, View convertView, ViewGroup parent) {
+
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.commit_comment, null);
+        }
 
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
-        if (convertView.getTag() == null) {
-            viewHolder = new ViewHolder();
-            viewHolder.viewGroup = (ViewGroup) convertView.findViewById(R.id.comments_list);
+        if (viewHolder == null) {
+            viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         }
 
-        if (commentsList != null) {
-            viewHolder.viewGroup.removeAllViews();
+        setIndicies(cursor);
 
-            // make and add a view for each comment
-            for (CommitComment comment : commentsList) {
-                viewHolder.viewGroup.addView(getCommentView(comment));
-            }
-        }
-    }
-
-    private View getCommentView(final CommitComment comment) {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View commentView = inflater.inflate(R.layout.commit_comment, null);
-        // set author name
-        TextView authorTextView = (TextView) commentView.findViewById(R.id.comment_author_name);
-        authorTextView.setText(comment.getAuthorObject().getName());
-        authorTextView.setOnClickListener(new View.OnClickListener() {
+        TextView author = viewHolder.authorTextView;
+        Integer authorNumber = cursor.getInt(authorId_index);
+        author.setTag(authorNumber);
+        author.setText(cursor.getString(authorName_index));
+        author.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setTrackingUser(comment.getAuthorObject());
+                setTrackingUser((Integer) v.getTag());
             }
         });
 
-        authorTextView.setTag(comment.getAuthorObject());
-        mPatchsetViewerFragment.registerViewForContextMenu(authorTextView);
+        String timestamp = cursor.getString(timestamp_index);
+        if (timestamp != null) {
+            viewHolder.timestamp.setText(Tools.prettyPrintDate(mContext, timestamp,
+                    Prefs.getServerTimeZone(mContext),
+                    Prefs.getLocalTimeZone(mContext)));
+        }
+
         // setup styled comments
-        TextView commentMessage = (TextView) commentView.findViewById(R.id.comment_message);
         // use Linkify to automatically linking http/email/addresses
-        Linkify.addLinks(commentMessage, Linkify.ALL);
+        Linkify.addLinks(viewHolder.commentMessage, Linkify.ALL);
         // replace replace emoticons with drawables
-        commentMessage.setText(EmoticonSupportHelper.getSmiledText(mContext, comment.getMessage()));
+        viewHolder.commentMessage.setText(EmoticonSupportHelper.getSmiledText(mContext,
+                cursor.getString(message_index)));
+
         // set gravatar icon for commenter
-        NetworkImageView gravatar = (NetworkImageView) commentView.findViewById(R.id.comment_gravatar);
-        gravatar.setImageUrl(GravatarHelper.getGravatarUrl(comment.getAuthorObject().getEmail()),
+        viewHolder.gravatar.setImageUrl(GravatarHelper.getGravatarUrl(
+                cursor.getString(authorEmail_index)),
                 new ImageLoader(mRequestQuery, new BitmapLruCache(mContext)));
-        return commentView;
+
+        return convertView;
     }
 
-    private void setTrackingUser(CommitterObject user) {
+    private void setTrackingUser(Integer user) {
         Prefs.setTrackingUser(mContext, user);
         if (!Prefs.isTabletMode(mContext)) mActivity.finish();
     }
 
-    @Override
-    protected int getCardLayoutId() {
-        return R.layout.comments_card;
+    private void setIndicies(@NotNull Cursor cursor) {
+        // These indices will not change regardless of the view
+        if (message_index == null) {
+            message_index = cursor.getColumnIndex(UserMessage.C_MESSAGE);
+        }
+        if (authorId_index == null) {
+            authorId_index = cursor.getColumnIndex(UserMessage.C_AUTHOR);
+        }
+        if (authorName_index == null) {
+            authorName_index = cursor.getColumnIndex(UserMessage.C_NAME);
+        }
+        if (authorEmail_index == null) {
+            authorEmail_index = cursor.getColumnIndex(UserMessage.C_EMAIL);
+        }
+        if (timestamp_index == null) {
+            timestamp_index = cursor.getColumnIndex(UserMessage.C_TIMESTAMP);
+        }
     }
 
+
     private static class ViewHolder {
-        ViewGroup viewGroup;
+        TextView authorTextView;
+        TextView commentMessage;
+        NetworkImageView gravatar;
+        TextView timestamp;
+
+        private ViewHolder(View view) {
+            authorTextView = (TextView) view.findViewById(R.id.comment_author_name);
+            commentMessage = (TextView) view.findViewById(R.id.comment_message);
+            gravatar = (NetworkImageView) view.findViewById(R.id.comment_gravatar);
+            timestamp = (TextView) view.findViewById(R.id.comment_timestamp);
+        }
     }
 }
