@@ -39,12 +39,7 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
 
     @Override
     void insert(JSONCommit commit) {
-        String changeid = commit.getChangeId();
-
-        Reviewer[] reviewers = reviewersToArray(commit);
-        Reviewers.insertReviewers(getContext(), changeid, reviewers);
-        Revisions.insertRevision(getContext(), commit.getPatchSet());
-        MessageInfo.insertMessages(getContext(), changeid, commit.getMessagesList());
+        doInsert(getContext(), commit);
     }
 
     @Override
@@ -62,5 +57,14 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
         List<Reviewer> rs = commit.getReviewers();
         if (rs == null) return null;
         return rs.toArray(new Reviewer[rs.size()]);
+    }
+
+    protected static void doInsert(Context context, JSONCommit commit) {
+        String changeid = commit.getChangeId();
+
+        Reviewer[] reviewers = reviewersToArray(commit);
+        Reviewers.insertReviewers(context, changeid, reviewers);
+        Revisions.insertRevision(context, commit.getPatchSet());
+        MessageInfo.insertMessages(context, changeid, commit.getMessagesList());
     }
 }

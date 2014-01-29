@@ -1,14 +1,15 @@
 package com.jbirdvegas.mgerrit.objects;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.jbirdvegas.mgerrit.StaticWebAddress;
+
+import com.jbirdvegas.mgerrit.Prefs;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A class that helps to deconstruct Gerrit queries and assemble them
@@ -17,24 +18,44 @@ import java.util.regex.Pattern;
  */
 public class GerritURL implements Parcelable
 {
-    private static String sGerritBase;
+    private static Context sContext;
     private static String sProject = "";
     private String mStatus = "";
     private String mEmail = "";
     private String mCommitterState = "";
     private boolean mRequestDetailedAccounts = false;
     private String mSortkey = "";
-    private boolean mRequestChangeDetail = false;
     private String mChangeID = "";
     private int mChangeNo = 0;
 
-    // Default constructor to facilitate instantiation
-    public GerritURL() {
-        super();
+    private enum ChangeDetailLevels {
+        DISABLED, // Do not fetch change details
+        LEGACY,   // Fetch change details and use legacy URL (Gerrit 2.7 or lower)
+        ENABLED   // Fetch change details and use new change details endpoint (Gerrit 2.8+)
     }
+    private ChangeDetailLevels mRequestChangeDetail = ChangeDetailLevels.DISABLED;
 
-    public static void setGerrit(String mGerritBase) {
-        GerritURL.sGerritBase = mGerritBase;
+    public static final String DETAILED_ACCOUNTS_ARG = "&o=DETAILED_ACCOUNTS";
+    // used to query commit message
+    public static final String CURRENT_PATCHSET_ARGS = new StringBuilder(0)
+            .append("?o=CURRENT_REVISION")
+            .append("&o=CURRENT_COMMIT")
+            .append("&o=CURRENT_FILES")
+            .toString();
+    public static final String OLD_CHANGE_DETAIL_ARGS = new StringBuilder(0)
+            .append("&o=CURRENT_REVISION")
+            .append("&o=CURRENT_COMMIT")
+            .append("&o=CURRENT_FILES")
+            .append("&o=DETAILED_LABELS")
+            .append("&o=MESSAGES")
+            .toString();
+
+
+    // Default constructor to facilitate instantiation
+    public GerritURL() { }
+
+    public static void setContext(Context context) {
+        GerritURL.sContext = context;
     }
 
     public static void setProject(String project) {
@@ -57,11 +78,6 @@ public class GerritURL implements Parcelable
         mChangeID = changeID;
     }
 
-    public void setCommitterState(String committerState) {
-        if (committerState == null) committerState = "";
-        mCommitterState = committerState;
-    }
-
     /**
      * DETAILED_ACCOUNTS: include _account_id and email fields when referencing accounts.
      * @param requestDetailedAccounts true if to include the additional fields in the response
@@ -70,10 +86,15 @@ public class GerritURL implements Parcelable
         mRequestDetailedAccounts = requestDetailedAccounts;
     }
 
-    public void requestChangeDetail(boolean request) {
-        mRequestChangeDetail = request;
-        if (request) {
+    public void requestChangeDetail(boolean request, Boolean useLegacyUrl) {
+        if (!request) {
+            mRequestChangeDetail = ChangeDetailLevels.DISABLED;
+        } else if (!useLegacyUrl) {
+            mRequestChangeDetail = ChangeDetailLevels.ENABLED;
             mRequestDetailedAccounts = false;
+        } else {
+            mRequestChangeDetail = ChangeDetailLevels.LEGACY;
+            mRequestDetailedAccounts = true;
         }
     }
 
@@ -94,67 +115,27 @@ public class GerritURL implements Parcelable
     @Nullable
     public String toString()
     {
-        boolean addPlus = false;
+        boolean addSeperator = false;
 
-        // Sanity checking, this value REALLY should be set.
-        if (sGerritBase == null) {
-            throw new NullPointerException("Base Gerrit URL is null, did you forget to set one?");
-        }
+        StringBuilder builder = new StringBuilder(0).append(Prefs.getCurrentGerrit(sContext));
+        builder.append("changes/");
 
-        StringBuilder builder = new StringBuilder(0).append(sGerritBase);
-
-        if (mRequestChangeDetail) {
+        if (mRequestChangeDetail == ChangeDetailLevels.ENABLED) {
             if (mChangeNo > 0) {
-                builder.append("changes/").append(mChangeNo).append("/detail/")
-                        .append(JSONCommit.CURRENT_PATCHSET_ARGS);
+                builder.append(mChangeNo).append("/detail/")
+                        .append(GerritURL.CURRENT_PATCHSET_ARGS);
             }
-            // Cannot request change detail without a change id.
+            // Cannot request change detail without a change number.
             else return "";
         } else {
-            builder.append(StaticWebAddress.getQuery());
-            if (mChangeID != null && !mChangeID.isEmpty()) {
-                builder.append(mChangeID);
-                addPlus = true;
-            }
+            builder.append("?q=");
+            addSeperator = appendChangeID(builder, addSeperator);
         }
 
-        if (mStatus != null && !mStatus.isEmpty())
-        {
-            builder.append(JSONCommit.KEY_STATUS)
-                    .append(":")
-                    .append(mStatus);
-            addPlus = true;
-        }
-
-        if (mCommitterState != null && !mCommitterState.isEmpty() && mEmail != null && !mEmail.isEmpty())
-        {
-            if (addPlus) builder.append('+');
-            builder.append(mCommitterState)
-                .append(':')
-                .append(mEmail);
-            addPlus = true;
-        }
-
-        try {
-            if (sProject != null && !sProject.isEmpty())
-            {
-                if (addPlus) builder.append('+');
-                builder.append(JSONCommit.KEY_PROJECT)
-                    .append(":")
-                    .append(URLEncoder.encode(sProject, "UTF-8"));
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        if (mSortkey != null && !mSortkey.isEmpty()) {
-            builder.append("&P=").append(mSortkey);
-        }
-
-        if (mRequestDetailedAccounts) {
-            builder.append(JSONCommit.DETAILED_ACCOUNTS_ARG);
-        }
-
+        addSeperator = appendStatus(builder, addSeperator);
+        addSeperator = appendOwner(builder, addSeperator);
+        appendProject(builder, addSeperator);
+        appendArgs(builder);
         return builder.toString();
     }
 
@@ -170,24 +151,70 @@ public class GerritURL implements Parcelable
         }
     }
 
-    /**
-     * Get the status query portion of the string
-     * @param str A gerrit query url, ideally the result of this class's toString method.
-     * @return The status query in the form "status:xxx"
-     */
-    public static String getQuery(String str) {
-        Pattern MY_PATTERN = Pattern.compile("(" + JSONCommit.KEY_STATUS + ":.*?)[+&]");
-        Matcher m = MY_PATTERN.matcher(str);
-        if (m.find()) return m.group(1);
-        else return null;
-    }
-
     public boolean equals(String str) {
         return this.toString().equals(str);
     }
 
-    // --- Parcelable stuff so we can send this object through intents ---
+    private boolean appendChangeID(StringBuilder builder, boolean addSeperator) {
+        if (addSeperator) builder.append('+');
+        if (mChangeID != null && !mChangeID.isEmpty()) {
+            builder.append(mChangeID);
+            return true;
+        }
+        return false;
+    }
+    private boolean appendStatus(StringBuilder builder, boolean addSeperator) {
+        if (mStatus != null && !mStatus.isEmpty()) {
+            if (addSeperator) builder.append('+');
+            builder.append(JSONCommit.KEY_STATUS)
+                    .append(":")
+                    .append(mStatus);
+            return true;
+        }
+        return false;
+    }
 
+    private boolean appendOwner(StringBuilder builder, boolean addSeperator) {
+        if (mCommitterState != null && !mCommitterState.isEmpty() &&
+                mEmail != null && !mEmail.isEmpty()) {
+            if (addSeperator) builder.append('+');
+            builder.append(mCommitterState)
+                    .append(':')
+                    .append(mEmail);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean appendProject(StringBuilder builder, boolean addSeperator) {
+        if (sProject != null && !sProject.isEmpty()) {
+            if (addSeperator) builder.append('+');
+            try {
+                builder.append(JSONCommit.KEY_PROJECT)
+                        .append(":")
+                        .append(URLEncoder.encode(sProject, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void appendArgs(StringBuilder builder) {
+        if (mSortkey != null && !mSortkey.isEmpty()) {
+            builder.append("&P=").append(mSortkey);
+        }
+        if (mRequestChangeDetail == ChangeDetailLevels.LEGACY) {
+            builder.append(GerritURL.OLD_CHANGE_DETAIL_ARGS);
+        }
+        if (mRequestDetailedAccounts) {
+            builder.append(GerritURL.DETAILED_ACCOUNTS_ARG);
+        }
+    }
+
+
+    // --- Parcelable stuff so we can send this object through intents ---
     public static final Creator<GerritURL> CREATOR
             = new Creator<GerritURL>() {
         public GerritURL createFromParcel(Parcel in) {
@@ -207,7 +234,6 @@ public class GerritURL implements Parcelable
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(sGerritBase);
         dest.writeString(sProject);
         dest.writeString(mChangeID);
         dest.writeInt(mChangeNo);
@@ -216,11 +242,10 @@ public class GerritURL implements Parcelable
         dest.writeString(mCommitterState);
         dest.writeInt(mRequestDetailedAccounts ? 1 : 0);
         dest.writeString(mSortkey);
-        dest.writeInt(mRequestChangeDetail ? 1 : 0);
+        dest.writeString(mRequestChangeDetail.name());
     }
 
     public GerritURL(Parcel in) {
-        sGerritBase = in.readString();
         sProject = in.readString();
         mChangeID = in.readString();
         mChangeNo = in.readInt();
@@ -229,6 +254,6 @@ public class GerritURL implements Parcelable
         mCommitterState = in.readString();
         mRequestDetailedAccounts = in.readInt() == 1;
         mSortkey = in.readString();
-        mRequestChangeDetail = in.readInt() == 1;
+        mRequestChangeDetail = ChangeDetailLevels.valueOf(in.readString());
     }
 }

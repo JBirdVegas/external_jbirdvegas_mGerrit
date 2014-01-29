@@ -86,6 +86,7 @@ public abstract class DatabaseTable {
         tables = new ArrayList<>();
         tables.add(Changes.class);
         tables.add(CommitMarker.class);
+        tables.add(Config.class);
         tables.add(FileChanges.class);
         tables.add(FileInfoTable.class);
         tables.add(MessageInfo.class);

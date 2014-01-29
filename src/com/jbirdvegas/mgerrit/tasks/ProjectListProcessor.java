@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
 
+import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
@@ -72,7 +73,7 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     }
 
     @Override
-    protected void fetchData() {
-        super.fetchData(mUrl);
+    protected void fetchData(RequestQueue queue) {
+        super.fetchData(mUrl, queue);
     }
 }

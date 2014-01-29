@@ -117,8 +117,9 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
      * @return url of preferred gerrit instance
      */
     public static String getCurrentGerrit(Context context) {
+        String[] gerrits = context.getResources().getStringArray(R.array.gerrit_webaddresses);
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(GERRIT_KEY, StaticWebAddress.HTTP_GERRIT_AOKP_CO);
+                .getString(GERRIT_KEY, gerrits[0]);
     }
 
     public static void setCurrentGerrit(Context context, String gerritInstanceUrl) {

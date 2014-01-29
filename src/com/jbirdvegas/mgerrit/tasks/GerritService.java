@@ -23,6 +23,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +36,9 @@ public class GerritService extends IntentService {
     public static final String URL_KEY = "Url";
     public static final String DATA_TYPE_KEY = "Type";
 
-    public static enum DataType { Project, Commit, CommitDetails }
+    public static enum DataType { Project, Commit, CommitDetails, GetVersion, LegacyCommitDetails }
+
+    public static RequestQueue mRequestQueue;
 
     private GerritURL mCurrentUrl;
 
@@ -43,6 +47,10 @@ public class GerritService extends IntentService {
 
     @Override
     protected void onHandleIntent(@NotNull Intent intent) {
+        if (mRequestQueue == null) {
+            mRequestQueue = Volley.newRequestQueue(this);
+        }
+
         mCurrentUrl = intent.getParcelableExtra(URL_KEY);
         SyncProcessor processor;
 
@@ -54,6 +62,10 @@ public class GerritService extends IntentService {
             processor = new ChangeListProcessor(this, mCurrentUrl);
         } else if (dataType == DataType.CommitDetails) {
             processor = new CommitProcessor(this, mCurrentUrl);
+        } else if (dataType == DataType.LegacyCommitDetails) {
+            processor = new LegacyCommitProcessor(this, mCurrentUrl);
+        } else if (dataType == DataType.GetVersion) {
+            processor = new VersionProcessor(this);
         } else {
             Log.w(TAG, "Don't know how to handle synchronization of type " + DATA_TYPE_KEY);
             return;
@@ -61,7 +73,7 @@ public class GerritService extends IntentService {
 
         // Call the SyncProcessor to fetch the data if necessary
         boolean needsSync = processor.isSyncRequired();
-        if (needsSync) processor.fetchData();
+        if (needsSync) processor.fetchData(mRequestQueue);
     }
 
     /**

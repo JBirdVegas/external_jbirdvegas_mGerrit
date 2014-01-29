@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.database.FileChanges;
 import com.jbirdvegas.mgerrit.dialogs.DiffDialog;
 import com.jbirdvegas.mgerrit.helpers.Tools;
@@ -108,15 +109,6 @@ public class PatchSetChangesCard implements CardBinder {
             viewHolder.oldPathContainer.setVisibility(View.GONE);
         }
 
-        /* If the file is binary don't offer to show the diff or any statistics as
-         *  we cannot get detailed information on binary files */
-        if (cursor.getInt(mIsBinary_index) != 0) {
-            viewHolder.binaryText.setVisibility(View.VISIBLE);
-            return convertView;
-        } else {
-            viewHolder.binaryText.setVisibility(View.GONE);
-        }
-
         int insertedInFile = cursor.getInt(mInserted_index);
         int deletedInFile = cursor.getInt(mDeleted_index);
         // we may not have inserted lines so remove if unneeded
@@ -134,6 +126,15 @@ public class PatchSetChangesCard implements CardBinder {
             viewHolder.deleted.setText('-' + String.valueOf(deletedInFile));
         }
 
+        /* If the file is binary don't offer to show the diff as
+         *  we cannot get detailed information on binary files */
+        if (cursor.getInt(mIsBinary_index) != 0) {
+            viewHolder.binaryText.setVisibility(View.VISIBLE);
+            return convertView;
+        } else {
+            viewHolder.binaryText.setVisibility(View.GONE);
+        }
+
         // We have already set an anonymous tag so we need to use ids
         convertView.setTag(R.id.changeNumber, cursor.getInt(mCommit_index));
         convertView.setTag(R.id.filePath, cursor.getString(mFileName_index));
@@ -142,12 +143,18 @@ public class PatchSetChangesCard implements CardBinder {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                AlertDialog.Builder ad = new AlertDialog.Builder(mContext)
-                        .setTitle(R.string.choose_diff_view);
-
                 final Integer changeNumber = (Integer) view.getTag(R.id.changeNumber);
                 final String filePath = (String) view.getTag(R.id.filePath);
                 final Integer patchset = (Integer) view.getTag(R.id.patchSetNumber);
+
+                // If the server does not support diffs then do not show the dialog
+                if (!Config.isDiffSupported(mContext)) {
+                    launchDiffInBrowser(changeNumber, patchset, filePath);
+                    return;
+                }
+
+                AlertDialog.Builder ad = new AlertDialog.Builder(mContext)
+                        .setTitle(R.string.choose_diff_view);
 
                 ad.setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
                     @Override
@@ -167,14 +174,7 @@ public class PatchSetChangesCard implements CardBinder {
                         R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        // launch in web browser
-                        String base = "%s#/c/%d/%d/%s,unified";
-                        Intent browserIntent = new Intent(
-                                Intent.ACTION_VIEW, Uri.parse(String.format(base,
-                                Prefs.getCurrentGerrit(mContext),
-                                changeNumber,
-                                patchset, filePath)));
-                        mContext.startActivity(browserIntent);
+                        launchDiffInBrowser(changeNumber, patchset, filePath);
                     }
                 });
                 ad.create().show();
@@ -198,6 +198,16 @@ public class PatchSetChangesCard implements CardBinder {
         });
         mAlertDialog = diffDialog.create();
         mAlertDialog.show();
+    }
+
+    private void launchDiffInBrowser(Integer changeNumber, Integer patchset, String filePath) {
+        String base = "%s#/c/%d/%d/%s,unified";
+        Intent browserIntent = new Intent(
+                Intent.ACTION_VIEW, Uri.parse(String.format(base,
+                Prefs.getCurrentGerrit(mContext),
+                changeNumber,
+                patchset, filePath)));
+        mContext.startActivity(browserIntent);
     }
 
     private void setupCusorIndicies(Cursor cursor) {
@@ -236,14 +246,14 @@ public class PatchSetChangesCard implements CardBinder {
 
     class ViewHolder {
 
-        TextView path;
-        TextView inserted;
-        TextView deleted;
-        View binaryText;
-        View insText;
-        View delText;
-        TextView oldPath;
-        View oldPathContainer;
+        final TextView path;
+        final TextView inserted;
+        final TextView deleted;
+        final View binaryText;
+        final View insText;
+        final View delText;
+        final TextView oldPath;
+        final View oldPathContainer;
 
         ViewHolder(View view) {
             path = (TextView)view.findViewById(R.id.changed_file_path);
@@ -253,7 +263,7 @@ public class PatchSetChangesCard implements CardBinder {
             insText = view.findViewById(R.id.inserted_text);
             delText = view.findViewById(R.id.deleted_text);
             oldPath = (TextView) view.findViewById(R.id.changed_file_old_path);
-            oldPathContainer = (View) view.findViewById(R.id.old_path_container);
+            oldPathContainer = view.findViewById(R.id.old_path_container);
         }
     }
 }

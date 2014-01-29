@@ -29,9 +29,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -40,6 +38,7 @@ import android.widget.ExpandableListView;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.adapters.CommitDetailsAdapter;
 import com.jbirdvegas.mgerrit.database.Changes;
+import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.database.FileChanges;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
@@ -50,7 +49,6 @@ import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
@@ -74,6 +72,8 @@ public class PatchSetViewerFragment extends Fragment
     private GerritURL mUrl;
     private String mSelectedChange;
     private String mStatus;
+    // Whether the server supports the new change details endpoint (false if so)
+    private boolean sIsLegacyVersion;
 
     private CommitDetailsAdapter mAdapter;
 
@@ -105,7 +105,6 @@ public class PatchSetViewerFragment extends Fragment
         }
     };
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -134,13 +133,16 @@ public class PatchSetViewerFragment extends Fragment
         mAdapter = new CommitDetailsAdapter(mParent);
         mListView.setAdapter(mAdapter);
 
+        sIsLegacyVersion = !Config.isDiffSupported(mParent);
+
         mUrl = new GerritURL();
 
         Button retryButton = (Button) currentFragment.findViewById(R.id.btn_retry);
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequest();
+                if (sIsLegacyVersion) sendRequest(GerritService.DataType.Commit);
+                else sendRequest(GerritService.DataType.LegacyCommitDetails);
             }
         });
 
@@ -160,7 +162,7 @@ public class PatchSetViewerFragment extends Fragment
     /**
      * Start the updater to check for an update if necessary
      */
-    private void sendRequest() {
+    private void sendRequest(GerritService.DataType dataType) {
 
         // If we aren't connected, there's nothing to do here
         if (!switchViews()) return;
@@ -171,7 +173,7 @@ public class PatchSetViewerFragment extends Fragment
          * so this will not be able to get the files changed or the full commit message
          * in prior Gerrit versions.
          */
-        GerritService.sendRequest(mParent, GerritService.DataType.CommitDetails, mUrl);
+        GerritService.sendRequest(mParent, dataType, mUrl);
     }
 
     private void setTitle(int commitNumber) {
@@ -196,9 +198,10 @@ public class PatchSetViewerFragment extends Fragment
         this.mSelectedChange = changeID;
         mUrl.setChangeID(mSelectedChange);
         mUrl.setChangeNumber(changeNo);
-        mUrl.requestChangeDetail(true);
+        mUrl.requestChangeDetail(true, sIsLegacyVersion);
 
-        sendRequest();
+        if (sIsLegacyVersion) sendRequest(GerritService.DataType.LegacyCommitDetails);
+        else sendRequest(GerritService.DataType.CommitDetails);
 
         initLoaders(changeID);
     }
@@ -226,7 +229,6 @@ public class PatchSetViewerFragment extends Fragment
             // Without the status we cannot find a changeid to load data for
             return;
         }
-
 
         Pair<String, Integer> change = SelectedChange.getSelectedChange(mContext, mStatus);
         String changeID = change.first;
@@ -329,37 +331,6 @@ public class PatchSetViewerFragment extends Fragment
     -------------------------
 
      */
-
-    private CommitterObject committerObject = null;
-
-    private static final int OWNER = 0;
-    private static final int REVIEWER = 1;
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        committerObject = (CommitterObject) v.getTag();
-        menu.setHeaderTitle(R.string.developers_role);
-        menu.add(0, v.getId(), OWNER, v.getContext().getString(R.string.context_menu_owner));
-        menu.add(0, v.getId(), REVIEWER, v.getContext().getString(R.string.context_menu_reviewer));
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        String tab = null;
-        switch (item.getOrder()) {
-            case OWNER:
-                tab = CardsFragment.KEY_OWNER;
-                break;
-            case REVIEWER:
-                tab = CardsFragment.KEY_REVIEWER;
-        }
-        committerObject.setState(tab);
-        Intent intent = new Intent(mParent, ReviewTab.class);
-        intent.putExtra(CardsFragment.KEY_DEVELOPER, committerObject);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(intent);
-        return true;
-    }
 
     private boolean switchViews() {
         boolean isconn = Tools.isConnected(mParent);

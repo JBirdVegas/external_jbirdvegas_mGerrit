@@ -103,11 +103,11 @@ abstract class SyncProcessor<T> {
      *  SyncProcessor(Context, GerritURL). The default simply calls
      *  fetchData(String).
      */
-    protected void fetchData() {
-        fetchData(getUrl().toString());
+    protected void fetchData(RequestQueue queue) {
+        fetchData(getUrl().toString(), queue);
     }
 
-    protected void fetchData(final String url) {
+    protected void fetchData(final String url, RequestQueue queue) {
         GsonRequest request = new GsonRequest<>(url, gson, getType(), 5,
                 getListener(url), new Response.ErrorListener() {
             @Override
@@ -116,16 +116,12 @@ abstract class SyncProcessor<T> {
             }
         });
 
-        fetchData(url, request);
+        fetchData(url, request, queue);
     }
 
-    protected void fetchData(final String url, Request<T> request) {
+    protected void fetchData(final String url, Request<T> request, RequestQueue queue) {
+        if (queue == null) queue = Volley.newRequestQueue(getContext());
 
-        // Won't be able to actually get JSON response back as it
-        //  is improperly formed (junk at start), but requesting raw text and
-        //  trimming it should be fine.
-
-        RequestQueue queue = Volley.newRequestQueue(mContext);
         new StartingRequest(mContext, url).sendUpdateMessage();
         queue.add(request);
     }

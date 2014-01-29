@@ -165,7 +165,6 @@ public class GerritControllerActivity extends FragmentActivity {
 
         /* Initially set the current Gerrit globally here.
          *  We can rely on callbacks to know when they change */
-        GerritURL.setGerrit(Prefs.getCurrentGerrit(this));
         GerritURL.setProject(Prefs.getCurrentProject(this));
 
         // Don't register listeners here. It is registered in onResume instead.
