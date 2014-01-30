@@ -52,14 +52,14 @@
                 android:textSize="@dimen/text_size_large"
                 android:text="@string/changelog_loading"
                 style="@style/CardText"
-                android:id="@+id/textView2"
+                android:id="@+id/changelog_searching"
                 android:layout_weight="1.00"
                 android:gravity="center_vertical"/>
 
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/progressBar"
+                android:id="@+id/changelog_progressBar"
                 android:indeterminate="true"/>
         </LinearLayout>
 

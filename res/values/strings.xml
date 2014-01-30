@@ -157,4 +157,5 @@
     <string name="header_comments">Comments</string>
     <string name="commit_updated">Updated:</string>
     <string name="renamed_label">Renamed from:</string>
+    <string name="no_changelog">There are no recent builds for your device</string>
 </resources>

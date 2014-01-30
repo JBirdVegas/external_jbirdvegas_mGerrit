@@ -231,17 +231,21 @@ public class PatchSetViewerFragment extends Fragment
         }
 
         Pair<String, Integer> change = SelectedChange.getSelectedChange(mContext, mStatus);
-        String changeID = change.first;
-        int changeNumber = change.second;
-        if (changeID == null || changeID.isEmpty()) {
-            changeID = Changes.getMostRecentChange(mParent, mStatus);
-            if (changeID == null || changeID.isEmpty()) {
+        String changeID;
+        int changeNumber;
+
+        if (change == null || change.first.isEmpty()) {
+            change = Changes.getMostRecentChange(mParent, mStatus);
+            if (change == null || change.first.isEmpty()) {
                 // No changes to load data from
                 AnalyticsHelper.sendAnalyticsEvent(mParent, "PatchSetViewerFragment",
                         "load_change", "null_changeID", null);
                 return;
             }
         }
+
+        changeID = change.first;
+        changeNumber = change.second;
 
         if (direct) setSelectedChange(changeID);
         else {

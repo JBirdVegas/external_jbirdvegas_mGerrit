@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
@@ -142,23 +143,27 @@ public class ChangelogFragment extends Fragment {
     class gooImResponseListener implements Response.Listener<JSONObject> {
         @Override
         public void onResponse(JSONObject response) {
+            JSONArray result = response.optJSONArray("list");
+            if (result == null) {
+                TextView text = (TextView) mParent.findViewById(R.id.changelog_searching);
+                text.setText(mParent.getString(R.string.no_changelog));
+                mParent.findViewById(R.id.changelog_progressBar).setVisibility(View.GONE);
+                return;
+            }
             mViewSwitcher.showNext();
-
-            Toast.makeText(mParent,
-                    R.string.please_select_update_for_range,
+            Toast.makeText(mParent, R.string.please_select_update_for_range,
                     Toast.LENGTH_LONG).show();
-            try {
-                JSONArray result = response.getJSONArray("list");
-                int resultsSize = result.length();
-                List<GooFileObject> filesList = new LinkedList<>();
 
+            int resultsSize = result.length();
+            List<GooFileObject> filesList = new LinkedList<>();
+            try {
                 for (int i = 0; resultsSize > i; i++) {
                     filesList.add(GooFileObject.getInstance(result.getJSONObject(i)));
                 }
-                setupList(filesList);
             } catch (Exception e) {
                 Log.e("ErrorListener", e.getLocalizedMessage());
             }
+            setupList(filesList);
         }
     }
 

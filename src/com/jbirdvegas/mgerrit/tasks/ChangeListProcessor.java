@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.tasks;
  */
 
 import android.content.Context;
+import android.util.Pair;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
@@ -85,11 +86,14 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
                 System.currentTimeMillis(), getQuery());
 
         // Save our spot using the sortkey of the most recent change
-        String changeID = Changes.getMostRecentChange(mContext, getUrl().getStatus());
-        if (changeID != null) {
-            JSONCommit commit = findCommit(data, changeID);
-            if (commit != null) {
-                CommitMarker.markCommit(mContext, commit);
+        Pair<String, Integer> change = Changes.getMostRecentChange(mContext, getUrl().getStatus());
+        if (change != null) {
+            String changeID = change.first;
+            if (changeID != null && !changeID.isEmpty()) {
+                JSONCommit commit = findCommit(data, changeID);
+                if (commit != null) {
+                    CommitMarker.markCommit(mContext, commit);
+                }
             }
         }
     }

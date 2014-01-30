@@ -22,7 +22,7 @@
               android:layout_height="wrap_content"
               android:background="?attr/cardBackgroundColor"
               android:orientation="vertical"
-              android:paddingBottom="8dip">
+              android:padding="@dimen/standard_padding">
 
     <TextView
         android:id="@+id/labels_card_reviewer_name"

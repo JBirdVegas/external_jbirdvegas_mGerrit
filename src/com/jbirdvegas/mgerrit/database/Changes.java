@@ -22,6 +22,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Pair;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
@@ -122,22 +123,22 @@ public class Changes extends DatabaseTable {
         return status;
     }
 
-    public static String getMostRecentChange(Context context, String status) {
+    public static Pair<String, Integer> getMostRecentChange(Context context, String status) {
         Uri uri = DBParams.fetchOneRow(CONTENT_URI);
-        String changeID = null;
+        Pair<String, Integer> pair = null;
 
         status = JSONCommit.Status.getStatusString(status);
 
         Cursor c = context.getContentResolver().query(uri,
-                new String[] { C_CHANGE_ID },
+                new String[] { C_CHANGE_ID, C_COMMIT_NUMBER },
                 C_STATUS + " = ?",
                 new String[] { status },
                 SORT_BY);
         if (c.moveToFirst()) {
-            changeID = c.getString(0);
+            pair = new Pair<>(c.getString(0), c.getInt(1));
         }
         c.close();
-        return changeID;
+        return pair;
     }
 
     public static Integer getChangeNumberForChange(Context context, String changeID) {
