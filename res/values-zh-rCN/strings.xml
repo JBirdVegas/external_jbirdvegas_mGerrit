@@ -27,6 +27,8 @@
     <string name="status_explanation_merged">更改已合并到其分支。</string>
     <string name="status_explanation_abandoned">更改被其所有者或管理员废弃。</string>
     <string name="status_explanation_draft">更改是一个草稿，它只包含草稿补丁集。</string>
+    <string name="patchset_labels_code_reviewer">代码评审：</string>
+    <string name="patchset_labels_verified_reviewer">已审核：</string>
     <string name="inserted">插入行</string>
     <string name="deleted">删除行</string>
     <string name="binary_file">二进制文件</string>
@@ -125,4 +127,12 @@
     <string name="not_connected">当前没有网络链接。请稍后再试。</string>
     <string name="aokp_changelog_card_title">最近AOKP编译版本</string>
     <string name="changelog_loading">正在搜索最近编译版本&#8230;</string>
+    <string name="retry_label">重试</string>
+    <string name="header_properties">属性</string>
+    <string name="header_commit_message">提交信息</string>
+    <string name="header_changed_files">变更文件</string>
+    <string name="header_reviewers">评审人</string>
+    <string name="header_comments">评论</string>
+    <string name="commit_updated">更新：</string>
+    <string name="renamed_label">重命名自：</string>
 </resources>
