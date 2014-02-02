@@ -45,6 +45,11 @@ public class PatchSetPropertiesCard implements CardBinder {
     private final FragmentActivity mActivity;
     private final LayoutInflater mInflater;
 
+    // Colors
+    private final int mOrange;
+    private final int mGreen;
+    private final int mRed;
+
     private Integer changeid_index;
     private Integer changenum_index;
     private Integer branch_index;
@@ -54,6 +59,7 @@ public class PatchSetPropertiesCard implements CardBinder {
     private Integer authorId_index;
     private Integer authorEmail_index;
     private Integer authorName_index;
+    private Integer status_index;
 
 
     public PatchSetPropertiesCard(Context context, RequestQueue requestQueue) {
@@ -61,6 +67,10 @@ public class PatchSetPropertiesCard implements CardBinder {
         this.mContext = context;
         this.mActivity = (FragmentActivity) mContext;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        this.mOrange = context.getResources().getColor(android.R.color.holo_orange_light);
+        this.mGreen = context.getResources().getColor(R.color.text_green);
+        this.mRed = context.getResources().getColor(R.color.text_red);
     }
 
     @Override
@@ -101,6 +111,19 @@ public class PatchSetPropertiesCard implements CardBinder {
         }
 
         setClicksToActionViews(cursor, viewHolder.shareBtn, viewHolder.browserBtn);
+
+        String statusText = cursor.getString(status_index);
+        switch (statusText) {
+            case "MERGED":
+                viewHolder.status.setBackgroundColor(mGreen);
+                break;
+            case "ABANDONED":
+                viewHolder.status.setBackgroundColor(mRed);
+                break;
+            default:
+                viewHolder.status.setBackgroundColor(mOrange);
+                break;
+        }
 
         return convertView;
     }
@@ -212,6 +235,9 @@ public class PatchSetPropertiesCard implements CardBinder {
         if (updated_index == null) {
             updated_index = cursor.getColumnIndex(UserChanges.C_UPDATED);
         }
+        if (status_index == null) {
+            status_index = cursor.getColumnIndex(UserChanges.C_STATUS);
+        }
     }
 
 
@@ -222,6 +248,7 @@ public class PatchSetPropertiesCard implements CardBinder {
         private final View topicContainer;
         private final TextView topic;
         private final TextView updated;
+        private final View status;
 
         private final ImageView shareBtn;
         private final ImageView browserBtn;
@@ -233,6 +260,7 @@ public class PatchSetPropertiesCard implements CardBinder {
             topicContainer = view.findViewById(R.id.prop_card_topic_container);
             topic = (TextView) view.findViewById(R.id.prop_card_topic);
             updated = (TextView) view.findViewById(R.id.prop_card_last_update);
+            status = view.findViewById(R.id.prop_card_status);
 
             shareBtn = (ImageView) view.findViewById(R.id.properties_card_share_info);
             browserBtn = (ImageView) view.findViewById(R.id.properties_card_view_in_browser);

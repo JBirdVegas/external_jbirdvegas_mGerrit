@@ -56,7 +56,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            tools:layout="@layout/commit_list" />
+            tools:layout="@layout/commit_list"
+            android:background="?attr/mainBackgroundColor"/>
 
     </LinearLayout>
 </RelativeLayout>
