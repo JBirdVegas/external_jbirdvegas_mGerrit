@@ -68,6 +68,8 @@
                   <meta-data android:name="android.app.searchable"
                       android:resource="@xml/projects_searchable"/>
         </activity>
+        <activity android:name=".DiffViewer"
+                  android:parentActivityName=".GerritControllerActivity"/>
         <service android:name=".tasks.GerritService" />
         <provider
             android:name=".database.DatabaseFactory"

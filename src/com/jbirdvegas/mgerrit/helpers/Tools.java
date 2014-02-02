@@ -20,14 +20,17 @@ package com.jbirdvegas.mgerrit.helpers;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.objects.FileInfo;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -157,6 +160,26 @@ public class Tools {
         } catch (ParseException e) {
             e.printStackTrace();
             return date;
+        }
+    }
+
+    public static void colorPath(Resources r, TextView view,
+                                 String statusText, boolean usingLightTheme) {
+        FileInfo.Status status = FileInfo.Status.getValue(statusText);
+        int green = r.getColor(R.color.text_green);
+        int red = r.getColor(R.color.text_red);
+
+        if (status == FileInfo.Status.ADDED) {
+            view.setTextColor(green);
+        } else if (status == FileInfo.Status.DELETED) {
+            view.setTextColor(red);
+        } else {
+            // Need to determine from the current theme what the default color is and set it back
+            if (usingLightTheme) {
+                view.setTextColor(r.getColor(R.color.text_light));
+            } else {
+                view.setTextColor(r.getColor(R.color.text_dark));
+            }
         }
     }
 }

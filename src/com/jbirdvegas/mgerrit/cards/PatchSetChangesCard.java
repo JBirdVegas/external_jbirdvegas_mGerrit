@@ -23,7 +23,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,15 +32,12 @@ import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.database.FileChanges;
-import com.jbirdvegas.mgerrit.dialogs.DiffDialog;
-import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.DiffViewer;
 import com.jbirdvegas.mgerrit.objects.FileInfo;
 
 public class PatchSetChangesCard implements CardBinder {
-    private static final String TAG = PatchSetChangesCard.class.getSimpleName();
     private final Context mContext;
     private final LayoutInflater mInflater;
-    private AlertDialog mAlertDialog;
 
     // Colors
     private final int mGreen;
@@ -154,29 +150,20 @@ public class PatchSetChangesCard implements CardBinder {
                 }
 
                 AlertDialog.Builder ad = new AlertDialog.Builder(mContext)
-                        .setTitle(R.string.choose_diff_view);
-
-                ad.setPositiveButton(R.string.context_menu_view_diff_dialog, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // v2.8 (returns Base64 encoded String)
-                        // http://gerrit.aokp.co/changes/I554a3ab/revisions/current/files/res%2Fvalues%2Fcustom_arrays.xml/diff
-                        //changes/{change-id}/revisions/current/files/{file-path}/content
-                        String base64 = "%schanges/%s/revisions/current/patch";
-                        String url = String.format(base64,
-                                Prefs.getCurrentGerrit(mContext),
-                                changeNumber);
-                        launchDiffDialog(url, filePath);
-                    }
-                });
-
-                ad.setNegativeButton(
-                        R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        launchDiffInBrowser(changeNumber, patchset, filePath);
-                    }
-                });
+                        .setTitle(R.string.choose_diff_view)
+                        .setPositiveButton(R.string.context_menu_view_diff_viewer, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                launchDiffDialog(changeNumber, patchset, filePath);
+                            }
+                        })
+                        .setNegativeButton(
+                                R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                launchDiffInBrowser(changeNumber, patchset, filePath);
+                            }
+                        });
                 ad.create().show();
             }
         });
@@ -184,20 +171,13 @@ public class PatchSetChangesCard implements CardBinder {
     }
 
     // creates the Diff viewer dialog
-    private void launchDiffDialog(String url, String filePath) {
-        Log.d(TAG, "Attempting to contact: " + url);
-        DiffDialog diffDialog = new DiffDialog(mContext, url, filePath);
-        diffDialog.addExceptionCallback(new DiffDialog.DiffFailCallback() {
-            @Override
-            public void killDialogAndErrorOut(Exception e) {
-                if (mAlertDialog != null) {
-                    mAlertDialog.cancel();
-                }
-                Tools.showErrorDialog(mContext, e);
-            }
-        });
-        mAlertDialog = diffDialog.create();
-        mAlertDialog.show();
+    private void launchDiffDialog(Integer changeNumber, Integer patchSetNumber, String filePath) {
+
+        Intent diffIntent = new Intent(mContext, DiffViewer.class);
+        diffIntent.putExtra(DiffViewer.CHANGE_NUMBER_TAG, changeNumber);
+        diffIntent.putExtra(DiffViewer.PATCH_SET_NUMBER_TAG, patchSetNumber);
+        diffIntent.putExtra(DiffViewer.FILE_PATH_TAG, filePath);
+        mContext.startActivity(diffIntent);
     }
 
     private void launchDiffInBrowser(Integer changeNumber, Integer patchset, String filePath) {

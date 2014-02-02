@@ -70,7 +70,7 @@
     <string name="commit_reviewer">Tag Ismertető</string>
     <string name="context_menu_reviewer">Változások a vizsgálat sorrendjében.</string>
     <string name="context_menu_owner">Változások benyújtása eredetileg</string>
-    <string name="context_menu_view_diff_dialog">Különbségek felsorolva</string>
+    <string name="context_menu_view_diff_viewer">Különbségek felsorolva</string>
     <string name="context_menu_diff_view_in_browser">Különbségek böngészőben</string>
     <string name="choose_diff_view">Hogy akarod megtekinteni az eltéréseket?</string>
     <string name="stalker_mode_toast">Most követett felhasználó:</string>

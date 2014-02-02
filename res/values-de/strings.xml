@@ -43,7 +43,6 @@
   <string name="initializing_data_transfer">Initialisiere Datentransfer...</string>
   <string name="communications_error">Übertragungs-Fehler!!!</string>
   <string name="open_source_libs">Open-Source-Bibliotheken</string>
-  <string name="cards_ui">Karten-Schnittstelle</string>
   <string name="nine_old_androids">NineOldAndroids</string>
   <string name="explain_status_title">Status erläutern</string>
   <string name="explain_status_summary">Kurze Beschreibung der Status-Tab-Bezeichnungen</string>
@@ -60,7 +59,6 @@
   <string name="commit_reviewer">Rezensent der Übergabe</string>
   <string name="context_menu_reviewer">Änderungen im Wartestatus.</string>
   <string name="context_menu_owner">Ursprünglich eingereichte Änderungen.</string>
-  <string name="context_menu_view_diff_dialog">Unterscheide in Dialog anzeigen</string>
   <string name="context_menu_diff_view_in_browser">Unterscheide in Browser anzeigen</string>
   <string name="choose_diff_view">Wie möchten Sie die Unterschiede anzeigen?</string>
   <string name="stalker_mode_toast">Jetzt gestalkter Nutzer:</string>

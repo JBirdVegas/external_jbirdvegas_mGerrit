@@ -64,7 +64,7 @@
   <string name="commit_reviewer">Обзор изменений</string>
   <string name="context_menu_reviewer">Изменения в очереди обзора.</string>
   <string name="context_menu_owner">Первоначальные изменения.</string>
-  <string name="context_menu_view_diff_dialog">Просмотр различий в диалоговом окне</string>
+  <string name="context_menu_view_diff_viewer">Просмотр различий в диалоговом окне</string>
   <string name="context_menu_diff_view_in_browser">Просмотр различий в браузере</string>
   <string name="choose_diff_view">Какой вид просмотра различий Вы предпочитаете?</string>
   <string name="stalker_mode_toast">Слежение за пользователем:</string>

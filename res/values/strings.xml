@@ -86,7 +86,7 @@
     <string name="commit_reviewer">Commit Reviewer</string>
     <string name="context_menu_reviewer">Changes in review query.</string>
     <string name="context_menu_owner">Changes originally submitted.</string>
-    <string name="context_menu_view_diff_dialog">View diff in dialog</string>
+    <string name="context_menu_view_diff_viewer">Use internal viewer</string>
     <string name="context_menu_diff_view_in_browser">View diff in browser</string>
     <string name="choose_diff_view">How would you like to view the diff?</string>
     <string name="stalker_mode_toast">Now stalking user:</string>
@@ -158,4 +158,6 @@
     <string name="commit_updated">Updated:</string>
     <string name="renamed_label">Renamed from:</string>
     <string name="no_changelog">There are no recent builds for your device</string>
+    <string name="diff_back">Previous File</string>
+    <string name="diff_next">Next File</string>
 </resources>

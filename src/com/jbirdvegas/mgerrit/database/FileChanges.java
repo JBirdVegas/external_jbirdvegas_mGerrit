@@ -31,33 +31,33 @@ public class FileChanges extends DatabaseTable {
 
     // --- Columns (FileInfo table)---
     // The Change-Id of the change.
-    public static final String C_CHANGE_ID = "change_id";
+    public static final String C_CHANGE_ID = FileInfoTable.C_CHANGE_ID;
 
     // The patch set number.
-    public static final String C_PATCH_SET_NUMBER = "psNumber";
+    public static final String C_PATCH_SET_NUMBER = FileInfoTable.C_PATCH_SET_NUMBER;
 
-    public static final String C_FILE_NAME = "filename";
+    public static final String C_FILE_NAME = FileInfoTable.C_FILE_NAME;
 
     /* The status of the file ("A"=Added, "D"=Deleted, "R"=Renamed, "C"=Copied, "W"=Rewritten).
      * Not set if the file was Modified ("M"). optional. */
-    public static final String C_STATUS = "status";
+    public static final String C_STATUS = FileInfoTable.C_STATUS;
 
     // Whether the file is binary.
-    public static final String C_ISBINARY = "binary";
+    public static final String C_ISBINARY = FileInfoTable.C_ISBINARY;
 
     // The old file path. Only set if the file was renamed or copied.
-    public static final String C_OLDPATH = "old_path";
+    public static final String C_OLDPATH = FileInfoTable.C_OLDPATH;
 
     // Number of inserted lines. Not set for binary files or if no lines were inserted.
-    public static final String C_LINES_INSERTED = "lines_inserted";
+    public static final String C_LINES_INSERTED = FileInfoTable.C_LINES_INSERTED;
 
     // Number of deleted lines. Not set for binary files or if no lines were deleted.
-    public static final String C_LINES_DELETED = "lines_deleted";
+    public static final String C_LINES_DELETED = FileInfoTable.C_LINES_DELETED;
 
     // --- Columns (Changes table) ---
 
     // The legacy numeric ID of the change (used in the web address)
-    public static final String C_COMMIT_NUMBER = "_change_number";
+    public static final String C_COMMIT_NUMBER = Changes.C_COMMIT_NUMBER;
 
 
     public static final int ITEM_LIST = UriType.FileChangesList.ordinal();
@@ -110,6 +110,25 @@ public class FileChanges extends DatabaseTable {
                         + FileInfoTable.TABLE + "." + C_CHANGE_ID
                         + " = " + Changes.TABLE + "." + Changes.C_CHANGE_ID,
                 new String[] { changeid }, SORT_BY);
+    }
+
+    /**
+     * Get details for the files we can diff given a change number
+     * @param context Context for database access
+     * @param changeNumber The number of the change to get the file changes for
+     * @return A CursorLoader
+     */
+    public static CursorLoader getNonBinaryChangedFiles(Context context, Integer changeNumber) {
+        String[] PROJECTION = new String[] {
+                FileInfoTable.TABLE + ".rowid AS _id", C_FILE_NAME,
+                FileInfoTable.TABLE + "." + C_STATUS, C_LINES_INSERTED, C_LINES_DELETED};
+
+        return new CursorLoader(context, CONTENT_URI, PROJECTION,
+                Changes.TABLE + "." + C_COMMIT_NUMBER + " = ? AND "
+                        + FileInfoTable.TABLE + "." + C_CHANGE_ID
+                        + " = " + Changes.TABLE + "." + Changes.C_CHANGE_ID
+                        + " AND " + C_ISBINARY + " = 0",
+                new String[] { String.valueOf(changeNumber) }, SORT_BY);
     }
 
     @Override

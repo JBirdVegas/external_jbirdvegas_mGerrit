@@ -72,7 +72,7 @@
     <string name="commit_reviewer">提交审核者</string>
     <string name="context_menu_reviewer">更改审核查询。</string>
     <string name="context_menu_owner">更改原始提交。</string>
-    <string name="context_menu_view_diff_dialog">在对话框中查看差异</string>
+    <string name="context_menu_view_diff_viewer">在对话框中查看差异</string>
     <string name="context_menu_diff_view_in_browser">在浏览器中查看差异</string>
     <string name="choose_diff_view">你想要查看差异吗？</string>
     <string name="stalker_mode_toast">现在跟踪用户：</string>

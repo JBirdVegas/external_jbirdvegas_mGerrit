@@ -37,6 +37,9 @@
         <item name="diffStyle">@style/Diff.Light</item>
         <item name="changeInsertedStyle">@style/CardText.Inserted.Light</item>
         <item name="changeDeletedStyle">@style/CardText.Deleted.Light</item>
+        <item name="backIcon">@drawable/ic_action_previous_item</item>
+        <item name="nextIcon">@drawable/ic_action_next_item</item>
+        <item name="backgroundTop">@drawable/border_top</item>
     </style>
 
     <style name="Theme.Dark" parent="android:style/Theme.Holo">
@@ -59,5 +62,8 @@
         <item name="diffStyle">@style/Diff.Dark</item>
         <item name="changeInsertedStyle">@style/CardText.Inserted.Dark</item>
         <item name="changeDeletedStyle">@style/CardText.Deleted.Dark</item>
+        <item name="backIcon">@drawable/ic_action_previous_item_dark</item>
+        <item name="nextIcon">@drawable/ic_action_next_item_dark</item>
+        <item name="backgroundTop">@drawable/border_top_dark</item>
     </style>
 </resources>

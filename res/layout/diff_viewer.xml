@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/mainBackgroundColor"
+    android:fillViewport="true"
+    android:orientation="vertical"
+    android:padding="@dimen/standard_padding"
+    android:weightSum="10">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true">
+
+            <com.jbirdvegas.mgerrit.views.DiffTextView
+                android:id="@+id/diff_view_diff"
+                style="?attr/diffStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="left"
+                android:fontFamily="monospace"
+                android:padding="@dimen/default_left_card_start"
+                android:paddingTop="@dimen/diff_view_padding_top"
+                android:text="@string/loading"
+                android:textSize="@dimen/text_size_large"/>
+        </HorizontalScrollView>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="?attr/backgroundTop">
+
+        <ImageButton
+            android:id="@+id/diff_previous"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:contentDescription="@string/diff_back"
+            android:src="?attr/backIcon"
+            android:onClick="onPreviousClick"/>
+
+        <Spinner
+            android:id="@+id/diff_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
+
+        <ImageButton
+            android:id="@+id/diff_next"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@string/diff_next"
+            android:src="?attr/nextIcon"
+            android:onClick="onNextClick"/>
+
+    </RelativeLayout>
+</LinearLayout>

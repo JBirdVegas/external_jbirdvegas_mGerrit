@@ -31,6 +31,7 @@
         <attr name="mainBackgroundColor" format="color"/>
         <attr name="cardBackgroundColor" format="color"/>
         <attr name="clickableCardBackground" format="reference" />
+        <attr name="backgroundTop" format="reference"/>
     </declare-styleable>
     <declare-styleable name="CommitCard">
         <attr name="isSelected" format="boolean"/>
@@ -56,5 +57,10 @@
         <attr name="origHeader" format="color" />
         <attr name="newHeader" format="color" />
         <attr name="pathInfo" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="ImageButton">
+        <attr name="backIcon" format="reference"/>
+        <attr name="nextIcon" format="reference"/>
     </declare-styleable>
 </resources>

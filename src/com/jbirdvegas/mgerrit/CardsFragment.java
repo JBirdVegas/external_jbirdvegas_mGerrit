@@ -53,6 +53,7 @@ import java.util.ArrayList;
 
 public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
+
     public static final String KEY_DEVELOPER = "committer_object";
     public static final String KEY_OWNER = "owner";
     public static final String KEY_REVIEWER = "reviewer";

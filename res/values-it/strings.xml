@@ -71,7 +71,7 @@
     <string name="commit_reviewer">"Impegnarsi Revisore"</string>
     <string name="context_menu_reviewer">"Cambiamenti nella query di revisione."</string>
     <string name="context_menu_owner">"Modifiche inizialmente presentati."</string>
-    <string name="context_menu_view_diff_dialog">"Visualizza diff in finestra"</string>
+    <string name="context_menu_view_diff_viewer">"Visualizza diff in finestra"</string>
     <string name="context_menu_diff_view_in_browser">"Visualizza diff in del browser"</string>
     <string name="choose_diff_view">"Come ti piacerebbe vedere il diff?"</string>
     <string name="stalker_mode_toast">"Ora lo stalking utente:"</string>

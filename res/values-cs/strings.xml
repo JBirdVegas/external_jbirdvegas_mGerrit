@@ -66,7 +66,7 @@
     <string name="commit_reviewer">Revident požadavku</string>
     <string name="context_menu_reviewer">Změnový revident ve frontě.</string>
     <string name="context_menu_owner">Původní odesilatel změny.</string>
-    <string name="context_menu_view_diff_dialog">Zobrazit rozdíly v dialogu</string>
+    <string name="context_menu_view_diff_viewer">Zobrazit rozdíly v dialogu</string>
     <string name="context_menu_diff_view_in_browser">Zobrazit rozdíly v prohlížeči</string>
     <string name="choose_diff_view">Jak se mají zobrazit rozdíly?</string>
     <string name="stalker_mode_toast">Aktuálně špehuji uživatele:</string>
