@@ -99,7 +99,7 @@ The supported operators are:
     - '=': Default. Search for changes equal to the given time give or take one unit from the shortest time interval. For example the search:
 	age:"=5 weeks 2 days"	is equivilant to	age:">5 weeks 1 days" age:"<5 weeks 3 days"
 Note: Specifying the same unit multiple times in a single keyword stacks, with the value accumulating. For example:
-	age:"5 weeks 2w"		is equivilant to	age:"5 weeks"
+	age:"5 weeks 2w"		is equivilant to	age:"7 weeks"
 
 
 License
