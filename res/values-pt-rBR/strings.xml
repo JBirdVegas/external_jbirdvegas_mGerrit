@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
+  ~  Author: Mario Celso Teixeira, 2013
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<resources>
+    <string name="reviewable">Review</string>
+    <string name="merged">Merged</string>
+    <string name="abandoned">Abandoned</string>
+    <string name="status_explanation_new">Mudança está em revisão.</string>
+    <string name="status_explanation_submitted">Mudança foi submetida e está na fila de merge. Aguardando por uma ou mais dependências.
+    </string>
+    <string name="status_explanation_merged">Mudança foi mergeada em seu branch.</string>
+    <string name="status_explanation_abandoned">Mudança foi abandonada pelo autor ou administrador.</string>
+    <string name="inserted">Linhas inseridas:</string>
+    <string name="deleted">Linhas excluídas:</string>
+    <string name="none_found">Não encontrado</string>
+    <string name="please_try_again">Volte e tente novamente</string>
+    <string name="menu_preferences">Preferências</string>
+    <string name="menu_help">Ajuda</string>
+    <string name="choose_gerrit_instance">Selecione a Instância do Gerrit</string>
+    <string name="commit_committer">Committer:</string>
+    <string name="commit_author">Author:</string>
+    <string name="commit_owner">Owner:</string>
+    <string name="failed_to_parse_json_response">Falha ao tratar resposta de </string>
+    <string name="show_exception">Mostrar Exceção</string>
+    <string name="exit">Sair</string>
+    <string name="gerrit_call_failed">Falha ao tratar resposta do Gerrit, verifique sua conexão e tente novamente.
+    </string>
+    <string name="establishing_connection">Conectando…</string>
+    <string name="downloading_status" formatted="false">%d of %d bytes baixados\t%d%% completado</string>
+    <string name="connection_established">Conexão estabelecida</string>
+    <string name="initializing_data_transfer">Iniciando transferência de dados…</string>
+    <string name="communications_error">Erro de comunicação!!!</string>
+    <string name="transfering_json_data">Transferindo dados em JSON…</string>
+    <string name="open_source_libs">Bibliotecas Open Source</string>
+    <string name="nine_old_androids">NineOldAndroids</string>
+    <string name="explain_status_title">Explicação dos Status</string>
+    <string name="explain_status_summary">Breve explicação do siginificado das abas de Status</string>
+    <string name="menu_gerrit_instance">Instância do Gerrit</string>
+    <string name="owner_gravatar">Imagem Gravatar do Owner</string>
+    <string name="author_gravatar">Imagem Gravatar do Author</string>
+    <string name="committer_gravatar">Imagem Gravatar do Committer</string>
+    <string name="menu_refresh">Atualizar</string>
+    <string name="current_revision_is_draft_message">Versão corrente é um rascunho.
+        Algumas informações estarão indisponíveis
+    </string>
+    <string name="comments_card_title">Comentários:</string>
+    <string name="unknown">Desconhecido</string>
+    <string name="aosp_volley_title">AOSP\'s Volley</string>
+    <string name="developers_role">Escolha um papel de desenvolvedor </string>
+    <string name="commit_reviewer">Revisor do Commit</string>
+    <string name="context_menu_reviewer">Mudanças na busca.</string>
+    <string name="context_menu_owner">Mudanças submetidas.</string>
+    <string name="context_menu_view_diff_dialog">Ver diferenças em uma janela</string>
+    <string name="context_menu_diff_view_in_browser">Ver diferenças no navegador</string>
+    <string name="choose_diff_view">Como gostaria de ver as diferenças?</string>
+    <string name="stalker_mode_toast">Agora acompanhando usuário:</string>
+    <string name="share">Compartilhar</string>
+    <string name="commit_shared_from_mgerrit" formatted="false">Commit %s compartilhados com o mGerrit!</string>
+    <string name="found_cards_toast" formatted="false"><![CDATA[Encontrados %d commits em %d segundos]]></string>
+    <string name="menu_projects">Visão por projeto</string>
+    <string name="aokp_changelog">Atualizações do AOKP</string>
+    <string name="download_update">Download</string>
+    <string name="please_select_update_for_range">Selecione um arquivo para visualizar as modificações</string>
+    <string name="download_rom_zip">Baixar ROM zip</string>
+    <string name="failed_to_decode_base64">Falha ao decodificar a resposta em Base64.</string>
+    <string name="using_gerrit_toast">Usando o Gerrit:</string>
+    <string name="google_now_style_animations_title">Cartões Animados</string>
+    <string name="google_now_style_animations_summary">Habilita o estilo Google Now para desenhar os cartões</string>
+    <string name="loading">Carregando diferenças\u2026</string>
+</resources>
