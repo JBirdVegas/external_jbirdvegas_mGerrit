@@ -81,6 +81,11 @@ public class GerritSearchView extends SearchView
         if (user != null) {
             replaceKeyword(new OwnerSearch(user.toString()), true);
         }
+
+        String project = Prefs.getCurrentProject(mContext);
+        if (project != null) {
+            replaceKeyword(new ProjectSearch(project), true);
+        }
     }
 
     @Override

@@ -146,7 +146,7 @@ public class AgeSearch extends SearchKeyword {
                 period = new Period(mInstant, Instant.now());
             }
             DateTime earlier = now.minus(adjust(period, +1));
-            DateTime later = now.minus(adjust(period, -1));
+            DateTime later = now.minus(period);
             return new String[] { earlier.toString(), later.toString() };
         } else {
             if (period == null) {
@@ -164,7 +164,7 @@ public class AgeSearch extends SearchKeyword {
         try {
             mInstant = Instant.parse(param, ISODateTimeFormat.localDateOptionalTimeParser());
             mPeriod = null;
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException ignored) {
             mPeriod = toPeriod(param);
             mInstant = null;
         }
@@ -175,8 +175,10 @@ public class AgeSearch extends SearchKeyword {
         /* Use the same format as the one initially provided. I.e. if a
          *  relative time period was set initially, we want a relative period
          *  to come back out. Otherwise it is a different search */
-        String string = OP_NAME + ":\"" + getOperator();
-          if (mPeriod != null) {
+        String operator = getOperator() ;
+        if ("=".equals(operator)) operator = "";
+        String string = OP_NAME + ":\"" + operator;
+        if (mPeriod != null) {
             return string + periodParser.print(mPeriod) + '"';
         } else {
             return string + mInstant.toString() + '"';
@@ -225,6 +227,7 @@ public class AgeSearch extends SearchKeyword {
      * @return The adjusted period
      */
     private Period adjust(final Period period, int adjustment) {
+        if (adjustment == 0) return period;
 
         // Order is VERY important here
         LinkedHashMap<Integer, DurationFieldType> map = new LinkedHashMap<>();
