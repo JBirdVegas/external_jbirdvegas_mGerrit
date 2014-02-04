@@ -129,12 +129,12 @@ public class GerritURL implements Parcelable
             else return "";
         } else {
             builder.append("?q=");
-            addSeperator = appendChangeID(builder, addSeperator);
+            addSeperator |= appendChangeID(builder, addSeperator);
+            addSeperator |= appendStatus(builder, addSeperator);
+            addSeperator |= appendOwner(builder, addSeperator);
+            appendProject(builder, addSeperator);
         }
 
-        addSeperator = appendStatus(builder, addSeperator);
-        addSeperator = appendOwner(builder, addSeperator);
-        appendProject(builder, addSeperator);
         appendArgs(builder);
         return builder.toString();
     }

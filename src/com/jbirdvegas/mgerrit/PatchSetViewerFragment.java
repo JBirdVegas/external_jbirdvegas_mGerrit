@@ -203,18 +203,16 @@ public class PatchSetViewerFragment extends Fragment
         if (sIsLegacyVersion) sendRequest(GerritService.DataType.LegacyCommitDetails);
         else sendRequest(GerritService.DataType.CommitDetails);
 
-        initLoaders(changeID);
+        restartLoaders(changeID);
     }
 
-    private void initLoaders(String changeID) {
+    private void restartLoaders(String changeID) {
         Bundle args = new Bundle();
         args.putString(CHANGE_ID, changeID);
 
-        getLoaderManager().initLoader(LOADER_PROPERTIES, args, this);
-        getLoaderManager().initLoader(LOADER_MESSAGE, args, this);
-        getLoaderManager().initLoader(LOADER_FILES, args, this);
-        getLoaderManager().initLoader(LOADER_REVIEWERS, args, this);
-        getLoaderManager().initLoader(LOADER_COMMENTS, args, this);
+        for (int i = LOADER_PROPERTIES; i < LOADER_COMMENTS; i++) {
+            getLoaderManager().restartLoader(i, args, this);
+        }
     }
 
     /**
@@ -314,6 +312,23 @@ public class PatchSetViewerFragment extends Fragment
     public void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(mParent).unregisterReceiver(mStatusReceiver);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(CHANGE_ID, mSelectedChange);
+        outState.putString(STATUS, mStatus);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mSelectedChange = savedInstanceState.getString(CHANGE_ID);
+            mStatus = savedInstanceState.getString(STATUS);
+            restartLoaders(mSelectedChange);
+        }
+        super.onViewStateRestored(savedInstanceState);
     }
 
     /*
