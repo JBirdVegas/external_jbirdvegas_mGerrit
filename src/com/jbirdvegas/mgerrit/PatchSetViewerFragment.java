@@ -210,7 +210,7 @@ public class PatchSetViewerFragment extends Fragment
         Bundle args = new Bundle();
         args.putString(CHANGE_ID, changeID);
 
-        for (int i = LOADER_PROPERTIES; i < LOADER_COMMENTS; i++) {
+        for (int i = LOADER_PROPERTIES; i <= LOADER_COMMENTS; i++) {
             getLoaderManager().restartLoader(i, args, this);
         }
     }
