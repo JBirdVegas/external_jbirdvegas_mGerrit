@@ -112,6 +112,10 @@ public class Revisions extends DatabaseTable {
     }
 
     public static void insertRevision(Context context, CommitInfo patchSet) {
+        if (patchSet == null) {
+            return; // We cannot do anything if we don't have any information
+        }
+
         String ps = patchSet.getPatchSetNumber();
         ContentValues row = new ContentValues(9);
 

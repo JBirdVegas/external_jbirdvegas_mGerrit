@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/mainBackgroundColor"
-    android:fillViewport="true"
     android:orientation="vertical"
     android:padding="@dimen/standard_padding"
     android:weightSum="10">
@@ -13,6 +12,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
         android:layout_weight="9">
 
         <HorizontalScrollView

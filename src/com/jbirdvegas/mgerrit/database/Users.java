@@ -107,11 +107,13 @@ public class Users extends DatabaseTable {
         return context.getContentResolver().bulkInsert(uri, values.toArray(valuesArray));
     }
 
-    public static Uri insertUser(Context context, String name, String email) {
-        ContentValues userValues = new ContentValues(2);
+    public static Uri insertUser(Context context, int id, String name, String email) {
+        ContentValues userValues = new ContentValues(3);
+        userValues.put(C_ACCOUNT_ID, id);
         userValues.put(C_EMAIL, email);
         userValues.put(C_NAME, name);
-        return context.getContentResolver().insert(CONTENT_URI, userValues);
+        Uri uri = DBParams.insertWithReplace(CONTENT_URI);
+        return context.getContentResolver().insert(uri, userValues);
     }
 
     /**

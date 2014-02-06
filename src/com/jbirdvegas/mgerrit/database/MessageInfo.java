@@ -27,6 +27,7 @@ import android.support.v4.content.CursorLoader;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.CommitComment;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,12 +110,24 @@ public class MessageInfo extends DatabaseTable {
             ContentValues row = new ContentValues(6);
             row.put(C_CHANGE_ID, changeid);
             row.put(C_MESSAGE_ID, comment.getId());
-            row.put(C_AUTHOR, comment.getAuthorObject().getAccountId());
+
+            CommitterObject author = comment.getAuthorObject();
+            if (author != null) {
+                row.put(C_AUTHOR, author.getAccountId());
+            } else {
+                /* We may not get an author object for automatic comments by Gerrit,
+                 *  so put an ID of 0 instead, which we can later determine to be the server
+                 */
+                row.put(C_AUTHOR, 0);
+            }
             row.put(C_TIMESTAMP, comment.getDate());
             row.put(C_MESSAGE, comment.getMessage());
             row.put(C_REVISION_NUMBER, comment.getRevisionNumber());
             values.add(row);
         }
+
+        // In case we inserted the Gerrit system user
+        Users.insertUser(context, 0, "Gerrit Code Review", null);
 
         Uri uri = DBParams.insertWithReplace(CONTENT_URI);
         ContentValues valuesArray[] = new ContentValues[values.size()];
