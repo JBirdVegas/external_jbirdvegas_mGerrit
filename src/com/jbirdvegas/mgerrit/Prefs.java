@@ -47,8 +47,44 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public static final String TRACKING_USER = "committer_being_tracked";
     public static final String APP_THEME = "app_theme";
     private static final String TABLET_MODE = "tablet_layout_mode";
+    private static final String DIFF_DEFAULT = "change_diff";
 
     private Preference mGerritSwitcher;
+    private Context mContext;
+
+    public enum DiffModes {
+        ASK {
+            @Override
+            public String getSummary(Context context) {
+                return context.getResources().getString(R.string.diff_options_ask);
+            }
+        }, INTERNAL {
+            @Override
+            public String getSummary(Context context) {
+                return context.getResources().getString(R.string.diff_options_internal);
+            }
+        }, EXTERNAL {
+            @Override
+            public String getSummary(Context context) {
+                return context.getResources().getString(R.string.diff_options_external);
+            }
+        };
+
+        public String getSummary(Context context) {
+            return null;
+        }
+
+        public static DiffModes getMode(Context context, String s) {
+            Resources r = context.getResources();
+            if (s.equals(r.getString(R.string.diff_option_internal))) {
+                return INTERNAL;
+            } else if (s.equals(r.getString(R.string.diff_option_external))) {
+                return EXTERNAL;
+            } else {
+                return ASK;
+            }
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +93,8 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
 
         PreferenceCategory libraries = (PreferenceCategory) findPreference("libraries");
         addLibraries(libraries);
+
+        mContext = getActivity();
 
         // select gerrit instance
         mGerritSwitcher = findPreference(GERRIT_KEY);
@@ -74,7 +112,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         });
         // Allow disabling of Google Now style animations
         ((CheckBoxPreference) findPreference(ANIMATION_KEY))
-                .setChecked(getAnimationPreference(this.getActivity()));
+                .setChecked(getAnimationPreference(mContext));
         ListPreference serverTimeZoneList = (ListPreference) findPreference(SERVER_TIMEZONE_KEY);
         // Allow changing assumed TimeZone for server
         serverTimeZoneList.setEntryValues(TimeZone.getAvailableIDs());
@@ -105,6 +143,18 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
                     preference.setSummary("");
                 }
 
+                return true;
+            }
+        });
+
+        Preference diffDefault = findPreference(DIFF_DEFAULT);
+        DiffModes mode = getDiffDefault(getActivity());
+        diffDefault.setSummary(mode.getSummary(mContext));
+        diffDefault.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                DiffModes o = DiffModes.getMode(mContext, newValue.toString());
+                preference.setSummary(o.getSummary(mContext));
                 return true;
             }
         });
@@ -304,5 +354,12 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public static void setTabletMode(Context context, boolean tabletMode) {
         PreferenceManager.getDefaultSharedPreferences(context)
                 .edit().putBoolean(TABLET_MODE, tabletMode).commit();
+    }
+
+    public static DiffModes getDiffDefault(Context context) {
+        Resources r = context.getResources();
+        String soption = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(DIFF_DEFAULT, r.getString(R.string.diff_option_ask));
+        return DiffModes.getMode(context, soption);
     }
 }

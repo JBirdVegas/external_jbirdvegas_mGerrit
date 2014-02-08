@@ -29,8 +29,10 @@
         <item name="cardTextStyle">@style/CardText.Light</item>
         <item name="cardTitleStyle">@style/CardTitle.Light</item>
         <item name="cardBackgroundColor">@color/card_background</item>
-        <item name="clickableCardBackground">@drawable/card_background_states</item>
+        <item name="clickableCardBackground">@drawable/commit_card_background_states</item>
+        <item name="selectableCardBackground">@drawable/files_card_background_states</item>
         <item name="viewIcon">@drawable/ic_menu_view</item>
+        <item name="browserIcon">@drawable/ic_action_web_site</item>
         <item name="warningIcon">@drawable/ic_action_warning</item>
         <item name="saveIcon">@drawable/ic_action_save</item>
         <item name="searchIcon">@drawable/ic_action_search</item>
@@ -54,8 +56,9 @@
         <item name="cardTextStyle">@style/CardText.Dark</item>
         <item name="cardTitleStyle">@style/CardTitle.Dark</item>
         <item name="cardBackgroundColor">@color/card_background_dark</item>
-        <item name="clickableCardBackground">@drawable/card_background_states_dark</item>
+        <item name="clickableCardBackground">@drawable/commit_card_background_states_dark</item>
         <item name="viewIcon">@android:drawable/ic_menu_view</item>
+        <item name="browserIcon">@drawable/ic_action_web_site_dark</item>
         <item name="warningIcon">@drawable/ic_action_warning_dark</item>
         <item name="saveIcon">@drawable/ic_action_save_dark</item>
         <item name="searchIcon">@drawable/ic_action_search_dark</item>

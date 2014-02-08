@@ -72,4 +72,16 @@
         <item>@string/support_library_website</item>
         <item>@string/aosp_volley_website</item>
     </string-array>
+
+    <string-array name="diff_options" translatable="false">
+        <item>@string/diff_options_ask</item>
+        <item>@string/diff_options_internal</item>
+        <item>@string/diff_options_external</item>
+    </string-array>
+
+    <string-array name="diff_options_values" translatable="false">
+        <item>@string/diff_option_ask</item>
+        <item>@string/diff_option_internal</item>
+        <item>@string/diff_option_external</item>
+    </string-array>
 </resources>

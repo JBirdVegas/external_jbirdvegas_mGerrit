@@ -14,4 +14,12 @@
     <string name="liquid_rom_name">LiquidSmooth</string>
     <string name="other_rom_name">AOSP/Other</string>
 
+    <!-- Seriously, DO NOT Translate these, they are used for reading the shared preferences -->
+    <string name="theme_light_value" translatable="false">Light</string>
+    <string name="theme_dark_value" translatable="false">Dark</string>
+
+    <string name="diff_option_ask" translatable="false">ask</string>
+    <string name="diff_option_internal" translatable="false">internal</string>
+    <string name="diff_option_external" translatable="false">external</string>
+
 </resources>

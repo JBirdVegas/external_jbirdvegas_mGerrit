@@ -32,6 +32,7 @@ import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnim
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.FileInfo;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -181,5 +182,10 @@ public class Tools {
                 view.setTextColor(r.getColor(R.color.text_dark));
             }
         }
+    }
+
+    public static final String getFileName(String fileWithPath) {
+        int lastIndex = fileWithPath.lastIndexOf(File.separatorChar);
+        return fileWithPath.substring(++lastIndex);
     }
 }

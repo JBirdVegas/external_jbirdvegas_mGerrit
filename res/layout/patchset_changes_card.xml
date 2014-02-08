@@ -21,7 +21,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="?attr/cardBackgroundColor"
+              android:background="?attr/selectableCardBackground"
               android:orientation="vertical"
               android:paddingBottom="8dip">
 

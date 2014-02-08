@@ -140,9 +140,6 @@
     <string name="change_theme">Select Theme</string>
     <string name="theme_light">Light theme</string>
     <string name="theme_dark">Dark theme</string>
-    <!-- Seriously, DO NOT Translate these, they are used for reading the shared preferences -->
-    <string name="theme_light_value" translatable="false">Light</string>
-    <string name="theme_dark_value" translatable="false">Dark</string>
 
     <string name="gerrit_help">Gerrit help</string>
     <string name="not_connected">There\'s no network connection right now. Try again later.</string>
@@ -160,4 +157,12 @@
     <string name="no_changelog">There are no recent builds for your device</string>
     <string name="diff_back">Previous File</string>
     <string name="diff_next">Next File</string>
+
+    <string name="diff_options_title">View change diffs</string>
+    <string name="diff_options_ask">Ask</string>
+    <string name="diff_options_internal">In internal viewer when available</string>
+    <string name="diff_options_external">In browser</string>
+
+    <string name="diff_menu_internal_condensed">Viewer</string>
+    <string name="diff_menu_external_condensed">Browser</string>
 </resources>

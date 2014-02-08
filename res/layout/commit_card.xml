@@ -77,7 +77,7 @@
                 android:layout_alignParentRight="true"
                 android:contentDescription="@string/share"/>
             <ImageView
-                android:src="?attr/viewIcon"
+                android:src="?attr/browserIcon"
                 android:id="@+id/commit_card_view_in_browser"
                 style="@style/ActionViewsStyle"
                 android:layout_toLeftOf="@+id/commit_card_share_info"
