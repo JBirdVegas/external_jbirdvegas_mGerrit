@@ -88,7 +88,7 @@ public class ProjectsTable extends DatabaseTable {
         for (Project project : projects) {
             ContentValues projectRow = new ContentValues(2);
 
-            String path = project.getmPath();
+            String path = project.getPath();
             projectRow.put(C_PATH, path);
             Pair<String, String> proj = splitPath(path);
             projectRow.put(C_ROOT, proj.first);

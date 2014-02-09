@@ -10,9 +10,6 @@ import android.support.v4.content.CursorLoader;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.CommitInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /*
  * Copyright (C) 2014 Android Open Kang Project (AOKP)
  *  Author: Evan Conway (P4R4N01D), 2014

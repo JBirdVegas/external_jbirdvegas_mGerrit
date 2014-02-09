@@ -37,7 +37,7 @@ public class CommitInfo implements Parcelable{
     /** The Change-Id of the change. */
     private String mChangeId;
 
-    public static final String KEY_COMMIT = "commit";
+    private static final String KEY_COMMIT = "commit";
     /**The commit ID of the current patch set of this change.
      * Don't set the @SerialisedName as there is a name conflict here */
     private String mCommit;
@@ -46,7 +46,7 @@ public class CommitInfo implements Parcelable{
     @SerializedName(CommitInfo.KEY_AUTHOR)
     private CommitterObject mAuthorObject;
 
-    public static final String KEY_COMMITTER = "committer";
+    private static final String KEY_COMMITTER = "committer";
     @SerializedName(CommitInfo.KEY_COMMITTER)
     private CommitterObject mCommitterObject;
 

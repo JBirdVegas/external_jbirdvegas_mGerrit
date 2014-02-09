@@ -38,7 +38,7 @@ public class GerritService extends IntentService {
 
     public static enum DataType { Project, Commit, CommitDetails, GetVersion, LegacyCommitDetails }
 
-    public static RequestQueue mRequestQueue;
+    private static RequestQueue mRequestQueue;
 
     private GerritURL mCurrentUrl;
 

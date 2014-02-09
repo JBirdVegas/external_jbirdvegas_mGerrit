@@ -20,8 +20,8 @@ package com.jbirdvegas.mgerrit.objects;
  *  Very basic container class for the Gerrit switcher
  */
 public class GerritDetails implements Comparable<GerritDetails> {
-    String gerritName;
-    String gerritUrl;
+    private final String gerritName;
+    private final String gerritUrl;
 
     public GerritDetails(String gerritName, String gerritUrl) {
         this.gerritName = gerritName;
@@ -32,16 +32,8 @@ public class GerritDetails implements Comparable<GerritDetails> {
         return gerritName;
     }
 
-    public void setGerritName(String gerritName) {
-        this.gerritName = gerritName;
-    }
-
     public String getGerritUrl() {
         return gerritUrl;
-    }
-
-    public void setGerritUrl(String gerritUrl) {
-        this.gerritUrl = gerritUrl;
     }
 
     @Override

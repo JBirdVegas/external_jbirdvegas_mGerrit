@@ -40,7 +40,7 @@ import java.util.TimeZone;
 
 public class Prefs extends PreferenceFragment implements Preference.OnPreferenceClickListener {
     public static final String GERRIT_KEY = "gerrit_instances_key";
-    public static final String ANIMATION_KEY = "animation_key";
+    private static final String ANIMATION_KEY = "animation_key";
     private static final String SERVER_TIMEZONE_KEY = "server_timezone";
     private static final String LOCAL_TIMEZONE_KEY = "local_timezone";
     public static final String CURRENT_PROJECT = "current_project";

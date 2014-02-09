@@ -40,7 +40,6 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /** This class aims to manage and abstract which database is being accessed.
  *  This is a singleton class, we can have only one DBHelper (it is also a

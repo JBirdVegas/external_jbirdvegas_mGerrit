@@ -49,7 +49,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
     private final Context mContext;
 
     // Cards supported:
-    public enum Cards { PROPERTIES, COMMIT_MSG, CHANGED_FILES, REVIEWERS, COMMENTS };
+    public enum Cards { PROPERTIES, COMMIT_MSG, CHANGED_FILES, REVIEWERS, COMMENTS }
     private static final int _cards_count = Cards.values().length;
 
     // Stores the type of card at position

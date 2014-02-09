@@ -1,20 +1,15 @@
 package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
-import android.net.Uri;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
-import com.jbirdvegas.mgerrit.message.StartingRequest;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
 
-import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

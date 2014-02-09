@@ -31,7 +31,7 @@ public class TheApplication extends Application
 
     private SharedPreferences mPrefs;
 
-    public static final String PACKAGE_NAME = "com.jbirdvegas.mgerrit";
+    private static final String PACKAGE_NAME = "com.jbirdvegas.mgerrit";
 
     // This corresponds to an intent-filter action in the manifest
     public static final String GERRIT_CHANGED = PACKAGE_NAME + ".GERRIT_CHANGED";

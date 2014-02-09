@@ -32,7 +32,6 @@ import com.jbirdvegas.mgerrit.tasks.Deserializers;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -47,7 +46,7 @@ public class JSONCommit implements Parcelable {
     public static final String KEY_DELETED = "lines_deleted";
     public static final String KEY_STATUS = "status";
     public static final String KEY_ID = "id";
-    public static final String KEY_WEBSITE = "website";
+    private static final String KEY_WEBSITE = "website";
     public static final String KEY_ACCOUNT_ID = "_account_id";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_DATE = "date";
@@ -65,7 +64,7 @@ public class JSONCommit implements Parcelable {
     private static final String KEY_UPDATED = "updated";
     private static final String KEY_MERGEABLE = "mergeable";
     private static final String KEY_SORT_KEY = "_sortkey";
-    public static final String KEY_COMMIT_NUMBER = "_number";
+    private static final String KEY_COMMIT_NUMBER = "_number";
     private static final String KEY_MESSAGES = "messages";
     private static final String KEY_CURRENT_REVISION = "current_revision";
     private static final String KEY_LABELS = "labels";

@@ -31,13 +31,13 @@ public class ProjectsListAdapter extends SimpleCursorTreeAdapter
     // Note that the constructor does not take a Cursor. This is done to avoid
     // querying the database on the main thread.
     public ProjectsListAdapter(Context context,
-                               int groupLayout,
                                String[] groupFrom,
                                int[] groupTo,
-                               int childLayout,
                                String[] childFrom,
                                int[] childTo) {
-        super(context, null, groupLayout, groupFrom, groupTo, childLayout,
+        super(context, null,
+                android.R.layout.simple_expandable_list_item_1, groupFrom, groupTo,
+                com.jbirdvegas.mgerrit.R.layout.projects_subproject_row,
                 childFrom, childTo);
         mContext = context;
     }

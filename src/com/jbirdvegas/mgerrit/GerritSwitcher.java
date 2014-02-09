@@ -40,7 +40,6 @@ import org.jetbrains.annotations.Contract;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -203,17 +202,7 @@ public class GerritSwitcher extends DialogFragment {
 
         GerritDetails team = gerritData.get(position);
         File target = new File(GerritTeamsHelper.mExternalCacheDir + "/" + team.getGerritName());
-
         boolean success = target.delete();
-        StringBuilder builder = new StringBuilder().append("Attempt to delete: ")
-                .append(target.getAbsolutePath())
-                .append(" was a ");
-        if (success) {
-            builder.append("success.");
-        } else {
-            builder.append("failure.");
-            Log.v(TAG, "Files present:" + Arrays.toString(GerritTeamsHelper.mExternalCacheDir.list()));
-        }
 
         /* We don't need to worry about an item not being selected in the adapter from removing this
          *  element as it can always move down one position. We are not deleting the last element

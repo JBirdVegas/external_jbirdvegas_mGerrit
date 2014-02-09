@@ -33,7 +33,7 @@ import java.util.List;
 public class CheckableView extends RelativeLayout implements Checkable {
 
     private boolean mIsChecked = false;
-    private List<Checkable> checkableViews;
+    private final List<Checkable> checkableViews;
 
     public CheckableView(Context context, AttributeSet attrs) {
         super(context, attrs);

@@ -36,15 +36,7 @@ public final class Project implements Comparable<Project> {
         this.mId = id;
     }
 
-    public String getmKind() {
-        return mKind;
-    }
-
-    public String getmId() {
-        return mId;
-    }
-
-    public String getmPath() {
+    public String getPath() {
         return mPath;
     }
 
@@ -55,13 +47,13 @@ public final class Project implements Comparable<Project> {
 
     @Override
     public int compareTo(Project project) {
-        int i = mPath.compareTo(project.getmPath());
+        int i = mPath.compareTo(project.getPath());
         if (i != 0) return i;
 
-        i = mKind.compareTo(project.getmKind());
+        i = mKind.compareTo(project.mKind);
         if (i != 0) return i;
 
-        i = mId.compareTo(project.getmId());
+        i = mId.compareTo(project.mId);
         return i;
     }
 }

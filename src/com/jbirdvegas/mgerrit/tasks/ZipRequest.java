@@ -11,13 +11,10 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.jbirdvegas.mgerrit.Prefs;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
@@ -39,7 +36,10 @@ import java.util.zip.ZipInputStream;
  */
 public class ZipRequest extends Request<String> {
 
-    public static final int BUFFER = 2048;
+    // Time until cache will be hit, but also refreshed on background
+    private static final long CACHE_REFRESH_TIME = 5 * 60 * 1000;
+    // Time until cache entry expires completely
+    private static final long CACHE_EXPIRES_TIME = 24 * 60 * 60 * 1000;
 
     /** Decoding lock so that we don't decode more than one archive at a time (to avoid OOM's) */
     private static final Object sDecodeLock = new Object();
@@ -131,12 +131,8 @@ public class ZipRequest extends Request<String> {
             serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
         }
 
-        // Time until cache will be hit, but also refreshed on background
-        final long cacheHitButRefreshed = 5 * 60 * 1000;
-        // Time until cache entry expires completely
-        final long cacheExpired = 24 * 60 * 60 * 1000;
-        final long softExpire = now + cacheHitButRefreshed;
-        final long ttl = now + cacheExpired;
+        final long softExpire = now + CACHE_REFRESH_TIME;
+        final long ttl = now + CACHE_EXPIRES_TIME;
 
         Cache.Entry entry = new Cache.Entry();
         entry.data = response.data;

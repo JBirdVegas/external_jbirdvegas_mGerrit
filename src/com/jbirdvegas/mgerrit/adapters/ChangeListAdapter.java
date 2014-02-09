@@ -65,7 +65,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, final Cursor cursor) {
+    public void bindView(@NotNull View view, Context context, @NotNull final Cursor cursor) {
 
         setIndicies(cursor);
 

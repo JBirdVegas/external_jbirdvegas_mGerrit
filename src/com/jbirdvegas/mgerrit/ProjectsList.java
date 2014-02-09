@@ -42,7 +42,6 @@ import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 public class ProjectsList extends Activity
@@ -122,10 +121,8 @@ public class ProjectsList extends Activity
     {
         // Set the adapter for the list view
         mListAdapter = new ProjectsListAdapter(this,
-                android.R.layout.simple_expandable_list_item_1,
                 new String[] { ProjectsTable.C_ROOT }, // Name for group layouts
                 new int[] { android.R.id.text1 },
-                R.layout.projects_subproject_row,
                 new String[] { ProjectsTable.C_SUBPROJECT }, // Name for child layouts
                 new int[] { android.R.id.text1 });
         mProjectsListView.setAdapter(mListAdapter);
