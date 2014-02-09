@@ -165,4 +165,6 @@
 
     <string name="diff_menu_internal_condensed">Viewer</string>
     <string name="diff_menu_external_condensed">Browser</string>
+    <string name="diff_no_files">No non-binary files were found in this change.</string>
+    <string name="diff_load_failed">Failed to get diff!</string>
 </resources>

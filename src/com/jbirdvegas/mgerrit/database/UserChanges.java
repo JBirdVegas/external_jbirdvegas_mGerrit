@@ -164,6 +164,33 @@ public class UserChanges extends DatabaseTable {
     }
 
     /**
+     * Update the Change details for a change
+     * @param context Context for database access
+     * @param commit A change object containing the data for the commit to be updated.
+     *               Only data visible to the change list will be updated.
+     * @return Whether any rows were updated
+     */
+    public static boolean updateChange(Context context, JSONCommit commit) {
+        if (commit == null || commit.getChangeId() == null) return false;
+
+        ContentValues values = new ContentValues(9);
+        if (commit.getSubject() != null){
+            values.put(C_SUBJECT, commit.getSubject());
+        } if (commit.getLastUpdatedDate() != null){
+            values.put(C_UPDATED, trimDate(commit.getLastUpdatedDate()));
+        } if (commit.getOwnerObject() != null) {
+            values.put(C_OWNER, commit.getOwnerObject().getAccountId());
+        } if (commit.getStatus() != null) {
+            values.put(C_STATUS, commit.getStatus().toString());
+        }
+        // The topic could have been cleared
+        values.put(C_TOPIC, commit.getTopic());
+
+        return context.getContentResolver().update(Changes.CONTENT_URI, values,
+                C_CHANGE_ID + " = ?", new String[] { commit.getChangeId() }) > 0;
+    }
+
+    /**
      * List the commits for a given change status and subject
      * @param context Context for database access
      * @param status The change status to search for

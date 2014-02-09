@@ -22,6 +22,7 @@ import android.content.Context;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
+import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
@@ -65,5 +66,7 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
         Reviewers.insertReviewers(context, changeid, reviewers);
         Revisions.insertRevision(context, commit.getPatchSet());
         MessageInfo.insertMessages(context, changeid, commit.getMessagesList());
+
+        UserChanges.updateChange(context, commit);
     }
 }

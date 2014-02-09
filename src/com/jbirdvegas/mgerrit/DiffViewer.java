@@ -24,12 +24,17 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.widget.SimpleCursorAdapter;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.jbirdvegas.mgerrit.adapters.FileAdapter;
 import com.jbirdvegas.mgerrit.database.FileChanges;
 import com.jbirdvegas.mgerrit.tasks.ZipRequest;
 import com.jbirdvegas.mgerrit.views.DiffTextView;
@@ -42,14 +47,38 @@ public class DiffViewer extends FragmentActivity
     private String mLineSplit = System.getProperty("line.separator");
     private DiffTextView mDiffTextView;
     private Spinner mSpinner;
-    private SimpleCursorAdapter mAdapter;
+    private FileAdapter mAdapter;
+    private final OnItemSelectedListener selectedListener = new OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String fileName = mAdapter.getPathAtPosition(position);
+            loadDiff(fileName);
+
+            int previousPosition = mAdapter.getPreviousPosition(position);
+            mBtnPrevious.setVisibility(previousPosition >= 0 ? View.VISIBLE : View.INVISIBLE);
+
+            int nextPosition = mAdapter.getNextPosition(position);
+            mBtnNext.setVisibility(nextPosition >= 0 ? View.VISIBLE : View.INVISIBLE);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Not used
+        }
+    };
+
+    private ImageButton mBtnPrevious, mBtnNext;
 
     private String mFilePath;
     private int mChangeNumber;
+    private int mPatchsetNumber;
 
     public static final String CHANGE_NUMBER_TAG = "changeNumber";
     public static final String PATCH_SET_NUMBER_TAG = "patchSetNumber";
     public static final String FILE_PATH_TAG = "file";
+
+    private static RequestQueue requestQueue;
+    private ZipRequest request;
 
 
     @Override
@@ -70,32 +99,20 @@ public class DiffViewer extends FragmentActivity
 
         setChangeTitle(mChangeNumber);
 
-        String filePath = intent.getStringExtra(FILE_PATH_TAG);
-        Integer patchSetNumber = intent.getIntExtra(PATCH_SET_NUMBER_TAG, 0);
+        mFilePath = intent.getStringExtra(FILE_PATH_TAG);
+        mPatchsetNumber = intent.getIntExtra(PATCH_SET_NUMBER_TAG, 0);
 
-        mFilePath = filePath;
         mDiffTextView = (DiffTextView) findViewById(R.id.diff_view_diff);
         mSpinner = (Spinner) findViewById(R.id.diff_spinner);
 
-        mAdapter = new SimpleCursorAdapter(this, R.layout.diff_files_row, null,
-                new String[] { FileChanges.C_FILE_NAME },
-                new int[] { R.id.changed_file_path }, 0);
-        mSpinner.setAdapter(mAdapter);
+        mBtnPrevious = (ImageButton) findViewById(R.id.diff_previous);
+        mBtnNext = (ImageButton) findViewById(R.id.diff_next);
 
-        ZipRequest request = new ZipRequest(this, mChangeNumber, patchSetNumber, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                if (s != null) setTextView(s);
-                else mDiffTextView.setText("Failed to get diff!");
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                mDiffTextView.setText("Failed to load diff :(");
-            }
-        }
-        );
-        Volley.newRequestQueue(this).add(request);
+        mAdapter = new FileAdapter(this, null);
+        mSpinner.setAdapter(mAdapter);
+        mSpinner.setOnItemSelectedListener(selectedListener);
+
+        loadDiff(mFilePath);
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -126,9 +143,48 @@ public class DiffViewer extends FragmentActivity
         mDiffTextView.setDiffText(builder.toString());
     }
 
+    private void loadDiff(String fileName) {
+        mFilePath = fileName;
+
+        /* The whole diff may be too large to cache in memory or expired
+         *  so we will launch another request for it, even if we have
+         *  previously loaded a diff for this change
+         */
+        request = new ZipRequest(this, mChangeNumber,
+                mPatchsetNumber, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                if (s != null) setTextView(s);
+                else mDiffTextView.setText(getString(R.string.diff_load_failed));
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                mDiffTextView.setText(R.string.diff_load_failed);
+            }
+        }
+        );
+
+        if (requestQueue == null) requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(request);
+    }
+
+    // Set the title of this activity
     private void setChangeTitle(Integer changeNumber) {
         String s = getResources().getString(R.string.change_detail_heading);
         setTitle(String.format(s, changeNumber));
+    }
+
+    // Handler for clicking on the previous file button
+    public void onPreviousClick(View view) {
+        int position = mAdapter.getPreviousPosition(mSpinner.getSelectedItemPosition());
+        if (position >= 0) mSpinner.setSelection(position);
+    }
+
+    // Handler for clicking on the next file button
+    public void onNextClick(View view) {
+        int position = mAdapter.getNextPosition(mSpinner.getSelectedItemPosition());
+        if (position >= 0) mSpinner.setSelection(position);
     }
 
     @Override
@@ -139,6 +195,14 @@ public class DiffViewer extends FragmentActivity
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
+        if (cursor != null && cursor.isAfterLast()) {
+            if (request != null) request.cancel();
+            mDiffTextView.setText(getString(R.string.diff_no_files));
+        }
+
+        int pos = mAdapter.getPositionOfFile(mFilePath);
+        if (pos >= 0) mSpinner.setSelection(pos);
+
     }
 
     @Override

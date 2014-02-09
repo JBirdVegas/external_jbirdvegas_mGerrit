@@ -68,12 +68,8 @@ public class FileAdapter extends CursorAdapter {
         setupIndicies(cursor);
         colorPath(viewHolder.path, cursor);
 
-        // Remove the path from the filename
-        String filename = cursor.getString(mPath_index);
-        int idx = filename.lastIndexOf("/");
-        filename = idx >= 0 ? filename.substring(idx + 1) : filename;
+        String filename = Tools.getFileName(cursor.getString(mPath_index));
         viewHolder.path.setText(filename);
-
     }
 
     @Nullable

@@ -90,21 +90,12 @@ public class CommitMarker extends DatabaseTable {
         Uri uri = DBParams.fetchOneRow(CONTENT_URI);
         status = JSONCommit.Status.getStatusString(status);
 
-        Cursor cursor = null;
-        try {
-             cursor = context.getContentResolver().query(uri,
-                    new String[] { C_SORTKEY },
-                    C_STATUS + " = ?",
-                    new String[] { status },
-                    null);
-            if (cursor.moveToFirst()) {
-                return cursor.getString(0);
-            }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
+        Cursor c = context.getContentResolver().query(uri,
+                new String[] { C_SORTKEY },
+                C_STATUS + " = ?",
+                new String[] { status },
+                null);
+        if (c.moveToFirst()) return c.getString(0);
         return null;
     }
 

@@ -24,9 +24,6 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.CommitMarker;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
-import com.jbirdvegas.mgerrit.database.MessageInfo;
-import com.jbirdvegas.mgerrit.database.Reviewers;
-import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
@@ -48,19 +45,6 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
     @Override
     void insert(JSONCommit[] commits) {
         UserChanges.insertCommits(getContext(), Arrays.asList(commits));
-
-        for (JSONCommit commit : commits) {
-            Reviewer[] reviewers = reviewersToArray(commit);
-            if (reviewers == null) {
-                // Assume we have not got change details for any of the commits
-                return;
-            }
-
-            String changeid = commit.getChangeId();
-            Reviewers.insertReviewers(getContext(), changeid, reviewers);
-            Revisions.insertRevision(getContext(), commit.getPatchSet());
-            MessageInfo.insertMessages(getContext(), changeid, commit.getMessagesList());
-        }
     }
 
     @Override

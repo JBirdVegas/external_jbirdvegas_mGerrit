@@ -189,9 +189,10 @@ public class Tools {
      * @param filePath A path to a file
      * @return The short file name from a full file path
      */
-    public static final String getFileName(String filePath) {
-        int lastIndex = filePath.lastIndexOf(File.separatorChar);
-        return filePath.substring(++lastIndex);
+    public static String getFileName(String filePath) {
+        // Remove the path from the filename
+        int idx = filePath.lastIndexOf("/");
+        return idx >= 0 ? filePath.substring(idx + 1) : filePath;
     }
 
     public static String getWebAddress(Context context, int commitNumber) {
