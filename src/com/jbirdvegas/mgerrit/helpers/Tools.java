@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.FileInfo;
 
@@ -184,8 +185,16 @@ public class Tools {
         }
     }
 
-    public static final String getFileName(String fileWithPath) {
-        int lastIndex = fileWithPath.lastIndexOf(File.separatorChar);
-        return fileWithPath.substring(++lastIndex);
+    /**
+     * @param filePath A path to a file
+     * @return The short file name from a full file path
+     */
+    public static final String getFileName(String filePath) {
+        int lastIndex = filePath.lastIndexOf(File.separatorChar);
+        return filePath.substring(++lastIndex);
+    }
+
+    public static String getWebAddress(Context context, int commitNumber) {
+        return String.format("%s#/c/%d/", Prefs.getCurrentGerrit(context), commitNumber);
     }
 }

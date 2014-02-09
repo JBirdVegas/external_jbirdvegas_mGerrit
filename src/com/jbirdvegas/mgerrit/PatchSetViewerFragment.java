@@ -324,6 +324,11 @@ public class PatchSetViewerFragment extends Fragment
      */
     public void setStatus(String status) {
         this.mStatus = JSONCommit.Status.getStatusString(status);
+        /* If we are running this in phone mode, notify the parent of the new status for the menu
+         *  items */
+        if (!Prefs.isTabletMode(mContext)) {
+            ((PatchSetViewerActivity) mParent).setSelectedStatus(mStatus);
+        }
     }
 
     public boolean compareStatus(String status1, String status2) {
@@ -387,7 +392,7 @@ public class PatchSetViewerFragment extends Fragment
     public void onViewStateRestored(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             mSelectedChange = savedInstanceState.getString(CHANGE_ID);
-            mStatus = savedInstanceState.getString(STATUS);
+            setStatus(savedInstanceState.getString(STATUS));
             restartLoaders(mSelectedChange);
         }
         super.onViewStateRestored(savedInstanceState);

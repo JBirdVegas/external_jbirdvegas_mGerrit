@@ -28,12 +28,12 @@ import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
-import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,7 +76,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
 
         viewHolder.changeid = cursor.getString(changeid_index);
         viewHolder.changeStatus = cursor.getString(status_index);
-        viewHolder.webAddress = getWebAddress(cursor.getInt(changenum_index));
+        viewHolder.webAddress = Tools.getWebAddress(mContext, cursor.getInt(changenum_index));
         view.setTag(viewHolder);
 
         if (viewHolder.changeid.equals(selectedChangeId)) {
@@ -140,10 +140,6 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
         });
 
         super.bindView(view, context, cursor);
-    }
-
-    private String getWebAddress(int commitNumber) {
-        return String.format("%s#/c/%d/", Prefs.getCurrentGerrit(mContext), commitNumber);
     }
 
     /**

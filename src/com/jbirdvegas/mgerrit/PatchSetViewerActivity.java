@@ -18,10 +18,18 @@ package com.jbirdvegas.mgerrit;
  */
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.util.Pair;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ShareActionProvider;
+import android.widget.Toast;
+
+import com.jbirdvegas.mgerrit.database.SelectedChange;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 
 /**
  * An activity representing a single Change detail screen. This
@@ -32,6 +40,13 @@ import android.view.MenuItem;
  * more than a {@link com.jbirdvegas.mgerrit.PatchSetViewerFragment}.
  */
 public class PatchSetViewerActivity extends FragmentActivity {
+
+    private ShareActionProvider mShareActionProvider;
+
+    // Relevant details for the selected change
+    private String mStatus;
+    private String mChangeId;
+    private Integer mChangeNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +71,38 @@ public class PatchSetViewerActivity extends FragmentActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(android.R.id.content, fragment)
                     .commit();
-        }
-        else {
+        } else {
             setContentView(R.layout.commit_list);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.change_details_menu, menu);
+        MenuItem item = menu.findItem(R.id.menu_details_share);
+        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+
+        if (mStatus != null) setShareIntent(mChangeId, mChangeNumber);
+        return true;
+    }
+
+    /**
+     * Constructs a share intent with the change information and sets it to the share
+     *  action provider.
+     * @param changeid The ID of the selected change
+     * @param changeNumber The legacy number of the selected change
+     */
+    private void setShareIntent(String changeid, Integer changeNumber) {
+        if (mShareActionProvider != null) {
+            String webAddress = Tools.getWebAddress(this, changeNumber);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            intent.putExtra(Intent.EXTRA_SUBJECT,
+                    String.format(getResources().getString(R.string.commit_shared_from_mgerrit),
+                            changeid));
+            intent.putExtra(Intent.EXTRA_TEXT, webAddress + " #mGerrit");
+            mShareActionProvider.setShareIntent(intent);
         }
     }
 
@@ -75,7 +119,33 @@ public class PatchSetViewerActivity extends FragmentActivity {
                 //
                 NavUtils.navigateUpTo(this, new Intent(this, GerritControllerActivity.class));
                 return true;
+            case R.id.menu_details_browser:
+                if (mChangeNumber == null) return false;
+                String webAddress = Tools.getWebAddress(this, mChangeNumber);
+                if (webAddress != null) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webAddress));
+                    startActivity(browserIntent);
+                } else {
+                    Toast.makeText(this, R.string.failed_to_find_url, Toast.LENGTH_SHORT).show();
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Sets the details for the selected change and re-creates the options menu.
+     * By using the status, we can query the database and get both the change id
+     * and the change number.
+     * @param status The status of the selected change
+     */
+    public void setSelectedStatus(String status) {
+        mStatus = status;
+        Pair<String, Integer> change = SelectedChange.getSelectedChange(this, mStatus);
+        mChangeId = change.first;
+        mChangeNumber = change.second;
+
+        // We need to re-create the options menu to set the share intent again
+        invalidateOptionsMenu();
     }
 }
