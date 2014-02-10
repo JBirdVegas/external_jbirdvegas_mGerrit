@@ -20,30 +20,36 @@ package com.jbirdvegas.mgerrit.helpers;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-
+import com.android.volley.Cache;
+import com.android.volley.NetworkResponse;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.FileInfo;
 
-import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class Tools {
 
     private static final String GERRIT_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
     private static final String HUMAN_READABLE_DATE_FORMAT = "MMMM dd, yyyy '%s' hh:mm:ss aa";
+    private static final String DEFAULT_CHARSET = "UTF-8";
 
     public static void showErrorDialog(Context context,
                                 Exception exception) {
@@ -197,5 +203,86 @@ public class Tools {
 
     public static String getWebAddress(Context context, int commitNumber) {
         return String.format("%s#/c/%d/", Prefs.getCurrentGerrit(context), commitNumber);
+    }
+
+    public static iIntent createShareIntent(Context context, String changeid, int changeNumber) {
+        String webAddress = Tools.getWebAddress(context, changeNumber);
+        return createShareIntent(context, changeid, webAddress);
+    }
+
+    public static Intent createShareIntent(Context context, String changeid, String webAddress) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        intent.putExtra(Intent.EXTRA_SUBJECT,
+                String.format(context.getResources().getString(R.string.commit_shared_from_mgerrit),
+                        changeid));
+        intent.putExtra(Intent.EXTRA_TEXT, webAddress + " #mGerrit");
+        return intent;
+    }
+
+    public static String getFileExtention(String filename) {
+        int start = filename.lastIndexOf(".");
+        return filename.substring(++start);
+    }
+
+    public static boolean isImage(String filePath) {
+        String fileExtention = getFileExtention(filePath);
+        return fileExtention.equals("png") || fileExtention.equals("jpg");
+    }
+
+    public static String getRevisionUrl(Context context, Integer changeNumber, Integer patchSetNumber) {
+        String ps;
+        if (patchSetNumber == null || patchSetNumber < 1) ps = "current";
+        else ps = String.valueOf(patchSetNumber);
+        return String.format("%schanges/%d/revisions/%s/patch?zip",
+                Prefs.getCurrentGerrit(context),
+                changeNumber, ps);
+    }
+
+    public static String getBinaryDownloadUrl(Context context, int changeNumber,
+                                              int patchSetNumber, String path)
+            throws UnsupportedEncodingException {
+        // Url Encoding must be applied to the change and revision args
+        String needsEncoded = URLEncoder.encode(String.format("%d,%d", changeNumber, patchSetNumber),
+                DEFAULT_CHARSET);
+        // Url Encoding must also be applied to the postpended arg
+        String postPend = URLEncoder.encode("^0", DEFAULT_CHARSET);
+        return String.format("%s/cat/%s,%s%s", Prefs.getCurrentGerrit(context),
+                needsEncoded, path, postPend);
+    }
+
+    /**
+     * Extracts a {@link com.android.volley.Cache.Entry} from a {@link com.android.volley.NetworkResponse}.
+     * Cache-control headers are ignored.
+     * @param response The network response to parse headers from
+     * @return a cache entry for the given response, or null if the response is not cacheable.
+     * @link http://stackoverflow.com/questions/16781244/android-volley-jsonobjectrequest-caching
+     */
+    public static Cache.Entry parseIgnoreCacheHeaders(NetworkResponse response,
+                                                      long cacheRefreshTime,
+                                                      long cacheExpiresTime) {
+        long now = System.currentTimeMillis();
+
+        Map<String, String> headers = response.headers;
+        long serverDate = 0;
+        String headerValue;
+
+        headerValue = headers.get("Date");
+        if (headerValue != null) {
+            serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
+        }
+
+        final long softExpire = now + cacheRefreshTime;
+        final long ttl = now + cacheExpiresTime;
+
+        Cache.Entry entry = new Cache.Entry();
+        entry.data = response.data;
+        entry.etag = null; // Not worried about etag
+        entry.softTtl = softExpire;
+        entry.ttl = ttl;
+        entry.serverDate = serverDate;
+        entry.responseHeaders = headers;
+        return entry;
     }
 }

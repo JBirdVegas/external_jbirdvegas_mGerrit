@@ -166,5 +166,7 @@
     <string name="diff_menu_internal_condensed">Viewer</string>
     <string name="diff_menu_external_condensed">Browser</string>
     <string name="diff_no_files">No non-binary files were found in this change.</string>
-    <string name="diff_load_failed">Failed to get diff!</string>
+    <string name="failed_to_get_diff">Failed to load diff :(</string>
+    <string name="failed_to_load_image">Failed to load image :(</string>
+    <string name="failed_to_decode_image">Failed to decode image :(</string>
 </resources>

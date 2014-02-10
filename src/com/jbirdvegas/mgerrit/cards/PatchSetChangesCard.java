@@ -58,6 +58,7 @@ public class PatchSetChangesCard implements CardBinder {
     private Integer mDeleted_index;
     private Integer mPatchSet_index;
     private Integer mCommit_index;
+    private Integer mIsImage_index;
 
 
     public PatchSetChangesCard(Context context) {
@@ -131,7 +132,10 @@ public class PatchSetChangesCard implements CardBinder {
         if (cursor.getInt(mIsBinary_index) != 0) {
             viewHolder.binaryText.setVisibility(View.VISIBLE);
             convertView.setEnabled(false);
-            return convertView;
+            // If it is binary and not an image we don't need to tag diff-related data
+            if (cursor.getInt(mIsImage_index) == 0) {
+                return convertView;
+            }
         } else {
             viewHolder.binaryText.setVisibility(View.GONE);
             convertView.setEnabled(true);
@@ -246,6 +250,9 @@ public class PatchSetChangesCard implements CardBinder {
         }
         if (mCommit_index == null) {
             mCommit_index = cursor.getColumnIndex(FileChanges.C_COMMIT_NUMBER);
+        }
+        if (mIsImage_index == null) {
+            mIsImage_index = cursor.getColumnIndex(FileChanges.C_ISIMAGE);
         }
     }
 

@@ -54,6 +54,9 @@ public class FileChanges extends DatabaseTable {
     // Number of deleted lines. Not set for binary files or if no lines were deleted.
     public static final String C_LINES_DELETED = FileInfoTable.C_LINES_DELETED;
 
+    // Whether the file is an image.
+    public static final String C_ISIMAGE = FileInfoTable.C_ISIMAGE;
+
     // --- Columns (Changes table) ---
 
     // The legacy numeric ID of the change (used in the web address)
@@ -77,7 +80,7 @@ public class FileChanges extends DatabaseTable {
             Changes.TABLE + "." + Changes.C_COMMIT_NUMBER,
             C_PATCH_SET_NUMBER, C_FILE_NAME,
             FileInfoTable.TABLE + "." + FileInfoTable.C_STATUS,
-            C_ISBINARY, C_OLDPATH,
+            C_ISBINARY, C_OLDPATH, C_ISIMAGE,
             C_LINES_INSERTED, C_LINES_DELETED };
 
     private static FileChanges mInstance = null;
@@ -99,7 +102,7 @@ public class FileChanges extends DatabaseTable {
     }
 
     /**
-     * Get detals on what files changed in a change
+     * Get details on what files changed in a change
      * @param context Context for database access
      * @param changeid The Change-Id of the change to get the file changes for
      * @return A CursorLoader
@@ -113,21 +116,22 @@ public class FileChanges extends DatabaseTable {
     }
 
     /**
-     * Get details for the files we can diff given a change number
+     * Get details for the files which we can show diff details for in the DiffViewer
      * @param context Context for database access
      * @param changeNumber The number of the change to get the file changes for
      * @return A CursorLoader
      */
-    public static CursorLoader getNonBinaryChangedFiles(Context context, Integer changeNumber) {
+    public static CursorLoader getDiffableFiles(Context context, Integer changeNumber) {
         String[] PROJECTION = new String[] {
-                FileInfoTable.TABLE + ".rowid AS _id", C_FILE_NAME,
-                FileInfoTable.TABLE + "." + C_STATUS, C_LINES_INSERTED, C_LINES_DELETED};
+                FileInfoTable.TABLE + ".rowid AS _id", C_FILE_NAME, C_ISBINARY, C_COMMIT_NUMBER,
+                C_PATCH_SET_NUMBER, FileInfoTable.TABLE + "." + C_STATUS,
+                C_LINES_INSERTED, C_LINES_DELETED};
 
         return new CursorLoader(context, CONTENT_URI, PROJECTION,
                 Changes.TABLE + "." + C_COMMIT_NUMBER + " = ? AND "
                         + FileInfoTable.TABLE + "." + C_CHANGE_ID
                         + " = " + Changes.TABLE + "." + Changes.C_CHANGE_ID
-                        + " AND " + C_ISBINARY + " = 0",
+                        + " AND (" + C_ISBINARY + " = 0 OR " + C_ISIMAGE + " = 1)",
                 new String[] { String.valueOf(changeNumber) }, SORT_BY);
     }
 

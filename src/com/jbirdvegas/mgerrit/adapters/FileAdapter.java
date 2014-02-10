@@ -43,6 +43,9 @@ public class FileAdapter extends CursorAdapter {
     private static Integer mPath_index;
     private static Integer mInserted_index;
     private static Integer mDeleted_index;
+    private static Integer mIsBinary_index;
+    private String mFilename;
+    private static Integer mChangeId_index;
 
 
     public FileAdapter(Context context, Cursor c) {
@@ -67,9 +70,6 @@ public class FileAdapter extends CursorAdapter {
         }
         setupIndicies(cursor);
         colorPath(viewHolder.path, cursor);
-
-        String filename = Tools.getFileName(cursor.getString(mPath_index));
-        viewHolder.path.setText(filename);
     }
 
     @Nullable
@@ -91,7 +91,6 @@ public class FileAdapter extends CursorAdapter {
         setupIndicies(cursor);
 
         colorPath(viewHolder.path, cursor);
-        viewHolder.path.setText(cursor.getString(mPath_index));
 
         int inserted = cursor.getInt(mInserted_index);
         setTextOrHide(viewHolder.inserted, viewHolder.insertedContainer, inserted);
@@ -156,6 +155,8 @@ public class FileAdapter extends CursorAdapter {
     private void colorPath(TextView view, Cursor cursor) {
         Tools.colorPath(mContext.getResources(), view,
                 cursor.getString(mStatus_index), mUsingLightTheme);
+        mFilename = Tools.getFileName(cursor.getString(mPath_index));
+        view.setText(mFilename);
     }
 
     private void setTextOrHide(TextView textView, View container, Integer count) {
@@ -184,6 +185,12 @@ public class FileAdapter extends CursorAdapter {
         }
         if (mDeleted_index == null) {
             mDeleted_index = cursor.getColumnIndex(FileChanges.C_LINES_DELETED);
+        }
+        if (mIsBinary_index == null) {
+            mIsBinary_index = cursor.getColumnIndex(FileChanges.C_ISBINARY);
+        }
+        if (mChangeId_index == null) {
+            mChangeId_index = cursor.getColumnIndex(FileChanges.C_CHANGE_ID);
         }
     }
 

@@ -62,6 +62,9 @@ public class FileInfoTable extends DatabaseTable {
     // Number of deleted lines. Not set for binary files or if no lines were deleted.
     public static final String C_LINES_DELETED = "lines_deleted";
 
+    // Whether the file is an image.
+    public static final String C_ISIMAGE = "is_image";
+
     public static final String[] PRIMARY_KEY = { C_CHANGE_ID, C_FILE_NAME };
 
     public static final int ITEM_LIST = UriType.FileInfoList.ordinal();
@@ -94,6 +97,7 @@ public class FileInfoTable extends DatabaseTable {
                 + C_LINES_INSERTED + " INTEGER DEFAULT 0, "
                 + C_LINES_DELETED + " INTEGER DEFAULT 0, "
                 + C_STATUS + " text NOT NULL, "
+                + C_ISIMAGE + " INTEGER DEFAULT 0 NOT NULL, "
                 + "PRIMARY KEY (" + C_CHANGE_ID + ", " + C_FILE_NAME + ") ON CONFLICT REPLACE, "
                 + "FOREIGN KEY (" + C_CHANGE_ID + ") REFERENCES "
                 + Changes.TABLE + "(" + Changes.C_CHANGE_ID + "), "
@@ -127,6 +131,7 @@ public class FileInfoTable extends DatabaseTable {
             row.put(C_LINES_DELETED, file.getDeleted());
             row.put(C_STATUS, String.valueOf(file.getStatus()));
             row.put(C_ISBINARY, file.isBinary());
+            row.put(C_ISIMAGE, file.isImage());
             values.add(row);
         }
 

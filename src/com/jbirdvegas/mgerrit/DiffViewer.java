@@ -19,16 +19,19 @@ package com.jbirdvegas.mgerrit;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.ViewSwitcher;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -36,23 +39,33 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.adapters.FileAdapter;
 import com.jbirdvegas.mgerrit.database.FileChanges;
+import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.tasks.ZipImageRequest;
 import com.jbirdvegas.mgerrit.tasks.ZipRequest;
 import com.jbirdvegas.mgerrit.views.DiffTextView;
 
+import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
 
 public class DiffViewer extends FragmentActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String TAG = DiffViewer.class.getSimpleName();
     private String mLineSplit = System.getProperty("line.separator");
     private DiffTextView mDiffTextView;
     private Spinner mSpinner;
     private FileAdapter mAdapter;
-    private final OnItemSelectedListener selectedListener = new OnItemSelectedListener() {
+    private final AdapterView.OnItemSelectedListener mSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            String fileName = mAdapter.getPathAtPosition(position);
-            loadDiff(fileName);
+            String filepath = mAdapter.getPathAtPosition(position);
+            mAdapter.getItem(position);
+            Log.d(TAG, "Loading: " + filepath);
+            if (Tools.isImage(filepath)) {
+                makeImageRequest(filepath);
+            } else {
+                loadDiff(filepath);
+            }
 
             int previousPosition = mAdapter.getPreviousPosition(position);
             mBtnPrevious.setVisibility(previousPosition >= 0 ? View.VISIBLE : View.INVISIBLE);
@@ -68,6 +81,7 @@ public class DiffViewer extends FragmentActivity
     };
 
     private ImageButton mBtnPrevious, mBtnNext;
+    private ViewSwitcher mSwitcher;
 
     private String mFilePath;
     private int mChangeNumber;
@@ -79,6 +93,9 @@ public class DiffViewer extends FragmentActivity
 
     private static RequestQueue requestQueue;
     private ZipRequest request;
+
+    private static int DIFF_CHILD = 0;
+    private static int IMAGE_CHILD = 1;
 
 
     @Override
@@ -104,17 +121,52 @@ public class DiffViewer extends FragmentActivity
 
         mDiffTextView = (DiffTextView) findViewById(R.id.diff_view_diff);
         mSpinner = (Spinner) findViewById(R.id.diff_spinner);
+        mSwitcher = (ViewSwitcher) findViewById(R.id.diff_switcher);
 
         mBtnPrevious = (ImageButton) findViewById(R.id.diff_previous);
         mBtnNext = (ImageButton) findViewById(R.id.diff_next);
 
         mAdapter = new FileAdapter(this, null);
         mSpinner.setAdapter(mAdapter);
-        mSpinner.setOnItemSelectedListener(selectedListener);
+        mSpinner.setOnItemSelectedListener(mSelectedListener);
 
-        loadDiff(mFilePath);
+        boolean isImage = Tools.isImage(mFilePath);
+        if (isImage) mSwitcher.showNext();
+        else mSwitcher.showPrevious();
+        switchViews(isImage);
 
+        mAdapter = new FileAdapter(this, null);
+        mSpinner.setAdapter(mAdapter);
+        mSpinner.setOnItemSelectedListener(mSelectedListener);
         getSupportLoaderManager().initLoader(0, null, this);
+    }
+
+    private void makeImageRequest(String filePath) {
+        try {
+            mFilePath = filePath;
+            String webAddress = Tools.getBinaryDownloadUrl(this, mChangeNumber, mPatchsetNumber, filePath);
+            ZipImageRequest imageRequest = new ZipImageRequest(webAddress, new Response.Listener<Bitmap>() {
+                @Override
+                public void onResponse(Bitmap bitmap) {
+                    if (bitmap == null) {
+                        mDiffTextView.setText(R.string.failed_to_decode_image);
+                        return;
+                    }
+                    findViewById(R.id.diff_scrollview).setVisibility(View.GONE);
+                    ImageView imageView = (ImageView) findViewById(R.id.diff_image);
+                    imageView.setVisibility(View.VISIBLE);
+                    imageView.setImageBitmap(bitmap);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    mDiffTextView.setText(R.string.failed_to_load_image);
+                }
+            });
+            Volley.newRequestQueue(this).add(imageRequest);
+        } catch (UnsupportedEncodingException e) {
+            mDiffTextView.setText(R.string.failed_to_load_image);
+        }
     }
 
     private void setTextView(String result) {
@@ -154,13 +206,15 @@ public class DiffViewer extends FragmentActivity
                 mPatchsetNumber, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
+                findViewById(R.id.diff_scrollview).setVisibility(View.VISIBLE);
+                findViewById(R.id.diff_image).setVisibility(View.GONE);
                 if (s != null) setTextView(s);
-                else mDiffTextView.setText(getString(R.string.diff_load_failed));
+                else mDiffTextView.setText(getString(R.string.failed_to_get_diff));
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                mDiffTextView.setText(R.string.diff_load_failed);
+                mDiffTextView.setText(R.string.failed_to_get_diff);
             }
         }
         );
@@ -173,6 +227,12 @@ public class DiffViewer extends FragmentActivity
     private void setChangeTitle(Integer changeNumber) {
         String s = getResources().getString(R.string.change_detail_heading);
         setTitle(String.format(s, changeNumber));
+    }
+
+    private void switchViews(boolean isImage) {
+        int displayedChild = mSwitcher.getDisplayedChild();
+        if (isImage && displayedChild == 0) mSwitcher.showNext();
+        else if (!isImage && displayedChild == 1) mSwitcher.showPrevious();
     }
 
     // Handler for clicking on the previous file button
@@ -189,7 +249,7 @@ public class DiffViewer extends FragmentActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return FileChanges.getNonBinaryChangedFiles(this, mChangeNumber);
+        return FileChanges.getDiffableFiles(this, mChangeNumber);
     }
 
     @Override

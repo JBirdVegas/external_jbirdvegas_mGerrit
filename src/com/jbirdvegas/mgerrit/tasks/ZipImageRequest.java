@@ -1,6 +1,7 @@
 package com.jbirdvegas.mgerrit.tasks;
 
-import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
@@ -9,19 +10,18 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
 /*
  * Copyright (C) 2014 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (P4R4N01D), 2014
+ *  Author: Jon Stanford (JBirdVegas), 2014
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,11 +35,11 @@ import java.util.zip.ZipInputStream;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-public class ZipRequest extends Request<String> {
+public class ZipImageRequest extends Request<Bitmap> {
     /** Decoding lock so that we don't decode more than one archive at a time (to avoid OOM's) */
     private static final Object sDecodeLock = new Object();
 
-    private Response.Listener<String> mListener;
+    private Response.Listener<Bitmap> mListener;
 
     // Time until cache will be hit, but also refreshed on background
     private static final long CACHE_REFRESH_TIME = 5 * 60 * 1000;
@@ -49,23 +49,23 @@ public class ZipRequest extends Request<String> {
     /**
      * Creates a new request to download a file compressed into a Zip archive.
      *  This downloads and decodes a change diff that was compressed into an archive.
-     *  A single file is expected inside the archive. Assumes the zip file uses
-     *  UTF-8 encoding.
+     *  A single file is expected inside the archive. Assumes the zip file is an
+     *  image.
      *
-     * @param changeNumber index of change provided by gerrit
-     * @param patchSetNumber revision number of change
+     * @param url URL of the file to download
      * @param listener Listener to receive the decoded diff string
      * @param errorListener Error listener, or null to ignore errors
      */
-    public ZipRequest(Context context, Integer changeNumber, Integer patchSetNumber,
-                      Response.Listener<String> listener,
-                      Response.ErrorListener errorListener) {
-        super(Method.GET, Tools.getRevisionUrl(context, changeNumber, patchSetNumber), errorListener);
+    public ZipImageRequest(String url,
+                           Response.Listener<Bitmap> listener,
+                           Response.ErrorListener errorListener)
+            throws UnsupportedEncodingException {
+        super(Method.GET, url, errorListener);
         mListener = listener;
     }
 
     @Override
-    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+    protected Response<Bitmap> parseNetworkResponse(NetworkResponse response) {
         // Serialize all decode on a global lock to reduce concurrent heap usage.
         synchronized (sDecodeLock) {
             try {
@@ -77,30 +77,38 @@ public class ZipRequest extends Request<String> {
         }
     }
 
-    @Override
-    protected void deliverResponse(String response) {
-        mListener.onResponse(response);
-    }
-
-    private Response<String> doParse(NetworkResponse response) {
+    private Response<Bitmap> doParse(NetworkResponse response) {
         byte[] response_data = response.data;
-        StringBuilder builder = new StringBuilder();
-
         ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(response_data));
-        BufferedReader in;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
         try {
-            in = new BufferedReader(new InputStreamReader(zis, "UTF-8"));
+            int bytesRead;
+            byte[] buffer = new byte[8192];
             if (zis.getNextEntry() != null) {
-                String temp;
-                while ((temp = in.readLine()) != null) {
-                    builder.append(temp).append(System.getProperty("line.separator"));
+                while ((bytesRead = zis.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
                 }
             }
-            in.close();
-            return Response.success(builder.toString(),
-                    Tools.parseIgnoreCacheHeaders(response, CACHE_REFRESH_TIME, CACHE_EXPIRES_TIME));
+            return getBitmap(output.toByteArray(), response);
         } catch (IOException e) {
             return Response.error(new ParseError(e));
+        }
+    }
+
+    @Override
+    protected void deliverResponse(Bitmap bitmap) {
+        mListener.onResponse(bitmap);
+    }
+
+    private Response<Bitmap> getBitmap(byte[] data, NetworkResponse response) {
+        BitmapFactory.Options decodeOptions = new BitmapFactory.Options();
+        decodeOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+        if (bitmap == null) {
+            return Response.error(new ParseError(response));
+        } else {
+            return Response.success(bitmap, Tools.parseIgnoreCacheHeaders(response,
+                    CACHE_REFRESH_TIME, CACHE_EXPIRES_TIME));
         }
     }
 }

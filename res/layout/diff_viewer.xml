@@ -9,30 +9,46 @@
     android:padding="@dimen/standard_padding"
     android:weightSum="10">
 
-    <ScrollView
+    <ViewSwitcher
+        android:id="@+id/diff_switcher"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:fillViewport="true"
         android:layout_weight="9">
 
-        <HorizontalScrollView
+        <ScrollView
+            android:id="@+id/diff_scrollview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:fillViewport="true">
 
-            <com.jbirdvegas.mgerrit.views.DiffTextView
-                android:id="@+id/diff_view_diff"
-                style="?attr/diffStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="left"
-                android:fontFamily="monospace"
-                android:padding="@dimen/default_left_card_start"
-                android:paddingTop="@dimen/diff_view_padding_top"
-                android:text="@string/loading"
-                android:textSize="@dimen/text_size_large"/>
-        </HorizontalScrollView>
-    </ScrollView>
+            <HorizontalScrollView
+                android:id="@+id/diff_horizontal_scroll_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true">
+
+                <com.jbirdvegas.mgerrit.views.DiffTextView
+                    android:id="@+id/diff_view_diff"
+                    style="?attr/diffStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
+                    android:fontFamily="monospace"
+                    android:padding="@dimen/default_left_card_start"
+                    android:paddingTop="@dimen/diff_view_padding_top"
+                    android:text="@string/loading"
+                    android:textSize="@dimen/text_size_large"/>
+            </HorizontalScrollView>
+        </ScrollView>
+
+        <ImageView
+            android:id="@+id/diff_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+    </ViewSwitcher>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -47,15 +63,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:contentDescription="@string/diff_back"
-            android:src="?attr/backIcon"
-            android:onClick="onPreviousClick"/>
-
-        <Spinner
-            android:id="@+id/diff_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"/>
+            android:onClick="onPreviousClick"
+            android:src="?attr/backIcon"/>
 
         <ImageButton
             android:id="@+id/diff_next"
@@ -64,8 +73,16 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:contentDescription="@string/diff_next"
-            android:src="?attr/nextIcon"
-            android:onClick="onNextClick"/>
+            android:onClick="onNextClick"
+            android:src="?attr/nextIcon"/>
 
+        <Spinner
+            android:id="@+id/diff_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_toLeftOf="@id/diff_next"
+            android:layout_toRightOf="@id/diff_previous"/>
     </RelativeLayout>
 </LinearLayout>

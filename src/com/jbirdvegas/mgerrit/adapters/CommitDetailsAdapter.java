@@ -211,7 +211,9 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
             return true; // Always allow group headers
         } else {
             Cursor data = (Cursor) getChild(groupPosition, childPosition);
-            return data.getInt(data.getColumnIndex(FileChanges.C_ISBINARY)) == 0;
+            boolean isBinary = data.getInt(data.getColumnIndex(FileChanges.C_ISBINARY)) == 1;
+            boolean isImage = data.getInt(data.getColumnIndex(FileChanges.C_ISIMAGE)) == 1;
+            return !isBinary || (isBinary && isImage);
         }
     }
 

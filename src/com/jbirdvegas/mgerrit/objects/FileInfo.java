@@ -23,6 +23,7 @@ import android.os.Parcelable;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.JsonObject;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 
 public class FileInfo implements Parcelable {
 
@@ -42,6 +43,9 @@ public class FileInfo implements Parcelable {
 
     @SerializedName("binary")
     private boolean isBinary = false;
+
+    @SerializedName("isImage")
+    private boolean isImage = false;
 
     // File status
     public enum Status {
@@ -97,6 +101,8 @@ public class FileInfo implements Parcelable {
 
     public boolean isBinary() { return isBinary; }
 
+    public boolean isImage() { return isImage; }
+
     public static FileInfo deserialise(JsonObject object, String _path) {
         FileInfo file = new Gson().fromJson(object, FileInfo.class);
         file.path = _path;
@@ -107,6 +113,8 @@ public class FileInfo implements Parcelable {
             statusValue = object.get(JSONCommit.KEY_STATUS).getAsString();
         }
         file.status = Status.getValue(statusValue);
+
+        file.isImage = (file.isBinary() && Tools.isImage(file.path));
         return file;
     }
 
@@ -119,6 +127,7 @@ public class FileInfo implements Parcelable {
                 ", deleted=" + deleted +
                 ", status=" + status +
                 ", isBinary=" + isBinary +
+                ", isImage=" + isImage +
                 '}';
     }
 
