@@ -19,7 +19,7 @@ import com.jbirdvegas.mgerrit.cards.PatchSetMessageCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetPropertiesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetReviewersCard;
 import com.jbirdvegas.mgerrit.database.FileChanges;
-import com.jbirdvegas.mgerrit.objects.DiffActionBar;
+import com.jbirdvegas.mgerrit.objects.FilesCAB;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +52,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
     private final Context mContext;
 
     // Contextual action bar handler instance so the adapter can close the CAB
-    private DiffActionBar mContextualAB;
+    private FilesCAB mContextualAB;
 
     // Cards supported:
     public enum Cards { PROPERTIES, COMMIT_MSG, CHANGED_FILES, REVIEWERS, COMMENTS }
@@ -164,7 +164,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
         /* Check if we collapsed the same group as the selected item and the selected item
          *   was a child. */
         ActionMode am = mContextualAB.getActionMode();
-        DiffActionBar.TagHolder holder = (DiffActionBar.TagHolder) am.getTag();
+        FilesCAB.TagHolder holder = (FilesCAB.TagHolder) am.getTag();
         if (holder.groupPosition == groupPosition && holder.isChild) {
             am.finish();
         }
@@ -213,7 +213,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
         }
     }
 
-    public void setContextualActionBar(DiffActionBar cab) {
+    public void setContextualActionBar(FilesCAB cab) {
         this.mContextualAB = cab;
     }
 

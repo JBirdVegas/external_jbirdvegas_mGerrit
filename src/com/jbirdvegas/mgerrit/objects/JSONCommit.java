@@ -127,11 +127,11 @@ public class JSONCommit implements Parcelable {
 
         public static Status getStatusFromString(final String status) {
             String status_lower = status.toLowerCase();
-            if (status_lower.equals(KEY_STATUS_OPEN.toLowerCase()) || status_lower.equals("new")) {
+            if (KEY_STATUS_OPEN.equals(status_lower) || "new".equals(status_lower)) {
                 return NEW;
-            } else if (status_lower.equals(KEY_STATUS_MERGED.toLowerCase())) {
+            } else if (KEY_STATUS_MERGED.equals(status_lower)) {
                 return MERGED;
-            } else if (status_lower.equals(KEY_STATUS_ABANDONED)) {
+            } else if (KEY_STATUS_ABANDONED.equals(status_lower)) {
                 return ABANDONED;
             }
             return SUBMITTED;

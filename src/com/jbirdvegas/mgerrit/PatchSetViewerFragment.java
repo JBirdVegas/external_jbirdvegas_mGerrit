@@ -53,7 +53,7 @@ import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
-import com.jbirdvegas.mgerrit.objects.DiffActionBar;
+import com.jbirdvegas.mgerrit.objects.FilesCAB;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
@@ -80,7 +80,7 @@ public class PatchSetViewerFragment extends Fragment
     private boolean sIsLegacyVersion;
 
     private CommitDetailsAdapter mAdapter;
-    private DiffActionBar mFilesCAB;
+    private FilesCAB mFilesCAB;
 
     public static final String NEW_CHANGE_SELECTED = "Change Selected";
     public static final String EXPAND_TAG = "expand";
@@ -143,7 +143,7 @@ public class PatchSetViewerFragment extends Fragment
 
         // Child click listeners (relevant for the changes cards)
         mListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        mFilesCAB = new DiffActionBar(mParent, !sIsLegacyVersion);
+        mFilesCAB = new FilesCAB(mParent, !sIsLegacyVersion);
         mAdapter.setContextualActionBar(mFilesCAB);
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -159,7 +159,7 @@ public class PatchSetViewerFragment extends Fragment
 
                 // In case this is a group view and does not have the change number tagged
                 view.setTag(R.id.changeID, mSelectedChange);
-                DiffActionBar.TagHolder holder = new DiffActionBar.TagHolder(view, mContext,
+                FilesCAB.TagHolder holder = new FilesCAB.TagHolder(view, mContext,
                         groupPos, childPos >= 0);
 
                 // Set the title to be shown in the action bar

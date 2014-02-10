@@ -32,7 +32,7 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 /**
  * Handler for the Changed files contextual action bar.
  */
-public class DiffActionBar implements ActionMode.Callback {
+public class FilesCAB implements ActionMode.Callback {
 
     // Whether to enable the internal viewer icon
     private final boolean mShowViewer;
@@ -43,7 +43,7 @@ public class DiffActionBar implements ActionMode.Callback {
     // The title to be shown in the CAB
     private String mSelectedFile;
 
-    public DiffActionBar(Context context, boolean diffSupported) {
+    public FilesCAB(Context context, boolean diffSupported) {
         mContext = context;
         mShowViewer = diffSupported;
     }

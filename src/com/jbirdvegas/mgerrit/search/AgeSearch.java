@@ -126,7 +126,7 @@ public class AgeSearch extends SearchKeyword {
     @Override
     public String buildSearch() {
         String operator = getOperator();
-        if (operator.equals("=")) {
+        if ("=".equals(operator)) {
             /* Note that since datetime is an SQLite function it must be included
              *  directly in the query */
             return UserChanges.C_UPDATED + " BETWEEN datetime(?) AND datetime(?)";
@@ -141,7 +141,7 @@ public class AgeSearch extends SearchKeyword {
         Period period = mPeriod;
 
         // Equals: we need to do some arithmetic to get a range from the period
-        if (getOperator().equals("=")) {
+        if ("=".equals(getOperator())) {
             if (period == null) {
                 period = new Period(mInstant, Instant.now());
             }
