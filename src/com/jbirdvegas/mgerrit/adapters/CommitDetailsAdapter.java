@@ -164,9 +164,11 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
         /* Check if we collapsed the same group as the selected item and the selected item
          *   was a child. */
         ActionMode am = mContextualAB.getActionMode();
-        FilesCAB.TagHolder holder = (FilesCAB.TagHolder) am.getTag();
-        if (holder.groupPosition == groupPosition && holder.isChild) {
-            am.finish();
+        if (am != null) {
+            FilesCAB.TagHolder holder = (FilesCAB.TagHolder) am.getTag();
+            if (holder.groupPosition == groupPosition && holder.isChild) {
+                am.finish();
+            }
         }
 
         super.onGroupCollapsed(groupPosition);
