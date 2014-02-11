@@ -21,7 +21,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="?attr/clickableCardBackground">
+    android:background="?attr/clickableCardBackground"
+    android:paddingBottom="@dimen/standard_padding">
 
     <View
         android:id="@+id/commit_card_commit_status"
@@ -63,25 +64,5 @@
             android:layout_height="wrap_content"
             android:id="@+id/commit_card_last_updated"
             style="@style/CardText" />
-
-        <RelativeLayout
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:paddingBottom="8dip"
-            android:layout_gravity="right"
-            android:gravity="end">
-            <ImageView
-                android:src="?attr/shareIcon"
-                android:id="@+id/commit_card_share_info"
-                style="@style/ActionViewsStyle"
-                android:layout_alignParentRight="true"
-                android:contentDescription="@string/share"/>
-            <ImageView
-                android:src="?attr/browserIcon"
-                android:id="@+id/commit_card_view_in_browser"
-                style="@style/ActionViewsStyle"
-                android:layout_toLeftOf="@+id/commit_card_share_info"
-                android:contentDescription="@string/view_in_browser"/>
-        </RelativeLayout>
     </LinearLayout>
 </com.jbirdvegas.mgerrit.cards.CommitCard>

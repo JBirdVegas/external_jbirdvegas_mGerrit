@@ -23,15 +23,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -124,6 +129,14 @@ public abstract class CardsFragment extends Fragment
         mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card, null, from, to, 0,
                 getQuery());
         mAdapter.setViewBinder(new CommitCardBinder(mParent, mRequestQueue));
+
+        registerForContextMenu(mListView);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mAdapter.itemClickListener(view);
+            }
+        });
 
         /* If animations have been enabled, setup and use an animation adapter, otherwise use
          *  the regular adapter. The data should always be bound to mAdapter */
@@ -220,6 +233,57 @@ public abstract class CardsFragment extends Fragment
         mIsDirty = false;
         getLoaderManager().restartLoader(0, null, this);
         if (mNeedsForceUpdate) sendRequest();
+    }
+
+    private void setMenuItemTitle(MenuItem menuItem, String formatString, String parameters) {
+        String title = String.format(formatString, parameters);
+        menuItem.setTitle(title);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = mParent.getMenuInflater();
+        inflater.inflate(R.menu.change_list_menu, menu);
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        View targetView = info.targetView;
+
+        // Set the title of the user tracking menu item
+        MenuItem userMenuItem = menu.findItem(R.id.menu_change_track_user);
+        setMenuItemTitle(userMenuItem, getResources().getString(R.string.context_menu_track_user),
+                (String) targetView.getTag(R.id.userName));
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        View targetView = info.targetView;
+        String webAddress = (String) targetView.getTag(R.id.webAddress);
+        switch (item.getItemId()) {
+            case R.id.menu_change_details:
+                mListView.performItemClick(targetView, info.position, info.id);
+                return true;
+            case R.id.menu_change_browser:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webAddress));
+                mParent.startActivity(browserIntent);
+                return true;
+            case R.id.menu_change_track_user:
+                int user = (int) targetView.getTag(R.id.user);
+                Prefs.setTrackingUser(mParent, user);
+                return true;
+            case R.id.menu_change_track_project:
+                String project = (String) targetView.getTag(R.id.project);
+                Prefs.setCurrentProject(mParent, project);
+                return true;
+            case R.id.menu_change_share:
+                String changeid = (String) targetView.getTag(R.id.changeID);
+                Intent intent = Tools.createShareIntent(mParent, changeid, webAddress);
+                mParent.startActivity(intent);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     /**

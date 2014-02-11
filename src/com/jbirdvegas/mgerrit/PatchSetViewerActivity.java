@@ -94,14 +94,7 @@ public class PatchSetViewerActivity extends FragmentActivity {
      */
     private void setShareIntent(String changeid, Integer changeNumber) {
         if (mShareActionProvider != null) {
-            String webAddress = Tools.getWebAddress(this, changeNumber);
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-            intent.putExtra(Intent.EXTRA_SUBJECT,
-                    String.format(getResources().getString(R.string.commit_shared_from_mgerrit),
-                            changeid));
-            intent.putExtra(Intent.EXTRA_TEXT, webAddress + " #mGerrit");
+            Intent intent = Tools.createShareIntent(this, changeid, changeNumber);
             mShareActionProvider.setShareIntent(intent);
         }
     }

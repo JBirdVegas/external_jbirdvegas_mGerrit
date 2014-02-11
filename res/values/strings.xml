@@ -84,11 +84,16 @@
     <string name="aosp_volley_title">AOSP\'s Volley</string>
     <string name="developers_role">Choose developer\'s role to view</string>
     <string name="commit_reviewer">Commit Reviewer</string>
-    <string name="context_menu_reviewer">Changes in review query.</string>
-    <string name="context_menu_owner">Changes originally submitted.</string>
+
+    <!-- Context menu strings -->
     <string name="context_menu_view_diff_viewer">Use internal viewer</string>
     <string name="context_menu_diff_view_in_browser">View diff in browser</string>
+    <string name="context_menu_change_browser">View change in browser</string>
+    <string name="context_menu_change_viewer">View change details</string>
     <string name="choose_diff_view">How would you like to view the diff?</string>
+    <string name="context_menu_track_user" formatted="false">Track user %s</string>
+    <string name="context_menu_track_project">Track project</string>
+
     <string name="stalker_mode_toast">Now stalking user:</string>
     <string name="share">Share</string>
     <string name="view_in_browser">View this change in the default browser</string>

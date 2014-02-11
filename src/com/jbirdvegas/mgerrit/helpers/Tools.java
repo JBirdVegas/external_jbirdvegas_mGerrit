@@ -205,7 +205,7 @@ public class Tools {
         return String.format("%s#/c/%d/", Prefs.getCurrentGerrit(context), commitNumber);
     }
 
-    public static iIntent createShareIntent(Context context, String changeid, int changeNumber) {
+    public static Intent createShareIntent(Context context, String changeid, int changeNumber) {
         String webAddress = Tools.getWebAddress(context, changeNumber);
         return createShareIntent(context, changeid, webAddress);
     }

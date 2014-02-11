@@ -20,13 +20,11 @@ package com.jbirdvegas.mgerrit.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
+
 import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
@@ -36,27 +34,28 @@ import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ChangeListAdapter extends SimpleCursorAdapter {
 
-    private final String mStatus;
     Context mContext;
 
-    // Cursor indices
-    private Integer changeid_index;
-    private Integer changenum_index;
-    private Integer status_index;
+    private Integer mChangenum_index;
+    private Integer mUserId_index;
+    private Integer mUserName_index;
+    private Integer mProject_index;
 
     private String selectedChangeId;
     private CommitCard selectedChangeView;
+
 
     public ChangeListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags,
                              String status) {
         super(context, layout, c, from, to, flags);
         mContext = context;
 
-        mStatus = JSONCommit.Status.getStatusString(status);
-        Pair<String, Integer> change = SelectedChange.getSelectedChange(context, mStatus);
+        String statusString = JSONCommit.Status.getStatusString(status);
+        Pair<String, Integer> change = SelectedChange.getSelectedChange(context, statusString);
 
         if (change != null) {
             // We only need the changeid
@@ -69,17 +68,10 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
 
         setIndicies(cursor);
 
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-        if (viewHolder == null) {
-            viewHolder = new ViewHolder(view);
-        }
+        TagHolder tagHolder = new TagHolder(context, cursor);
+        view.setTag(tagHolder);
 
-        viewHolder.changeid = cursor.getString(changeid_index);
-        viewHolder.changeStatus = cursor.getString(status_index);
-        viewHolder.webAddress = Tools.getWebAddress(mContext, cursor.getInt(changenum_index));
-        view.setTag(viewHolder);
-
-        if (viewHolder.changeid.equals(selectedChangeId)) {
+        if (tagHolder.changeid.equals(selectedChangeId)) {
             CommitCard commitCard = (CommitCard) view;
             commitCard.setChangeSelected(true);
             selectedChangeView = commitCard;
@@ -87,59 +79,37 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
             ((CommitCard) view).setChangeSelected(false);
         }
 
-        View.OnClickListener cardListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ViewHolder vh = (ViewHolder) view.getTag();
-                Intent intent = new Intent(PatchSetViewerFragment.NEW_CHANGE_SELECTED);
-                intent.putExtra(PatchSetViewerFragment.CHANGE_ID, vh.changeid);
-                intent.putExtra(PatchSetViewerFragment.STATUS, vh.changeStatus);
-                intent.putExtra(PatchSetViewerFragment.EXPAND_TAG, true);
-                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
-
-                // Set this view as selected
-                setSelectedChangeId((CommitCard) view, vh.changeid);
-            }
-        };
-
-        // Root view already has viewHolder tagged
-        view.setOnClickListener(cardListener);
-
-        viewHolder.shareView.setTag(viewHolder);
-        viewHolder.shareView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ViewHolder vh = (ViewHolder) view.getTag();
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                intent.putExtra(Intent.EXTRA_SUBJECT,
-                        String.format(mContext.getResources().getString(R.string.commit_shared_from_mgerrit),
-                                vh.changeid));
-                intent.putExtra(Intent.EXTRA_TEXT, vh.webAddress + " #mGerrit");
-                mContext.startActivity(intent);
-            }
-        });
-
-        viewHolder.browserView.setTag(viewHolder);
-        viewHolder.browserView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String webAddr = ((ViewHolder) view.getTag()).webAddress;
-                if (webAddr != null) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse(webAddr));
-                    mContext.startActivity(browserIntent);
-                } else {
-                    Toast.makeText(view.getContext(),
-                            R.string.failed_to_find_url,
-                            Toast.LENGTH_SHORT)
-                            .show();
-                }
-            }
-        });
+        view.setTag(R.id.changeID, tagHolder.changeid);
+        view.setTag(R.id.changeNumber, cursor.getInt(mChangenum_index));
+        view.setTag(R.id.user, cursor.getInt(mUserId_index));
+        view.setTag(R.id.userName, cursor.getString(mUserName_index));
+        view.setTag(R.id.project, cursor.getString(mProject_index));
+        view.setTag(R.id.webAddress, tagHolder.webAddress);
 
         super.bindView(view, context, cursor);
+    }
+
+    @Nullable
+    @Override
+    public Object getItem(int position) {
+        Cursor cursor = getCursor();
+        if (cursor == null) return null;
+        else {
+            cursor.moveToPosition(position);
+            return cursor;
+        }
+    }
+
+    public void itemClickListener(View view) {
+        TagHolder vh = (TagHolder) view.getTag();
+        Intent intent = new Intent(PatchSetViewerFragment.NEW_CHANGE_SELECTED);
+        intent.putExtra(PatchSetViewerFragment.CHANGE_ID, vh.changeid);
+        intent.putExtra(PatchSetViewerFragment.STATUS, vh.changeStatus);
+        intent.putExtra(PatchSetViewerFragment.EXPAND_TAG, true);
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+
+        // Set this view as selected
+        setSelectedChangeId((CommitCard) view, vh.changeid);
     }
 
     /**
@@ -174,8 +144,8 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
     private void setSelectedChangeId(CommitCard card, String selectedChangeId) {
         //  Only invalidate the view if the changeid matches (i.e. it hasn't already been recycled)
         if (selectedChangeView != null) {
-            ViewHolder viewHolder = (ViewHolder) selectedChangeView.getTag();
-            if (viewHolder.changeid.equals(this.selectedChangeId)) {
+            TagHolder tagHolder = (TagHolder) selectedChangeView.getTag();
+            if (tagHolder.changeid.equals(this.selectedChangeId)) {
                 selectedChangeView.setChangeSelected(false);
             }
         }
@@ -187,14 +157,17 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
 
     private void setIndicies(@NotNull Cursor cursor) {
         // These indices will not change regardless of the view
-        if (changeid_index == null) {
-            changeid_index = cursor.getColumnIndex(UserChanges.C_CHANGE_ID);
+        if (mChangenum_index == null) {
+            mChangenum_index = cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER);
         }
-        if (changenum_index == null) {
-            changenum_index = cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER);
+        if (mUserId_index == null) {
+            mUserId_index = cursor.getColumnIndex(UserChanges.C_USER_ID);
         }
-        if (status_index == null) {
-            status_index = cursor.getColumnIndex(UserChanges.C_STATUS);
+        if (mUserName_index == null) {
+            mUserName_index = cursor.getColumnIndex(UserChanges.C_NAME);
+        }
+        if (mProject_index == null) {
+            mProject_index = cursor.getColumnIndex(UserChanges.C_PROJECT);
         }
     }
 
@@ -205,24 +178,24 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
             binder.onCursorChanged();
         }
 
-        changeid_index = null;
-        changenum_index = null;
-        status_index = null;
+        mChangenum_index = null;
+        mUserId_index = null;
+        mUserName_index = null;
+        mProject_index = null;
 
         return super.swapCursor(c);
     }
 
-    private static class ViewHolder {
-        ImageView browserView;
-        ImageView shareView;
-
+    private static class TagHolder {
         String changeid;
         String changeStatus;
         String webAddress;
 
-        ViewHolder(View view) {
-            browserView = (ImageView) view.findViewById(R.id.commit_card_view_in_browser);
-            shareView = (ImageView) view.findViewById(R.id.commit_card_share_info);
+        TagHolder(Context context, Cursor cursor) {
+            changeid = cursor.getString(cursor.getColumnIndex(UserChanges.C_CHANGE_ID));
+            changeStatus = cursor.getString(cursor.getColumnIndex(UserChanges.C_STATUS));
+            webAddress = Tools.getWebAddress(context,
+                    cursor.getInt(cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER)));
         }
     }
 }

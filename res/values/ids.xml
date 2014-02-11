@@ -23,4 +23,8 @@
     <item type="id" name="patchSetNumber" />
     <item type="id" name="filePath" />
     <item type="id" name="webAddress" />
+    <item type="id" name="user" />
+    <item type="id" name="userName" />
+    <item type="id" name="project" />
+    <item type="id" name="status"/>
 </resources>
