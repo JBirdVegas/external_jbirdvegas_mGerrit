@@ -70,6 +70,8 @@ public class FileAdapter extends CursorAdapter {
         }
         setupIndicies(cursor);
         colorPath(viewHolder.path, cursor);
+
+        view.setTag(R.id.status, cursor.getString(mStatus_index));
     }
 
     @Nullable
@@ -97,6 +99,8 @@ public class FileAdapter extends CursorAdapter {
 
         int deleted = cursor.getInt(mDeleted_index);
         setTextOrHide(viewHolder.deleted, viewHolder.deletedContainer, deleted);
+
+        convertView.setTag(R.id.status, cursor.getString(mStatus_index));
 
         return convertView;
     }

@@ -40,9 +40,11 @@ import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.adapters.FileAdapter;
 import com.jbirdvegas.mgerrit.database.FileChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.objects.FileInfo;
 import com.jbirdvegas.mgerrit.tasks.ZipImageRequest;
 import com.jbirdvegas.mgerrit.tasks.ZipRequest;
 import com.jbirdvegas.mgerrit.views.DiffTextView;
+import com.jbirdvegas.mgerrit.views.StripedImageView;
 
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
@@ -59,10 +61,12 @@ public class DiffViewer extends FragmentActivity
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             String filepath = mAdapter.getPathAtPosition(position);
-            mAdapter.getItem(position);
+            String statusString = (String) view.getTag(R.id.status);
+            FileInfo.Status status = FileInfo.Status.getValue(statusString);
+
             Log.d(TAG, "Loading: " + filepath);
             if (Tools.isImage(filepath)) {
-                makeImageRequest(filepath);
+                makeImageRequest(filepath, status);
             } else {
                 loadDiff(filepath);
             }
@@ -93,9 +97,6 @@ public class DiffViewer extends FragmentActivity
 
     private static RequestQueue requestQueue;
     private ZipRequest request;
-
-    private static int DIFF_CHILD = 0;
-    private static int IMAGE_CHILD = 1;
 
 
     @Override
@@ -141,11 +142,12 @@ public class DiffViewer extends FragmentActivity
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
-    private void makeImageRequest(String filePath) {
+    private void makeImageRequest(String filePath, final FileInfo.Status fileStatus) {
         try {
             mFilePath = filePath;
-            String webAddress = Tools.getBinaryDownloadUrl(this, mChangeNumber, mPatchsetNumber, filePath);
-            ZipImageRequest imageRequest = new ZipImageRequest(webAddress, new Response.Listener<Bitmap>() {
+            boolean wasDeleted = (fileStatus == FileInfo.Status.DELETED);
+            ZipImageRequest imageRequest = new ZipImageRequest(this, mChangeNumber, mPatchsetNumber,
+                    filePath, wasDeleted, new Response.Listener<Bitmap>() {
                 @Override
                 public void onResponse(Bitmap bitmap) {
                     if (bitmap == null) {
@@ -153,9 +155,10 @@ public class DiffViewer extends FragmentActivity
                         return;
                     }
                     findViewById(R.id.diff_scrollview).setVisibility(View.GONE);
-                    ImageView imageView = (ImageView) findViewById(R.id.diff_image);
+                    StripedImageView imageView = (StripedImageView) findViewById(R.id.diff_image);
                     imageView.setVisibility(View.VISIBLE);
                     imageView.setImageBitmap(bitmap);
+                    imageView.setStripe(fileStatus);
                 }
             }, new Response.ErrorListener() {
                 @Override

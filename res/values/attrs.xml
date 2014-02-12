@@ -67,4 +67,9 @@
         <attr name="backIcon" format="reference"/>
         <attr name="nextIcon" format="reference"/>
     </declare-styleable>-->
+    <declare-styleable name="StripedImageView">
+        <attr name="addedStripeColor" format="color"/>
+        <attr name="deletedStripeColor" format="color"/>
+        <attr name="modifiedStripeColor" format="color"/>
+    </declare-styleable>
 </resources>

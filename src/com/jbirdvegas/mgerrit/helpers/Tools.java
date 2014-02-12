@@ -36,8 +36,6 @@ import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.FileInfo;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,7 +47,6 @@ public class Tools {
 
     private static final String GERRIT_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
     private static final String HUMAN_READABLE_DATE_FORMAT = "MMMM dd, yyyy '%s' hh:mm:ss aa";
-    private static final String DEFAULT_CHARSET = "UTF-8";
 
     public static void showErrorDialog(Context context,
                                 Exception exception) {
@@ -238,18 +235,6 @@ public class Tools {
         return String.format("%schanges/%d/revisions/%s/patch?zip",
                 Prefs.getCurrentGerrit(context),
                 changeNumber, ps);
-    }
-
-    public static String getBinaryDownloadUrl(Context context, int changeNumber,
-                                              int patchSetNumber, String path)
-            throws UnsupportedEncodingException {
-        // Url Encoding must be applied to the change and revision args
-        String needsEncoded = URLEncoder.encode(String.format("%d,%d", changeNumber, patchSetNumber),
-                DEFAULT_CHARSET);
-        // Url Encoding must also be applied to the postpended arg
-        String postPend = URLEncoder.encode("^0", DEFAULT_CHARSET);
-        return String.format("%s/cat/%s,%s%s", Prefs.getCurrentGerrit(context),
-                needsEncoded, path, postPend);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.jbirdvegas.mgerrit.tasks;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -10,12 +11,14 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
@@ -41,6 +44,7 @@ public class ZipImageRequest extends Request<Bitmap> {
 
     private Response.Listener<Bitmap> mListener;
 
+    private static final String DEFAULT_CHARSET = "UTF-8";
     // Time until cache will be hit, but also refreshed on background
     private static final long CACHE_REFRESH_TIME = 5 * 60 * 1000;
     // Time until cache entry expires completely
@@ -56,11 +60,13 @@ public class ZipImageRequest extends Request<Bitmap> {
      * @param listener Listener to receive the decoded diff string
      * @param errorListener Error listener, or null to ignore errors
      */
-    public ZipImageRequest(String url,
+    public ZipImageRequest(Context context, int changeNumber,
+                           int patchSetNumber, String path, boolean wasDeleted,
                            Response.Listener<Bitmap> listener,
                            Response.ErrorListener errorListener)
             throws UnsupportedEncodingException {
-        super(Method.GET, url, errorListener);
+        super(Method.GET, getBinaryDownloadUrl(context, changeNumber, patchSetNumber, path, wasDeleted),
+                errorListener);
         mListener = listener;
     }
 
@@ -98,6 +104,26 @@ public class ZipImageRequest extends Request<Bitmap> {
     @Override
     protected void deliverResponse(Bitmap bitmap) {
         mListener.onResponse(bitmap);
+    }
+
+    /** Format: <Gerrit>/cat/<change number>,<revision number>,<path>^<parent>
+     * Gerrit: The current Gerrit instance
+     * Change number: The change number of the change where the file was added/modified/removed
+     * Revision number: The revision number
+     * Path: Full file path of the file to retreive
+     * Parent: 0 to get new file (added), 1 to get old file (removed)
+     */
+    public static String getBinaryDownloadUrl(Context context, int changeNumber,
+                                              int patchSetNumber, String path, boolean wasDeleted)
+            throws UnsupportedEncodingException {
+        // Url Encoding must be applied to the change and revision args
+        String needsEncoded = URLEncoder.encode(String.format("%d,%d", changeNumber, patchSetNumber),
+                DEFAULT_CHARSET);
+        // Url Encoding must also be applied to the postpended arg
+        String postPend = URLEncoder.encode("^", DEFAULT_CHARSET);
+        char parent = (wasDeleted ? '1' : '0');
+        return String.format("%s/cat/%s,%s%s%c", Prefs.getCurrentGerrit(context),
+                needsEncoded, path, postPend, parent);
     }
 
     private Response<Bitmap> getBitmap(byte[] data, NetworkResponse response) {

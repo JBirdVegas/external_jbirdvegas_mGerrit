@@ -57,6 +57,7 @@
         <item name="cardTitleStyle">@style/CardTitle.Dark</item>
         <item name="cardBackgroundColor">@color/card_background_dark</item>
         <item name="clickableCardBackground">@drawable/commit_card_background_states_dark</item>
+        <item name="selectableCardBackground">@drawable/files_card_background_states_dark</item>
         <item name="viewIcon">@android:drawable/ic_menu_view</item>
         <item name="browserIcon">@drawable/ic_action_web_site_dark</item>
         <item name="warningIcon">@drawable/ic_action_warning_dark</item>
