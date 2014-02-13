@@ -9,6 +9,7 @@ import android.support.v4.content.CursorLoader;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.CommitInfo;
+import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
 /*
  * Copyright (C) 2014 Android Open Kang Project (AOKP)
@@ -119,8 +120,14 @@ public class Revisions extends DatabaseTable {
         row.put(C_CHANGE_ID, patchSet.getChangeId());
         row.put(C_PATCH_SET_NUMBER, ps);
         row.put(C_COMMIT, patchSet.getCommit());
-        row.put(C_AUTHOR, patchSet.getAuthorObject().getEmail());
-        row.put(C_COMMITTER, patchSet.getCommitterObject().getEmail());
+        CommitterObject author = patchSet.getAuthorObject();
+        if (author != null) {
+            row.put(C_AUTHOR, author.getEmail());
+        }
+        CommitterObject committer = patchSet.getCommitterObject();
+        if (committer != null) {
+            row.put(C_COMMITTER, committer.getEmail());
+        }
         row.put(C_MESSAGE, patchSet.getMessage());
 
         Uri uri = DBParams.insertWithReplace(CONTENT_URI);
