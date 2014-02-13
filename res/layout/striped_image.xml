@@ -19,39 +19,39 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:orientation="horizontal">
+
+    <View
+        android:id="@+id/striped_image_stripe_left"
+        android:layout_width="@dimen/card_stroke_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_gravity="left"
+        android:background="@android:color/transparent"
+        android:paddingRight="@dimen/commit_card_stroke_padding"/>
+
+    <View
+        android:id="@+id/striped_image_stripe_right"
+        android:layout_width="@dimen/card_stroke_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="right"
+        android:background="@android:color/transparent"
+        android:paddingRight="@dimen/commit_card_stroke_padding"/>
+
     <ImageView
         android:id="@+id/striped_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        tools:visibility="visible"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
-
-    <View
-        android:id="@+id/striped_image_stripe_left"
-        android:layout_height="match_parent"
-        android:layout_alignTop="@id/striped_image"
-        android:layout_alignBottom="@id/striped_image"
-        android:layout_toLeftOf="@id/striped_image"
-        android:layout_width="@dimen/card_stroke_width"
-        android:background="@android:color/transparent"
-        android:paddingRight="@dimen/commit_card_stroke_padding"
-         />
-
-    <View
-        android:id="@+id/striped_image_stripe_right"
-        android:layout_height="match_parent"
-        android:layout_alignTop="@id/striped_image"
-        android:layout_alignBottom="@id/striped_image"
-        android:layout_toRightOf="@id/striped_image"
-        android:layout_width="@dimen/card_stroke_width"
-        android:background="@android:color/transparent"
-        android:paddingLeft="@dimen/commit_card_stroke_padding"
-        />
+        android:layout_gravity="center"
+        android:layout_toLeftOf="@id/striped_image_stripe_right"
+        android:layout_toRightOf="@id/striped_image_stripe_left"
+        android:visibility="gone"
+        tools:src="@drawable/ic_menu_view"
+        tools:visibility="visible"/>
 
 </RelativeLayout>
