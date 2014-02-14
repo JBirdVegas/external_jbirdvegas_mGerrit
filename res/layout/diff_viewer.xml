@@ -10,11 +10,16 @@
     android:padding="@dimen/standard_padding"
     android:weightSum="10">
 
-    <ViewSwitcher
+    <ViewFlipper
         android:id="@+id/diff_switcher"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="9">
+
+        <com.jbirdvegas.mgerrit.views.LoadingView
+            android:id="@+id/diff_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
         <ScrollView
             android:id="@+id/diff_scrollview"
@@ -52,7 +57,7 @@
             app:deletedStripeColor="@color/text_red"
             app:modifiedStripeColor="@android:color/transparent"/>
 
-    </ViewSwitcher>
+    </ViewFlipper>
 
     <RelativeLayout
         android:layout_width="match_parent"
