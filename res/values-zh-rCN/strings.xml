@@ -70,11 +70,15 @@
     <string name="aosp_volley_title">AOSP\'s Volley</string>
     <string name="developers_role">选择开发者角色用于查看</string>
     <string name="commit_reviewer">提交审核者</string>
-    <string name="context_menu_reviewer">更改审核查询。</string>
-    <string name="context_menu_owner">更改原始提交。</string>
-    <string name="context_menu_view_diff_viewer">在对话框中查看差异</string>
+
+    <string name="context_menu_view_diff_viewer">使用内置查看器</string>
     <string name="context_menu_diff_view_in_browser">在浏览器中查看差异</string>
+    <string name="context_menu_change_browser">在浏览器中查看更改</string>
+    <string name="context_menu_change_viewer">查看更改详情</string>
     <string name="choose_diff_view">你想要查看差异吗？</string>
+    <string name="context_menu_track_user" formatted="false">跟踪用户 %s</string>
+    <string name="context_menu_track_project">跟踪项目</string>
+
     <string name="stalker_mode_toast">现在跟踪用户：</string>
     <string name="share">分享</string>
     <string name="view_in_browser">在默认浏览器中查看本变更</string>
@@ -135,4 +139,21 @@
     <string name="header_comments">评论</string>
     <string name="commit_updated">更新：</string>
     <string name="renamed_label">重命名自：</string>
+    <string name="no_changelog">您的设备没有最近的编译版本</string>
+    <string name="diff_back">上一个文件</string>
+    <string name="diff_next">下一个文件</string>
+
+    <string name="diff_options_title">查看更新差异</string>
+    <string name="diff_options_ask">询问</string>
+    <string name="diff_options_internal">内置查看器（若可用）</string>
+    <string name="diff_options_external">浏览器</string>
+
+    <string name="diff_menu_internal_condensed">查看器</string>
+    <string name="diff_menu_external_condensed">浏览器</string>
+    <string name="diff_no_files">更新中没有发现非二进制文件。</string>
+    <string name="failed_to_get_diff">读取差异失败</string>
+    <string name="failed_to_load_image">读取图像失败</string>
+    <string name="failed_to_decode_image">解码图像失败</string>
+    <string name="diff_text_loading">读取差异文本</string>
+    <string name="diff_image_loading">读取图片</string>
 </resources>
