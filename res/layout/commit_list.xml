@@ -18,19 +18,20 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="wrap_content"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <ListView
         android:id="@+id/commit_cards"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/cards_list_padding_vert"
+        android:clipToPadding="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="@dimen/cards_list_divider_height"
+        android:fastScrollEnabled="true"
         android:paddingBottom="@dimen/cards_list_padding_vert"
         android:paddingLeft="@dimen/cards_list_padding_horiz"
         android:paddingRight="@dimen/cards_list_padding_horiz"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="@dimen/cards_list_divider_height"
-        android:fastScrollEnabled="true"/>
+        android:paddingTop="@dimen/cards_list_padding_vert"/>
 </LinearLayout>
