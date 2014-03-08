@@ -26,4 +26,8 @@
     <!-- Interval between change list synchronizations (in milliseconds)
         Sync at most once every 20 minutes -->
     <integer name="changes_sync_interval">1200000</integer>
+
+    <!-- Maximum number of changes to fetch at once.
+        Set this to a negative number to not specify a limit -->
+    <integer name="changes_limit">100</integer>
 </resources>

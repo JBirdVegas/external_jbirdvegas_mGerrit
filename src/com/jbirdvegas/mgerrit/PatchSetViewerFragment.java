@@ -56,6 +56,7 @@ import com.jbirdvegas.mgerrit.message.StatusSelected;
 import com.jbirdvegas.mgerrit.objects.FilesCAB;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.search.ChangeSearch;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import org.jetbrains.annotations.Nullable;
@@ -258,7 +259,8 @@ public class PatchSetViewerFragment extends Fragment
 
         int changeNo = SelectedChange.setSelectedChange(mContext, changeID);
         this.mSelectedChange = changeID;
-        mUrl.setChangeID(mSelectedChange);
+
+        mUrl.addSearchKeyword(new ChangeSearch(mSelectedChange));
         mUrl.setChangeNumber(changeNo);
         mUrl.requestChangeDetail(true, sIsLegacyVersion);
 

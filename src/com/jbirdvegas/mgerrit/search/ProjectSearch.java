@@ -18,6 +18,10 @@ package com.jbirdvegas.mgerrit.search;
  */
 
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.objects.ServerVersion;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class ProjectSearch extends SearchKeyword {
 
@@ -35,5 +39,21 @@ public class ProjectSearch extends SearchKeyword {
     public String buildSearch() {
         // Exact match only
         return UserChanges.C_PROJECT + " = ?";
+    }
+
+    @Override
+    public String getGerritQuery(ServerVersion serverVersion) {
+        String param = getParam();
+        // Keywords with empty parameters are ignored
+        if (param == null || param.isEmpty()) return "";
+
+        StringBuilder builder = new StringBuilder().append(OP_NAME).append(":\"");
+        try {
+            // We need to URL encode this
+            builder.append(URLEncoder.encode(param, "UTF-8")).append("\"");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return builder.toString();
     }
 }

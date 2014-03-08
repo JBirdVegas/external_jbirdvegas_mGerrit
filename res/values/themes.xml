@@ -19,6 +19,7 @@
 <resources>
     <style name="Theme.Light" parent="android:style/Theme.Holo.Light">
         <item name="android:actionBarStyle">@style/ActionBar.Light</item>
+        <item name="android:actionModeBackground">@drawable/ab_transparent</item>
         <item name="android:textColorPrimary">@color/actionbar_text</item>
         <item name="gerritIcon">@drawable/ic_menu_source</item>
         <item name="projectsIcon">@drawable/ic_menu_project</item>

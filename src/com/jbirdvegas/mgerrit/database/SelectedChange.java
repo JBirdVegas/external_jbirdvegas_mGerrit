@@ -74,13 +74,16 @@ public class SelectedChange extends DatabaseTable {
     }
 
     public static Pair<String, Integer> getSelectedChange(Context context, String status) {
+        Pair<String, Integer> selectedChange = null;
+
         Cursor c = context.getContentResolver().query(CONTENT_URI,
                 new String[] { C_CHANGE_ID, C_CHANGE_NO },
                 C_STATUS + " = ?",
                 new String[] { status },
                 null);
-        if (!c.moveToFirst()) return null;
-        else return new Pair<>(c.getString(0), c.getInt(1));
+        if (c.moveToFirst()) selectedChange = new Pair<>(c.getString(0), c.getInt(1));
+        c.close();
+        return selectedChange;
     }
 
     public static Integer setSelectedChange(Context context, String changeid) {

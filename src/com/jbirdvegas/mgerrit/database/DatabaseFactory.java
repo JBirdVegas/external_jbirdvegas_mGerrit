@@ -25,6 +25,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -308,19 +309,27 @@ public class DatabaseFactory extends ContentProvider {
      * @param values A set of column_name/value pairs to add to the database. This must not be null.
      * @param conflictAlgorithm for insert conflict resolver
      * @param updateOnDuplicate
-     * @return The URI for the newly inserted item.
+     * @return Whether the database table changed as a result of the insertion
      */
     public boolean insert(String table, ContentValues values,
                           Integer conflictAlgorithm, boolean updateOnDuplicate) {
-        long id = -1;
+        long id;
         if (table == null) return false;
 
         lock();
         if (conflictAlgorithm == null) {
             id = wdb.insert(table, null, values);
-        }
-        else {
+        } else {
             id = wdb.insertWithOnConflict(table, null, values, conflictAlgorithm);
+        }
+        // Check if any rows were added/modified
+        if (id >= 0) {
+            SQLiteStatement stmt = wdb.compileStatement("SELECT CHANGES()");
+            try {
+                id = stmt.simpleQueryForLong();
+            } finally {
+                stmt.close();
+            }
         }
         unlock();
 

@@ -17,23 +17,28 @@ package com.jbirdvegas.mgerrit.search;
  *  limitations under the License.
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public abstract class SearchKeyword {
+public abstract class SearchKeyword implements Parcelable {
 
     public static final String TAG = "SearchKeyword";
 
@@ -87,6 +92,9 @@ public abstract class SearchKeyword {
         mOpParam = param;
     }
 
+    protected static SearchKeyword getInstance(Parcel in) {
+        return buildToken(in.readString());
+    }
 
     protected static void registerKeyword(String opName, Class<? extends SearchKeyword> clazz) {
         _KEYWORDS.put(opName, clazz);
@@ -137,7 +145,11 @@ public abstract class SearchKeyword {
     @Nullable
     private static SearchKeyword buildToken(@NotNull String tokenStr) {
         String[] s = tokenStr.split(":", 2);
-        if (s.length == 2) return buildToken(s[0], s[1]);
+        if (s.length == 2) {
+            // Remove the beginning and ending double quotes
+            s[1] = s[1].replaceAll("^\"|\"$", "");
+            return buildToken(s[0], s[1]);
+        }
         else return null;
     }
 
@@ -210,13 +222,55 @@ public abstract class SearchKeyword {
         return new String[] { getParam() };
     }
 
-    public static String replaceKeyword(String query, SearchKeyword keyword) {
+    /**
+     * Get the Gerrit search query that this keyword corresponds to.
+     *  Some keywords do not have corresponding queries supported by Gerrit, so
+     *  it is safe to return an empty string in that case. The default implementation
+     *  returns an empty string.
+     * @param serverVersion The version of the Gerrit instance running on the server
+     */
+    public String getGerritQuery(ServerVersion serverVersion) {
+        return "";
+    }
+
+    public static String replaceKeyword(final String query, final SearchKeyword keyword) {
         Set<SearchKeyword> tokens = SearchKeyword.constructTokens(query);
-        tokens = removeKeyword(tokens, keyword.getClass());
-        if (isParameterValid(keyword.getParam())) {
-            tokens.add(keyword);
-        }
+        tokens = replaceKeyword(tokens, keyword);
         return SearchKeyword.getQuery(tokens);
+    }
+
+    public static Set<SearchKeyword> replaceKeyword(final Set<SearchKeyword> tokens,
+                                                    SearchKeyword keyword) {
+        Set<SearchKeyword> retVal = removeKeyword(tokens, keyword.getClass());
+        if (isParameterValid(keyword.getParam())) {
+            retVal.add(keyword);
+        }
+        return retVal;
+    }
+
+    /**
+     * @param tokens A list of search keywords
+     * @param keyword An additional age search keyword to be added to the list
+     * @return A new set of search keywords, retaining only the oldest AgeSearch keyword
+     */
+    public static Set<SearchKeyword> retainOldest(final Set<SearchKeyword> tokens,
+                                                  @NotNull AgeSearch keyword) {
+        List<AgeSearch> ageSearches = new ArrayList<>();
+        List<SearchKeyword> otherSearches = new ArrayList<>();
+
+        ageSearches.add(keyword);
+
+        if (tokens.size() > 0) {
+            for (SearchKeyword o : tokens) {
+                if (o instanceof AgeSearch) ageSearches.add((AgeSearch) o);
+                else otherSearches.add(o);
+            }
+
+            Collections.sort(ageSearches, Collections.reverseOrder());
+            otherSearches.add(ageSearches.get(0));
+        }
+
+        return new HashSet<>(otherSearches);
     }
 
     public static String addKeyword(String query, SearchKeyword keyword) {
@@ -232,7 +286,7 @@ public abstract class SearchKeyword {
                                                    Class<? extends SearchKeyword> clazz) {
         Iterator<SearchKeyword> it = tokens.iterator();
         while (it.hasNext()) {
-            SearchKeyword token = it.next();
+            Object token = it.next();
             if (token.getClass().equals(clazz)) {
                 it.remove();
             }
@@ -241,9 +295,16 @@ public abstract class SearchKeyword {
     }
 
     public static int findKeyword(Set<SearchKeyword> tokens, Class<? extends SearchKeyword> clazz) {
+        return findKeyword(tokens, clazz, 0);
+    }
+
+    public static int findKeyword(Set<SearchKeyword> tokens, Class<? extends SearchKeyword> clazz,
+                                  int start) {
+        if (start < 0) start = 0;
         int i = 0;
-        for (SearchKeyword token : tokens) {
-            if (token.getClass().equals(clazz)) return i;
+        for (Object token : tokens) {
+            if (i < start) i++;
+            else if (token.getClass().equals(clazz)) return i;
             else i++;
         }
         return -1;
@@ -270,4 +331,26 @@ public abstract class SearchKeyword {
             return index;
         }
     }
+
+    // --- Parcelable methods
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(toString());
+    }
+
+    public static final Parcelable.Creator<SearchKeyword> CREATOR
+            = new Parcelable.Creator<SearchKeyword>() {
+        public SearchKeyword createFromParcel(Parcel source) {
+            return getInstance(source);
+        }
+
+        public SearchKeyword[] newArray(int size) {
+            return new SearchKeyword[size];
+        }
+    };
 }

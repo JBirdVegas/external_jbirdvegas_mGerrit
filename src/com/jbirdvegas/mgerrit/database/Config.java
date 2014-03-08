@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.jbirdvegas.mgerrit.objects.ServerVersion;
+
 /*
  * Copyright (C) 2014 Android Open Kang Project (AOKP)
  *  Author: Evan Conway (P4R4N01D), 2014
@@ -68,11 +70,19 @@ public class Config extends DatabaseTable {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE + "/#", ITEM_ID);
     }
 
+    public static ServerVersion getServerVersion(Context context) {
+        String version = getValue(context, KEY_VERSION);
+        if (version == null || version.isEmpty()) return null;
+        return new ServerVersion(version);
+    }
+
     public static String getValue(Context context, String key) {
+        String value = null;
         Cursor c = context.getContentResolver().query(CONTENT_URI,
                 new String[] { C_VALUE }, C_KEY + " = ?", new String[] { key }, null);
-        if (!c.moveToFirst()) return null;
-        else return c.getString(0);
+        if (c.moveToFirst()) value = c.getString(0);
+        c.close();
+        return value;
     }
 
     public static void setValue(Context context, String key, String value) {
@@ -88,8 +98,6 @@ public class Config extends DatabaseTable {
      *  This was introduced in Gerrit v2.8.
      */
     public static boolean isDiffSupported(Context context) {
-        String version = getValue(context, KEY_VERSION);
-        if (version == null) return false;
-        return version.startsWith("2.8");
+        return getServerVersion(context).isFeatureSupported(ServerVersion.VERSION_DIFF);
     }
 }

@@ -23,17 +23,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.helpers.Tools;
-import com.jbirdvegas.mgerrit.message.ConnectionEstablished;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.EstablishingConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.HandshakeError;
-import com.jbirdvegas.mgerrit.message.InitializingDataTransfer;
-import com.jbirdvegas.mgerrit.message.ProgressUpdate;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 
@@ -83,55 +79,6 @@ public class DefaultGerritReceivers {
         }
     };
 
-    private final BroadcastReceiver runningReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String message = intent.getStringExtra(GerritMessage.MESSAGE);
-            Log.d("Gerrit Receiver", message);
-        }
-    };
-
-    // Not used.
-    private final BroadcastReceiver updateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String message = intent.getStringExtra(GerritMessage.MESSAGE);
-            Long fileLength = intent.getLongExtra(GerritMessage.FILE_LENGTH, -1);
-            Long progress = intent.getLongExtra(GerritMessage.FILE_LENGTH, 0);
-
-            if (fileLength != -1) {
-                mActivity.setProgressBarIndeterminate(false);
-                mActivity.setProgress(findPercent(progress, fileLength));
-            }
-        }
-
-        private int findPercent(long progress, long totalSize) {
-            try {
-                // use a safe casting method
-                return safeLongToInt(progress * 100 / totalSize);
-                // handle division by zero just in case
-            } catch (ArithmeticException ae) {
-                return -1;
-            }
-        }
-
-        /**
-         * safely casts long to int
-         *
-         * @param l long to be transformed
-         * @return int value of l
-         */
-        private int safeLongToInt(long l) {
-            if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
-                throw new IllegalArgumentException
-                        (l + " cannot be cast to int without changing its value.");
-            }
-            return (int) l;
-        }
-    };
-
     private final BroadcastReceiver errorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -165,9 +112,6 @@ public class DefaultGerritReceivers {
         HashMap<String, BroadcastReceiver> typeReceiver = new HashMap<>();
         typeReceiver.put(EstablishingConnection.TYPE, startReceiver);
         typeReceiver.put(StartingRequest.TYPE, startReceiver);
-        typeReceiver.put(ConnectionEstablished.TYPE, runningReceiver);
-        typeReceiver.put(InitializingDataTransfer.TYPE, runningReceiver);
-        typeReceiver.put(ProgressUpdate.TYPE, updateReceiver);
         typeReceiver.put(Finished.TYPE, finishedReceiver);
         typeReceiver.put(HandshakeError.TYPE, errorReceiver);
         typeReceiver.put(ErrorDuringConnection.TYPE, errorReceiver);
@@ -187,7 +131,7 @@ public class DefaultGerritReceivers {
     public void unregisterReceivers() {
 
         BroadcastReceiver[] receivers = new BroadcastReceiver[] {startReceiver,
-                runningReceiver, updateReceiver, finishedReceiver, errorReceiver};
+                finishedReceiver, errorReceiver};
 
         for (BroadcastReceiver receiver : receivers) {
             // This should ignore receivers that are not registered

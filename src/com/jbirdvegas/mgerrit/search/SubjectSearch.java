@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.search;
  */
 
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
 public class SubjectSearch extends SearchKeyword {
 
@@ -41,5 +42,10 @@ public class SubjectSearch extends SearchKeyword {
     @Override
     public String[] getEscapeArgument() {
         return new String[] { getParam() + '%' };
+    }
+
+    @Override
+    public String getGerritQuery(ServerVersion serverVersion) {
+        return toString();
     }
 }

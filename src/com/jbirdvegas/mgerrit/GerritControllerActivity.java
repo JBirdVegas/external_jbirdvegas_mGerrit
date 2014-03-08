@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -43,7 +42,6 @@ import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Logger;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.Tracker;
-
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.ROMHelper;
@@ -55,26 +53,14 @@ import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.HandshakeError;
 import com.jbirdvegas.mgerrit.message.InitializingDataTransfer;
 import com.jbirdvegas.mgerrit.message.ProgressUpdate;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
-import com.jbirdvegas.mgerrit.tasks.GerritTask;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 public class GerritControllerActivity extends FragmentActivity {
 
     private static final String GERRIT_INSTANCE = "gerrit";
     private String mGerritWebsite;
-
-    /**
-     * Keep track of all the GerritTask instances so the dialog can be dismissed
-     *  when this activity is paused.
-     */
-    private Set<GerritTask> mGerritTasks;
 
     // Listener for changes to which commit is selected
     private BroadcastReceiver mChangeListener;
@@ -162,10 +148,6 @@ public class GerritControllerActivity extends FragmentActivity {
 
         mGerritWebsite = Prefs.getCurrentGerrit(this);
 
-        /* Initially set the current Gerrit globally here.
-         *  We can rely on callbacks to know when they change */
-        GerritURL.setProject(Prefs.getCurrentProject(this));
-
         // Don't register listeners here. It is registered in onResume instead.
         mChangeListener = new BroadcastReceiver() {
             @Override
@@ -193,7 +175,6 @@ public class GerritControllerActivity extends FragmentActivity {
     }
 
     private void init() {
-        mGerritTasks = new HashSet<>();
         receivers = new DefaultGerritReceivers(this);
     }
 
@@ -305,21 +286,6 @@ public class GerritControllerActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (mGerritTasks != null) {
-            Iterator<GerritTask> it = mGerritTasks.iterator();
-            while (it.hasNext()) {
-                GerritTask gerritTask = it.next();
-                if (gerritTask.getStatus() == AsyncTask.Status.FINISHED) {
-                    it.remove();
-                }
-            }
-        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 
@@ -333,20 +299,6 @@ public class GerritControllerActivity extends FragmentActivity {
             mTheme = themeId;
             setTheme(themeId);
             this.recreate();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        // if screen gets disposed of before mGerritTasks is initialized
-        if (mGerritTasks != null) {
-            for (GerritTask gerritTask : mGerritTasks) {
-                gerritTask.cancel(true);
-            }
-            mGerritTasks.clear();
-            mGerritTasks = null;
         }
     }
 

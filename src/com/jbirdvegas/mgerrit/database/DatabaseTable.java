@@ -69,6 +69,7 @@ public abstract class DatabaseTable {
         FileChangesList, FileChangesID,
         FileInfoList, FileInfoID,
         MessageInfoList, MessageInfoID,
+        MoreChangesList, MoreChangesID,
         ProjectsList, ProjectsID,
         ReviewersList, ReviewersID,
         RevisionList, RevisionID,
@@ -90,6 +91,7 @@ public abstract class DatabaseTable {
         tables.add(FileChanges.class);
         tables.add(FileInfoTable.class);
         tables.add(MessageInfo.class);
+        tables.add(MoreChanges.class);
         tables.add(ProjectsTable.class);
         tables.add(Reviewers.class);
         tables.add(Revisions.class);
@@ -153,13 +155,15 @@ public abstract class DatabaseTable {
      * @return whether there are any rows in the given table
      */
     public static boolean isEmpty(@NotNull Context context, @NotNull Uri uri) {
+        boolean empty = false;
+
         Cursor cursor = context.getContentResolver().query(uri, new String[] { "count(*)" },
                 null, null, null);
-        if (cursor == null) return true;
+        if (cursor == null) empty = true;
         cursor.moveToFirst(); // IMPORTANT
-        boolean noRows = (cursor.getInt(0) <= 0);
+        if (!empty) empty = (cursor.getInt(0) <= 0);
         cursor.close();
-        return noRows;
+        return empty;
     }
 
     protected void registerContentObserver(Context context) {

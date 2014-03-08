@@ -29,6 +29,8 @@ import com.jbirdvegas.mgerrit.objects.GerritURL;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+
 public class GerritService extends IntentService {
 
     public static final String TAG = "GerritService";
@@ -36,14 +38,25 @@ public class GerritService extends IntentService {
     public static final String URL_KEY = "Url";
     public static final String DATA_TYPE_KEY = "Type";
 
+    /* These are for the change list - whether we are fetching newer or older changes than what
+      * we have already */
+    public enum Direction { Newer, Older }
+    public static final String CHANGES_LIST_DIRECTION = "direction";
+
     public static enum DataType { Project, Commit, CommitDetails, GetVersion, LegacyCommitDetails }
 
     private static RequestQueue mRequestQueue;
 
     private GerritURL mCurrentUrl;
 
+    // A list of the currently running sync processors
+    private static HashMap<GerritURL, SyncProcessor> sRunningTasks;
+
     // This is required for the service to be started
-    public GerritService() { super(TAG); }
+    public GerritService() {
+        super(TAG);
+        sRunningTasks = new HashMap<>();
+    }
 
     @Override
     protected void onHandleIntent(@NotNull Intent intent) {
@@ -54,26 +67,31 @@ public class GerritService extends IntentService {
         mCurrentUrl = intent.getParcelableExtra(URL_KEY);
         SyncProcessor processor;
 
+        if (sRunningTasks.containsKey(mCurrentUrl)) return;
+
         // Determine which SyncProcessor to use here
         DataType dataType = (DataType) intent.getSerializableExtra(DATA_TYPE_KEY);
         if (dataType == DataType.Project) {
-            processor = new ProjectListProcessor(this);
+            processor = new ProjectListProcessor(this, intent);
         } else if (dataType == DataType.Commit) {
-            processor = new ChangeListProcessor(this, mCurrentUrl);
+            processor = new ChangeListProcessor(this, intent, mCurrentUrl);
         } else if (dataType == DataType.CommitDetails) {
-            processor = new CommitProcessor(this, mCurrentUrl);
+            processor = new CommitProcessor(this, intent, mCurrentUrl);
         } else if (dataType == DataType.LegacyCommitDetails) {
-            processor = new LegacyCommitProcessor(this, mCurrentUrl);
+            processor = new LegacyCommitProcessor(this, intent, mCurrentUrl);
         } else if (dataType == DataType.GetVersion) {
-            processor = new VersionProcessor(this);
+            processor = new VersionProcessor(this, intent);
         } else {
             Log.w(TAG, "Don't know how to handle synchronization of type " + DATA_TYPE_KEY);
             return;
         }
 
         // Call the SyncProcessor to fetch the data if necessary
-        boolean needsSync = processor.isSyncRequired();
-        if (needsSync) processor.fetchData(mRequestQueue);
+        boolean needsSync = processor.isSyncRequired(this);
+        if (needsSync) {
+            sRunningTasks.put(mCurrentUrl, processor);
+            processor.fetchData(mRequestQueue);
+        }
     }
 
     /**
@@ -90,5 +108,21 @@ public class GerritService extends IntentService {
         Bundle b = new Bundle();
         b.putParcelable(GerritService.URL_KEY, url);
         GerritService.sendRequest(context, dataType, b);
+    }
+
+    private static boolean isProcessorRunning(SyncProcessor processor) {
+        Class<? extends SyncProcessor> clazz = processor.getClass();
+        for (SyncProcessor next : sRunningTasks.values()) {
+            if (next.getClass().equals(clazz)) return true;
+        }
+        return false;
+    }
+
+    protected static HashMap<GerritURL, SyncProcessor> getRunningProcessors() {
+        return sRunningTasks;
+    }
+
+    protected static void finishedRequest(GerritURL url) {
+        sRunningTasks.remove(url);
     }
 }

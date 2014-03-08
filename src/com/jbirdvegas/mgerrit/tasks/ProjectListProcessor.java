@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.tasks;
  */
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.Prefs;
@@ -35,22 +36,21 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
 
     private final String mUrl;
 
-    ProjectListProcessor(Context context) {
-        super(context);
+    ProjectListProcessor(Context context, Intent intent) {
+        super(context, intent);
         String gerrit = Prefs.getCurrentGerrit(context);
         mUrl = gerrit + "projects/?d";
     }
 
     @Override
-    void insert(Projects projects) {
+    int insert(Projects projects) {
         List<Project> projectList = projects.getAsList();
         Collections.sort(projectList);
-        ProjectsTable.insertProjects(getContext(), projectList);
+        return ProjectsTable.insertProjects(getContext(), projectList);
     }
 
     @Override
-    boolean isSyncRequired() {
-        Context context = getContext();
+    boolean isSyncRequired(Context context) {
         long syncInterval = context.getResources().getInteger(R.integer.projects_sync_interval);
         long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, mUrl);
         boolean sync = isInSyncInterval(syncInterval, lastSync);
@@ -69,6 +69,12 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     void doPostProcess(Projects data) {
         SyncTime.setValue(mContext, SyncTime.PROJECTS_LIST_SYNC_TIME,
                 System.currentTimeMillis(), mUrl);
+    }
+
+    @Override
+    int count(Projects projects) {
+        if (projects != null) return projects.getProjectCount();
+        else return 0;
     }
 
     @Override

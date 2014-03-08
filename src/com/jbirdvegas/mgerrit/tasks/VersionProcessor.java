@@ -1,6 +1,7 @@
 package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -33,14 +34,14 @@ public class VersionProcessor extends SyncProcessor<String> {
 
     private final String mUrl;
 
-    VersionProcessor(Context context) {
-        super(context);
+    VersionProcessor(Context context, Intent intent) {
+        super(context, intent);
         String url = Prefs.getCurrentGerrit(context);
         mUrl = url + "config/server/version";
     }
 
     @Override
-    void insert(String data) {
+    int insert(String data) {
         // Trim off the junk beginning and the quotes around the version number
         Pattern p = Pattern.compile("\"([^\"]+)\"");
         Matcher m = p.matcher(data);
@@ -49,17 +50,24 @@ public class VersionProcessor extends SyncProcessor<String> {
         } else {
             Config.setValue(getContext(), Config.KEY_VERSION, data);
         }
+        return 1;
     }
 
     @Override
-    boolean isSyncRequired() {
+    boolean isSyncRequired(Context context) {
         // Look up the database to see if we have previously saved the version
-        return Config.getValue(getContext(), Config.KEY_VERSION) == null;
+        return Config.getValue(context, Config.KEY_VERSION) == null;
     }
 
     @Override
     Class<String> getType() {
         return String.class;
+    }
+
+    @Override
+    int count(String version) {
+        if (version != null) return 1;
+        else return 0;
     }
 
     @Override

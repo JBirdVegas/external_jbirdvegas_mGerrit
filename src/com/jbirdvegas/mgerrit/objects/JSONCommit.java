@@ -72,6 +72,7 @@ public class JSONCommit implements Parcelable {
     private static final String KEY_CODE_REVIEW = "Code-Review";
     public static final String KEY_REVISIONS = "revisions";
     private static final String KEY_TIMEZONE = "tz";
+    private static final String KEY_MORE_CHANGES = "_more_changes";
 
     private TimeZone mServerTimeZone;
     private TimeZone mLocalTimeZone;
@@ -250,6 +251,10 @@ public class JSONCommit implements Parcelable {
     @SerializedName(JSONCommit.KEY_MESSAGES)
     private List<CommitComment> mMessagesList;
 
+    /** The messages associated with the change */
+    @SerializedName(JSONCommit.KEY_MORE_CHANGES)
+    private boolean mMoreChanges = true;
+
 
     public String getKind() {
         return mKind;
@@ -365,6 +370,10 @@ public class JSONCommit implements Parcelable {
     public CommitInfo getPatchSet() { return mPatchSet; }
     public void setPatchSet(CommitInfo patchSet) { this.mPatchSet = patchSet; }
 
+    // Note that this value can only be false for the first or last change returned from querying the server
+    public boolean areMoreChanges() { return mMoreChanges; }
+
+
     // Parcelable implementation
     public JSONCommit(Parcel parcel) {
         mKind = parcel.readString();
@@ -386,6 +395,7 @@ public class JSONCommit implements Parcelable {
         mReviewers = parcel.readParcelable(ReviewerList.class.getClassLoader());
         mPatchSetNumber = parcel.readInt();
         mMessagesList = parcel.readArrayList(CommitComment.class.getClassLoader());
+        mMoreChanges = parcel.readByte() == 1;
     }
 
     @Override
@@ -414,6 +424,7 @@ public class JSONCommit implements Parcelable {
         parcel.writeParcelable(mReviewers, 0);
         parcel.writeInt(mPatchSetNumber);
         parcel.writeTypedList(mMessagesList);
+        parcel.writeByte((byte) (mMoreChanges ? 1 : 0));
     }
 
     @Override
@@ -441,6 +452,7 @@ public class JSONCommit implements Parcelable {
                 ", mPatchSet=" + mPatchSet +
                 ", mPatchSetNumber=" + mPatchSetNumber +
                 ", mMessagesList=" + mMessagesList +
+                ", mMoreChanges=" + mMoreChanges +
                 '}';
     }
 }

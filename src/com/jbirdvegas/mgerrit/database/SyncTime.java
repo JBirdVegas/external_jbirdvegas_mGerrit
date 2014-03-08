@@ -70,14 +70,15 @@ public class SyncTime extends DatabaseTable {
     }
 
     public static long getValueForQuery(Context context, String key, String query) {
-
+        long value = 0;
         Cursor c = context.getContentResolver().query(CONTENT_URI,
                 new String[] { C_VALUE },
                 C_KEY + " = ?" + " AND " + C_QUERY + " LIKE ?",
                 new String[] { key, query + "%" },
                 null);
-        if (!c.moveToFirst()) return 0;
-        else return c.getLong(0);
+        if (c.moveToFirst()) value = c.getLong(0);
+        c.close();
+        return value;
     }
 
     public static void setValue(Context context, String key, long value, String query) {
@@ -92,7 +93,7 @@ public class SyncTime extends DatabaseTable {
      * Clear all the data in this table. Not reversible.
      * @param context Context from which to access the database
      */
-    public static void clear(Context context){
+    public static void clear(Context context) {
         context.getContentResolver().delete(CONTENT_URI, null, null);
     }
 }

@@ -5,11 +5,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.jbirdvegas.mgerrit.Prefs;
+import com.jbirdvegas.mgerrit.database.Config;
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A class that helps to deconstruct Gerrit queries and assemble them
@@ -19,14 +24,13 @@ import java.net.URLEncoder;
 public class GerritURL implements Parcelable
 {
     private static Context sContext;
-    private static String sProject = "";
     private String mStatus = "";
-    private String mEmail = "";
-    private String mCommitterState = "";
     private boolean mRequestDetailedAccounts = false;
     private String mSortkey = "";
-    private String mChangeID = "";
     private int mChangeNo = 0;
+
+    private Set<SearchKeyword> mSearchKeywords;
+    private int mLimit;
 
     private enum ChangeDetailLevels {
         DISABLED, // Do not fetch change details
@@ -54,28 +58,32 @@ public class GerritURL implements Parcelable
     // Default constructor to facilitate instantiation
     public GerritURL() { }
 
+    public GerritURL(GerritURL url) {
+        mStatus = url.mStatus;
+        mRequestDetailedAccounts = url.mRequestDetailedAccounts;
+        mChangeNo = url.mChangeNo;
+        mRequestChangeDetail = url.mRequestChangeDetail;
+    }
+
     public static void setContext(Context context) {
         GerritURL.sContext = context;
     }
 
-    public static void setProject(String project) {
-        if (project == null) project = "";
-        sProject = project;
+    public void addSearchKeyword(SearchKeyword keyword) {
+        if (mSearchKeywords == null) {
+            mSearchKeywords = new HashSet<>();
+        }
+        mSearchKeywords.add(keyword);
+    }
+
+    public void addSearchKeywords(Set<SearchKeyword> keywords) {
+        if (keywords == null) return;
+        for (SearchKeyword keyword : keywords) addSearchKeyword(keyword);
     }
 
     public void setStatus(String status) {
         if (status == null) status = "";
         mStatus = status;
-    }
-
-    public void setEmail(String email) {
-        if (email == null) email = "";
-        mEmail = email;
-    }
-
-    public void setChangeID(String changeID) {
-        if (changeID == null) changeID = "";
-        mChangeID = changeID;
     }
 
     /**
@@ -111,11 +119,18 @@ public class GerritURL implements Parcelable
         mSortkey = sortKey;
     }
 
+    /**
+     * @param limit The maximum number of changes to include in the response
+     */
+    public void setLimit(int limit) {
+        this.mLimit = limit;
+    }
+
     @Override
     @Nullable
     public String toString()
     {
-        boolean addSeperator = false;
+        boolean addSeperator;
 
         StringBuilder builder = new StringBuilder(0).append(Prefs.getCurrentGerrit(sContext));
         builder.append("changes/");
@@ -129,10 +144,12 @@ public class GerritURL implements Parcelable
             else return "";
         } else {
             builder.append("?q=");
-            addSeperator |= appendChangeID(builder, addSeperator);
-            addSeperator |= appendStatus(builder, addSeperator);
-            addSeperator |= appendOwner(builder, addSeperator);
-            appendProject(builder, addSeperator);
+            addSeperator = appendStatus(builder, false);
+            try {
+                appendSearchKeywords(builder, addSeperator);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
 
         appendArgs(builder);
@@ -152,17 +169,9 @@ public class GerritURL implements Parcelable
     }
 
     public boolean equals(String str) {
-        return this.toString().equals(str);
+        return str != null && str.equals(this.toString());
     }
 
-    private boolean appendChangeID(StringBuilder builder, boolean addSeperator) {
-        if (addSeperator) builder.append('+');
-        if (mChangeID != null && !mChangeID.isEmpty()) {
-            builder.append(mChangeID);
-            return true;
-        }
-        return false;
-    }
     private boolean appendStatus(StringBuilder builder, boolean addSeperator) {
         if (mStatus != null && !mStatus.isEmpty()) {
             if (addSeperator) builder.append('+');
@@ -174,31 +183,29 @@ public class GerritURL implements Parcelable
         return false;
     }
 
-    private boolean appendOwner(StringBuilder builder, boolean addSeperator) {
-        if (mCommitterState != null && !mCommitterState.isEmpty() &&
-                mEmail != null && !mEmail.isEmpty()) {
-            if (addSeperator) builder.append('+');
-            builder.append(mCommitterState)
-                    .append(':')
-                    .append(mEmail);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean appendProject(StringBuilder builder, boolean addSeperator) {
-        if (sProject != null && !sProject.isEmpty()) {
-            if (addSeperator) builder.append('+');
-            try {
-                builder.append(JSONCommit.KEY_PROJECT)
-                        .append(":")
-                        .append(URLEncoder.encode(sProject, "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+    private boolean appendSearchKeywords(StringBuilder builder, boolean addSeperator)
+            throws UnsupportedEncodingException {
+        ServerVersion version = Config.getServerVersion(sContext);
+        if (mSearchKeywords != null && !mSearchKeywords.isEmpty()) {
+            if (addSeperator) {
+                builder.append('+');
+                addSeperator = false;
             }
-            return true;
+            for (SearchKeyword keyword : mSearchKeywords) {
+
+                if (addSeperator) {
+                    builder.append('+');
+                    addSeperator = false;
+                }
+
+                String operator =  URLEncoder.encode(keyword.getGerritQuery(version),"UTF-8");
+                if (operator != null && !operator.isEmpty()) {
+                    builder.append(operator);
+                    addSeperator = true;
+                }
+            }
         }
-        return false;
+        return addSeperator;
     }
 
     private void appendArgs(StringBuilder builder) {
@@ -210,6 +217,10 @@ public class GerritURL implements Parcelable
         }
         if (mRequestDetailedAccounts) {
             builder.append(GerritURL.DETAILED_ACCOUNTS_ARG);
+        }
+
+        if (mLimit > 0) {
+            builder.append("&n=").append(mLimit);
         }
     }
 
@@ -234,26 +245,37 @@ public class GerritURL implements Parcelable
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(sProject);
-        dest.writeString(mChangeID);
         dest.writeInt(mChangeNo);
         dest.writeString(mStatus);
-        dest.writeString(mEmail);
-        dest.writeString(mCommitterState);
         dest.writeInt(mRequestDetailedAccounts ? 1 : 0);
         dest.writeString(mSortkey);
         dest.writeString(mRequestChangeDetail.name());
+        dest.writeInt(mLimit);
+
+        int size;
+        if (mSearchKeywords == null) size = 0;
+        else size = mSearchKeywords.size();
+        dest.writeInt(size);
+
+        if (size > 0) {
+            SearchKeyword[] keywords = new SearchKeyword[size];
+            dest.writeTypedArray(mSearchKeywords.toArray(keywords), flags);
+        }
     }
 
     public GerritURL(Parcel in) {
-        sProject = in.readString();
-        mChangeID = in.readString();
         mChangeNo = in.readInt();
         mStatus = in.readString();
-        mEmail = in.readString();
-        mCommitterState = in.readString();
         mRequestDetailedAccounts = in.readInt() == 1;
         mSortkey = in.readString();
         mRequestChangeDetail = ChangeDetailLevels.valueOf(in.readString());
+        mLimit = in.readInt();
+
+        int size = in.readInt();
+        if (size > 0) {
+            SearchKeyword[] keywords = new SearchKeyword[size];
+            in.readTypedArray(keywords, SearchKeyword.CREATOR);
+            mSearchKeywords = new HashSet<>(Arrays.asList(keywords));
+        }
     }
 }

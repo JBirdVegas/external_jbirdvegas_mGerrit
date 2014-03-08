@@ -148,24 +148,8 @@ public class GooFileObject implements Parcelable {
         return mPath;
     }
 
-    public String getFolder() {
-        return mFolder;
-    }
-
-    public String getMd5() {
-        return mMd5;
-    }
-
     public String getType() {
         return mType;
-    }
-
-    public String getDescription() {
-        return mDescription;
-    }
-
-    public boolean isIsFlashable() {
-        return mIsFlashable;
     }
 
     public long getModified() {
@@ -173,56 +157,12 @@ public class GooFileObject implements Parcelable {
         return mModified * 1000;
     }
 
-    public long getDownloads() {
-        return mDownloads;
-    }
-
     public int getStatus() {
         return mStatus;
     }
 
-    public String getAdditionalInfo() {
-        return mAdditionalInfo;
-    }
-
     public String getShortUrl() {
         return mShortUrl;
-    }
-
-    public int getDeveloperId() {
-        return mDeveloperId;
-    }
-
-    public String getRO_DeveloperId() {
-        return mRO_DeveloperId;
-    }
-
-    public String getRO_Board() {
-        return mRO_Board;
-    }
-
-    public String getRO_Rom() {
-        return mRO_Rom;
-    }
-
-    public int getRO_Version() {
-        return mRO_Version;
-    }
-
-    public long getGappsPackage() {
-        return mGappsPackage;
-    }
-
-    public int getIncrementalFile() {
-        return mIncrementalFile;
-    }
-
-    public String getGappsLink() {
-        return mGappsLink;
-    }
-
-    public String getGappsMd5() {
-        return mGappsMd5;
     }
 
     @Override

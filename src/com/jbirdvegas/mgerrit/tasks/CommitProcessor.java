@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.tasks;
  */
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
@@ -33,23 +34,28 @@ import java.util.List;
 
 class CommitProcessor extends SyncProcessor<JSONCommit> {
 
-    CommitProcessor(Context context, GerritURL url) {
-        super(context, url);
+    CommitProcessor(Context context, Intent intent, GerritURL url) {
+        super(context, intent, url);
     }
 
     @Override
-    void insert(JSONCommit commit) {
-        doInsert(getContext(), commit);
+    int insert(JSONCommit commit) {
+        return doInsert(getContext(), commit);
     }
 
     @Override
-    boolean isSyncRequired() {
+    boolean isSyncRequired(Context context) {
         return true;
     }
 
     @Override
     Class<JSONCommit> getType() {
         return JSONCommit.class;
+    }
+
+    @Override
+    int count(JSONCommit data) {
+        return data == null ? 0 : 1;
     }
 
     @Nullable
@@ -59,7 +65,9 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
         return rs.toArray(new Reviewer[rs.size()]);
     }
 
-    protected static void doInsert(Context context, JSONCommit commit) {
+    protected static int doInsert(Context context, JSONCommit commit) {
+        if (commit == null) return 0;
+
         String changeid = commit.getChangeId();
 
         Reviewer[] reviewers = reviewersToArray(commit);
@@ -68,5 +76,7 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
         MessageInfo.insertMessages(context, changeid, commit.getMessagesList());
 
         UserChanges.updateChange(context, commit);
+
+        return 1;
     }
 }

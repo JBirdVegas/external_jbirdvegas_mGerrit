@@ -37,38 +37,47 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.support.v4.widget.SwipeRefreshLayout;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.haarman.listviewanimations.swinginadapters.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
+import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
+import com.jbirdvegas.mgerrit.database.Changes;
+import com.jbirdvegas.mgerrit.database.MoreChanges;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
+import com.jbirdvegas.mgerrit.message.Finished;
+import com.jbirdvegas.mgerrit.message.StartingRequest;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
+import com.jbirdvegas.mgerrit.search.AfterSearch;
+import com.jbirdvegas.mgerrit.search.BeforeSearch;
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
+import com.jbirdvegas.mgerrit.tasks.GerritService.Direction;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public abstract class CardsFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    public static final String KEY_DEVELOPER = "committer_object";
-    public static final String KEY_OWNER = "owner";
-    public static final String KEY_REVIEWER = "reviewer";
+        implements LoaderManager.LoaderCallbacks<Cursor>,
+        SwipeRefreshLayout.OnRefreshListener {
 
     public static final String SEARCH_QUERY = "SEARCH";
+    private static int sChangesLimit = 0;
     protected String TAG = "CardsFragment";
 
     private GerritURL mUrl;
-
-    private RequestQueue mRequestQueue;
 
     private FragmentActivity mParent;
 
@@ -88,18 +97,50 @@ public abstract class CardsFragment extends Fragment
         }
     };
 
+    /* Broadcast receiver to tell the endless adapter we have finished loading when there was
+     * no data */
+    private final BroadcastReceiver finishedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mSwipeLayout != null) mSwipeLayout.setRefreshing(false);
+
+            Intent processed = intent.getParcelableExtra(Finished.INTENT_KEY);
+            Direction direction = (Direction) processed.getSerializableExtra(GerritService.CHANGES_LIST_DIRECTION);
+
+            if (mEndlessAdapter == null || direction == Direction.Newer) return;
+
+            int itemsFetched = intent.getIntExtra(Finished.ITEMS_FETCHED_KEY, 0);
+            if (itemsFetched < sChangesLimit) {
+                // Remove the endless adapter as we have no more changes to load
+                mEndlessAdapter.finishedDataLoading();
+            }
+        }
+    };
+
+    private final BroadcastReceiver startReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mSwipeLayout.setRefreshing(true);
+        }
+    };
+
     private ListView mListView;
     // Adapter that binds data to the listview
     private ChangeListAdapter mAdapter;
     // Wrapper for mAdapter, enabling animations
-    private SingleAnimationAdapter mAnimAdapter = null;
+    private SingleAnimationAdapter mAnimAdapter;
+    // Wrapper for above listview adapters to help provide infinite list functionality
+    private EndlessAdapterWrapper mEndlessAdapter;
+
     // Whether animations have been enabled
-    private boolean mAnimationsEnabled;
+    private Boolean mAnimationsEnabled = null;
+
     private GerritSearchView mSearchView;
+    private SwipeRefreshLayout mSwipeLayout;
+
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         init(savedInstanceState);
@@ -115,7 +156,7 @@ public abstract class CardsFragment extends Fragment
     private void init(Bundle savedInstanceState) {
         mParent = this.getActivity();
         View mCurrentFragment = this.getView();
-        mRequestQueue = Volley.newRequestQueue(mParent);
+        RequestQueue mRequestQueue = Volley.newRequestQueue(mParent);
 
         // Setup the list
         int[] to = new int[] { R.id.commit_card_title, R.id.commit_card_commit_owner,
@@ -126,11 +167,26 @@ public abstract class CardsFragment extends Fragment
                 UserChanges.C_PROJECT, UserChanges.C_UPDATED, UserChanges.C_STATUS };
 
         mListView = (ListView) mCurrentFragment.findViewById(R.id.commit_cards);
+        registerForContextMenu(mListView);
+
         mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card, null, from, to, 0,
                 getQuery());
         mAdapter.setViewBinder(new CommitCardBinder(mParent, mRequestQueue));
 
-        registerForContextMenu(mListView);
+        mEndlessAdapter = new EndlessAdapterWrapper(mParent, mAdapter) {
+            @Override
+            public void loadData() {
+                Set<SearchKeyword> keywords = mSearchView.getLastQuery();
+                String updated = Changes.getOldestUpdatedTime(mParent, getQuery());
+                if (updated != null) {
+                    keywords = SearchKeyword.retainOldest(keywords, new BeforeSearch(updated));
+                }
+                sendRequest(Direction.Older, keywords);
+            }
+        };
+
+        mEndlessAdapter.setEnabled(MoreChanges.areOlderChanges(mParent, getQuery()));
+
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -138,23 +194,25 @@ public abstract class CardsFragment extends Fragment
             }
         });
 
-        /* If animations have been enabled, setup and use an animation adapter, otherwise use
-         *  the regular adapter. The data should always be bound to mAdapter */
-       mAnimationsEnabled = Tools.toggleAnimations(Prefs.getAnimationPreference(mParent),
-               mListView, mAnimAdapter, mAdapter);
+        sChangesLimit = mParent.getResources().getInteger(R.integer.changes_limit);
 
         mUrl = new GerritURL();
-
         // Need the account id of the owner here to maintain FK db constraint
         mUrl.setRequestDetailedAccounts(true);
         mUrl.setStatus(getQuery());
 
         mSearchView = (GerritSearchView) mParent.findViewById(R.id.search);
+
+        mSwipeLayout = (SwipeRefreshLayout) mParent.findViewById(R.id.swipe_container);
+        mSwipeLayout.setOnRefreshListener(this);
+
+        mSwipeLayout.setColorScheme(R.color.text_orange, R.color.text_green, R.color.text_red,
+                android.R.color.transparent);
     }
 
     private void setup()
     {
-        sendRequest();
+        loadNewerChanges();
 
         // We cannot use the search query here as the SearchView may not have been initialised yet.
         getLoaderManager().initLoader(0, null, this);
@@ -166,11 +224,18 @@ public abstract class CardsFragment extends Fragment
         LocalBroadcastManager.getInstance(mParent).registerReceiver(mSearchQueryListener,
                 new IntentFilter(CardsFragment.SEARCH_QUERY));
 
-        boolean animations = Prefs.getAnimationPreference(mParent);
-        if (animations != mAnimationsEnabled) {
-            toggleAnimations(animations);
-        }
+        if (mEndlessAdapter != null) {
+            toggleAnimations(mEndlessAdapter);
+            mListView.setOnScrollListener(mEndlessAdapter);
+        } else toggleAnimations(mAdapter);
+
         EasyTracker.getInstance(getActivity()).activityStart(getActivity());
+
+        LocalBroadcastManager.getInstance(mParent).registerReceiver(startReceiver,
+            new IntentFilter(StartingRequest.TYPE));
+
+        LocalBroadcastManager.getInstance(mParent).registerReceiver(finishedReceiver,
+                new IntentFilter(Finished.TYPE));
     }
 
     @Override
@@ -178,6 +243,9 @@ public abstract class CardsFragment extends Fragment
         super.onStop();
         LocalBroadcastManager.getInstance(mParent).unregisterReceiver(mSearchQueryListener);
         EasyTracker.getInstance(getActivity()).activityStop(getActivity());
+
+        LocalBroadcastManager.getInstance(mParent).unregisterReceiver(startReceiver);
+        LocalBroadcastManager.getInstance(mParent).unregisterReceiver(finishedReceiver);
     }
 
     /**
@@ -187,18 +255,39 @@ public abstract class CardsFragment extends Fragment
      */
     abstract String getQuery();
 
+    private void loadNewerChanges() {
+        Set<SearchKeyword> keywords = null;
+
+        String updated = Changes.getNewestUpdatedTime(mParent, getQuery());
+        if (updated != null && !updated.isEmpty()) {
+            keywords = mSearchView.getLastQuery();
+            SearchKeyword.replaceKeyword(keywords, new AfterSearch(updated));
+        }
+
+        sendRequest(Direction.Newer, keywords);
+    }
+
     /**
      * Start the updater to check for an update if necessary
      */
-    private void sendRequest() {
+    private void sendRequest(Direction direction, Set<SearchKeyword> keywords) {
         if (mNeedsForceUpdate) {
             mNeedsForceUpdate = false;
             SyncTime.clear(mParent);
         }
 
+        GerritURL url = new GerritURL(mUrl);
+        if (sChangesLimit > 0) url.setLimit(sChangesLimit);
+
+        if (keywords == null || keywords.isEmpty()) {
+            keywords = mSearchView.getLastQuery();
+        }
+        url.addSearchKeywords(keywords);
+
         Intent it = new Intent(mParent, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
-        it.putExtra(GerritService.URL_KEY, mUrl);
+        it.putExtra(GerritService.URL_KEY, url);
+        it.putExtra(GerritService.CHANGES_LIST_DIRECTION, direction);
         mParent.startService(it);
     }
 
@@ -220,7 +309,9 @@ public abstract class CardsFragment extends Fragment
         }
 
         mNeedsForceUpdate = forceUpdate;
-        if (this.isAdded() && forceUpdate) sendRequest();
+        if (this.isAdded() && forceUpdate) loadNewerChanges();
+
+
     }
 
     @Override
@@ -232,7 +323,7 @@ public abstract class CardsFragment extends Fragment
         if (!mIsDirty) return;
         mIsDirty = false;
         getLoaderManager().restartLoader(0, null, this);
-        if (mNeedsForceUpdate) sendRequest();
+        if (mNeedsForceUpdate) loadNewerChanges();
     }
 
     private void setMenuItemTitle(MenuItem menuItem, String formatString, String parameters) {
@@ -289,10 +380,23 @@ public abstract class CardsFragment extends Fragment
     /**
      * Enables or disables listview animations. This simply toggles the
      *  adapter, initialising a new adapter if necessary.
-     * @param enable Whether to enable animations on the listview
+     * @param baseAdapter The current adapter for the listview
      */
-    public void toggleAnimations(boolean enable) {
-        mAnimationsEnabled = Tools.toggleAnimations(enable, mListView, mAnimAdapter, mAdapter);
+    public void toggleAnimations(BaseAdapter baseAdapter) {
+        boolean anim = Prefs.getAnimationPreference(mParent);
+        if (mAnimationsEnabled != null && anim == mAnimationsEnabled) return;
+        else mAnimationsEnabled = anim;
+
+        /* If animations have been enabled, setup and use an animation adapter, otherwise use
+         *  the regular adapter. The data should always be bound to mAdapter */
+        BaseAdapter adapter = Tools.toggleAnimations(mAnimationsEnabled, mListView, mAnimAdapter, baseAdapter);
+
+        if (mAnimationsEnabled) {
+            mAnimAdapter = (SingleAnimationAdapter) adapter;
+            if (baseAdapter == mEndlessAdapter) {
+                mEndlessAdapter.setParentAdatper(mAnimAdapter);
+            }
+        }
     }
 
     public void markDirty() { mIsDirty = true; }
@@ -336,6 +440,13 @@ public abstract class CardsFragment extends Fragment
         mAdapter.swapCursor(cursor);
         // Broadcast that we have finished loading changes
         new ChangeLoadingFinished(mParent, getQuery()).sendUpdateMessage();
+
+        if (cursor.getCount() < 1 && mEndlessAdapter != null) {
+            mEndlessAdapter.startDataLoading();
+        }
     }
 
+    @Override public void onRefresh() {
+        refresh(true);
+    }
 }

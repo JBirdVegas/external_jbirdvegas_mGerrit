@@ -17,10 +17,11 @@
   ~  limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="wrap_content"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ListView
         android:id="@+id/commit_cards"
@@ -34,4 +35,4 @@
         android:paddingLeft="@dimen/cards_list_padding_horiz"
         android:paddingRight="@dimen/cards_list_padding_horiz"
         android:paddingTop="@dimen/cards_list_padding_vert"/>
-</LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

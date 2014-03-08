@@ -18,28 +18,36 @@ package com.jbirdvegas.mgerrit.tasks;
  */
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 class LegacyCommitProcessor extends SyncProcessor<JSONCommit[]> {
 
-    LegacyCommitProcessor(Context context, GerritURL url) {
-        super(context, url);
+    LegacyCommitProcessor(Context context, Intent intent, GerritURL url) {
+        super(context, intent, url);
     }
 
     @Override
-    void insert(JSONCommit[] commits) {
-        if (commits.length > 0) CommitProcessor.doInsert(getContext(), commits[0]);
+    int insert(JSONCommit[] commits) {
+        if (commits.length > 0) return CommitProcessor.doInsert(getContext(), commits[0]);
+        return 0;
     }
 
     @Override
-    boolean isSyncRequired() {
+    boolean isSyncRequired(Context context) {
         return true;
     }
 
     @Override
     Class<JSONCommit[]> getType() {
         return JSONCommit[].class;
+    }
+
+    @Override
+    int count(JSONCommit[] data) {
+        if (data != null) return data.length;
+        else return 0;
     }
 }

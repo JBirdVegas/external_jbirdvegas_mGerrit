@@ -18,38 +18,61 @@ package com.jbirdvegas.mgerrit.tasks;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Pair;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.CommitMarker;
+import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
+import com.jbirdvegas.mgerrit.database.MoreChanges;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
-import com.jbirdvegas.mgerrit.objects.Reviewer;
+import com.jbirdvegas.mgerrit.objects.ServerVersion;
+import com.jbirdvegas.mgerrit.tasks.GerritService.Direction;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
 
-    ChangeListProcessor(Context context, GerritURL url) {
-        super(context, url);
-        setResumableUrl();
+    GerritService.Direction mDirection;
+
+    ChangeListProcessor(Context context, Intent intent, GerritURL url) {
+        super(context, intent, url);
+
+        Direction direction = (Direction) getIntent().getSerializableExtra(GerritService.CHANGES_LIST_DIRECTION);
+        if (direction != null) mDirection = direction;
+        else mDirection = Direction.Newer;
+
+        // If we are loading newer changes using an old Gerrit instance, set the sortkey
+        if (mDirection == Direction.Newer) {
+            ServerVersion version = Config.getServerVersion(context);
+            if (version == null || !version.isFeatureSupported("2.8.1")) setResumableUrl();
+        }
     }
 
     @Override
-    void insert(JSONCommit[] commits) {
-        UserChanges.insertCommits(getContext(), Arrays.asList(commits));
+    int insert(JSONCommit[] commits) {
+        if (commits.length > 0) {
+            return UserChanges.insertCommits(getContext(), Arrays.asList(commits));
+        }
+        return 0;
     }
 
     @Override
-    boolean isSyncRequired() {
-        Context context = getContext();
+    boolean isSyncRequired(Context context) {
+        // Are we already fetching changes for this status?
+        if (areFetchingChangesForStatus(getQuery())) return false;
+
+        else if (mDirection == Direction.Older) return true;
+
         long syncInterval = context.getResources().getInteger(R.integer.changes_sync_interval);
         long lastSync = SyncTime.getValueForQuery(context, SyncTime.CHANGES_LIST_SYNC_TIME, getQuery());
         boolean sync = isInSyncInterval(syncInterval, lastSync);
@@ -66,20 +89,34 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
 
     @Override
     void doPostProcess(JSONCommit[] data) {
-        SyncTime.setValue(mContext, SyncTime.CHANGES_LIST_SYNC_TIME,
-                System.currentTimeMillis(), getQuery());
+        String status = getUrl().getStatus();
+        boolean moreChanges = false;
 
-        // Save our spot using the sortkey of the most recent change
-        Pair<String, Integer> change = Changes.getMostRecentChange(mContext, getUrl().getStatus());
-        if (change != null) {
-            String changeID = change.first;
-            if (changeID != null && !changeID.isEmpty()) {
-                JSONCommit commit = findCommit(data, changeID);
-                if (commit != null) {
-                    CommitMarker.markCommit(mContext, commit);
+        if (mDirection == Direction.Older) {
+            if (data.length > 0) {
+                moreChanges = data[data.length - 1].areMoreChanges();
+            }
+        } else {
+            if (data.length > 0) {
+                moreChanges = data[0].areMoreChanges();
+            }
+
+            SyncTime.setValue(mContext, SyncTime.CHANGES_LIST_SYNC_TIME,
+                    System.currentTimeMillis(), getQuery());
+
+            // Save our spot using the sortkey of the most recent change
+            Pair<String, Integer> change = Changes.getMostRecentChange(mContext, status);
+            if (change != null) {
+                String changeID = change.first;
+                if (changeID != null && !changeID.isEmpty()) {
+                    JSONCommit commit = findCommit(data, changeID);
+                    if (commit != null) {
+                        CommitMarker.markCommit(mContext, commit);
+                    }
                 }
             }
         }
+        MoreChanges.insert(mContext, status, mDirection, moreChanges);
     }
 
     /**
@@ -95,8 +132,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
         }
     }
 
-    private JSONCommit findCommit(JSONCommit[] commits,
-                                  @NotNull String changeID) {
+    private JSONCommit findCommit(JSONCommit[] commits, @NotNull String changeID) {
         for (JSONCommit commit : commits) {
             if (changeID.equals(commit.getChangeId()))
                 return commit;
@@ -104,8 +140,20 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
         return null;
     }
 
-    @Nullable
-    protected static Reviewer[] reviewersToArray(JSONCommit commit) {
-        return CommitProcessor.reviewersToArray(commit);
+    private boolean areFetchingChangesForStatus(@NotNull String status) {
+        Class<? extends SyncProcessor> clazz = ChangeListProcessor.class;
+        HashMap<GerritURL, SyncProcessor> processors = GerritService.getRunningProcessors();
+
+        for (Map.Entry<GerritURL, SyncProcessor> entry : processors.entrySet()) {
+            if (entry.getValue().getClass().equals(clazz) && status.equals(entry.getKey().getQuery()))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    int count(JSONCommit[] data) {
+        if (data != null) return data.length;
+        else return 0;
     }
 }

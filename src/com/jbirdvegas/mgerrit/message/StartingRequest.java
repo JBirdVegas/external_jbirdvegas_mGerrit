@@ -44,14 +44,4 @@ public class StartingRequest extends GerritMessage {
     public String getMessage() {
         return getContext().getString(R.string.connection_starting);
     }
-
-    @Override
-    protected Intent packMessage(Map<String, String> map) {
-        Intent intent = new Intent(getType());
-
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            intent.putExtra(entry.getKey(), entry.getValue());
-        }
-        return intent;
-    }
 }

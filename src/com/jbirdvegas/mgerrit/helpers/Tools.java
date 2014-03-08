@@ -104,9 +104,10 @@ public class Tools {
      * Enables or disables listview animations. This simply toggles the
      *  adapter, initialising a new adapter if necessary.
      * @param enable Whether to enable animations on the listview
-     * @return enable
+     * @return The outer-most adapter that was applied to the list view.
+     *  a non-null instance of animAdapter if enable, defaultAdapter otherwise.
      */
-    public static boolean toggleAnimations(boolean enable, ListView lv,
+    public static BaseAdapter toggleAnimations(boolean enable, ListView lv,
                                            SingleAnimationAdapter animAdapter,
                                            BaseAdapter defaultAdapter) {
         if (enable) {
@@ -115,10 +116,12 @@ public class Tools {
                 animAdapter.setAbsListView(lv);
             }
             lv.setAdapter(animAdapter);
+            return animAdapter;
         } else if (defaultAdapter != null) {
             lv.setAdapter(defaultAdapter);
+            return defaultAdapter;
         }
-        return enable;
+        else return null;
     }
 
     /**

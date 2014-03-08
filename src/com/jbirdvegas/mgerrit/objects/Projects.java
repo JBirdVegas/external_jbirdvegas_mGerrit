@@ -56,4 +56,8 @@ public class Projects implements JsonDeserializer<Projects> {
     public List<Project> getAsList() {
         return projects;
     }
+
+    public int getProjectCount() {
+        return projects.size();
+    }
 }
