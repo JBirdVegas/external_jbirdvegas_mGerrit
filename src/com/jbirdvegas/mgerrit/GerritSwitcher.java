@@ -17,16 +17,15 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.URLUtil;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -55,11 +54,10 @@ import java.util.Set;
  *   (android.app.DialogFragment) to be invoked from the Preferences
  *   as there is no PreferenceFragment class in the support library.
  */
-public class GerritSwitcher extends DialogFragment {
+public class GerritSwitcher extends FragmentActivity {
 
     public static final String TAG = "GerritSwitcher";
 
-    private Context mContext;
     private List<GerritDetails> gerritData;
     private ListView mListView;
     private TeamListAdapter mAdapter;
@@ -67,45 +65,66 @@ public class GerritSwitcher extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mContext = this.getActivity();
-        Resources res = mContext.getResources();
+        Resources res = getResources();
         initialiseGerritList(res);
+
+        setTheme(Prefs.getCurrentThemeID(this));
+
+        // Action bar Up affordance
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.gerrit_switcher);
+        setTitle(R.string.choose_gerrit_instance_condensed);
+
+        mListView = (ListView) findViewById(R.id.lv_gerrit_switcher);
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // On long click delete the file and refresh the list
+                return removeItem(i);
+            }
+        });
+        mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        mAdapter = new TeamListAdapter(this, gerritData);
+        mListView.setAdapter(mAdapter);
     }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    protected void onStart() {
+        super.onStart();
 
-        mAdapter = new TeamListAdapter(mContext, gerritData);
+        if (mListView.getSelectedItemPosition() < 0) {
+            // Set the current Gerrit as selected
+            String currentGerrit = Prefs.getCurrentGerrit(this);
+            int pos = mAdapter.findItem(currentGerrit);
+            mListView.setSelection(pos);
+            mListView.setItemChecked(pos, true);
+        }
+    }
 
-        // Set the current Gerrit as selected
-        String currentGerrit = Prefs.getCurrentGerrit(mContext);
-        int pos = mAdapter.findItem(currentGerrit);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.dialog_menu, menu);
+        return true;
+    }
 
-        builder.setSingleChoiceItems(mAdapter, pos, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Not used
-            }
-        })
-                .setTitle(R.string.choose_gerrit_instance)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Only dismiss the dialog if a Gerrit has been selected
-                        if (onCommitSelection()) {
-                            dismiss();
-                        }
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        getDialog().cancel();
-                    }
-                });
-        // Create the AlertDialog object and return it
-        return builder.create();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onCommitSelection();
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.menu_cancel:
+                finish();
+                return true;
+            case R.id.menu_ok:
+                if (onCommitSelection()) finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void initialiseGerritList(Resources res) {
@@ -130,22 +149,9 @@ public class GerritSwitcher extends DialogFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        // This enables the soft keyboard to show up when an EditText field is focused.
-        getDialog().getWindow().
-                clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
-        mListView = ((AlertDialog) getDialog()).getListView();
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // on long click delete the file and refresh the list
-                return removeItem(i);
-            }
-        });
-        mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+    public void onBackPressed() {
+        onCommitSelection();
+        super.onBackPressed();
     }
 
     /**
@@ -157,7 +163,7 @@ public class GerritSwitcher extends DialogFragment {
         String gerritUrl = gerrit.getGerritUrl().trim();
 
         if (gerritName == null || gerritName.length() < 1) {
-            Toast.makeText(mContext, mContext.getString(R.string.invalid_gerrit_name), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_gerrit_name), Toast.LENGTH_SHORT).show();
             return false;
         } else if (isUrlValid(gerritUrl)) {
             // ensure we end with /
@@ -166,10 +172,10 @@ public class GerritSwitcher extends DialogFragment {
             }
             Log.v(TAG, "Saving url: " + gerritUrl);
             GerritTeamsHelper.saveTeam(gerritName, gerritUrl);
-            Prefs.setCurrentGerrit(mContext, gerritUrl);
+            Prefs.setCurrentGerrit(this, gerritUrl);
             return true;
         } else {
-            Toast.makeText(mContext, mContext.getString(R.string.invalid_gerrit_url), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.invalid_gerrit_url), Toast.LENGTH_SHORT).show();
             return false;
         }
     }
@@ -194,7 +200,7 @@ public class GerritSwitcher extends DialogFragment {
             return false;
         }
         // Cannot remove the currently selected Gerrit
-        String setGerrit = Prefs.getCurrentGerrit(mContext);
+        String setGerrit = Prefs.getCurrentGerrit(this);
         String thisItem = mAdapter.getItem(position).getGerritUrl();
         if (setGerrit.equals(thisItem)) {
             return false;

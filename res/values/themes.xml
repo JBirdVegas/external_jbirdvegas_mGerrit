@@ -42,6 +42,8 @@
         <item name="backIcon">@drawable/ic_action_previous_item</item>
         <item name="nextIcon">@drawable/ic_action_next_item</item>
         <item name="backgroundTop">@drawable/border_top</item>
+        <item name="acceptIcon">@drawable/ic_action_accept</item>
+        <item name="cancelIcon">@drawable/ic_action_cancel</item>
     </style>
 
     <style name="Theme.Dark" parent="android:style/Theme.Holo">
@@ -69,5 +71,7 @@
         <item name="backIcon">@drawable/ic_action_previous_item_dark</item>
         <item name="nextIcon">@drawable/ic_action_next_item_dark</item>
         <item name="backgroundTop">@drawable/border_top_dark</item>
+        <item name="acceptIcon">@drawable/ic_action_accept_dark</item>
+        <item name="cancelIcon">@drawable/ic_action_cancel_dark</item>
     </style>
 </resources>
