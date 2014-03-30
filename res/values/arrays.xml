@@ -28,6 +28,7 @@
         <item>PAC-man</item>
         <item>Paranoid Android</item>
         <item>TEAM Gummy</item>
+        <item>SlimRoms</item>
         <item>Wikimedia</item>
     </string-array>
     <string-array name="gerrit_webaddresses" translatable="false">
@@ -41,6 +42,7 @@
         <item>http://review.pac-rom.com/</item>
         <item>https://gerrit.paranoidandroid.co/</item>
         <item>http://review.gummyrom.com/</item>
+        <item>https://gerrit.slimroms.net</item>
         <item>https://gerrit.wikimedia.org/r/</item>
     </string-array>
     <string-array name="status_entries">
