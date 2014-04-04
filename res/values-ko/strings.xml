@@ -35,6 +35,7 @@
   <string name="menu_preferences">설정</string>
   <string name="menu_help">도움말</string>
   <string name="choose_gerrit_instance">팀 Gerrit 선택</string>
+  <string name="choose_gerrit_instance_condensed">Gerrit 소스 선택</string>
   <string name="commit_committer">커밋터</string>
   <string name="commit_author">저자</string>
   <string name="commit_owner">소유자</string>
@@ -149,4 +150,5 @@
   <string name="failed_to_decode_image">이미지 디코딩을 실패했습니다.</string>
   <string name="diff_text_loading">Diff Text 로딩 중</string>
   <string name="diff_image_loading">이미지 로딩 중</string>
+  <string name="loading_changes">더 많은 변경점을 불러오는 중...</string>
 </resources>

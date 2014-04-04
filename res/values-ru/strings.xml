@@ -36,6 +36,7 @@
   <string name="menu_preferences">Настройки</string>
   <string name="menu_help">Помощь</string>
   <string name="choose_gerrit_instance">Выбор Gerrit</string>
+  <string name="choose_gerrit_instance_condensed">Выбор источника Gerrit</string>
   <string name="commit_committer">Участник:</string>
   <string name="commit_author">Автор:</string>
   <string name="commit_owner">Владелец:</string>
@@ -70,8 +71,8 @@
   <string name="aosp_volley_title">Volley AOSP</string>
   <string name="developers_role">Выберите роль разработчика для просмотра</string>
   <string name="commit_reviewer">Обзор изменений</string>
-  <string name="context_menu_view_diff_viewer">Просмотр встроенной программой</string>
-  <string name="context_menu_diff_view_in_browser">Просмотр различий в браузере</string>
+  <string name="context_menu_view_diff_viewer">В программе</string>
+  <string name="context_menu_diff_view_in_browser">В браузере</string>
   <string name="context_menu_change_browser">Просмотр изменений в браузере</string>
   <string name="context_menu_change_viewer">Детали изменений</string>
   <string name="choose_diff_view">Какой вид просмотра различий Вы предпочитаете?</string>
@@ -142,9 +143,9 @@
   <string name="diff_next">Следующий файл</string>
   <string name="diff_options_title">Просмотр изменений</string>
   <string name="diff_options_ask">Спросить</string>
-  <string name="diff_options_internal">Встроенной программой, если доступно</string>
-  <string name="diff_options_external">Браузером</string>
-  <string name="diff_menu_internal_condensed">Встроенная программа</string>
+  <string name="diff_options_internal">В программе, если доступно</string>
+  <string name="diff_options_external">В браузере</string>
+  <string name="diff_menu_internal_condensed">Программа</string>
   <string name="diff_menu_external_condensed">Браузер</string>
   <string name="diff_no_files">В данном изменении двоичных файлов не найдено.</string>
   <string name="failed_to_get_diff">Не удалось загрузить изменения</string>
@@ -152,4 +153,5 @@
   <string name="failed_to_decode_image">Не удалось декодировать изображение</string>
   <string name="diff_text_loading">Загрузка изменений</string>
   <string name="diff_image_loading">Загрузка изображения</string>
+  <string name="loading_changes">Загрузка других изменений&#8230;</string>
 </resources>

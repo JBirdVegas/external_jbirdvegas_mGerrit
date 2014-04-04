@@ -35,6 +35,7 @@
   <string name="menu_preferences">Předvolby</string>
   <string name="menu_help">Nápověda</string>
   <string name="choose_gerrit_instance">Zvolit instanci Gerrit týmu</string>
+  <string name="choose_gerrit_instance_condensed">Zvolit zdroj Gerritu</string>
   <string name="commit_committer">Odeslal:</string>
   <string name="commit_author">Autor:</string>
   <string name="commit_owner">Vlastník:</string>
@@ -151,4 +152,5 @@
   <string name="failed_to_decode_image">Chyba při dekódování obrázku</string>
   <string name="diff_text_loading">Načítání textu změny</string>
   <string name="diff_image_loading">Načítání obrázku</string>
+  <string name="loading_changes">Načítání více změn&#8230;</string>
 </resources>
