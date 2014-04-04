@@ -18,7 +18,6 @@ package com.jbirdvegas.mgerrit;
  */
 
 import android.app.AlertDialog.Builder;
-import android.app.DialogFragment;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -238,8 +237,7 @@ public class GerritControllerActivity extends FragmentActivity {
         handleIntent(intent);
     }
 
-    private void handleIntent(Intent intent)
-    {
+    private void handleIntent(Intent intent) {
         String action = intent.getAction();
         if (!Intent.ACTION_SEARCH.equals(action)) {
             // Searching is already handled when the query text changes.
@@ -265,10 +263,10 @@ public class GerritControllerActivity extends FragmentActivity {
                 refreshTabs();
                 return true;
             case R.id.menu_team_instance:
-                DialogFragment newFragment = new GerritSwitcher();
-                String tag = getResources().getString(R.string.choose_gerrit_instance);
-                // Must use getFragmentManager not getSupportFragmentManager here
-                newFragment.show(getFragmentManager(), tag);
+                intent = new Intent(this, GerritSwitcher.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
                 return true;
             case R.id.menu_projects:
                 intent = new Intent(this, ProjectsList.class);

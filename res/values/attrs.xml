@@ -28,6 +28,8 @@
         <attr name="searchIcon" format="reference"/>
         <attr name="browserIcon" format="reference"/>
         <attr name="viewIcon" format="reference"/>
+        <attr name="acceptIcon" format="reference"/>
+        <attr name="cancelIcon" format="reference"/>
     </declare-styleable>
     <declare-styleable name="LinearLayout">
         <attr name="mainBackgroundColor" format="color"/>

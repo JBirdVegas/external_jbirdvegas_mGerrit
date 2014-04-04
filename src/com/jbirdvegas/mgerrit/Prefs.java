@@ -17,7 +17,6 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +32,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
+
 import org.jetbrains.annotations.Contract;
 
 import java.util.LinkedList;
@@ -173,8 +173,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     }
 
     public static void setCurrentGerrit(Context context, String gerritInstanceUrl) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
                 .putString(GERRIT_KEY, gerritInstanceUrl)
                 .commit();
     }
@@ -188,9 +187,10 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     @Override
     public boolean onPreferenceClick(Preference preference) {
         if (preference.equals(mGerritSwitcher)) {
-            DialogFragment newFragment = new GerritSwitcher();
-            String tag = getResources().getString(R.string.add_gerrit_team);
-            newFragment.show(this.getFragmentManager(), tag);
+            Intent intent = new Intent(mContext, GerritSwitcher.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(intent);
             return true;
         }
         return launchWebsite(preference);
