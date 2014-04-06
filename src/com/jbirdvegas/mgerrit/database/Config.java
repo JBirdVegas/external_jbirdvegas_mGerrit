@@ -98,6 +98,8 @@ public class Config extends DatabaseTable {
      *  This was introduced in Gerrit v2.8.
      */
     public static boolean isDiffSupported(Context context) {
-        return getServerVersion(context).isFeatureSupported(ServerVersion.VERSION_DIFF);
+        ServerVersion serverVersion = getServerVersion(context);
+        if (serverVersion == null) return false;
+        return serverVersion.isFeatureSupported(ServerVersion.VERSION_DIFF);
     }
 }
