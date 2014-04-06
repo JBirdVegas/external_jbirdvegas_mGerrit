@@ -248,7 +248,7 @@ public abstract class CardsFragment extends Fragment
         LocalBroadcastManager.getInstance(mParent).unregisterReceiver(startReceiver);
         LocalBroadcastManager.getInstance(mParent).unregisterReceiver(finishedReceiver);
 
-        mSwipeLayout.setOnRefreshListener(null);
+        mSwipeLayout.setOnRefreshListener((TheApplication) mParent.getApplication());
     }
 
     /**

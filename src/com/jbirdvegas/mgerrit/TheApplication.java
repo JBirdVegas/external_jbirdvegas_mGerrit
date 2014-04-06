@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
@@ -27,7 +28,7 @@ import com.jbirdvegas.mgerrit.tasks.GerritService;
  *  limitations under the License.
  */
 public class TheApplication extends Application
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
+        implements SharedPreferences.OnSharedPreferenceChangeListener, SwipeRefreshLayout.OnRefreshListener {
 
     private SharedPreferences mPrefs;
 
@@ -89,5 +90,10 @@ public class TheApplication extends Application
         Intent it = new Intent(this, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.GetVersion);
         startService(it);
+    }
+
+    @Override
+    public void onRefresh() {
+        // Do nothing.
     }
 }
