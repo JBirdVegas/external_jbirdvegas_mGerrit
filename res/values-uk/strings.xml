@@ -59,7 +59,7 @@
   <string name="stalker_mode_toast">Спостереження за користувачем:</string>
   <string name="share">Поділитись</string>
   <string name="commit_shared_from_mgerrit" formatted="false">Зміни %s відправлено через mGerrit!</string>
-  <string name="found_cards_toast" formatted="false"><! [CDATA [Знайдено змін %d за %d секунд]] ></string>
+  <string name="found_cards_toast" formatted="false"><![CDATA[Знайдено змін %d за %d секунд]]></string>
   <string name="menu_projects">Переглянути за проектом</string>
   <string name="aokp_changelog">Журнал змін AOKP</string>
   <string name="download_update">Завантажити</string>

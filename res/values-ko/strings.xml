@@ -81,7 +81,7 @@
   <string name="view_in_browser">기본 브라우저에서 변경사항 보기</string>
   <string name="moar_info">이 변경사항에 대한 세부 정보</string>
   <string name="commit_shared_from_mgerrit" formatted="false">mGerrit에서 공유된 %s 커밋!</string>
-  <string name="found_cards_toast" formatted="false"><! [CDATA [ %d초 이내에 %d개 커밋 발견]]></string>
+  <string name="found_cards_toast" formatted="false"><![CDATA[%d초 이내에 %d개 커밋 발견]]></string>
   <string name="menu_projects">프로젝트보기</string>
   <string name="aokp_changelog">AOKP 체인지로그</string>
   <string name="download_update">다운로드</string>

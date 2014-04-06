@@ -71,7 +71,8 @@
         <activity android:name=".DiffViewer"
                   android:parentActivityName=".GerritControllerActivity"/>
         <activity android:name=".GerritSwitcher"
-                  android:parentActivityName=".PrefsActivity"/>
+                  android:parentActivityName=".PrefsActivity"
+                  android:windowSoftInputMode="adjustPan"/>
         <service android:name=".tasks.GerritService" />
         <provider
             android:name=".database.DatabaseFactory"
