@@ -70,8 +70,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public abstract class CardsFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor>,
-        SwipeRefreshLayout.OnRefreshListener {
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String SEARCH_QUERY = "SEARCH";
     private static int sChangesLimit = 0;
@@ -102,7 +101,7 @@ public abstract class CardsFragment extends Fragment
     private final BroadcastReceiver finishedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mSwipeLayout != null) mSwipeLayout.setRefreshing(false);
+            mSwipeLayout.setRefreshing(false);
 
             Intent processed = intent.getParcelableExtra(Finished.INTENT_KEY);
             Direction direction = (Direction) processed.getSerializableExtra(GerritService.CHANGES_LIST_DIRECTION);
@@ -137,6 +136,12 @@ public abstract class CardsFragment extends Fragment
 
     private GerritSearchView mSearchView;
     private SwipeRefreshLayout mSwipeLayout;
+    private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            refresh(true);
+        }
+    };
 
 
     @Override
@@ -150,7 +155,22 @@ public abstract class CardsFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.commit_list, container, false);
+        View view = inflater.inflate(R.layout.commit_list, container, false);
+
+        // Its important to attach this reference to every view created
+        // if not then when a CardsFragment gets created for each subsequent
+        // subclass the referenced layout is actually pointing to the original
+        // fragment. Hence all other fragments will throw null when we attempt
+        // to perform actions (like swiping) on the current fragment.
+        setSwipeRefreshLayout(view);
+        return view;
+    }
+
+    private void setSwipeRefreshLayout(View view) {
+        mSwipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        mSwipeLayout.setColorScheme(R.color.text_orange, R.color.text_green, R.color.text_red,
+                android.R.color.transparent);
+        mSwipeLayout.setOnRefreshListener(mRefreshListener);
     }
 
     private void init(Bundle savedInstanceState) {
@@ -202,11 +222,6 @@ public abstract class CardsFragment extends Fragment
         mUrl.setStatus(getQuery());
 
         mSearchView = (GerritSearchView) mParent.findViewById(R.id.search);
-
-        mSwipeLayout = (SwipeRefreshLayout) mParent.findViewById(R.id.swipe_container);
-
-        mSwipeLayout.setColorScheme(R.color.text_orange, R.color.text_green, R.color.text_red,
-                android.R.color.transparent);
     }
 
     private void setup()
@@ -235,8 +250,6 @@ public abstract class CardsFragment extends Fragment
 
         LocalBroadcastManager.getInstance(mParent).registerReceiver(finishedReceiver,
                 new IntentFilter(Finished.TYPE));
-
-        mSwipeLayout.setOnRefreshListener(this);
     }
 
     @Override
@@ -445,9 +458,5 @@ public abstract class CardsFragment extends Fragment
         if (cursor.getCount() < 1 && mEndlessAdapter != null) {
             mEndlessAdapter.startDataLoading();
         }
-    }
-
-    @Override public void onRefresh() {
-        refresh(true);
     }
 }
