@@ -36,6 +36,7 @@
   <string name="menu_preferences">Preferencias</string>
   <string name="menu_help">Ayuda</string>
   <string name="choose_gerrit_instance">Elija instancia de Team Gerrit</string>
+  <string name="choose_gerrit_instance_condensed">Escoja la Fuente Gerrit</string>
   <string name="commit_committer">Responsable:</string>
   <string name="commit_author">Autor:</string>
   <string name="commit_owner">Propietario:</string>
@@ -151,4 +152,5 @@ Cierta información no estará disponible</string>
   <string name="failed_to_decode_image">No se pudo descifrar la imagen</string>
   <string name="diff_text_loading">Cargando texto de diff</string>
   <string name="diff_image_loading">Cargando imagen</string>
+  <string name="loading_changes">Cargando Mas Cambios&#8230;</string>
 </resources>

@@ -25,7 +25,7 @@
   <string name="status_explanation_merged">La modifica è stata unita al suo ramo.</string>
   <string name="status_explanation_abandoned">La modifica è stata abbandonata dal suo proprietario o amministratore.</string>
   <string name="status_explanation_draft">La modifica è una bozza di modifica che consiste solo in un set di patch.</string>
-  <string name="patchset_labels_code_reviewer">Recensione-Codice:</string>
+  <string name="patchset_labels_code_reviewer">Revisione-Codice:</string>
   <string name="patchset_labels_verified_reviewer">Verificato:</string>
   <string name="inserted">Linee inserite:</string>
   <string name="deleted">Linee eliminate:</string>
@@ -35,6 +35,7 @@
   <string name="menu_preferences">Impostazioni</string>
   <string name="menu_help">Help</string>
   <string name="choose_gerrit_instance">Scegli l\'istanza del Team Gerrit</string>
+  <string name="choose_gerrit_instance_condensed">Scegli la sorgente Gerrit</string>
   <string name="commit_committer">Interessato:</string>
   <string name="commit_author">Autore:</string>
   <string name="commit_owner">Proprietario</string>
@@ -46,12 +47,12 @@
   <string name="transferring">Trasferimento di dati JSON codificati...</string>
   <string name="downloading_status" formatted="false">Byte scaricati %d di %d \t, %d %% completato</string>
   <string name="connection_established">Connessione stabilita</string>
-  <string name="initializing_data_transfer">Inizio del trasferimento dati...</string>
+  <string name="initializing_data_transfer">Inizializzazione del trasferimento dati&#8230;</string>
   <string name="communications_error">Errore di comunicazione!!!</string>
   <string name="transferring_json_data">Trasferimento di dati JSON codificati ...</string>
   <string name="open_source_libs">Librerie Open Source</string>
   <string name="nine_old_androids">NoveVecchiAndroid</string>
-  <string name="listview_animations">AnimazioniVisualizzazineLista</string>
+  <string name="listview_animations">AnimazioniVisualizzazioneLista</string>
   <string name="support_library">Supporto alla Libreria v4</string>
   <string name="gson_library">Gson</string>
   <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
@@ -71,7 +72,7 @@
   <string name="commit_reviewer">Recensore Commit</string>
   <string name="context_menu_view_diff_viewer">Utilizza la visualizzazione interna</string>
   <string name="context_menu_diff_view_in_browser">Visualizza la differenza nel browser</string>
-  <string name="context_menu_change_browser">Visualizza cambio nel browser</string>
+  <string name="context_menu_change_browser">Visualizza modifiche nel browser</string>
   <string name="context_menu_change_viewer">Visualizza i dettagli del cambio</string>
   <string name="choose_diff_view">Come vorresti vedere la differenza?</string>
   <string name="context_menu_track_user" formatted="false">Traccia utente %s</string>
@@ -151,4 +152,5 @@
   <string name="failed_to_decode_image">Decodifica immagine fallita</string>
   <string name="diff_text_loading">Caricamento testo differenza</string>
   <string name="diff_image_loading">Caricamento immagine</string>
+  <string name="loading_changes">Caricamento di altri cambiamenti...</string>
 </resources>

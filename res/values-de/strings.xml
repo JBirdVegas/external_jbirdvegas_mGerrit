@@ -36,6 +36,7 @@
   <string name="menu_preferences">Einstellungen</string>
   <string name="menu_help">Hilfe</string>
   <string name="choose_gerrit_instance">Team-Gerrit-Vorgang wählen</string>
+  <string name="choose_gerrit_instance_condensed">Gerrit-Quelle auswählen</string>
   <string name="commit_committer">Überträger:</string>
   <string name="commit_author">Autor:</string>
   <string name="commit_owner">Besitzer:</string>
@@ -129,6 +130,7 @@
   <string name="changelog_loading">Suche nach den neusten Builds&#8230;</string>
   <string name="retry_label">Erneut versuchen</string>
   <string name="header_properties">Eigenschaften</string>
+  <string name="header_commit_message">Änderung einreichen</string>
   <string name="header_changed_files">Geänderte Dateien</string>
   <string name="header_reviewers">Reviewers</string>
   <string name="header_comments">Kommentare</string>
@@ -147,5 +149,7 @@
   <string name="failed_to_get_diff">Diff konnte nicht geladen werden</string>
   <string name="failed_to_load_image">Bild konnte nicht geladen werden</string>
   <string name="failed_to_decode_image">Bild konnte nicht decodiert werden</string>
+  <string name="diff_text_loading">Textdifferenz laden</string>
   <string name="diff_image_loading">Lade Bild</string>
+  <string name="loading_changes">Weitere Änderungen laden&#8230;</string>
 </resources>

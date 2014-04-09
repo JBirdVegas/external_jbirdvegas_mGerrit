@@ -66,21 +66,21 @@
   <string name="current_revision_is_draft_message">La révision courante est un brouillon.
 Certaines informations ne seront pas disponibles</string>
   <string name="comments_card_title">Remarques:</string>
-  <string name="unknown">inconnu</string>
+  <string name="unknown">Inconnu</string>
   <string name="aosp_volley_title">Volet AOSP</string>
   <string name="developers_role">Choisir le rôle du développeur à afficher</string>
   <string name="commit_reviewer">Examinateur de l\'ajout</string>
-  <string name="context_menu_view_diff_viewer">Utilisez la vue interne</string>
+  <string name="context_menu_view_diff_viewer">Utilisez la visionneuse interne</string>
   <string name="context_menu_diff_view_in_browser">Voir les différences dans le navigateur</string>
   <string name="context_menu_change_browser">Voir les changements dans le navigateur</string>
-  <string name="context_menu_change_viewer">Voir les changements en détail</string>
+  <string name="context_menu_change_viewer">Voir le détail des modifications</string>
   <string name="choose_diff_view">Comment souhaitez-vous voir les différences ?</string>
   <string name="context_menu_track_user" formatted="false">Suivre l\'utilisateur %s</string>
   <string name="context_menu_track_project">Suivre le projet</string>
   <string name="stalker_mode_toast">Utilisateur suivi actuellement :</string>
   <string name="share">Partager</string>
   <string name="view_in_browser">Voir cette modification dans le navigateur par défaut</string>
-  <string name="moar_info">Plus d\'informations sur ce changement</string>
+  <string name="moar_info">Plus d\'informations sur cette modification</string>
   <string name="commit_shared_from_mgerrit" formatted="false">Ajout %s partagée à partir de mGerrit !</string>
   <string name="found_cards_toast" formatted="false"><![CDATA[%d ajouts trouvés en %d secondes]]></string>
   <string name="menu_projects">Afficher par projet</string>
@@ -90,14 +90,14 @@ Certaines informations ne seront pas disponibles</string>
   <string name="download_rom_zip">Télécharger le zip de la ROM</string>
   <string name="failed_to_decode_base64">Impossible de décoder la réponse Base64.</string>
   <string name="return_was_null">Aucune réponse... Veuillez afficher dans le navigateur</string>
-  <string name="using_gerrit_toast">Utilisation de Gerrit:</string>
-  <string name="google_now_style_animations_title">Cartes animées</string>
+  <string name="using_gerrit_toast">Utilise Gerrit:</string>
+  <string name="google_now_style_animations_title">Animer les cartes</string>
   <string name="google_now_style_animations_summary">Activer les animations de style Google Now lors de l\'affichage des cartes</string>
   <string name="loading">Chargement diff\u2026</string>
   <string name="add_gerrit_team">Nouveau Gerrit</string>
   <string name="please_enter_gerrit_name">Veuillez entrer le nom de l\'instance Gerrit</string>
-  <string name="please_enter_gerrit_url">S\'il vous plaît entrez l\'url de Gerrit</string>
-  <string name="add_team_url">Nouvelle URL d\'équipe de Gerrit.</string>
+  <string name="please_enter_gerrit_url">Veuillez entrer l\'url de Gerrit</string>
+  <string name="add_team_url">Nouvelle URL d\'équipe Gerrit</string>
   <string name="add_gerrit_name">Nouveau nom d\'équipe Gerrit</string>
   <string name="handshake_fail_message">Le contact a échoué essayez d\'installer un certificat de prestataires sur votre appareil.
 </string>
@@ -108,33 +108,33 @@ Certaines informations ne seront pas disponibles</string>
   <string name="local_timezone_title">Fuseau horaire local</string>
   <string name="server_timezone_summary">Fuseau horaire local du lieu où se trouve le serveur Gerrit.</string>
   <string name="local_timezone_summary">Le fuseau horaire fourni par défaut peut être imprécis. Utilisez cette option pour remplacer le fuseau horaire par défaut.</string>
-  <string name="patchset_labels_change_diff">Changement des différences</string>
+  <string name="patchset_labels_change_diff">Différences entre les modifications</string>
   <string name="remove_content">Supprimer ce contenu</string>
-  <string name="connection_starting">Démarrer la requête Gerrit</string>
+  <string name="connection_starting">Démarrage de la requête Gerrit</string>
   <string name="projects_search_hint">Rechercher des projets</string>
   <string name="changes_search_hint">Rechercher des changements</string>
   <string name="failed_to_find_url">Impossible de trouver l\'URL du projet</string>
-  <string name="change_status_update">Un nouveau changement de statut a été sélectionné</string>
-  <string name="invalid_gerrit_name">Le nom Gerrit appliqué était invalide</string>
-  <string name="invalid_gerrit_url">L\'url Gerrit n\'est pas valide</string>
+  <string name="change_status_update">Un nouveau statut de modification a été sélectionné</string>
+  <string name="invalid_gerrit_name">Le nom Gerrit entré était invalide</string>
+  <string name="invalid_gerrit_url">L\'URL Gerrit entrée était invalide</string>
   <string name="gerrit_protocol">https://</string>
   <string name="change_detail_heading" formatted="false">Changement %d</string>
   <string name="commit_branch">Branche:</string>
   <string name="commit_topic">Sujet :</string>
-  <string name="change_theme">selectionnez un thème</string>
-  <string name="theme_light">Thème Clair</string>
+  <string name="change_theme">Sélectionnez un thème</string>
+  <string name="theme_light">Thème clair</string>
   <string name="theme_dark">Thème sombre</string>
   <string name="gerrit_help">Aide pour Gerrit</string>
   <string name="not_connected">Il n\'y a aucune connexion réseau pour l\'instant. Réessayez plus tard.</string>
   <string name="aokp_changelog_card_title">Versions récentes AOKP</string>
   <string name="changelog_loading">Recherche des dernières versions</string>
-  <string name="retry_label">Réessayez</string>
-  <string name="header_properties">Propriétées</string>
+  <string name="retry_label">Réessayer</string>
+  <string name="header_properties">Propriétés</string>
   <string name="header_commit_message">Valider le Message</string>
   <string name="header_changed_files">Fichiers modifiés</string>
   <string name="header_reviewers">Examinateurs</string>
   <string name="header_comments">Commentaires</string>
-  <string name="commit_updated">MàJ:</string>
+  <string name="commit_updated">Mis à jour:</string>
   <string name="renamed_label">Renommés à partir :</string>
   <string name="no_changelog">Il n\'y a pas de nouvelle version pour votre appareil</string>
   <string name="diff_back">Fichier précédent</string>
@@ -145,10 +145,10 @@ Certaines informations ne seront pas disponibles</string>
   <string name="diff_options_external">Dans le navigateur</string>
   <string name="diff_menu_internal_condensed">Visionneuse</string>
   <string name="diff_menu_external_condensed">Navigateur</string>
-  <string name="diff_no_files">Aucun fichier non binaires n\'a été trouvés dans ce changement.</string>
+  <string name="diff_no_files">Aucun fichier non-binaire n\'a été trouvé dans cette modification.</string>
   <string name="failed_to_get_diff">Impossible de charger le diff</string>
   <string name="failed_to_load_image">Échec du chargement de l\'image</string>
   <string name="failed_to_decode_image">N\'a pas pu décoder l\'image</string>
-  <string name="diff_text_loading">Chargement du texte de diff</string>
+  <string name="diff_text_loading">Chargement du texte diff</string>
   <string name="diff_image_loading">Chargement de l\'image</string>
 </resources>

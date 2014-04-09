@@ -17,14 +17,19 @@
   ~  limitations under the License.
   -->
 <resources>
+  <string name="reviewable">レビュー</string>
+  <string name="merged">マージ済み</string>
+  <string name="abandoned">却下</string>
   <string name="status_explanation_new">変更はレビュー中です。</string>
   <string name="status_explanation_submitted">変更は提出されてマージ中です。ひとつ以上の依存関係が解消されるのを待っています。</string>
   <string name="status_explanation_merged">変更はブランチにマージされました。</string>
   <string name="status_explanation_abandoned">変更はオーナーまたは管理者によって取り下げられました。</string>
+  <string name="status_explanation_draft">変更は草案のパッチセットのみで構成された、草案の段階の変更です。</string>
   <string name="patchset_labels_code_reviewer">コードレビュー:</string>
   <string name="patchset_labels_verified_reviewer">検証:</string>
   <string name="inserted">挿入行:</string>
   <string name="deleted">削除行:</string>
+  <string name="binary_file">バイナリファイル</string>
   <string name="none_found">見つかりません</string>
   <string name="please_try_again">戻って再度試してください</string>
   <string name="menu_preferences">設定</string>
@@ -45,6 +50,12 @@
   <string name="communications_error">通信エラー!!!</string>
   <string name="transferring_json_data">JSONデータ変換中...</string>
   <string name="open_source_libs">オープンソースライブラリー</string>
+  <string name="nine_old_androids">NineOldAndroids</string>
+  <string name="listview_animations">ListViewAnimations</string>
+  <string name="support_library">ライブラリv4をサポート</string>
+  <string name="gson_library">Gson</string>
+  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
+  <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">ステータス説明</string>
   <string name="explain_status_summary">ステータスタブの概要説明</string>
   <string name="menu_gerrit_instance">Gerritインスタンス</string>
@@ -60,11 +71,17 @@
   <string name="aosp_volley_title">AOSP Volley</string>
   <string name="developers_role">参照する変更を選択</string>
   <string name="commit_reviewer">コミットレビュアー</string>
-  <string name="context_menu_view_diff_viewer">ダイアログ</string>
+  <string name="context_menu_view_diff_viewer">内部ビューアを使用</string>
   <string name="context_menu_diff_view_in_browser">ブラウザ</string>
+  <string name="context_menu_change_browser">ブラウザで変更を表示</string>
+  <string name="context_menu_change_viewer">変更の詳細を表示</string>
   <string name="choose_diff_view">diff参照方法を選択</string>
+  <string name="context_menu_track_user" formatted="false">ユーザーを追跡 %s</string>
+  <string name="context_menu_track_project">プロジェクトを追跡</string>
   <string name="stalker_mode_toast">ユーザー追跡中:</string>
   <string name="share">共有</string>
+  <string name="view_in_browser">デフォルトブラウザで変更を確認</string>
+  <string name="moar_info">この変更に関する詳細な情報</string>
   <string name="commit_shared_from_mgerrit" formatted="false">コミット %s mGerritから共有!</string>
   <string name="found_cards_toast" formatted="false"><![CDATA[%dコミットを %d秒で見つけました]]></string>
   <string name="menu_projects">プロジェクト一覧</string>
@@ -92,4 +109,47 @@
   <string name="server_timezone_summary">Gerritサーバーが設置されている場所のタイムゾーン</string>
   <string name="local_timezone_summary">デフォルトで提供されるタイムゾーンが不正確な場合は、ローカルタイムゾーンを設定してください
     </string>
+  <string name="patchset_labels_change_diff">相違点を変更</string>
+  <string name="remove_content">このコンテンツを削除</string>
+  <string name="connection_starting">Gerritリクエストを開始</string>
+  <string name="projects_search_hint">プロジェクトを検索</string>
+  <string name="changes_search_hint">変更点を検索</string>
+  <string name="failed_to_find_url">プロジェクトのURLが見つかりません</string>
+  <string name="change_status_update">新しい変更ステータスが選択されました</string>
+  <string name="invalid_gerrit_name">Gerrit名の設定が無効です</string>
+  <string name="invalid_gerrit_url">GerritのURLの設定が無効です</string>
+  <string name="gerrit_protocol">https://</string>
+  <string name="change_detail_heading" formatted="false">%dを変更</string>
+  <string name="commit_branch">ブランチ:</string>
+  <string name="commit_topic">トピック:</string>
+  <string name="change_theme">テーマを選択</string>
+  <string name="theme_light">明るいテーマ</string>
+  <string name="theme_dark">暗いテーマ</string>
+  <string name="gerrit_help">Gerritのヘルプ</string>
+  <string name="not_connected">ネットワークに接続されていません。後で再試行してください。</string>
+  <string name="aokp_changelog_card_title">最近のAOKPビルド</string>
+  <string name="changelog_loading">最近のAOKPビルドを探しています&#8230;</string>
+  <string name="retry_label">再試行</string>
+  <string name="header_properties">プロパティ</string>
+  <string name="header_commit_message">コミットメッセージ</string>
+  <string name="header_changed_files">変更されたファイル</string>
+  <string name="header_reviewers">レビュワー</string>
+  <string name="header_comments">コメント</string>
+  <string name="commit_updated">更新日:</string>
+  <string name="renamed_label">更新者:</string>
+  <string name="no_changelog">ご利用のデバイス向けのビルドはありません</string>
+  <string name="diff_back">前のファイル</string>
+  <string name="diff_next">次のファイル</string>
+  <string name="diff_options_title">変更差分を表示</string>
+  <string name="diff_options_ask">質問</string>
+  <string name="diff_options_internal">可能な場合は内部ビューアを使用</string>
+  <string name="diff_options_external">ブラウザを使用</string>
+  <string name="diff_menu_internal_condensed">ビューア</string>
+  <string name="diff_menu_external_condensed">ブラウザ</string>
+  <string name="diff_no_files">この更新には非バイナリファイルはありません。</string>
+  <string name="failed_to_get_diff">差分の読み込みに失敗しました</string>
+  <string name="failed_to_load_image">画像の読み込みに失敗しました</string>
+  <string name="failed_to_decode_image">画像のデコードに失敗しました</string>
+  <string name="diff_text_loading">差分テキストを読み込み中</string>
+  <string name="diff_image_loading">画像を読み込み中</string>
 </resources>

@@ -18,34 +18,35 @@
   -->
 <resources>
   <string name="reviewable">පරීක්ෂා කරනව</string>
-  <string name="merged">ඒකාබද්ධ</string>
+  <string name="merged">ඒකාබද්ධිත</string>
   <string name="abandoned">අත්හැර දැමූ</string>
   <string name="status_explanation_new">වෙනස තවම පරීක්ෂා වෙමින් පවතී.</string>
-  <string name="status_explanation_submitted">වෙනස ඒකාබද්ධ කිරීම සඳහා යොමු කර ඇත. සමහර විට එය තවත් පරාධීන වෙනස්කම් වෙනුවෙන් බලා සිටිනවා විය හැක.</string>
+  <string name="status_explanation_submitted">වෙනස ඒකාබද්ධ කිරීම සඳහා යොමු කර ඇත. සමහර විට එය තව පරාධීන වෙනස්කම් හෝ වෙනස්කමක් වෙනුවෙන් බලා සිටිනවා විය හැක.    </string>
   <string name="status_explanation_merged">වෙනස අදාළ ශාකාවට ඒකාබද්ධ කර ඇත.</string>
-  <string name="status_explanation_abandoned">අයිතිකරු හෝ පාලකයා විසින් වෙනස අත්හැර දමා ඇත.</string>
+  <string name="status_explanation_abandoned">හිමිකරු හෝ පරිපාලකයා විසින් වෙනස අත්හැර දමා ඇත.</string>
   <string name="status_explanation_draft">වෙනස්කම අණ්ඩ කට්ටල අන්තර්ගත වූ කටු සටහනකි.</string>
   <string name="patchset_labels_code_reviewer">කේත-පරීක්ෂාව:</string>
-  <string name="patchset_labels_verified_reviewer">ස්ථිර කළා:</string>
+  <string name="patchset_labels_verified_reviewer">තහවුරු කළා:</string>
   <string name="inserted">එකතු කල පේලි:</string>
   <string name="deleted">ඉවත් කල පේලි:</string>
-  <string name="binary_file">ද්ව්‍යාන්ගී ලේඛණය</string>
+  <string name="binary_file">ද්ව්‍යංගී ලේඛණය</string>
   <string name="none_found">කිසිවක් හමුවූයේ නැත</string>
   <string name="please_try_again">කරුණාකර පසුපසට ගොස් නැවත උත්සහ කරන්න</string>
   <string name="menu_preferences">මනාප</string>
   <string name="menu_help">උදව්</string>
   <string name="choose_gerrit_instance">Gerrit සමුහයේ ප්‍රස්තාව තෝරන්න</string>
+  <string name="choose_gerrit_instance_condensed">Gerrit මූලාශ්‍රය තෝරන්න</string>
   <string name="commit_committer">පවරා දෙන්නා:</string>
   <string name="commit_author">කතෘ:</string>
   <string name="commit_owner">හිමිකරු:</string>
-  <string name="failed_to_parse_json_response">ලැබුණු ප්‍රතිචාරය අඳුනාගැනීමට අපොහොසත්විනි</string>
+  <string name="failed_to_parse_json_response">ලැබුණු ප්‍රතිචාරය විශ්ලේෂණයට අපොහොසත්විනි</string>
   <string name="show_exception">හැර දැමීම පෙන්වන්න</string>
   <string name="exit">පිටවීම</string>
-  <string name="gerrit_call_failed">Gerrit ප්‍රස්තාවෙන් වැදගත් ප්‍රතිචාරයක් ගැනීමට අපොහොසත්විනි, කරුණාකර ඔබේ සම්බන්දතාවය පරීක්ෂා කර නැවත උත්සහ කරන්න.    </string>
-  <string name="establishing_connection">සම්බන්දතාවය ස්ථාපිත කරමින්&#8230;</string>
+  <string name="gerrit_call_failed">Gerrit ප්‍රස්තාවෙන් වැදගත් ප්‍රතිචාරයක් ගැනීමට අපොහොසත්විනි, කරුණාකර ඔබේ සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සහ කරන්න.    </string>
+  <string name="establishing_connection">සම්බන්ධතාව ස්ථාපිත කරමින්&#8230;</string>
   <string name="transferring">JSON කේතාංකිත දත්ත මාරුකරමින්&#8230;</string>
   <string name="downloading_status" formatted="false">%d න් %d ක් බයිට භාගත කරන ලදී\t%d%% සම්පූර්ණයි</string>
-  <string name="connection_established">සම්බන්දය සංස්තාපිතයි</string>
+  <string name="connection_established">සම්බන්ධය සංස්තාපිතයි</string>
   <string name="initializing_data_transfer">දත්ත මාරුව අරඹමින්&#8230;</string>
   <string name="communications_error">සන්නිවේදනයේ දෝෂයක්!!!</string>
   <string name="transferring_json_data">JSON කේතාංකිත දත්ත මාරුකරමින්&#8230;</string>
@@ -63,11 +64,11 @@
   <string name="author_gravatar">කතෘගේ Gravatar ගිණුමේ අනුරුව</string>
   <string name="committer_gravatar">භාරකරුගේ Gravatar ගිණුමේ අනුරුව</string>
   <string name="menu_refresh">නැවුම් කරන්න</string>
-  <string name="current_revision_is_draft_message">පවතින ප්‍රතිශෝදනය කෙටුම්පතකි. සමහර තොරතුරු නොතිබීමට පුළුවනි    </string>
+  <string name="current_revision_is_draft_message">පවතින ප්‍රතිශෝධනය කෙටුම්පතකි. සමහර තොරතුරු නොතිබීමට පුළුවනි    </string>
   <string name="comments_card_title">විවේචන:</string>
   <string name="unknown">නොදනී</string>
   <string name="aosp_volley_title">AOSP ගේ වෙඩිමුරය</string>
-  <string name="developers_role">ප්රික්සීම සඳහා වර්ධකගේ භූමිකාව තෝරන්න</string>
+  <string name="developers_role">පිරික්සීම සඳහා වර්ධකගේ භූමිකාව තෝරන්න</string>
   <string name="commit_reviewer">පැවරුම් විචාරක</string>
   <string name="context_menu_view_diff_viewer">අභ්‍යන්තර විචාරකයෙක් යොදාගන්න</string>
   <string name="context_menu_diff_view_in_browser">වෙනස්කම් බ්‍රවුසරයෙන් බලන්න</string>
@@ -78,9 +79,9 @@
   <string name="context_menu_track_project">ව්‍යාපෘතිය හඹායන්න</string>
   <string name="stalker_mode_toast">දැන් පීඩා දෙන පරිශීලක:</string>
   <string name="share">බෙදාහදාගන්න</string>
-  <string name="view_in_browser">මෙම වෙනස සුපුරුදු බ්‍රවුසරයේ බලන්න</string>
+  <string name="view_in_browser">මෙම වෙනස පෙරනිමි බ්‍රවුසරයේ බලන්න</string>
   <string name="moar_info">මෙම වෙනස පිලිබඳ වඩාත් සවිස්තරාත්මක තොරතුරු</string>
-  <string name="commit_shared_from_mgerrit" formatted="false">mGerrit මගින් පැවරුම් %s හවුල් කරගත්තා!</string>
+  <string name="commit_shared_from_mgerrit" formatted="false">mGerrit මගින් පැවරුම් %s හවුල් කරගන්නා ලදී!</string>
   <string name="found_cards_toast" formatted="false"><![CDATA[තත්පර %d න් පැවරුම් %d සොයාගන්නා ලදී]]></string>
   <string name="menu_projects">ව්‍යාපෘතිය අනුව බලන්න</string>
   <string name="aokp_changelog">AOKP වෙනස්කම් ලොගය</string>
@@ -89,23 +90,23 @@
   <string name="download_rom_zip">ROM zip ගොනුව බාගන්න</string>
   <string name="failed_to_decode_base64">64පාදයේ ප්‍රතිචාරය විකේතනයට අපොහොසත්විනි.</string>
   <string name="return_was_null">ප්‍රතිචාරය ශුන්‍යයි&#8230; කරුණාකර බ්‍රවුසරයේ බලන්න</string>
-  <string name="using_gerrit_toast">Gerrit භාවිතාවේ:</string>
+  <string name="using_gerrit_toast">Gerrit භාවිතයෙන්:</string>
   <string name="google_now_style_animations_title">කාඩ්පත් සජීවීකරණය</string>
   <string name="google_now_style_animations_summary">කාඩ්පත් අඳින අතරතුර ගූගල් දැන් විලාසයේ සජීවන සක්‍රීය කරන්න</string>
-  <string name="loading">වෙනස්කම්\u2026 පුරවමින්</string>
+  <string name="loading">වෙනස්කම්\u2026 පූරණයවෙමින්</string>
   <string name="add_gerrit_team">නව Gerrit</string>
   <string name="please_enter_gerrit_name">කරුණාකර Gerrit ප්‍රස්තාවේ නම ඇතුලත් කරන්න</string>
   <string name="please_enter_gerrit_url">කරුණාකර Gerrit සබැඳිය ඇතුලත් කරන්න</string>
   <string name="add_team_url">නව Gerrit සමුහ සබැඳිය</string>
   <string name="add_gerrit_name">නව Gerrit සමුහ නාමය</string>
-  <string name="handshake_fail_message">අන්තර් සන්නිවේදනය බිඳවැටුනි, ප්‍රතිපාදකයාගේ සහතිකය ස්ථාපනයකර උත්සාහ කරන්න.    </string>
+  <string name="handshake_fail_message">අන්තර් සන්නිවේදනය බිඳවැටුනි, ප්‍රතිපාදකයාගේ සහතිකය ඔබේ උපාංගයේ ස්ථාපනයකර උත්සාහ කරන්න.    </string>
   <string name="caused_by">හේතුව වූයේ:</string>
   <string name="at">හි</string>
   <string name="locales">වේලා කලාපය ප්‍රාදේශීයකරණය</string>
   <string name="server_timezone_title">සේවාදායක වේලා කලාපය</string>
   <string name="local_timezone_title">ප්‍රාදේශීය වේලා කලාපය</string>
   <string name="server_timezone_summary">Gerrit සේවාදායකයා පිහිටා ඇති ස්ථානයේ ප්‍රාදේශීය වේලා කලාපය.</string>
-  <string name="local_timezone_summary">සුපුරුදු වේලා කලාපය සාවද්‍ය විය හැක. සුපුරුදු ප්‍රාදේශීය වේලා කලාපය අතික්‍රමණය සඳහා මෙය භාවිතා කරන්න.    </string>
+  <string name="local_timezone_summary">පෙරනිමි වේලා කලාපය සාවද්‍ය විය හැක. පෙරනිමි ප්‍රාදේශීය වේලා කලාපය අතික්‍රමණය සඳහා මෙය භාවිතා කරන්න.    </string>
   <string name="patchset_labels_change_diff">වෙනසේ මතභේද</string>
   <string name="remove_content">මෙම අන්තර්ගතය ඉවත්කරන්න</string>
   <string name="connection_starting">Gerrit ආයාචනා අරඹමින්</string>
@@ -123,7 +124,7 @@
   <string name="theme_light">සැහැල්ලු තේමාව</string>
   <string name="theme_dark">අඳුරු තේමාව</string>
   <string name="gerrit_help">Gerrit උදව්</string>
-  <string name="not_connected">දැනට ජාල සම්බන්දතාවයක් නොමැත. පසුව උත්සාහ කරන්න.</string>
+  <string name="not_connected">දැනට ජාල සම්බන්ධතාවයක් නොමැත. පසුව උත්සාහ කරන්න.</string>
   <string name="aokp_changelog_card_title">මෑතකාලීන AOKP ගොඩනැගීම්</string>
   <string name="changelog_loading">මෑතකාලීන ගොඩනැගීම් සොයමින්&#8230;</string>
   <string name="retry_label">නැවත උත්සාහ කරන්න</string>
@@ -134,9 +135,9 @@
   <string name="header_comments">විවේචන</string>
   <string name="commit_updated">යාවත්කාලීනවූ:</string>
   <string name="renamed_label">නැවත නම් කලේ:</string>
-  <string name="no_changelog">ඔබගේ උපාංගය සඳහා මෑතකාලීන ගොඩනැගීම් නොමැත</string>
+  <string name="no_changelog">ඔබේ උපාංගය සඳහා මෑතකාලීන ගොඩනැගීම් නොමැත</string>
   <string name="diff_back">පෙර ලේඛණය</string>
-  <string name="diff_next">ඊළඟ ලේඛණය</string>
+  <string name="diff_next">ඊළග ලේඛණය</string>
   <string name="diff_options_title">වෙනසේ මතභේද පෙන්වන්න</string>
   <string name="diff_options_ask">අහන්න</string>
   <string name="diff_options_internal">තිබෙන විට අභ්‍යන්තර පෙන්වනයේ</string>
@@ -144,9 +145,10 @@
   <string name="diff_menu_internal_condensed">පෙන්වනයේ</string>
   <string name="diff_menu_external_condensed">බ්‍රවුසරය</string>
   <string name="diff_no_files">මෙම වෙනසේ ද්වීමය නොවන ලේඛණ කිසිවක් නැත.</string>
-  <string name="failed_to_get_diff">වෙනස්කම් ලබාගත නොහැක</string>
-  <string name="failed_to_load_image">අනුරුව ලබාගත නොහැක</string>
+  <string name="failed_to_get_diff">වෙනස්කම් පූරණයට අසමත්වුනි</string>
+  <string name="failed_to_load_image">අනුරුව පූරණයට අසමත්වුනි</string>
   <string name="failed_to_decode_image">අනුරුව විකේතනය කල නොහැක</string>
-  <string name="diff_text_loading">වෙනසේ පෙළ ලබාගනිමින්</string>
-  <string name="diff_image_loading">අනුරුව ලබාගනිමින්</string>
+  <string name="diff_text_loading">වෙනසේ පෙළ පූරණයවෙමින්</string>
+  <string name="diff_image_loading">අනුරුව පූරණයවෙමින්</string>
+  <string name="loading_changes">තවත් වෙනස්කම් පූරණයවෙමින්&#8230;</string>
 </resources>

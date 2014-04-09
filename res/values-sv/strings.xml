@@ -35,6 +35,7 @@
   <string name="menu_preferences">Inställningar</string>
   <string name="menu_help">Hjälp</string>
   <string name="choose_gerrit_instance">Välj Team Gerrit instans</string>
+  <string name="choose_gerrit_instance_condensed">Välj Gerrit-källa</string>
   <string name="commit_committer">Inskickare:</string>
   <string name="commit_author">Författare:</string>
   <string name="commit_owner">Ägare:</string>
@@ -150,4 +151,5 @@ Viss information kommer inte vara tillgänglig</string>
   <string name="failed_to_decode_image">Det gick inte att avkoda bild</string>
   <string name="diff_text_loading">Laddar diff text</string>
   <string name="diff_image_loading">Laddar bild</string>
+  <string name="loading_changes">Laddar fler förändringar&#8230;</string>
 </resources>
