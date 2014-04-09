@@ -28,6 +28,7 @@
         <item>PAC-man</item>
         <item>Paranoid Android</item>
         <item>TEAM Gummy</item>
+        <item>WikiMedia</item>
     </string-array>
     <string-array name="gerrit_webaddresses" translatable="false">
         <item>http://gerrit.aokp.co/</item>
@@ -40,6 +41,7 @@
         <item>http://review.pac-rom.com/</item>
         <item>https://gerrit.paranoidandroid.co/</item>
         <item>http://review.gummyrom.com/</item>
+        <item>https://gerrit.wikimedia.org/r/</item>
     </string-array>
     <string-array name="status_entries">
         <item>@string/reviewable</item>
