@@ -30,7 +30,7 @@
   <string name="inserted">Linee inserite:</string>
   <string name="deleted">Linee eliminate:</string>
   <string name="binary_file">File binario</string>
-  <string name="none_found">Non Trovato</string>
+  <string name="none_found">Nessuno trovato</string>
   <string name="please_try_again">Si prega di tornare indietro e riprovare</string>
   <string name="menu_preferences">Impostazioni</string>
   <string name="menu_help">Help</string>
@@ -51,8 +51,8 @@
   <string name="communications_error">Errore di comunicazione!!!</string>
   <string name="transferring_json_data">Trasferimento di dati JSON codificati ...</string>
   <string name="open_source_libs">Librerie Open Source</string>
-  <string name="nine_old_androids">NoveVecchiAndroid</string>
-  <string name="listview_animations">AnimazioniVisualizzazioneLista</string>
+  <string name="nine_old_androids">NineOldAndroids</string>
+  <string name="listview_animations">ListViewAnimations</string>
   <string name="support_library">Supporto alla Libreria v4</string>
   <string name="gson_library">Gson</string>
   <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
@@ -87,7 +87,7 @@
   <string name="aokp_changelog">Changelog AOKP</string>
   <string name="download_update">Download</string>
   <string name="please_select_update_for_range">Si prega di selezionare il file di cui visualizzare il changelog</string>
-  <string name="download_rom_zip">Scarica il file zip della ROM</string>
+  <string name="download_rom_zip">Scarica la ROM in zip</string>
   <string name="failed_to_decode_base64">Impossibile decodificare la risposta Base64.</string>
   <string name="return_was_null">Nessuna risposta... Si prega di visualizzare sul browser</string>
   <string name="using_gerrit_toast">Chi sta utilizzando Gerrit:</string>
@@ -101,7 +101,7 @@
   <string name="add_gerrit_name">Nuovo nome del team Gerrit</string>
   <string name="handshake_fail_message">Stretta di mano fallita. Provare ad installare il certificato del fornitore sul dispositivo.</string>
   <string name="caused_by">Causato da:</string>
-  <string name="at">a</string>
+  <string name="at">alle</string>
   <string name="locales">Fuso orario localizzazione </string>
   <string name="server_timezone_title">Fuso orario Server</string>
   <string name="local_timezone_title">Fuso orario locale</string>
@@ -150,7 +150,7 @@
   <string name="failed_to_get_diff">Caricamento differenza non riuscito</string>
   <string name="failed_to_load_image">Caricamento immagine fallito</string>
   <string name="failed_to_decode_image">Decodifica immagine fallita</string>
-  <string name="diff_text_loading">Caricamento testo differenza</string>
+  <string name="diff_text_loading">Caricamento testo differente</string>
   <string name="diff_image_loading">Caricamento immagine</string>
   <string name="loading_changes">Caricamento di altri cambiamenti...</string>
 </resources>

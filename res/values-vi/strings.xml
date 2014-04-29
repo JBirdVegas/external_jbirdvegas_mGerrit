@@ -16,4 +16,87 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-<resources/>
+<resources>
+  <string name="reviewable">Đánh giá</string>
+  <string name="merged">Đã ghép</string>
+  <string name="abandoned">Đã bỏ</string>
+  <string name="status_explanation_new">Thay đổi vẫn đang được xem xét.</string>
+  <string name="status_explanation_submitted">Thay đổi đã được gửi và đang chờ ghép. Nó có thể đang chờ một hoặc nhiều phụ thuộc.
+    </string>
+  <string name="status_explanation_merged">Thay đổi đã được ghép vào nhánh.</string>
+  <string name="status_explanation_abandoned">Thay đổi đã bị huỷ bởi chủ sở hữu hoặc quản trị viên.</string>
+  <string name="status_explanation_draft">Chỉ là một thay đổi nháp bao gồm các bộ vá.</string>
+  <string name="patchset_labels_code_reviewer">Đánh giá-Mã:</string>
+  <string name="patchset_labels_verified_reviewer">Đã xác nhận:</string>
+  <string name="inserted">Dòng đã chèn:</string>
+  <string name="deleted">Dòng đã xoá:</string>
+  <string name="binary_file">Tập tin nhị phân</string>
+  <string name="none_found">Không tìm thấy</string>
+  <string name="please_try_again">Vui lòng quay lại và thử lại</string>
+  <string name="menu_preferences">Tuỳ chọn</string>
+  <string name="menu_help">Trợ giúp</string>
+  <string name="choose_gerrit_instance">Chọn Team Gerrit Instance</string>
+  <string name="choose_gerrit_instance_condensed">Chọn Gerrit Source</string>
+  <string name="commit_committer">Người cam kết:</string>
+  <string name="commit_author">Tác giả:</string>
+  <string name="commit_owner">Chủ sở hữu:</string>
+  <string name="failed_to_parse_json_response">Không thể phân tích phản hồi từ</string>
+  <string name="show_exception">Hiện ngoại lệ</string>
+  <string name="exit">Thoát</string>
+  <string name="gerrit_call_failed">Không thể lấy phản hỗi hữu dụng từ mẫu Gerrit, vui lòng kiểm tra kết nối và thử lại.
+    
+ </string>
+  <string name="establishing_connection">Đang thiết lập kết nối...</string>
+  <string name="transferring">Đang truyền dữ liệu JSON đã mã hoá...</string>
+  <string name="downloading_status" formatted="false">Đã tải xuống %d trên %d byte\t%d%% đã hoàn tất</string>
+  <string name="connection_established">Đã thiết lập kết nối</string>
+  <string name="initializing_data_transfer">Đang khởi tạo truyền tải dữ liệu...</string>
+  <string name="communications_error">LỖI liên lạc!!!</string>
+  <string name="transferring_json_data">Đang truyền dữ liệu JSON đã mã hoá&#8230;</string>
+  <string name="open_source_libs">Thư viện mã nguồn mở</string>
+  <string name="nine_old_androids">NineOldAndroids</string>
+  <string name="listview_animations">ListViewAnimations</string>
+  <string name="support_library">Hỗ trợ thư viện p.b 4</string>
+  <string name="gson_library">Gson</string>
+  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
+  <string name="jodatime">Joda-Time</string>
+  <string name="explain_status_title">Giải thích trạng thái</string>
+  <string name="explain_status_summary">Giải thích cho ý nghĩa các thẻ Trạng thái</string>
+  <string name="menu_gerrit_instance">Gerrit Instance</string>
+  <string name="owner_gravatar">Ảnh hồ sơ Gravatar chủ sở hữu</string>
+  <string name="author_gravatar">Ảnh hồ sơ Gravatar tác giả</string>
+  <string name="committer_gravatar">Ảnh hồ sơ Gravatar người cam kết</string>
+  <string name="menu_refresh">Làm mới</string>
+  <string name="current_revision_is_draft_message">Phiên bản hiện tại chỉ là nháp.
+Một số thông tin sẽ không khả dụng
+    </string>
+  <string name="comments_card_title">Bình luận:</string>
+  <string name="unknown">Không rõ</string>
+  <string name="aosp_volley_title">Volley của AOSP</string>
+  <string name="developers_role">Chọn vai trò của nhà phát triển để xem</string>
+  <string name="commit_reviewer">Commit Reviewer</string>
+  <string name="context_menu_view_diff_viewer">Sử dụng trình xem nội bộ</string>
+  <string name="context_menu_diff_view_in_browser">Xem khác nhau trong trình duyệt</string>
+  <string name="context_menu_change_browser">Xem thay đổi trong trình duyệt</string>
+  <string name="context_menu_change_viewer">Xem chi tiết thay đổi</string>
+  <string name="choose_diff_view">Bạn muốn xem thay đổi thế nào?</string>
+  <string name="context_menu_track_user" formatted="false">Theo dõi %s</string>
+  <string name="context_menu_track_project">Theo dõi dự dán</string>
+  <string name="stalker_mode_toast">Bạn đang theo dõi:</string>
+  <string name="share">Chia sẻ</string>
+  <string name="view_in_browser">Xem thay đổi này trong trình duyệt mặc định</string>
+  <string name="moar_info">Thông tin chi tiết về thay đổi</string>
+  <string name="commit_shared_from_mgerrit" formatted="false">Cam kết %s được chia sẻ từ mGerrit!</string>
+  <string name="found_cards_toast" formatted="false"><![CDATA[Tìm thấy %d cam kết trong %d giây]]></string>
+  <string name="menu_projects">Xem theo dự án</string>
+  <string name="aokp_changelog">Thay đổi AOKP</string>
+  <string name="download_update">Tải xuống</string>
+  <string name="please_select_update_for_range">Vui lòng chọn tập tin để xem thay đổi</string>
+  <string name="download_rom_zip">Tải file zip ROM</string>
+  <string name="failed_to_decode_base64">Không thể giải mã phản hồi Base64.</string>
+  <string name="return_was_null">Phản hồi là không&#8230; Vui lòng xem trong trình duyệt</string>
+  <string name="using_gerrit_toast">Sử dụng Gerrit:</string>
+  <string name="google_now_style_animations_title">Thẻ động</string>
+  <string name="google_now_style_animations_summary">Sử dụng kiểu chuyển động Google Now khi vẽ thẻ</string>
+  <string name="loading">Đang tải diff\u2026</string>
+</resources>

@@ -78,4 +78,5 @@
   <string name="no_changelog">لا يوجد هناك اي نسخة حديثة لجهازك</string>
   <string name="diff_back">الملف السابق</string>
   <string name="diff_next">الملف التالي</string>
+  <string name="diff_options_ask">إسأل</string>
 </resources>

@@ -35,6 +35,7 @@
   <string name="menu_preferences">偏好設定</string>
   <string name="menu_help">說明</string>
   <string name="choose_gerrit_instance">選擇 Gerrit 團隊實例</string>
+  <string name="choose_gerrit_instance_condensed">選擇 Gerrit 來源</string>
   <string name="commit_committer">提交者</string>
   <string name="commit_author">作者</string>
   <string name="commit_owner">擁有者</string>
@@ -42,18 +43,18 @@
   <string name="show_exception">顯示異常</string>
   <string name="exit">退出</string>
   <string name="gerrit_call_failed">未能從 Gerrit 實例得到有效的回應, 請檢查您的連連並重試。</string>
-  <string name="establishing_connection">連線中...</string>
+  <string name="establishing_connection">正在建立連線&#8230;</string>
   <string name="transferring">正在傳輸 JSON 編碼的資料...</string>
   <string name="downloading_status" formatted="false">%d / %d 字节 已下载\t%d%% 已完成
 已下載 %d 字節, 共 %d 字節\t完成率 %d%%</string>
-  <string name="connection_established">已連線</string>
-  <string name="initializing_data_transfer">開始數據傳輸...</string>
-  <string name="communications_error">通訊出現錯誤!!!</string>
+  <string name="connection_established">已建立連線</string>
+  <string name="initializing_data_transfer">正在初始化資料傳輸&#8230;</string>
+  <string name="communications_error">通訊錯誤！！！</string>
   <string name="transferring_json_data">正在傳輸 JSON 編碼的資料...</string>
-  <string name="open_source_libs">開原庫</string>
+  <string name="open_source_libs">開放原始碼函式庫</string>
   <string name="nine_old_androids">NineOldAndroids</string>
   <string name="listview_animations">ListViewAnimations</string>
-  <string name="support_library">支援函式庫第4版</string>
+  <string name="support_library">Support Library v4</string>
   <string name="gson_library">Gson</string>
   <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
   <string name="jodatime">Joda-Time</string>
@@ -63,18 +64,18 @@
   <string name="owner_gravatar">持有者的Gravatar頭像</string>
   <string name="author_gravatar">作者的Gravatar頭像</string>
   <string name="committer_gravatar">修訂者的Gravatar頭像</string>
-  <string name="menu_refresh">刷新</string>
+  <string name="menu_refresh">重新整理</string>
   <string name="current_revision_is_draft_message">當前修訂版本是草案。一些資訊將不可用.</string>
   <string name="comments_card_title">意見:</string>
   <string name="unknown">不明</string>
   <string name="aosp_volley_title">AOSP 的Volley</string>
   <string name="developers_role">選擇要查看的開發人員的角色</string>
-  <string name="context_menu_view_diff_viewer">使用內置檢視器</string>
-  <string name="context_menu_diff_view_in_browser">用瀏覽器看 diff 的結果</string>
+  <string name="context_menu_view_diff_viewer">使用內部檢視器</string>
+  <string name="context_menu_diff_view_in_browser">在瀏覽器中檢視 diff</string>
   <string name="context_menu_change_browser">在瀏覽器中查看更改</string>
   <string name="context_menu_change_viewer">查看更改的詳細資訊</string>
-  <string name="choose_diff_view">您想要如何檢視差異</string>
-  <string name="context_menu_track_user" formatted="false">跟蹤使用者 %s</string>
+  <string name="choose_diff_view">您要如何檢視 diff？</string>
+  <string name="context_menu_track_user" formatted="false">追蹤使用者 %s</string>
   <string name="context_menu_track_project">追蹤專案</string>
   <string name="stalker_mode_toast">現在跟蹤使用者：</string>
   <string name="share">分享</string>
@@ -88,13 +89,14 @@
   <string name="google_now_style_animations_summary">繪製卡片時使用 Google Now 風格動畫</string>
   <string name="loading">正在載入 diff\u2026</string>
   <string name="add_gerrit_team">新的 Gerrit</string>
+  <string name="please_enter_gerrit_url">請輸入 Gerrit 網址</string>
   <string name="server_timezone_title">伺服器時區</string>
   <string name="local_timezone_title">本地時區</string>
   <string name="remove_content">刪除此內容</string>
-  <string name="projects_search_hint">搜索專案</string>
+  <string name="projects_search_hint">搜尋專案</string>
   <string name="changes_search_hint">搜索變更</string>
   <string name="failed_to_find_url">無法找到專案的 URL</string>
-  <string name="gerrit_protocol">HTTPs://</string>
+  <string name="gerrit_protocol">https://</string>
   <string name="change_detail_heading" formatted="false">改變 %d</string>
   <string name="commit_branch">分支：</string>
   <string name="commit_topic">主題：</string>
@@ -106,12 +108,13 @@
   <string name="aokp_changelog_card_title">近期的 AOKP 編譯版本</string>
   <string name="changelog_loading">正在搜索近期的編譯版本&#8230;</string>
   <string name="retry_label">重試</string>
-  <string name="header_properties">屬性 </string>
+  <string name="header_properties">屬性</string>
   <string name="header_commit_message">提交信息</string>
   <string name="header_changed_files">更改了的檔案</string>
   <string name="header_reviewers">檢閱者</string>
   <string name="header_comments">意見</string>
   <string name="commit_updated">更新:</string>
+  <string name="renamed_label">重新命名自：</string>
   <string name="diff_back">上一個檔案</string>
   <string name="diff_next">下一個檔案</string>
   <string name="diff_options_ask">每次詢問</string>
@@ -124,5 +127,5 @@
   <string name="failed_to_load_image">未能載入圖像</string>
   <string name="failed_to_decode_image">未能對圖像進行解碼</string>
   <string name="diff_text_loading">正在加載文本差別...</string>
-  <string name="diff_image_loading">正在加載圖像...</string>
+  <string name="diff_image_loading">正在載入圖片</string>
 </resources>

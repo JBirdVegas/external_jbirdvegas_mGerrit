@@ -35,6 +35,7 @@
   <string name="menu_preferences">Préférences</string>
   <string name="menu_help">Aide</string>
   <string name="choose_gerrit_instance">Choisissez l\'équipe Gerrit Instance</string>
+  <string name="choose_gerrit_instance_condensed">Choisissez la source Gerrit</string>
   <string name="commit_committer">Ajouteur:</string>
   <string name="commit_author">Auteur :</string>
   <string name="commit_owner">Propriétaire:</string>
@@ -151,4 +152,5 @@ Certaines informations ne seront pas disponibles</string>
   <string name="failed_to_decode_image">N\'a pas pu décoder l\'image</string>
   <string name="diff_text_loading">Chargement du texte diff</string>
   <string name="diff_image_loading">Chargement de l\'image</string>
+  <string name="loading_changes">Chargement de changements supplémentaires&#8230;</string>
 </resources>

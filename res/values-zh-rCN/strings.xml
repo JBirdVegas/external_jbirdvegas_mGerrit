@@ -37,6 +37,7 @@
   <string name="menu_preferences">偏好</string>
   <string name="menu_help">帮助</string>
   <string name="choose_gerrit_instance">选择团队Gerrit实例</string>
+  <string name="choose_gerrit_instance_condensed">选择 Gerrit 源</string>
   <string name="commit_committer">提交者</string>
   <string name="commit_author">作者</string>
   <string name="commit_owner">所有者</string>
@@ -157,4 +158,5 @@
   <string name="failed_to_decode_image">解码图像失败</string>
   <string name="diff_text_loading">读取差异文本</string>
   <string name="diff_image_loading">读取图片</string>
+  <string name="loading_changes">正在加载更多更改...</string>
 </resources>

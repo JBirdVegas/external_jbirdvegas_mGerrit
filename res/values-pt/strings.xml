@@ -46,7 +46,7 @@
   <string name="establishing_connection">A estabelecer a ligação&#8230;</string>
   <string name="transferring">A transferir dados codificados JSON&#8230;</string>
   <string name="downloading_status" formatted="false">%d de %d bytes descarregados\t%d%% concluído</string>
-  <string name="connection_established">Conexão estabelecida</string>
+  <string name="connection_established">Ligação estabelecida</string>
   <string name="initializing_data_transfer">A inicializar transferência de dados...</string>
   <string name="communications_error">ERRO de comunicação!!!</string>
   <string name="transferring_json_data">A transferir dados codificados JSON&#8230;</string>

@@ -36,6 +36,7 @@
   <string name="menu_preferences">Preferências</string>
   <string name="menu_help">Ajuda</string>
   <string name="choose_gerrit_instance">Selecione a Instância do Gerrit</string>
+  <string name="choose_gerrit_instance_condensed">Escolha a fonte do Gerrit</string>
   <string name="commit_committer">Committer:</string>
   <string name="commit_author">Autor:</string>
   <string name="commit_owner">Proprietário:</string>
@@ -155,4 +156,5 @@
   <string name="failed_to_decode_image">Falha ao decodificar a imagem</string>
   <string name="diff_text_loading">Carregando texto diff</string>
   <string name="diff_image_loading">Carregando imagem</string>
+  <string name="loading_changes">Carregando mais mudanças...</string>
 </resources>

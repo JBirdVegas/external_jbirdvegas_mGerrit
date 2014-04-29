@@ -102,7 +102,7 @@
   <string name="add_gerrit_name">Neuer Gerrit Teamname</string>
   <string name="handshake_fail_message">Beim Handshake-Versuch die Zertifikate des Providers auf Ihrem Gerät zu installieren ist ein Fehler aufgetreten.</string>
   <string name="caused_by">Verursacht durch:</string>
-  <string name="at">bei</string>
+  <string name="at">um</string>
   <string name="locales">Zeitzonen-Lokalisierung</string>
   <string name="server_timezone_title">Server-Zeitzone</string>
   <string name="local_timezone_title">Lokale Zeitzone</string>
@@ -130,7 +130,7 @@
   <string name="changelog_loading">Suche nach den neusten Builds&#8230;</string>
   <string name="retry_label">Erneut versuchen</string>
   <string name="header_properties">Eigenschaften</string>
-  <string name="header_commit_message">Änderung einreichen</string>
+  <string name="header_commit_message">Änderung übertragen</string>
   <string name="header_changed_files">Geänderte Dateien</string>
   <string name="header_reviewers">Reviewers</string>
   <string name="header_comments">Kommentare</string>
