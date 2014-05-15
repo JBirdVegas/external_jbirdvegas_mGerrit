@@ -35,17 +35,16 @@
   <string name="please_try_again">Vui lòng quay lại và thử lại</string>
   <string name="menu_preferences">Tuỳ chọn</string>
   <string name="menu_help">Trợ giúp</string>
-  <string name="choose_gerrit_instance">Chọn Team Gerrit Instance</string>
-  <string name="choose_gerrit_instance_condensed">Chọn Gerrit Source</string>
+  <string name="choose_gerrit_instance">Chọn Nhóm Phiên bản Gerrit</string>
+  <string name="choose_gerrit_instance_condensed">Chọn nguồn Gerrit</string>
   <string name="commit_committer">Người cam kết:</string>
   <string name="commit_author">Tác giả:</string>
   <string name="commit_owner">Chủ sở hữu:</string>
   <string name="failed_to_parse_json_response">Không thể phân tích phản hồi từ</string>
   <string name="show_exception">Hiện ngoại lệ</string>
   <string name="exit">Thoát</string>
-  <string name="gerrit_call_failed">Không thể lấy phản hỗi hữu dụng từ mẫu Gerrit, vui lòng kiểm tra kết nối và thử lại.
-    
- </string>
+  <string name="gerrit_call_failed">Không thể lấy phản hồi hữu dụng từ Gerrit Gerrit, vui lòng kiểm tra kết nối và thử lại.
+    </string>
   <string name="establishing_connection">Đang thiết lập kết nối...</string>
   <string name="transferring">Đang truyền dữ liệu JSON đã mã hoá...</string>
   <string name="downloading_status" formatted="false">Đã tải xuống %d trên %d byte\t%d%% đã hoàn tất</string>
@@ -62,7 +61,7 @@
   <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">Giải thích trạng thái</string>
   <string name="explain_status_summary">Giải thích cho ý nghĩa các thẻ Trạng thái</string>
-  <string name="menu_gerrit_instance">Gerrit Instance</string>
+  <string name="menu_gerrit_instance">Phiên bản Gerrit</string>
   <string name="owner_gravatar">Ảnh hồ sơ Gravatar chủ sở hữu</string>
   <string name="author_gravatar">Ảnh hồ sơ Gravatar tác giả</string>
   <string name="committer_gravatar">Ảnh hồ sơ Gravatar người cam kết</string>
@@ -74,7 +73,7 @@ Một số thông tin sẽ không khả dụng
   <string name="unknown">Không rõ</string>
   <string name="aosp_volley_title">Volley của AOSP</string>
   <string name="developers_role">Chọn vai trò của nhà phát triển để xem</string>
-  <string name="commit_reviewer">Commit Reviewer</string>
+  <string name="commit_reviewer">Người đánh giá cam kết</string>
   <string name="context_menu_view_diff_viewer">Sử dụng trình xem nội bộ</string>
   <string name="context_menu_diff_view_in_browser">Xem khác nhau trong trình duyệt</string>
   <string name="context_menu_change_browser">Xem thay đổi trong trình duyệt</string>
@@ -99,4 +98,63 @@ Một số thông tin sẽ không khả dụng
   <string name="google_now_style_animations_title">Thẻ động</string>
   <string name="google_now_style_animations_summary">Sử dụng kiểu chuyển động Google Now khi vẽ thẻ</string>
   <string name="loading">Đang tải diff\u2026</string>
+  <string name="add_gerrit_team">Gerrit mới</string>
+  <string name="please_enter_gerrit_name">Vui lòng nhập tên phiên bản Gerrit</string>
+  <string name="please_enter_gerrit_url">Vui lòng nhập địa chỉ Gerrit</string>
+  <string name="add_team_url">Địa chỉ nhóm Gerrit mới</string>
+  <string name="add_gerrit_name">Tên nhóm Gerrit mới</string>
+  <string name="handshake_fail_message">Không thể cài đặt chứng thực nhà cung cấp trên thiết bị của bạn.
+    </string>
+  <string name="caused_by">Gây ra bởi:</string>
+  <string name="at">lúc</string>
+  <string name="locales">Múi giờ bản địa</string>
+  <string name="server_timezone_title">Múi giờ máy chủ</string>
+  <string name="local_timezone_title">Múi giờ địa phương</string>
+  <string name="server_timezone_summary">Múi giờ địa phương nơi đặt máy chủ Gerrit.</string>
+  <string name="local_timezone_summary">Múi giờ mặc định có thể không chính xác. Dùng mục này để ghi đè múi giờ địa phương mặc định.
+    </string>
+  <string name="patchset_labels_change_diff">Thay đổi khác nhau</string>
+  <string name="remove_content">Xoá nội dung này</string>
+  <string name="connection_starting">Khởi động yêu cầu Gerrit</string>
+  <string name="projects_search_hint">Tìm dự án</string>
+  <string name="changes_search_hint">Tìm thay đổi</string>
+  <string name="failed_to_find_url">Không thể tìm thấy địa chỉ dự án</string>
+  <string name="change_status_update">Một trạng thái thay đổi mới đã được chọn</string>
+  <string name="invalid_gerrit_name">Tên Gerrit không hợp lệ</string>
+  <string name="invalid_gerrit_url">Địa chỉ Gerrit không hợp lệ</string>
+  <string name="gerrit_protocol">https://</string>
+  <string name="change_detail_heading" formatted="false">Thay đổi %d</string>
+  <string name="commit_branch">Nhánh:</string>
+  <string name="commit_topic">Chủ đề:</string>
+  <string name="change_theme">Chọn chủ đề</string>
+  <string name="theme_light">Chủ đề sáng</string>
+  <string name="theme_dark">Chủ đề tối</string>
+  <string name="gerrit_help">Trợ giúp Gerrit</string>
+  <string name="not_connected">Không có kết nối nào lúc này. Thử lại sau.</string>
+  <string name="aokp_changelog_card_title">Các bản dựng AOKP gần đây</string>
+  <string name="changelog_loading">Đang tìm các bản dựng gần đây&#8230;</string>
+  <string name="retry_label">Thử lại</string>
+  <string name="header_properties">Thuộc tính</string>
+  <string name="header_commit_message">Thông điệp cam kết</string>
+  <string name="header_changed_files">Tập tin thay đổi</string>
+  <string name="header_reviewers">Đánh giá</string>
+  <string name="header_comments">Bình luận</string>
+  <string name="commit_updated">Đã cập nhật:</string>
+  <string name="renamed_label">Đổi tên từ:</string>
+  <string name="no_changelog">Không có bản dựng nào gần đây cho thiết bị của bạn</string>
+  <string name="diff_back">Tập tin trước đó</string>
+  <string name="diff_next">Tập tin kế tiếp</string>
+  <string name="diff_options_title">Xem thay đổi khác biệt</string>
+  <string name="diff_options_ask">Hỏi</string>
+  <string name="diff_options_internal">Trong trình xem nội bộ khi khả dụng</string>
+  <string name="diff_options_external">Trong trình duyệt</string>
+  <string name="diff_menu_internal_condensed">Trình xem</string>
+  <string name="diff_menu_external_condensed">Trình duyệt</string>
+  <string name="diff_no_files">Không tìm thấy tập tin nhị phân nào trong thay đổi này.</string>
+  <string name="failed_to_get_diff">Không thể tải thay đổi</string>
+  <string name="failed_to_load_image">Không thẻ tải ảnh</string>
+  <string name="failed_to_decode_image">Không thể giải mã hình ảnh</string>
+  <string name="diff_text_loading">Đang tải văn bản khác nhau</string>
+  <string name="diff_image_loading">Đang tải ảnh</string>
+  <string name="loading_changes">Đang tải thêm thay đổi&#8230;</string>
 </resources>

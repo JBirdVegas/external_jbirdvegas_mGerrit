@@ -121,7 +121,7 @@
   <string name="commit_branch">Branş:</string>
   <string name="commit_topic">Konu:</string>
   <string name="change_theme">Tema seçin</string>
-  <string name="theme_light">Açık Tonda tema</string>
+  <string name="theme_light">Aydınlık tema</string>
   <string name="theme_dark">Karanlık Tema</string>
   <string name="gerrit_help">Gerrit yardım</string>
   <string name="not_connected">Şu anda ağ bağlantısı yok. Daha sonra yeniden deneyin.</string>
@@ -145,7 +145,7 @@
   <string name="diff_menu_internal_condensed">Görüntüleyici</string>
   <string name="diff_menu_external_condensed">Tarayıcı</string>
   <string name="diff_no_files">Bu değişiklikte İkili olmayan dosyalar bulunmadı.</string>
-  <string name="failed_to_get_diff">Değişiklik yüklenmesinde hata</string>
+  <string name="failed_to_get_diff">Değişikliklerin yüklenmesinde hata</string>
   <string name="failed_to_load_image">Resim yüklenemedi</string>
   <string name="failed_to_decode_image">Resmi çözümlemede hata oluştu</string>
   <string name="diff_text_loading">Fark metini yükleniyor</string>
