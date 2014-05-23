@@ -64,6 +64,16 @@
   <string name="at">عند</string>
   <string name="server_timezone_title">المنطقة الزمانية للسيرفير</string>
   <string name="patchset_labels_change_diff">قم بتغيير الاختلافات</string>
+  <string name="invalid_gerrit_name">اسم مجموعة Gerrit غير صالح</string>
+  <string name="invalid_gerrit_url">مجموعة Gerrit URL غير صالح</string>
+  <string name="gerrit_protocol">https://</string>
+  <string name="change_detail_heading" formatted="false">التغيير %d</string>
+  <string name="commit_branch">فرع:</string>
+  <string name="commit_topic">الموضوع:</string>
+  <string name="change_theme">حدد الثيم</string>
+  <string name="theme_light">قالب ألوان خفيفة</string>
+  <string name="theme_dark">قالب ألوان داكنة</string>
+  <string name="gerrit_help">تعليمات Gerrit</string>
   <string name="not_connected">لايوجد في الوقت الحالي اتصال بالشبكة. الرجاء المحاولة لاحقاً.</string>
   <string name="aokp_changelog_card_title">نسخ AOKP حديثة</string>
   <string name="changelog_loading">يتم البحث عن نسخة حديثة&#8230;</string>
@@ -78,5 +88,10 @@
   <string name="no_changelog">لا يوجد هناك اي نسخة حديثة لجهازك</string>
   <string name="diff_back">الملف السابق</string>
   <string name="diff_next">الملف التالي</string>
+  <string name="diff_options_title">عرض تغيرات بيانات الاختلاف</string>
   <string name="diff_options_ask">إسأل</string>
+  <string name="diff_options_internal">عرض في الداخل اذا توفر</string>
+  <string name="diff_options_external">في المستعرض</string>
+  <string name="diff_menu_internal_condensed">عارض</string>
+  <string name="diff_menu_external_condensed">المتصفح</string>
 </resources>

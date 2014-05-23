@@ -52,7 +52,7 @@
   <string name="transferring_json_data">Trasferimento di dati JSON codificati ...</string>
   <string name="open_source_libs">Librerie Open Source</string>
   <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ListViewAnimations</string>
+  <string name="listview_animations">AnimazioniVisualizzazioneLista</string>
   <string name="support_library">Supporto alla Libreria v4</string>
   <string name="gson_library">Gson</string>
   <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
