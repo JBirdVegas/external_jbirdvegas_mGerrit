@@ -26,12 +26,12 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.ExpandableListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -46,22 +46,28 @@ import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 public class ProjectsList extends Activity
     implements LoaderManager.LoaderCallbacks<Cursor>,
-        SearchView.OnQueryTextListener
+        SearchView.OnQueryTextListener, Refreshable
 {
     ExpandableListView mProjectsListView;
-    ProjectsTable mProjectsTable;
     ProjectsListAdapter mListAdapter;
     private DefaultGerritReceivers receivers;
     private String mQuery;
 
     private static final String SEPERATOR = ProjectsTable.SEPERATOR;
 
+    private SwipeRefreshLayout mSwipeLayout;
+    private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            startService();
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         this.setTheme(Prefs.getCurrentThemeID(this));
         super.onCreate(savedInstanceState);
 
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.projects_list);
 
         // Action bar Up affordance
@@ -95,6 +101,8 @@ public class ProjectsList extends Activity
                 return false;
             }
         });
+
+        setSwipeRefreshLayout();
 
         handleIntent(this.getIntent());
 
@@ -178,6 +186,14 @@ public class ProjectsList extends Activity
         receivers.unregisterReceivers();
     }
 
+    private void setSwipeRefreshLayout() {
+        mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        mSwipeLayout.setColorScheme(R.color.text_orange, R.color.text_green, R.color.text_red,
+                android.R.color.transparent);
+        mSwipeLayout.setOnRefreshListener(mRefreshListener);
+        mSwipeLayout.setEnabled(false);
+    }
+
     private void setProject(String root, String subproject) {
         String project;
         if (subproject.isEmpty()) project = root;
@@ -247,5 +263,15 @@ public class ProjectsList extends Activity
          *  return false here to hide the soft keyboard.
          */
         return false;
+    }
+
+    @Override
+    public void onStartRefresh() {
+        mSwipeLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void onStopRefresh() {
+        mSwipeLayout.setRefreshing(false);
     }
 }

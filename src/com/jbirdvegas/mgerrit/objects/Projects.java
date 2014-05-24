@@ -45,9 +45,8 @@ public class Projects implements JsonDeserializer<Projects> {
         for (Map.Entry<String, JsonElement> project : json.entrySet()) {
             String path = project.getKey();
             JsonObject details = project.getValue().getAsJsonObject();
-            String kind = details.get("kind").getAsString();
             String id = details.get("id").getAsString();
-            projects.add(new Project(path, kind, id));
+            projects.add(new Project(path, id));
         }
 
         return this;

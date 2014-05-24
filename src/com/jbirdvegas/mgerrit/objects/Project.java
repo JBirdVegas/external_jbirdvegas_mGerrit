@@ -24,15 +24,11 @@ public final class Project implements Comparable<Project> {
     @SerializedName(JSONCommit.KEY_PROJECT)
     private final String mPath;
 
-    @SerializedName(JSONCommit.KEY_KIND)
-    private final String mKind;
-
     @SerializedName(JSONCommit.KEY_ID)
     private final String mId;
 
-    public Project(String path, String kind, String id) {
+    public Project(String path, String id) {
         this.mPath = path;
-        this.mKind = kind;
         this.mId = id;
     }
 
@@ -48,9 +44,6 @@ public final class Project implements Comparable<Project> {
     @Override
     public int compareTo(Project project) {
         int i = mPath.compareTo(project.getPath());
-        if (i != 0) return i;
-
-        i = mKind.compareTo(project.mKind);
         if (i != 0) return i;
 
         i = mId.compareTo(project.mId);
