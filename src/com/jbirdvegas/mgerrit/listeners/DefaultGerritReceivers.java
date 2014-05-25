@@ -25,6 +25,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
+import com.jbirdvegas.mgerrit.Refreshable;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.EstablishingConnection;
@@ -42,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultGerritReceivers {
 
+    // This variable uses type-intersection. May not compile in Java 6
     private Activity mActivity;
 
     // TODO: Add checks to make sure this is always >= 0
@@ -49,9 +51,11 @@ public class DefaultGerritReceivers {
 
     /**
      * Allows access to the default Gerrit receivers
-     * @param activity An activity context (associated directly with a view).
+     * @param activity An activity context (associated directly with a view). This must also
+     *                 implement the Refreshable interface to define behaviour for when a
+     *                 refresh should be started/stopped.
      */
-    public DefaultGerritReceivers(Activity activity) {
+    public <T extends Activity & Refreshable> DefaultGerritReceivers(T activity) {
         mActivity = activity;
         mRequestsRunning = new AtomicInteger(0);
     }
@@ -64,7 +68,8 @@ public class DefaultGerritReceivers {
 
             if (mRequestsRunning.get() < 0) mRequestsRunning.set(0);
             if (mRequestsRunning.getAndIncrement() == 0) {
-                mActivity.setProgressBarIndeterminateVisibility(true);
+                // Won't fail as the constructor specified mActivity is Refreshable
+                ((Refreshable) mActivity).onStartRefresh();
             }
         }
     };
@@ -73,7 +78,7 @@ public class DefaultGerritReceivers {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (mRequestsRunning.decrementAndGet() <= 0) {
-                mActivity.setProgressBarIndeterminateVisibility(false);
+                ((Refreshable) mActivity).onStopRefresh();
             }
             if (mRequestsRunning.get() < 0) mRequestsRunning.set(0);
         }
@@ -94,7 +99,7 @@ public class DefaultGerritReceivers {
             Tools.showErrorDialog(mActivity, exception);
 
             if (mRequestsRunning.decrementAndGet() <= 0) {
-                mActivity.setProgressBarIndeterminateVisibility(false);
+                ((Refreshable) mActivity).onStopRefresh();
             }
             if (mRequestsRunning.get() < 0) mRequestsRunning.set(0);
         }
@@ -139,6 +144,6 @@ public class DefaultGerritReceivers {
         }
 
         mRequestsRunning.set(0);
-        mActivity.setProgressBarIndeterminateVisibility(false);
+        ((Refreshable) mActivity).onStopRefresh();
     }
 }

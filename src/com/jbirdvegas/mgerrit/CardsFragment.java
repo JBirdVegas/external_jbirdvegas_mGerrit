@@ -70,7 +70,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public abstract class CardsFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor>, Refreshable {
 
     public static final String SEARCH_QUERY = "SEARCH";
     private static int sChangesLimit = 0;
@@ -84,6 +84,8 @@ public abstract class CardsFragment extends Fragment
     private boolean mIsDirty = false;
     // Indicates whether a request to force an update is pending
     private boolean mNeedsForceUpdate = false;
+    // Indicates whether the current fragment is refreshing
+    private boolean mIsRefreshing = false;
 
     // Broadcast receiver to receive processed search query changes
     private BroadcastReceiver mSearchQueryListener = new BroadcastReceiver() {
@@ -330,6 +332,10 @@ public abstract class CardsFragment extends Fragment
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
+        if (mSwipeLayout != null) {
+            mSwipeLayout.setRefreshing(mIsRefreshing);
+        }
+
         /* Refresh if necessary. As the fragment has just been attached,
          *  we can assume it is added here */
         if (!mIsDirty) return;
@@ -455,6 +461,24 @@ public abstract class CardsFragment extends Fragment
 
         if (cursor.getCount() < 1 && mEndlessAdapter != null) {
             mEndlessAdapter.startDataLoading();
+        }
+    }
+
+    @Override
+    public void onStartRefresh() {
+        if (isAdded() && mSwipeLayout != null) {
+            mSwipeLayout.setRefreshing(true);
+        } else {
+            mIsRefreshing = true;
+        }
+    }
+
+    @Override
+    public void onStopRefresh() {
+        if (isAdded() && mSwipeLayout != null) {
+            mSwipeLayout.setRefreshing(false);
+        } else {
+            mIsRefreshing = false;
         }
     }
 }

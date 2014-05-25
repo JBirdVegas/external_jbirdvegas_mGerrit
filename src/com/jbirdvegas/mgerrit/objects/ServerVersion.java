@@ -27,7 +27,7 @@ public class ServerVersion implements Comparator<ServerVersion> {
     // Release where support for getting change diffs was added
     public static final String VERSION_DIFF = "2.8";
     /* Release where support for before/after search operators (keywords) was added */
-    public static final String VERSION_BEFORE_SEARCH = "2.8.2";
+    public static final String VERSION_BEFORE_SEARCH = "2.9";
 
     String mVersion;
 
