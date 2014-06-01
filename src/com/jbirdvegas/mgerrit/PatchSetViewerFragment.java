@@ -18,16 +18,12 @@ package com.jbirdvegas.mgerrit;
  */
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -52,6 +48,7 @@ import com.jbirdvegas.mgerrit.database.UserReviewers;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
+import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
 import com.jbirdvegas.mgerrit.objects.FilesCAB;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
@@ -60,6 +57,8 @@ import com.jbirdvegas.mgerrit.search.ChangeSearch;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import org.jetbrains.annotations.Nullable;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Class handles populating the screen with several
@@ -83,8 +82,6 @@ public class PatchSetViewerFragment extends Fragment
     private CommitDetailsAdapter mAdapter;
     private FilesCAB mFilesCAB;
 
-    public static final String NEW_CHANGE_SELECTED = "Change Selected";
-    public static final String EXPAND_TAG = "expand";
     public static final String CHANGE_ID = "changeID";
     public static final String CHANGE_NO = "changeNo";
     public static final String STATUS = "queryStatus";
@@ -95,21 +92,7 @@ public class PatchSetViewerFragment extends Fragment
     public static final int LOADER_REVIEWERS = 3;
     public static final int LOADER_COMMENTS = 4;
 
-    private final BroadcastReceiver mStatusReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            String action = intent.getAction();
-            String status = intent.getStringExtra(StatusSelected.STATUS);
-
-            /* We may have got a broadcast saying that data from another tab
-             *  has been loaded. */
-            if (compareStatus(status, getStatus()) || action.equals(StatusSelected.ACTION)) {
-                setStatus(status);
-                loadChange(false);
-            }
-        }
-    };
+    private EventBus mEventBus;
 
 
     @Override
@@ -168,7 +151,7 @@ public class PatchSetViewerFragment extends Fragment
                     mFilesCAB.setTitle(holder.filePath);
                 } else {
                     String s = mParent.getResources().getString(R.string.change_detail_heading);
-                    mFilesCAB.setTitle(String.format(s, holder.changeNumber));
+                    mFilesCAB.setTitle(String.format(s, holder.changeNumber.intValue()));
                 }
 
                 mFilesCAB.setActionMode(getActivity().startActionMode(mFilesCAB));
@@ -220,6 +203,8 @@ public class PatchSetViewerFragment extends Fragment
                 setSelectedChange(changeid);
             }
         }
+
+        mEventBus = EventBus.getDefault();
     }
 
     /**
@@ -311,12 +296,7 @@ public class PatchSetViewerFragment extends Fragment
 
         if (direct) setSelectedChange(changeID);
         else {
-            Intent intent = new Intent(PatchSetViewerFragment.NEW_CHANGE_SELECTED);
-            intent.putExtra(PatchSetViewerFragment.CHANGE_ID, changeID);
-            intent.putExtra(PatchSetViewerFragment.CHANGE_NO, changeNumber);
-            intent.putExtra(PatchSetViewerFragment.STATUS, mStatus);
-            intent.putExtra(PatchSetViewerFragment.EXPAND_TAG, true);
-            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+            mEventBus.post(new NewChangeSelected(changeID, changeNumber, mStatus));
         }
     }
 
@@ -355,14 +335,7 @@ public class PatchSetViewerFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(mParent).registerReceiver(mStatusReceiver,
-                new IntentFilter(StatusSelected.ACTION));
-
-        // If we cannot get the status, it is likely phone mode.
-        if (getStatus() != null) {
-            LocalBroadcastManager.getInstance(mParent).registerReceiver(mStatusReceiver,
-                    new IntentFilter(ChangeLoadingFinished.ACTION));
-        }
+        mEventBus.register(this);
     }
 
     @Override
@@ -380,7 +353,7 @@ public class PatchSetViewerFragment extends Fragment
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(mParent).unregisterReceiver(mStatusReceiver);
+        mEventBus.unregister(this);
     }
 
     @Override
@@ -485,5 +458,21 @@ public class PatchSetViewerFragment extends Fragment
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         onLoadFinished(cursorLoader, null);
+    }
+
+    public void onEventMainThread(StatusSelected ev) {
+        setStatus(ev.getStatus());
+        loadChange(false);
+    }
+
+    public void onEventMainThread(ChangeLoadingFinished ev) {
+        String status = ev.getStatus();
+
+        /* We may have got a broadcast saying that data from another tab
+         *  has been loaded. */
+        if (compareStatus(status, getStatus())) {
+            setStatus(status);
+            loadChange(false);
+        }
     }
 }

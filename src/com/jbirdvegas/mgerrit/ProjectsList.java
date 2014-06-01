@@ -38,11 +38,14 @@ import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.adapters.ProjectsListAdapter;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
-import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
+
+import java.io.Serializable;
+
+import de.greenrobot.event.EventBus;
 
 public class ProjectsList extends Activity
     implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -50,7 +53,7 @@ public class ProjectsList extends Activity
 {
     ExpandableListView mProjectsListView;
     ProjectsListAdapter mListAdapter;
-    private DefaultGerritReceivers receivers;
+    private EventBus mEventBus;
     private String mQuery;
 
     private static final String SEPERATOR = ProjectsTable.SEPERATOR;
@@ -106,7 +109,7 @@ public class ProjectsList extends Activity
 
         handleIntent(this.getIntent());
 
-        receivers = new DefaultGerritReceivers(this);
+        mEventBus = EventBus.getDefault();
 
         // Todo: We don't always need to query the server here
         startService();
@@ -167,23 +170,16 @@ public class ProjectsList extends Activity
         return super.onOptionsItemSelected(item);
     }
 
-    // Register to receive messages.
-    private void registerReceivers() {
-        receivers.registerReceivers(StartingRequest.TYPE,
-                Finished.TYPE,
-                ErrorDuringConnection.TYPE);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceivers();
+        mEventBus.register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        receivers.unregisterReceivers();
+        mEventBus.unregister(this);
     }
 
     private void setSwipeRefreshLayout() {
@@ -224,6 +220,7 @@ public class ProjectsList extends Activity
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mListAdapter.setSubprojectQuery(mQuery);
         mListAdapter.changeCursor(cursor);
+        onStopRefresh();
     }
 
     @Override
@@ -273,5 +270,27 @@ public class ProjectsList extends Activity
     @Override
     public void onStopRefresh() {
         mSwipeLayout.setRefreshing(false);
+    }
+
+    public void onEventMainThread(StartingRequest ev) {
+        Intent intent = ev.getIntent();
+        if (intent.getSerializableExtra(GerritService.DATA_TYPE_KEY) == GerritService.DataType.Project) {
+            onStartRefresh();
+        }
+    }
+
+    public void onEventMainThread(Finished ev) {
+        Intent intent = ev.getIntent();
+        Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
+        if (ev.getItems() < 1 && dataType == GerritService.DataType.Project) {
+            onStopRefresh();
+        }
+    }
+
+    public void onEventMainThread(ErrorDuringConnection ev) {
+        Intent intent = ev.getIntent();
+        if (intent.getSerializableExtra(GerritService.DATA_TYPE_KEY) == GerritService.DataType.Project) {
+            onStopRefresh();
+        }
     }
 }

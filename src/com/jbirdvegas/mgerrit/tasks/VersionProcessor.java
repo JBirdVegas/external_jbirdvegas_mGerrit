@@ -14,6 +14,8 @@ import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.greenrobot.event.EventBus;
+
 /*
  * Copyright (C) 2014 Android Open Kang Project (AOKP)
  *  Author: Evan Conway (P4R4N01D), 2014
@@ -33,11 +35,13 @@ import java.util.regex.Pattern;
 public class VersionProcessor extends SyncProcessor<String> {
 
     private final String mUrl;
+    private final EventBus mEventBus;
 
     VersionProcessor(Context context, Intent intent) {
         super(context, intent);
         String url = Prefs.getCurrentGerrit(context);
         mUrl = url + "config/server/version";
+        mEventBus = EventBus.getDefault();
     }
 
     @Override
@@ -79,12 +83,13 @@ public class VersionProcessor extends SyncProcessor<String> {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 if (volleyError == null || volleyError.networkResponse == null) {
-                    new ErrorDuringConnection(mContext, volleyError, mUrl);
+                    mEventBus.post(new ErrorDuringConnection(getIntent(), mUrl, null, volleyError));
+
                 } else if (volleyError.networkResponse.statusCode == 404) {
                     // Pretend we got a response
                     getListener(mUrl).onResponse(Config.VERSION_DEFAULT);
                 } else {
-                    new ErrorDuringConnection(mContext, volleyError, mUrl);
+                    mEventBus.post(new ErrorDuringConnection(getIntent(), mUrl, null, volleyError));
                 }
             }
         });

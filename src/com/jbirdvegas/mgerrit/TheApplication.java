@@ -4,10 +4,13 @@ import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
+
 import com.jbirdvegas.mgerrit.database.DatabaseFactory;
+import com.jbirdvegas.mgerrit.message.GerritChanged;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
+
+import de.greenrobot.event.EventBus;
 
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
@@ -29,11 +32,6 @@ public class TheApplication extends Application
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private SharedPreferences mPrefs;
-
-    private static final String PACKAGE_NAME = "com.jbirdvegas.mgerrit";
-
-    // This corresponds to an intent-filter action in the manifest
-    public static final String GERRIT_CHANGED = PACKAGE_NAME + ".GERRIT_CHANGED";
 
     @Override
     public void onCreate() {
@@ -66,8 +64,7 @@ public class TheApplication extends Application
         Prefs.setCurrentProject(this, null);
         Prefs.clearTrackingUser(this);
 
-        Intent intent = new Intent(GERRIT_CHANGED);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        EventBus.getDefault().post(new GerritChanged(newGerrit));
 
         requestServerVersion();
     }

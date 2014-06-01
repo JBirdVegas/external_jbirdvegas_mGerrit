@@ -18,29 +18,29 @@ package com.jbirdvegas.mgerrit.adapters;
  */
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 import android.view.View;
 import android.widget.SimpleCursorAdapter;
 
-import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import de.greenrobot.event.EventBus;
 
 public class ChangeListAdapter extends SimpleCursorAdapter {
 
     Context mContext;
 
-    private Integer mChangenum_index;
     private Integer mUserId_index;
     private Integer mUserName_index;
     private Integer mProject_index;
@@ -80,7 +80,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
         }
 
         view.setTag(R.id.changeID, tagHolder.changeid);
-        view.setTag(R.id.changeNumber, cursor.getInt(mChangenum_index));
+        view.setTag(R.id.changeNumber, tagHolder.changeNumber);
         view.setTag(R.id.user, cursor.getInt(mUserId_index));
         view.setTag(R.id.userName, cursor.getString(mUserName_index));
         view.setTag(R.id.project, cursor.getString(mProject_index));
@@ -102,11 +102,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
 
     public void itemClickListener(View view) {
         TagHolder vh = (TagHolder) view.getTag();
-        Intent intent = new Intent(PatchSetViewerFragment.NEW_CHANGE_SELECTED);
-        intent.putExtra(PatchSetViewerFragment.CHANGE_ID, vh.changeid);
-        intent.putExtra(PatchSetViewerFragment.STATUS, vh.changeStatus);
-        intent.putExtra(PatchSetViewerFragment.EXPAND_TAG, true);
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        EventBus.getDefault().post(new NewChangeSelected(vh.changeid, vh.changeNumber, vh.changeStatus, true));
 
         // Set this view as selected
         setSelectedChangeId((CommitCard) view, vh.changeid);
@@ -157,9 +153,6 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
 
     private void setIndicies(@NotNull Cursor cursor) {
         // These indices will not change regardless of the view
-        if (mChangenum_index == null) {
-            mChangenum_index = cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER);
-        }
         if (mUserId_index == null) {
             mUserId_index = cursor.getColumnIndex(UserChanges.C_USER_ID);
         }
@@ -178,7 +171,6 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
             binder.onCursorChanged();
         }
 
-        mChangenum_index = null;
         mUserId_index = null;
         mUserName_index = null;
         mProject_index = null;
@@ -188,11 +180,13 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
 
     private static class TagHolder {
         String changeid;
+        int changeNumber;
         String changeStatus;
         String webAddress;
 
         TagHolder(Context context, Cursor cursor) {
             changeid = cursor.getString(cursor.getColumnIndex(UserChanges.C_CHANGE_ID));
+            changeNumber = cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER);
             changeStatus = cursor.getString(cursor.getColumnIndex(UserChanges.C_STATUS));
             webAddress = Tools.getWebAddress(context,
                     cursor.getInt(cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER)));

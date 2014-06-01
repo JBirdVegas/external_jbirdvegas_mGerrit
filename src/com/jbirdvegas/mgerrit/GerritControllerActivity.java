@@ -19,16 +19,13 @@ package com.jbirdvegas.mgerrit;
 
 import android.app.AlertDialog.Builder;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,31 +41,17 @@ import com.google.analytics.tracking.android.Tracker;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.ROMHelper;
-import com.jbirdvegas.mgerrit.listeners.DefaultGerritReceivers;
-import com.jbirdvegas.mgerrit.message.ConnectionEstablished;
-import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
-import com.jbirdvegas.mgerrit.message.EstablishingConnection;
-import com.jbirdvegas.mgerrit.message.Finished;
-import com.jbirdvegas.mgerrit.message.HandshakeError;
-import com.jbirdvegas.mgerrit.message.InitializingDataTransfer;
-import com.jbirdvegas.mgerrit.message.ProgressUpdate;
+import com.jbirdvegas.mgerrit.message.GerritChanged;
+import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
-import org.jetbrains.annotations.Nullable;
+import de.greenrobot.event.EventBus;
 
 public class GerritControllerActivity extends FragmentActivity
     implements Refreshable {
 
     private static final String GERRIT_INSTANCE = "gerrit";
     private String mGerritWebsite;
-
-    // Listener for changes to which commit is selected
-    private BroadcastReceiver mChangeListener;
-    // Listener for whenever the Gerrit changes
-    private BroadcastReceiver mGerritListener;
-
-    @Nullable
-    private DefaultGerritReceivers receivers;
 
     private Menu mMenu;
 
@@ -87,7 +70,7 @@ public class GerritControllerActivity extends FragmentActivity
         super.onStart();
         EasyTracker.getInstance(this).activityStart(this);
 
-        registerReceivers();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -95,8 +78,7 @@ public class GerritControllerActivity extends FragmentActivity
         super.onStop();
         EasyTracker.getInstance(this).activityStop(this);
 
-        receivers.unregisterReceivers();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mChangeListener);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -147,54 +129,10 @@ public class GerritControllerActivity extends FragmentActivity
 
         mGerritWebsite = Prefs.getCurrentGerrit(this);
 
-        // Don't register listeners here. It is registered in onResume instead.
-        mChangeListener = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String changeid = intent.getStringExtra(PatchSetViewerFragment.CHANGE_ID);
-                String status = intent.getStringExtra(PatchSetViewerFragment.STATUS);
-                boolean expand = intent.getBooleanExtra(PatchSetViewerFragment.EXPAND_TAG, false);
-                onChangeSelected(changeid, status, expand);
-            }
-        };
-
-        mGerritListener = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                onGerritChanged(Prefs.getCurrentGerrit(GerritControllerActivity.this));
-            }
-        };
-
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (GerritSearchView) findViewById(R.id.search);
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        handleIntent(this.getIntent());
-    }
-
-    private void init() {
-        receivers = new DefaultGerritReceivers(this);
-    }
-
-    // Register to receive messages.
-    private void registerReceivers() {
-        if (receivers == null) {
-            receivers = new DefaultGerritReceivers(this);
-        }
-        receivers.registerReceivers(EstablishingConnection.TYPE,
-                ConnectionEstablished.TYPE,
-                InitializingDataTransfer.TYPE,
-                ProgressUpdate.TYPE,
-                Finished.TYPE,
-                HandshakeError.TYPE,
-                ErrorDuringConnection.TYPE);
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(mChangeListener,
-                new IntentFilter(PatchSetViewerFragment.NEW_CHANGE_SELECTED));
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(mGerritListener,
-                new IntentFilter(TheApplication.GERRIT_CHANGED));
     }
 
     @Override
@@ -209,20 +147,6 @@ public class GerritControllerActivity extends FragmentActivity
         inflater.inflate(R.menu.gerrit_instances_menu, menu);
         this.mMenu = menu;
         return true;
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        setIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        String action = intent.getAction();
-        if (!Intent.ACTION_SEARCH.equals(action)) {
-            // Searching is already handled when the query text changes.
-            init();
-        }
     }
 
     @Override
@@ -309,34 +233,6 @@ public class GerritControllerActivity extends FragmentActivity
         }
     }
 
-    /**
-     * Handler for when a change is selected in the list.
-     * @param changeID The currently selected change ID
-     * @param expand Whether to expand the change and view the change details.
-     *               Relevant only to the tablet layout.
-     */
-    public void onChangeSelected(String changeID, String status, boolean expand) {
-        Bundle arguments = new Bundle();
-        arguments.putString(PatchSetViewerFragment.CHANGE_ID, changeID);
-        arguments.putString(PatchSetViewerFragment.STATUS, status);
-
-        SelectedChange.setSelectedChange(this, changeID);
-
-        if (mChangeList.getCurrentFragment() != null) {
-            mChangeList.getCurrentFragment().markChangeAsSelected(changeID);
-        }
-
-        if (mTwoPane) {
-            mChangeDetail.setSelectedChange(changeID);
-        } else if (expand) {
-            // In single-pane mode, simply start the detail activity
-            // for the selected item ID.
-            Intent detailIntent = new Intent(this, PatchSetViewerActivity.class);
-            detailIntent.putExtras(arguments);
-            startActivity(detailIntent);
-        }
-    }
-
     public ChangeListFragment getChangeList() {
         return mChangeList;
     }
@@ -380,6 +276,41 @@ public class GerritControllerActivity extends FragmentActivity
         CardsFragment currentFragment = mChangeList.getCurrentFragment();
         if (currentFragment != null) {
             currentFragment.onStopRefresh();
+        }
+    }
+
+    public void onEventMainThread(GerritChanged ev) {
+        onGerritChanged(ev.getNewGerrit());
+    }
+
+    /**
+     * Handler for when a change is selected in the list.
+     * @param changeID The currently selected change ID
+     * @param expand Whether to expand the change and view the change details.
+     *               Relevant only to the tablet layout.
+     */
+    public void onEventMainThread(NewChangeSelected ev) {
+        String changeId = ev.getChangeId();
+        String status = ev.getStatus();
+
+        Bundle arguments = new Bundle();
+        arguments.putString(PatchSetViewerFragment.CHANGE_ID, changeId);
+        arguments.putString(PatchSetViewerFragment.STATUS, status);
+
+        SelectedChange.setSelectedChange(this, changeId);
+
+        if (mChangeList.getCurrentFragment() != null) {
+            mChangeList.getCurrentFragment().markChangeAsSelected(changeId);
+        }
+
+        if (mTwoPane) {
+            mChangeDetail.setSelectedChange(changeId);
+        } else if (ev.isExpanded()) {
+            // In single-pane mode, simply start the detail activity
+            // for the selected item ID.
+            Intent detailIntent = new Intent(this, PatchSetViewerActivity.class);
+            detailIntent.putExtras(arguments);
+            startActivity(detailIntent);
         }
     }
 }

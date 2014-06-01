@@ -33,6 +33,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
+
 public class ChangeListFragment extends Fragment {
 
     private static final String TAG = ChangeListFragment.class.getSimpleName();
@@ -45,6 +47,7 @@ public class ChangeListFragment extends Fragment {
     private FragmentActivity mParent;
     private View mThisFragment;
     private ArrayList<CharSequence> mTitles;
+    private EventBus mEventBus;
 
     // This should be set to the status corresponding to the initially selected tab
     private String mSelectedStatus = JSONCommit.Status.NEW.toString();
@@ -68,6 +71,8 @@ public class ChangeListFragment extends Fragment {
         mParent = getActivity();
         mThisFragment = this.getView();
 
+        mEventBus = mEventBus.getDefault();
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the app.
         mSectionsPagerAdapter = new SectionsPagerAdapter(mParent.getSupportFragmentManager());
@@ -87,7 +92,8 @@ public class ChangeListFragment extends Fragment {
                     public void onPageSelected(int position)
                     {
                         String status = mSectionsPagerAdapter.getStatusAtPostion(position);
-                        new StatusSelected(mParent, status).sendUpdateMessage();
+
+                        mEventBus.post(new StatusSelected(status));
                         mSelectedStatus = status;
                         CardsFragment fragment = mSectionsPagerAdapter.getFragment(position);
                         if (fragment == null) {

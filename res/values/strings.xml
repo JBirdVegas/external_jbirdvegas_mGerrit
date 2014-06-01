@@ -68,6 +68,8 @@
     <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
     <string name="jodatime">Joda-Time</string>
     <string name="jodatime_website" translatable="false">http://www.joda.org/joda-time</string>
+    <string name="event_bus">EventBus</string>
+    <string name="event_bus_website" translatable="false">http://greenrobot.github.io/EventBus/</string>
 
     <string name="explain_status_title">Explain statuses</string>
     <string name="explain_status_summary">Brief explanation of the Status tabs meanings</string>

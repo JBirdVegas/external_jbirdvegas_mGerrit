@@ -1,12 +1,8 @@
 package com.jbirdvegas.mgerrit.message;
 
-import android.content.Intent;
-
-import com.jbirdvegas.mgerrit.objects.GerritMessage;
-
 /*
- * Copyright (C) 2013 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (P4R4N01D), 2013
+ * Copyright (C) 2014 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (P4R4N01D), 2014
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,14 +16,15 @@ import com.jbirdvegas.mgerrit.objects.GerritMessage;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-public class ErrorDuringConnection extends GerritMessage {
+public class GerritChanged {
 
-    private final Exception exception;
+    private final String mNewGerrit;
 
-    public ErrorDuringConnection(Intent intent, String url, String status, Exception mGerritException) {
-        super(intent, url, status);
-        this.exception = mGerritException;
+    public GerritChanged(String newGerrit) {
+        this.mNewGerrit = newGerrit;
     }
 
-    public Exception getException() { return exception; }
+    public String getNewGerrit() {
+        return mNewGerrit;
+    }
 }

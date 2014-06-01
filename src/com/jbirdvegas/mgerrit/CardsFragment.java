@@ -18,10 +18,7 @@ package com.jbirdvegas.mgerrit;
  */
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,7 +26,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -39,7 +36,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -54,7 +50,9 @@ import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
+import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
+import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
 import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.search.AfterSearch;
@@ -69,10 +67,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Set;
 
+import de.greenrobot.event.EventBus;
+
 public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor>, Refreshable {
 
-    public static final String SEARCH_QUERY = "SEARCH";
     private static int sChangesLimit = 0;
     protected String TAG = "CardsFragment";
 
@@ -86,44 +85,6 @@ public abstract class CardsFragment extends Fragment
     private boolean mNeedsForceUpdate = false;
     // Indicates whether the current fragment is refreshing
     private boolean mIsRefreshing = false;
-
-    // Broadcast receiver to receive processed search query changes
-    private BroadcastReceiver mSearchQueryListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String to = intent.getStringExtra(GerritSearchView.KEY_TO);
-            if (isAdded() && mParent.getClass().getSimpleName().equals(to)) {
-                getLoaderManager().restartLoader(0, null, CardsFragment.this);
-            }
-        }
-    };
-
-    /* Broadcast receiver to tell the endless adapter we have finished loading when there was
-     * no data */
-    private final BroadcastReceiver finishedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mSwipeLayout.setRefreshing(false);
-
-            Intent processed = intent.getParcelableExtra(Finished.INTENT_KEY);
-            Direction direction = (Direction) processed.getSerializableExtra(GerritService.CHANGES_LIST_DIRECTION);
-
-            if (mEndlessAdapter == null || direction == Direction.Newer) return;
-
-            int itemsFetched = intent.getIntExtra(Finished.ITEMS_FETCHED_KEY, 0);
-            if (itemsFetched < sChangesLimit) {
-                // Remove the endless adapter as we have no more changes to load
-                mEndlessAdapter.finishedDataLoading();
-            }
-        }
-    };
-
-    private final BroadcastReceiver startReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mSwipeLayout.setRefreshing(true);
-        }
-    };
 
     private ListView mListView;
     // Adapter that binds data to the listview
@@ -144,6 +105,7 @@ public abstract class CardsFragment extends Fragment
             refresh(true);
         }
     };
+    private EventBus mEventBus;
 
 
     @Override
@@ -224,6 +186,8 @@ public abstract class CardsFragment extends Fragment
         mUrl.setStatus(getQuery());
 
         mSearchView = (GerritSearchView) mParent.findViewById(R.id.search);
+
+        mEventBus = EventBus.getDefault();
     }
 
     private void setup()
@@ -237,8 +201,6 @@ public abstract class CardsFragment extends Fragment
     @Override
     public void onStart() {
         super.onStart();
-        LocalBroadcastManager.getInstance(mParent).registerReceiver(mSearchQueryListener,
-                new IntentFilter(CardsFragment.SEARCH_QUERY));
 
         if (mEndlessAdapter != null) {
             toggleAnimations(mEndlessAdapter);
@@ -247,21 +209,15 @@ public abstract class CardsFragment extends Fragment
 
         EasyTracker.getInstance(getActivity()).activityStart(getActivity());
 
-        LocalBroadcastManager.getInstance(mParent).registerReceiver(startReceiver,
-            new IntentFilter(StartingRequest.TYPE));
-
-        LocalBroadcastManager.getInstance(mParent).registerReceiver(finishedReceiver,
-                new IntentFilter(Finished.TYPE));
+        mEventBus.registerSticky(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        LocalBroadcastManager.getInstance(mParent).unregisterReceiver(mSearchQueryListener);
         EasyTracker.getInstance(getActivity()).activityStop(getActivity());
 
-        LocalBroadcastManager.getInstance(mParent).unregisterReceiver(startReceiver);
-        LocalBroadcastManager.getInstance(mParent).unregisterReceiver(finishedReceiver);
+        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -426,20 +382,22 @@ public abstract class CardsFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         if (args == null) {
-            args = mSearchView.getLastProcessedQuery();
-            String to = args.getString(GerritSearchView.KEY_TO);
-            if (!mParent.getClass().getSimpleName().equals(to))
-                args = null;
+            SearchQueryChanged ev = mEventBus.getStickyEvent(SearchQueryChanged.class);
+            if (ev != null) {
+                String to = ev.getClazzName();
+                if (mParent.getClass().getSimpleName().equals(to))
+                    args = ev.getBundle();
+            }
         }
 
         if (args != null) {
-            String databaseQuery = args.getString("WHERE");
+            String databaseQuery = args.getString(SearchQueryChanged.KEY_WHERE);
             if (databaseQuery != null && !databaseQuery.isEmpty()) {
-                if (args.getStringArrayList("BIND_ARGS") != null) {
+                if (args.getStringArrayList(SearchQueryChanged.KEY_BINDARGS) != null) {
                     /* Create a copy as the findCommits function can modify the contents of bindArgs
                      *  and we want each receiver to use the bindArgs from the original broadcast */
                     ArrayList<String> bindArgs = new ArrayList<>();
-                    bindArgs.addAll(args.getStringArrayList("BIND_ARGS"));
+                    bindArgs.addAll(args.getStringArrayList(SearchQueryChanged.KEY_BINDARGS));
                     return UserChanges.findCommits(mParent, getQuery(), databaseQuery, bindArgs);
                 }
             }
@@ -457,7 +415,7 @@ public abstract class CardsFragment extends Fragment
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
         // Broadcast that we have finished loading changes
-        new ChangeLoadingFinished(mParent, getQuery()).sendUpdateMessage();
+        mEventBus.post(new ChangeLoadingFinished(getQuery()));
 
         if (cursor.getCount() < 1 && mEndlessAdapter != null) {
             mEndlessAdapter.startDataLoading();
@@ -479,6 +437,46 @@ public abstract class CardsFragment extends Fragment
             mSwipeLayout.setRefreshing(false);
         } else {
             mIsRefreshing = false;
+        }
+    }
+
+
+    // Listen for processed search query changes
+    public void onEventMainThread(SearchQueryChanged ev) {
+        String to = ev.getClazzName();
+        if (isAdded() && mParent.getClass().getSimpleName().equals(to)) {
+            getLoaderManager().restartLoader(0, null, this);
+        }
+    }
+
+    /* Tell the endless adapter we have finished loading when there was no data */
+    public void onEventMainThread(Finished ev) {
+        if (!getQuery().equals(ev.getStatus())) {
+            return;
+        }
+
+        mSwipeLayout.setRefreshing(false);
+
+        Intent processed = ev.getIntent();
+        Direction direction = (Direction) processed.getSerializableExtra(GerritService.CHANGES_LIST_DIRECTION);
+
+        if (mEndlessAdapter == null || direction == Direction.Newer) return;
+
+        if (ev.getItems() < sChangesLimit) {
+            // Remove the endless adapter as we have no more changes to load
+            mEndlessAdapter.finishedDataLoading();
+        }
+    }
+
+    public void onEventMainThread(StartingRequest ev) {
+        if (getQuery().equals(ev.getStatus())) {
+            mSwipeLayout.setRefreshing(true);
+        }
+    }
+
+    public void onEventMainThread(ErrorDuringConnection ev) {
+        if (getQuery().equals(ev.getStatus())) {
+            mSwipeLayout.setRefreshing(false);
         }
     }
 }

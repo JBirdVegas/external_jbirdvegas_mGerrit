@@ -21,6 +21,7 @@ dependencies {
     compile files('libs/annotations.jar')
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.mcxiaoke.volley:library:1.0.+'
+    compile 'de.greenrobot:eventbus:2.2.1'
 }
 
 android {

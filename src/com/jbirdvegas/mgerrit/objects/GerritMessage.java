@@ -17,54 +17,29 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class GerritMessage {
 
-    public static final String MESSAGE = "Gerrit Task Update";
-    public static final String EXCEPTION = "Exception";
-    public static final String URL = "URL";
-    public static final String PROGRESS = "Progress";
-    public static final String FILE_LENGTH = "File Length";
+    public final String mUrl;
+    private final Intent mIntent;
+    private final String mStatus;
 
-    private final Context mContext;
-    public String mUrl;
-
-    public GerritMessage(Context context, String url) {
-        this.mContext = context;
+    public GerritMessage(@NotNull Intent intent, String url, String status) {
+        this.mIntent = intent;
         this.mUrl = url;
+        this.mStatus = status;
     }
-
-    public abstract String getType();
-    public abstract String getMessage();
 
     public String getUrl() { return mUrl; }
-    public Context getContext() { return mContext; }
 
-    public void sendUpdateMessage()
-    {
-        Map<String, String> m = new HashMap<>();
-        m.put(GerritMessage.MESSAGE, this.getMessage());
-        Intent i = packMessage(m);
-        sendMessage(i);
+    public Intent getIntent() {
+        return mIntent;
     }
 
-    private void sendMessage(Intent intent) {
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
-    }
-
-    protected Intent packMessage(Map<String, String> map) {
-        Intent intent = new Intent(getType());
-
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            intent.putExtra(entry.getKey(), entry.getValue());
-            intent.putExtra(URL, mUrl);
-        }
-        return intent;
+    public String getStatus() {
+        return mStatus;
     }
 }

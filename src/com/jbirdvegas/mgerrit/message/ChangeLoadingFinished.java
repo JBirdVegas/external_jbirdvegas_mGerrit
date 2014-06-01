@@ -1,9 +1,5 @@
 package com.jbirdvegas.mgerrit.message;
 
-import android.content.Context;
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
-
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
  *  Author: Evan Conway (P4R4N01D), 2013
@@ -20,31 +16,15 @@ import android.support.v4.content.LocalBroadcastManager;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+// Event: Finished loading the change list
 public class ChangeLoadingFinished {
-
-    /* Note: Must have the type declared static and public so receivers can subscribe
-     * to this type of message */
-    public static final String ACTION = "Change Loading Finished";
-    public static final String STATUS = "Change Status";
     private final String mStatus;
-    private Context mContext;
 
-    public ChangeLoadingFinished(Context context, String status) {
-        mContext = context;
+    public ChangeLoadingFinished(String status) {
         mStatus = status;
     }
 
-    public String getType() {
-        return ACTION;
-    }
-
-    public String getMessage() {
-        return String.format("Finished loading %s changes.", mStatus);
-    }
-
-    public void sendUpdateMessage() {
-        Intent intent = new Intent(getType());
-        intent.putExtra(STATUS, mStatus);
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+    public String getStatus() {
+        return mStatus;
     }
 }

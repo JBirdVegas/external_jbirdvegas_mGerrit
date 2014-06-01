@@ -266,7 +266,7 @@ public abstract class SearchKeyword implements Parcelable {
                 else otherSearches.add(o);
             }
 
-            Collections.sort(ageSearches, Collections.reverseOrder());
+            Collections.sort(ageSearches);
             otherSearches.add(ageSearches.get(0));
         }
 

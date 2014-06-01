@@ -1,14 +1,8 @@
 package com.jbirdvegas.mgerrit.message;
 
-import android.content.Context;
 import android.content.Intent;
 
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
-import com.jbirdvegas.mgerrit.tasks.GerritService;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
@@ -28,43 +22,12 @@ import java.util.Map;
  */
 public class Finished extends GerritMessage {
 
-    /* Note: Must have the type declared static and public so receivers can subscribe
-     * to this type of message */
-    public static final String TYPE = "Finished";
-
-    // The number of items that were fetched
-    public static final String ITEMS_FETCHED_KEY = "num_items";
-
-    // The original intent that has been processed
-    public static final String INTENT_KEY = "intent";
-
     private final int mItems;
-    private final Intent mIntent;
-    String mMessage;
 
-
-    public Finished(Context context, String message, @NotNull Intent intent, int items) {
-        super(context, intent.getStringExtra(GerritService.URL_KEY));
-        this.mMessage = message;
+    public Finished(Intent intent, String url, String status, int items) {
+        super(intent, url, status);
         this.mItems = items;
-        this.mIntent = intent;
     }
 
-    @Override
-    public String getType() {
-        return TYPE;
-    }
-
-    @Override
-    public String getMessage() {
-        return mMessage;
-    }
-
-    @Override
-    protected Intent packMessage(Map<String, String> map) {
-        Intent intent = super.packMessage(map);
-        intent.putExtra(ITEMS_FETCHED_KEY, mItems);
-        intent.putExtra(INTENT_KEY, mIntent);
-        return intent;
-    }
+    public int getItems() { return mItems; }
 }
