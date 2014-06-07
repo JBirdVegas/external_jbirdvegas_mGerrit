@@ -86,6 +86,8 @@ public abstract class CardsFragment extends Fragment
     // Indicates whether the current fragment is refreshing
     private boolean mIsRefreshing = false;
 
+    private static boolean sIsTabletMode = false;
+
     private ListView mListView;
     // Adapter that binds data to the listview
     private ChangeListAdapter mAdapter;
@@ -188,6 +190,8 @@ public abstract class CardsFragment extends Fragment
         mSearchView = (GerritSearchView) mParent.findViewById(R.id.search);
 
         mEventBus = EventBus.getDefault();
+
+        sIsTabletMode = Prefs.isTabletMode(mParent);
     }
 
     private void setup()
@@ -414,8 +418,11 @@ public abstract class CardsFragment extends Fragment
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
-        // Broadcast that we have finished loading changes
-        mEventBus.post(new ChangeLoadingFinished(getQuery()));
+
+        if (sIsTabletMode) {
+            // Broadcast that we have finished loading changes
+            mEventBus.post(new ChangeLoadingFinished(getQuery()));
+        }
 
         if (cursor.getCount() < 1 && mEndlessAdapter != null) {
             mEndlessAdapter.startDataLoading();

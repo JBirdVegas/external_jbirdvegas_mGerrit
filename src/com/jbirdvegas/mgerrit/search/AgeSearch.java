@@ -140,7 +140,7 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
              *  directly in the query */
             return UserChanges.C_UPDATED + " BETWEEN datetime(?) AND datetime(?)";
         } else {
-            return "datetime(?) " + operator + " " + UserChanges.C_UPDATED;
+            return UserChanges.C_UPDATED + " " + operator + " datetime(?)";
         }
     }
 

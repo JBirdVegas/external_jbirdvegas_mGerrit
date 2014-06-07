@@ -31,16 +31,20 @@ public class AfterSearch extends AgeSearch {
     }
 
     public AfterSearch(String param) {
-        super(param, "<=");
+        super(param, ">=");
     }
 
     public AfterSearch(long timestamp) {
-        super(timestamp, "<=");
+        super(timestamp, ">=");
     }
 
     @Override
     public String toString() {
-        return OP_NAME + ":" + getInstant().toString();
+        Instant instant = getInstant();
+        if (instant == null) {
+            instant = AgeSearch.getInstantFromPeriod(getPeriod());
+        }
+        return OP_NAME + ":" + instant.toString();
     }
 
     @Override
@@ -58,10 +62,6 @@ public class AfterSearch extends AgeSearch {
 
             return "after:{" + sInstantFormatter.print(instant) +'}';
         }
-        // Need to leave off the operator and make sure we are using relative format
-        /* Gerrit only supports specifying one time unit, so we will normalize the period
-         *  into days.
-         * After search on the server only supports the parameter in timestamps */
-        return AgeSearch.OP_NAME + ":" + String.valueOf(ageSearch.toDays()) + "d";
+        return "";
     }
 }
