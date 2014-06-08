@@ -70,7 +70,7 @@ import java.util.Set;
 import de.greenrobot.event.EventBus;
 
 public abstract class CardsFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor>, Refreshable {
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static int sChangesLimit = 0;
     protected String TAG = "CardsFragment";
@@ -429,7 +429,6 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
-    @Override
     public void onStartRefresh() {
         if (isAdded() && mSwipeLayout != null) {
             mSwipeLayout.setRefreshing(true);
@@ -438,7 +437,6 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
-    @Override
     public void onStopRefresh() {
         if (isAdded() && mSwipeLayout != null) {
             mSwipeLayout.setRefreshing(false);
@@ -462,7 +460,7 @@ public abstract class CardsFragment extends Fragment
             return;
         }
 
-        mSwipeLayout.setRefreshing(false);
+        onStopRefresh();
 
         Intent processed = ev.getIntent();
         Direction direction = (Direction) processed.getSerializableExtra(GerritService.CHANGES_LIST_DIRECTION);
@@ -477,13 +475,13 @@ public abstract class CardsFragment extends Fragment
 
     public void onEventMainThread(StartingRequest ev) {
         if (getQuery().equals(ev.getStatus())) {
-            mSwipeLayout.setRefreshing(true);
+            onStartRefresh();
         }
     }
 
     public void onEventMainThread(ErrorDuringConnection ev) {
         if (getQuery().equals(ev.getStatus())) {
-            mSwipeLayout.setRefreshing(false);
+            onStopRefresh();
         }
     }
 }

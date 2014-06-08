@@ -49,7 +49,7 @@ import de.greenrobot.event.EventBus;
 
 public class ProjectsList extends Activity
     implements LoaderManager.LoaderCallbacks<Cursor>,
-        SearchView.OnQueryTextListener, Refreshable
+        SearchView.OnQueryTextListener
 {
     ExpandableListView mProjectsListView;
     ProjectsListAdapter mListAdapter;
@@ -220,7 +220,7 @@ public class ProjectsList extends Activity
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mListAdapter.setSubprojectQuery(mQuery);
         mListAdapter.changeCursor(cursor);
-        onStopRefresh();
+        mSwipeLayout.setRefreshing(false);
     }
 
     @Override
@@ -262,20 +262,10 @@ public class ProjectsList extends Activity
         return false;
     }
 
-    @Override
-    public void onStartRefresh() {
-        mSwipeLayout.setRefreshing(true);
-    }
-
-    @Override
-    public void onStopRefresh() {
-        mSwipeLayout.setRefreshing(false);
-    }
-
     public void onEventMainThread(StartingRequest ev) {
         Intent intent = ev.getIntent();
         if (intent.getSerializableExtra(GerritService.DATA_TYPE_KEY) == GerritService.DataType.Project) {
-            onStartRefresh();
+            mSwipeLayout.setRefreshing(true);
         }
     }
 
@@ -283,14 +273,14 @@ public class ProjectsList extends Activity
         Intent intent = ev.getIntent();
         Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
         if (ev.getItems() < 1 && dataType == GerritService.DataType.Project) {
-            onStopRefresh();
+            mSwipeLayout.setRefreshing(false);
         }
     }
 
     public void onEventMainThread(ErrorDuringConnection ev) {
         Intent intent = ev.getIntent();
         if (intent.getSerializableExtra(GerritService.DATA_TYPE_KEY) == GerritService.DataType.Project) {
-            onStopRefresh();
+            mSwipeLayout.setRefreshing(false);
         }
     }
 }

@@ -10,6 +10,7 @@ import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +82,8 @@ public abstract class EndlessAdapterWrapper extends BaseAdapter
      *  When manually loading data, be sure to call this.
      */
     public void startDataLoading() {
+        // Don't load data if there is no connection
+        if (!Tools.isConnected(mContext)) return;
         // No effect if we have already started loading or this is disabled
         if (mLoadingMoreData) return;
         mLoadingMoreData = true;

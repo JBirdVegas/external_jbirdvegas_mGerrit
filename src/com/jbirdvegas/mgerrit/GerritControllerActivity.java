@@ -47,8 +47,7 @@ import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
 import de.greenrobot.event.EventBus;
 
-public class GerritControllerActivity extends FragmentActivity
-    implements Refreshable {
+public class GerritControllerActivity extends FragmentActivity {
 
     private static final String GERRIT_INSTANCE = "gerrit";
     private String mGerritWebsite;
@@ -261,22 +260,6 @@ public class GerritControllerActivity extends FragmentActivity
         });
         builder.create();
         builder.show();
-    }
-
-    @Override
-    public void onStartRefresh() {
-        CardsFragment currentFragment = mChangeList.getCurrentFragment();
-        if (currentFragment != null) {
-            currentFragment.onStartRefresh();
-        }
-    }
-
-    @Override
-    public void onStopRefresh() {
-        CardsFragment currentFragment = mChangeList.getCurrentFragment();
-        if (currentFragment != null) {
-            currentFragment.onStopRefresh();
-        }
     }
 
     public void onEventMainThread(GerritChanged ev) {
