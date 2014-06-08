@@ -99,7 +99,7 @@ public class PatchSetPropertiesCard implements CardBinder {
 
         setupUserDetails(viewHolder.author,
                 cursor.getInt(authorId_index),
-                cursor.getString(authorName_index),
+                cursor.getString(authorEmail_index),
                 cursor.getString(authorName_index));
 
         String topic = cursor.getString(topic_index);
