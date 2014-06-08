@@ -111,7 +111,7 @@ public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
         // Row specific handling
         if (getItemViewType(position) == 0) {
             if (convertView == null) {
-                convertView = mInflator.inflate(R.layout.gerrit_row, null);
+                convertView = mInflator.inflate(R.layout.gerrit_row, parent, false);
             }
 
             viewHolder = (ViewHolder) convertView.getTag();
@@ -131,7 +131,7 @@ public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
 
         } else {
             if (convertView == null) {
-                convertView = mInflator.inflate(R.layout.add_team_row, null);
+                convertView = mInflator.inflate(R.layout.add_team_row, parent, false);
             }
 
             viewHolder = (ViewHolder) convertView.getTag();

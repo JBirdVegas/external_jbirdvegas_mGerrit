@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.GooFileObject;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -35,11 +34,15 @@ public class GooFileArrayAdapter extends BaseAdapter {
     private final Context mContext;
     private final int mLayoutResourceId;
     private final List<GooFileObject> mGooFilesList;
+    private final SimpleDateFormat mDateFormat;
+    private final LayoutInflater mInflator;
 
     public GooFileArrayAdapter(Context context, int layoutResourceId, List<GooFileObject> objects) {
         this.mContext = context;
         this.mLayoutResourceId = layoutResourceId;
         this.mGooFilesList = objects;
+        this.mDateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        this.mInflator = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -59,19 +62,30 @@ public class GooFileArrayAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View root = convertView;
-        if (root == null) {
-            LayoutInflater inflater = (LayoutInflater)
-                    mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            root = inflater.inflate(mLayoutResourceId, null);
-            TextView fileName = (TextView) root.findViewById(R.id.goo_file_name);
-            TextView fileUpdate = (TextView) root.findViewById(R.id.goo_file_date);
-            final GooFileObject file = mGooFilesList.get(position);
-            fileName.setText(file.getFileName());
-            long unixDate = file.getModified();
-            DateFormat df = new SimpleDateFormat("MM-dd-yyyy");
-            fileUpdate.setText(df.format(new Date(unixDate)));
+        if (convertView == null) {
+            convertView = mInflator.inflate(mLayoutResourceId, parent, false);
         }
-        return root;
+
+        ViewHolder viewHolder = (ViewHolder) convertView.getTag();
+        if (viewHolder == null) {
+            viewHolder = new ViewHolder(convertView);
+            convertView.setTag(viewHolder);
+        }
+
+        GooFileObject file = mGooFilesList.get(position);
+        viewHolder.fileName.setText(file.getFileName());
+        long unixDate = file.getModified();
+        viewHolder.fileUpdate.setText(mDateFormat.format(new Date(unixDate)));
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView fileName;
+        TextView fileUpdate;
+
+        ViewHolder(View view) {
+            fileName = (TextView) view.findViewById(R.id.goo_file_name);
+            fileUpdate = (TextView) view.findViewById(R.id.goo_file_date);
+        }
     }
 }

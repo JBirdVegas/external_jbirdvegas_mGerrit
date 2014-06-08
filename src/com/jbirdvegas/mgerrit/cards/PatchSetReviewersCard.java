@@ -58,7 +58,7 @@ public class PatchSetReviewersCard implements CardBinder {
     public View setViewValue(Cursor cursor, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.patchset_labels_card, null);
+            convertView = mInflater.inflate(R.layout.patchset_labels_card, parent, false);
         }
 
         // Locate the views if necessary (these views are constant)

@@ -58,7 +58,7 @@ public class FileAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return mInflator.inflate(R.layout.diff_files_row, null);
+        return mInflator.inflate(R.layout.diff_files_row, parent, false);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class FileAdapter extends CursorAdapter {
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = mInflator.inflate(R.layout.diff_files_dropdown_row, null);
+            convertView = mInflator.inflate(R.layout.diff_files_dropdown_row, parent, false);
         }
 
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();

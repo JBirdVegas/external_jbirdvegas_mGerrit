@@ -40,7 +40,7 @@ public class PatchSetMessageCard implements CardBinder {
     @Override
     public View setViewValue(Cursor cursor, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.patchset_message_card, null);
+            convertView = mInflater.inflate(R.layout.patchset_message_card, parent, false);
         }
 
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();

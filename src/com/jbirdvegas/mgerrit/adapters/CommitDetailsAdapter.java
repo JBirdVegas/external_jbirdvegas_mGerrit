@@ -103,7 +103,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = mInflator.inflate(R.layout.card_header, null);
+            convertView = mInflator.inflate(R.layout.card_header, parent, false);
         }
 
         GroupViewHolder viewHolder = (GroupViewHolder) convertView.getTag();

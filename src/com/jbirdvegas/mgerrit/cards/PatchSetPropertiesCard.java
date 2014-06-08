@@ -77,7 +77,7 @@ public class PatchSetPropertiesCard implements CardBinder {
     public View setViewValue(Cursor cursor, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.properties_card, null);
+            convertView = mInflater.inflate(R.layout.properties_card, parent, false);
         }
 
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();

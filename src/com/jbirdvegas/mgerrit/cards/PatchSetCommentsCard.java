@@ -62,9 +62,8 @@ public class PatchSetCommentsCard implements CardBinder {
     }
 
     public View setViewValue(Cursor cursor, View convertView, ViewGroup parent) {
-
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.commit_comment, null);
+            convertView = mInflater.inflate(R.layout.commit_comment, parent, false);
         }
 
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
