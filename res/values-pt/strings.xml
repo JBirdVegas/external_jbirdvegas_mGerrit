@@ -51,12 +51,6 @@
   <string name="communications_error">ERRO de comunicação!!!</string>
   <string name="transferring_json_data">A transferir dados codificados JSON&#8230;</string>
   <string name="open_source_libs">Bibliotecas de código aberto</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ListViewAnimations</string>
-  <string name="support_library">Biblioteca de Suporte v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">Explicar os estatutos</string>
   <string name="explain_status_summary">Breve explicação do significado da aba do Estado</string>
   <string name="menu_gerrit_instance">Instância do Gerrit</string>

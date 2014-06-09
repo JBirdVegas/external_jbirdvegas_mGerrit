@@ -24,8 +24,8 @@
   <string name="status_explanation_submitted">El cambio ha sido subido y está en linea para combinarse. Puede estar esperando por una o más dependencias.
     </string>
   <string name="status_explanation_merged">El cambio se ha integrado con su rama.</string>
-  <string name="status_explanation_abandoned">EL cambio fue abandonado por su propietario o el administrador.</string>
-  <string name="status_explanation_draft">El cambio es un borrador que consiste de un parche.</string>
+  <string name="status_explanation_abandoned">El cambio fue abandonado por su propietario o el administrador.</string>
+  <string name="status_explanation_draft">El cambio es un proyecto de cambio que solamente consiste en proyectos counjuntos de parches.</string>
   <string name="patchset_labels_code_reviewer">Revisión de código:</string>
   <string name="patchset_labels_verified_reviewer">Verificado:</string>
   <string name="inserted">Líneas insertadas:</string>
@@ -52,12 +52,6 @@
   <string name="communications_error">ERROR de comunicación!!!</string>
   <string name="transferring_json_data">Transfiriendo datos JSON codificados&#8230;</string>
   <string name="open_source_libs">Bibliotecas de código abierto</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ListViewAnimations</string>
-  <string name="support_library">Biblioteca de soporte v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">Explique los estados</string>
   <string name="explain_status_summary">Breve explicación de los significados de las lengüetas de estado</string>
   <string name="menu_gerrit_instance">Instancia de Gerrit</string>
@@ -69,7 +63,6 @@
 Cierta información no estará disponible</string>
   <string name="comments_card_title">Comentarios:</string>
   <string name="unknown">Desconocido</string>
-  <string name="aosp_volley_title">Volley de AOSP</string>
   <string name="developers_role">Elija papel de desarrollador para ver</string>
   <string name="commit_reviewer">Revisor de Commit</string>
   <string name="context_menu_view_diff_viewer">Usar visor interno</string>
@@ -103,7 +96,7 @@ Cierta información no estará disponible</string>
   <string name="add_gerrit_name">Nuevo nombre del equipo de Gerrit</string>
   <string name="handshake_fail_message">Falló el handshake. Intente instalar certificado del proveedor del dispositivo.</string>
   <string name="caused_by">Causado por:</string>
-  <string name="at">en</string>
+  <string name="at">a las</string>
   <string name="locales">Localización de zona horaria</string>
   <string name="server_timezone_title">Zona horaria del servidor</string>
   <string name="local_timezone_title">Zona horaria local</string>
@@ -152,5 +145,5 @@ Cierta información no estará disponible</string>
   <string name="failed_to_decode_image">No se pudo descifrar la imagen</string>
   <string name="diff_text_loading">Cargando texto de diff</string>
   <string name="diff_image_loading">Cargando imagen</string>
-  <string name="loading_changes">Cargando Mas Cambios&#8230;</string>
+  <string name="loading_changes">Cargando Más Cambios&#8230;</string>
 </resources>

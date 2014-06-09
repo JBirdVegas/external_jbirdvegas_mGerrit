@@ -51,12 +51,6 @@
   <string name="communications_error">Erreur de communication!!!</string>
   <string name="transferring_json_data">Transfert des données encodées en JSON&#8230;</string>
   <string name="open_source_libs">Bibliothèques Open Source</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">Voir la liste des animations</string>
-  <string name="support_library">Support de la bibliothèque v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">Expliquer les statuts</string>
   <string name="explain_status_summary">Brève explication de la signification de l\'onglet Statut</string>
   <string name="menu_gerrit_instance">Instance de Gerrit</string>
@@ -68,7 +62,6 @@
 Certaines informations ne seront pas disponibles</string>
   <string name="comments_card_title">Remarques:</string>
   <string name="unknown">Inconnu</string>
-  <string name="aosp_volley_title">Volet AOSP</string>
   <string name="developers_role">Choisir le rôle du développeur à afficher</string>
   <string name="commit_reviewer">Examinateur de l\'ajout</string>
   <string name="context_menu_view_diff_viewer">Utilisez la visionneuse interne</string>

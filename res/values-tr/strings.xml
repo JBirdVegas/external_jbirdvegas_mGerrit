@@ -51,12 +51,6 @@
   <string name="communications_error">İletişim hatası!!!</string>
   <string name="transferring_json_data">JSON kodlanmış verisi transfer ediliyor&#8230;</string>
   <string name="open_source_libs">Açık kaynak kütüphaneleri</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ListViewAnimations</string>
-  <string name="support_library">Destek Kitaplığı v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Zamanı</string>
   <string name="explain_status_title">Durumları açıkla</string>
   <string name="explain_status_summary">Durum sekmeleri anlamlarının kısa açıklaması</string>
   <string name="menu_gerrit_instance">Gerrit örneği</string>
@@ -67,7 +61,6 @@
   <string name="current_revision_is_draft_message">Mevcut revizyon bir taslaktır. Bazı bilgiler mevcut olmayacak</string>
   <string name="comments_card_title">Yorumlar:</string>
   <string name="unknown">Bilinmeyen</string>
-  <string name="aosp_volley_title">AOSP Ağ Kütüphanesi</string>
   <string name="developers_role">Geliştiricinin rolünü görüntülemek için seçin</string>
   <string name="commit_reviewer">Gözdengeçirici Öner</string>
   <string name="context_menu_view_diff_viewer">Dahili Görüntüleyici\'yi kullanın</string>

@@ -51,12 +51,6 @@
   <string name="communications_error">CHYBA komunikace!!!</string>
   <string name="transferring_json_data">Přenášení JSON enkodovaných dat&#8230;</string>
   <string name="open_source_libs">Open Source knihovny</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ListViewAnimations</string>
-  <string name="support_library">Support Library v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">Vysvětlení stavů</string>
   <string name="explain_status_summary">Jednoduché vysvětlení, co znamenají stavy na záložkách</string>
   <string name="menu_gerrit_instance">Instance gerritu</string>
@@ -69,7 +63,6 @@
     </string>
   <string name="comments_card_title">Komentáře:</string>
   <string name="unknown">Neznámý</string>
-  <string name="aosp_volley_title">AOSP Volley</string>
   <string name="developers_role">Zvolit roli vývojáře k zobrazení</string>
   <string name="commit_reviewer">Revident požadavku</string>
   <string name="context_menu_view_diff_viewer">Zobrazit rozdíly v dialogu</string>

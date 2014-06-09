@@ -55,12 +55,6 @@
   <string name="communications_error">通讯错误！！！</string>
   <string name="transferring_json_data">正在传输JSON格式数据&#8230;&#8230;</string>
   <string name="open_source_libs">开源引用库</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ListViewAnimations</string>
-  <string name="support_library">支持库 v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">状态解释</string>
   <string name="explain_status_summary">简要说明状态标签的含义</string>
   <string name="menu_gerrit_instance">Gerrit实例</string>
@@ -73,7 +67,6 @@
     </string>
   <string name="comments_card_title">评论：</string>
   <string name="unknown">未知</string>
-  <string name="aosp_volley_title">AOSP Volley</string>
   <string name="developers_role">选择开发者角色用于查看</string>
   <string name="commit_reviewer">提交审核者</string>
   <string name="context_menu_view_diff_viewer">使用内置查看器</string>

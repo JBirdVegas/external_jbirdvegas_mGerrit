@@ -52,12 +52,6 @@
   <string name="communications_error">ОШИБКА связи!!!</string>
   <string name="transferring_json_data">Передача данных JSON...</string>
   <string name="open_source_libs">Библиотеки открытого кода</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ListViewAnimations</string>
-  <string name="support_library">Поддержка библиотеки v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">Объяснение статусов</string>
   <string name="explain_status_summary">Краткое объяснение значений вкладок статусов</string>
   <string name="menu_gerrit_instance">Выбор Gerrit</string>
@@ -68,7 +62,6 @@
   <string name="current_revision_is_draft_message">Текущая ревизия является проектом. Некоторая информация будет недоступна</string>
   <string name="comments_card_title">Комментарии:</string>
   <string name="unknown">Неизвестно</string>
-  <string name="aosp_volley_title">Volley AOSP</string>
   <string name="developers_role">Выберите роль разработчика для просмотра</string>
   <string name="commit_reviewer">Обзор изменений</string>
   <string name="context_menu_view_diff_viewer">В программе</string>

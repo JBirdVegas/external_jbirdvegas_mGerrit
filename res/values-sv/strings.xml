@@ -51,12 +51,6 @@
   <string name="communications_error">Kommunikationsfel!!!</string>
   <string name="transferring_json_data">Överför JSON-kodad data&#8230;</string>
   <string name="open_source_libs">Öppet källkods bibliotek</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">Listanimationer</string>
-  <string name="support_library">Stödbibliotek v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-tid</string>
   <string name="explain_status_title">Förklara statusar</string>
   <string name="explain_status_summary">Kort förklaring av statusflikarnas betydelser</string>
   <string name="menu_gerrit_instance">Gerrit Instans</string>
@@ -68,7 +62,6 @@
 Viss information kommer inte vara tillgänglig</string>
   <string name="comments_card_title">Kommentarer:</string>
   <string name="unknown">Okänd</string>
-  <string name="aosp_volley_title">AOSP\'S Volley</string>
   <string name="developers_role">Välj att visa utvecklarens roll</string>
   <string name="commit_reviewer">Inskickarens Kommentar</string>
   <string name="context_menu_view_diff_viewer">Använd intern läsare</string>

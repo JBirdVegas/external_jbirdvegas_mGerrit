@@ -50,13 +50,7 @@
   <string name="initializing_data_transfer">දත්ත මාරුව අරඹමින්&#8230;</string>
   <string name="communications_error">සන්නිවේදනයේ දෝෂයක්!!!</string>
   <string name="transferring_json_data">JSON කේතාංකිත දත්ත මාරුකරමින්&#8230;</string>
-  <string name="open_source_libs">විවෘත කේතිත පුස්තකාල</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ලැයිස්තු පෙන්වීමේ සජීවන</string>
-  <string name="support_library">4වන ආධාරක පුස්තකාල අනුවාදය</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-වේලාව</string>
+  <string name="open_source_libs">විවෘත මූලාශ්‍ර පුස්තකාල</string>
   <string name="explain_status_title">තත්ව පහදන්න</string>
   <string name="explain_status_summary">තත්ව පටිති පිලිබඳ කෙටි පැහැදිලිකිරීමක්</string>
   <string name="menu_gerrit_instance">Gerrit ප්‍රස්තාව</string>
@@ -67,7 +61,6 @@
   <string name="current_revision_is_draft_message">පවතින ප්‍රතිශෝධනය කෙටුම්පතකි. සමහර තොරතුරු නොතිබීමට පුළුවනි    </string>
   <string name="comments_card_title">විවේචන:</string>
   <string name="unknown">නොදනී</string>
-  <string name="aosp_volley_title">AOSP ගේ වෙඩිමුරය</string>
   <string name="developers_role">පිරික්සීම සඳහා වර්ධකගේ භූමිකාව තෝරන්න</string>
   <string name="commit_reviewer">පැවරුම් විචාරක</string>
   <string name="context_menu_view_diff_viewer">අභ්‍යන්තර විචාරකයෙක් යොදාගන්න</string>

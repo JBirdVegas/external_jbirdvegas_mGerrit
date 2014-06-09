@@ -40,7 +40,6 @@
   <string name="initializing_data_transfer">Ініціалізації передачі даних...</string>
   <string name="communications_error">ПОМИЛКА зв\'язку!!!</string>
   <string name="open_source_libs">Бібліотеки відкритого коду</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
   <string name="explain_status_title">Пояснення статусів</string>
   <string name="explain_status_summary">Стисле пояснення вкладок статусів</string>
   <string name="menu_gerrit_instance">Зразок Gerrit</string>
@@ -51,7 +50,6 @@
   <string name="current_revision_is_draft_message">Поточна ревізія є проектом. Деяка інформація буде недоступна</string>
   <string name="comments_card_title">Коментарі:</string>
   <string name="unknown">Невідомо</string>
-  <string name="aosp_volley_title">AOSP\'s Volley</string>
   <string name="developers_role">Виберіть ролі розробника для перегляду</string>
   <string name="commit_reviewer">Перегляд змін</string>
   <string name="context_menu_diff_view_in_browser">Перегляд відмінностей в браузері</string>

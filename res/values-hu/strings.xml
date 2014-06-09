@@ -50,7 +50,6 @@
   <string name="communications_error">Kapcsolat HIBA!!!</string>
   <string name="transferring_json_data">JSON kódolt adat átvitele...</string>
   <string name="open_source_libs">Nyílt Forrású Könyvtárak</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
   <string name="explain_status_title">Magyarázó állapotok</string>
   <string name="explain_status_summary">Rövid magyarázatok a Státusz lapok jelentéséhez</string>
   <string name="menu_gerrit_instance">Gerrit Felűgyelők</string>
@@ -63,7 +62,6 @@
     </string>
   <string name="comments_card_title">Megjegyzés:</string>
   <string name="unknown">Ismeretlen</string>
-  <string name="aosp_volley_title">AOSP Özönei</string>
   <string name="developers_role">Válassz fejlesztőt\ket teendők megtekintéséhez</string>
   <string name="commit_reviewer">Tag Ismertető</string>
   <string name="context_menu_view_diff_viewer">Különbségek felsorolva</string>

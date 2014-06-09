@@ -50,12 +50,6 @@
   <string name="communications_error">שגיאת תקשורת!!!</string>
   <string name="transferring_json_data">העברת נתוני JSON מקודדים&#8230;</string>
   <string name="open_source_libs">ספריות קוד פתוח</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">הנפשה של תצוגת-רשימה</string>
-  <string name="support_library">תמיכה בספריה v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">הסבר מצבים</string>
   <string name="explain_status_summary">הסבר קצר על משמעות טאב המצבים</string>
   <string name="menu_gerrit_instance">יישום Gerrit</string>
@@ -66,7 +60,6 @@
   <string name="current_revision_is_draft_message">הגרסה הנוכחית היא טיוטה. חלק מהמידע לא יהיה זמין</string>
   <string name="comments_card_title">הערות:</string>
   <string name="unknown">לא ידוע</string>
-  <string name="aosp_volley_title">Volley של AOSP</string>
   <string name="developers_role">בחר תפקיד מפתח להצגה</string>
   <string name="commit_reviewer">אשר סוקר</string>
   <string name="context_menu_view_diff_viewer">השתמש במציג פנימי</string>
@@ -97,6 +90,7 @@
   <string name="please_enter_gerrit_url">הזן את כתובת ה Gerrit</string>
   <string name="add_team_url">כתובת Gerrit חדש</string>
   <string name="add_gerrit_name">שם חדש לצוות Gerrit</string>
+  <string name="handshake_fail_message"> תהליך \"לחיצת היד\" נכשל. נסו להתקין תעודות של הספק על מכשירכם.</string>
   <string name="caused_by">נגרם על ידי:</string>
   <string name="at">ב</string>
   <string name="locales">מיקום אזור זמן</string>
@@ -118,11 +112,14 @@
   <string name="theme_light">ערכת נושא בהירה</string>
   <string name="theme_dark">ערכת נושא כהה</string>
   <string name="gerrit_help">עזרת Gerrit</string>
+  <string name="not_connected">לא קיים חיבור רשת כרגע. נסו מאוחר יותר.</string>
   <string name="retry_label">נסה שנית</string>
   <string name="header_properties">מאפיינים</string>
   <string name="header_changed_files">קבצים שהשתנו</string>
+  <string name="header_reviewers">סוקרים</string>
   <string name="header_comments">הערות</string>
   <string name="commit_updated">עודכן:</string>
+  <string name="renamed_label">מתורגם מ:</string>
   <string name="diff_back">הקובץ הקודם</string>
   <string name="diff_next">הקובץ הבא</string>
   <string name="diff_options_ask">שאל</string>

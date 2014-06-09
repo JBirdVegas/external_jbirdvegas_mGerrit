@@ -20,13 +20,22 @@
   <string name="reviewable">Gennemgå</string>
   <string name="merged">Flettet</string>
   <string name="abandoned">Opgivet</string>
+  <string name="status_explanation_new">Ændringen er stadig ved at blive gennemgået.</string>
+  <string name="status_explanation_submitted">Ændringen er blevet indgivet og er i kø til at blive flettet.  En eller flere afhængigheder kan være årsag til ventetid.</string>
+  <string name="status_explanation_merged">Ændringen er blevet flettet ind i dens gren.</string>
+  <string name="status_explanation_abandoned">Ændringen blev opgivet af ejeren eller administrator.</string>
+  <string name="status_explanation_draft">Ændringen er en udkastsændring som kun indeholder udkastnings ændringsset.</string>
+  <string name="patchset_labels_code_reviewer">Kode-anmeldelse:</string>
+  <string name="patchset_labels_verified_reviewer">Bekræftet:</string>
   <string name="inserted">Indsatte linjer:</string>
   <string name="deleted">Slettede linjer:</string>
+  <string name="binary_file">Binær fil</string>
   <string name="none_found">Ingen fundet</string>
   <string name="please_try_again">Gå venligst tilbage og prøv igen</string>
   <string name="menu_preferences">Præferencer</string>
   <string name="menu_help">Hjælp</string>
   <string name="choose_gerrit_instance">Vælg Team Gerrit instans</string>
+  <string name="choose_gerrit_instance_condensed">Vælg Gerrit kilde</string>
   <string name="commit_committer">Indberetter:</string>
   <string name="commit_author">Forfatter:</string>
   <string name="commit_owner">Ejer:</string>
@@ -35,12 +44,13 @@
   <string name="exit">Afslut</string>
   <string name="gerrit_call_failed">Kunne ikke få et brugbart svar fra Gerrit-instansen. Tjek venligst din forbindelse og prøv igen.     </string>
   <string name="establishing_connection">Opretter forbindelse...</string>
+  <string name="transferring">Overførsel af JSON kodet data...</string>
   <string name="downloading_status" formatted="false">%d af %d bytes downloaded\t%d%% færdiggjort</string>
   <string name="connection_established">Forbindelse etableret</string>
   <string name="initializing_data_transfer">Starter dataoverførsel...</string>
   <string name="communications_error">Kommunikationsfejl!!!</string>
+  <string name="transferring_json_data">Overførsel af JSON kodet data&#8230;</string>
   <string name="open_source_libs">Open Source-biblioteker</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
   <string name="explain_status_title">Forklar status</string>
   <string name="explain_status_summary">Kort forklaring af betydningen af Status-tabs</string>
   <string name="menu_gerrit_instance">Gerrit Instans</string>
@@ -53,5 +63,5 @@
     </string>
   <string name="comments_card_title">Kommentarer:</string>
   <string name="unknown">Ukendt</string>
-  <string name="aosp_volley_title">AOSP\'s Volley</string>
+  <string name="menu_projects">Se af projektet</string>
 </resources>

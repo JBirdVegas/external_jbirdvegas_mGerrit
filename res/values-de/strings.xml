@@ -52,12 +52,6 @@
   <string name="communications_error">Übertragungsfehler!!!</string>
   <string name="transferring_json_data">Übertrage JSON-kodierte Daten&#8230;</string>
   <string name="open_source_libs">Open Source Bibliotheken</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">Animationen der Listenansicht</string>
-  <string name="support_library">Support Library v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Zeit</string>
   <string name="explain_status_title">Status erläutern</string>
   <string name="explain_status_summary">Kurze Erklärung zu den Status-Reitern</string>
   <string name="menu_gerrit_instance">Gerrit-Vorgang</string>
@@ -68,9 +62,8 @@
   <string name="current_revision_is_draft_message">Die jetzige Revision ist ein Entwurf. Einige Informationen sind nicht verfügbar</string>
   <string name="comments_card_title">Kommentare:</string>
   <string name="unknown">Unbekannt</string>
-  <string name="aosp_volley_title">AOSP-Salve</string>
   <string name="developers_role">Entwicklerrolle zur Ansicht wählen</string>
-  <string name="commit_reviewer">Rezensent der Übergabe</string>
+  <string name="commit_reviewer">Commit-Rezensent</string>
   <string name="context_menu_view_diff_viewer">Internen Betrachter verwenden</string>
   <string name="context_menu_diff_view_in_browser">Unterscheide in Browser anzeigen</string>
   <string name="context_menu_change_browser">Änderung im Browser anzeigen</string>
@@ -132,7 +125,7 @@
   <string name="header_properties">Eigenschaften</string>
   <string name="header_commit_message">Änderung übertragen</string>
   <string name="header_changed_files">Geänderte Dateien</string>
-  <string name="header_reviewers">Reviewers</string>
+  <string name="header_reviewers">Reviewer</string>
   <string name="header_comments">Kommentare</string>
   <string name="commit_updated">Aktualisiert:</string>
   <string name="renamed_label">Umbenannt von:</string>

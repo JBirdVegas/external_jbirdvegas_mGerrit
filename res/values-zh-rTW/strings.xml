@@ -52,12 +52,6 @@
   <string name="communications_error">通訊錯誤！！！</string>
   <string name="transferring_json_data">正在傳輸 JSON 編碼的資料...</string>
   <string name="open_source_libs">開放原始碼函式庫</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ListViewAnimations</string>
-  <string name="support_library">Support Library v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">解釋狀態</string>
   <string name="explain_status_summary">簡要說明狀態分頁的意思</string>
   <string name="menu_gerrit_instance">Gerrit Instance</string>
@@ -68,8 +62,8 @@
   <string name="current_revision_is_draft_message">當前修訂版本是草案。一些資訊將不可用.</string>
   <string name="comments_card_title">意見:</string>
   <string name="unknown">不明</string>
-  <string name="aosp_volley_title">AOSP 的Volley</string>
   <string name="developers_role">選擇要查看的開發人員的角色</string>
+  <string name="commit_reviewer">提交者</string>
   <string name="context_menu_view_diff_viewer">使用內部檢視器</string>
   <string name="context_menu_diff_view_in_browser">在瀏覽器中檢視 diff</string>
   <string name="context_menu_change_browser">在瀏覽器中查看更改</string>
@@ -81,15 +75,24 @@
   <string name="share">分享</string>
   <string name="view_in_browser">在預設的瀏覽器中檢視修改</string>
   <string name="moar_info">本次修改的更多資訊</string>
+  <string name="commit_shared_from_mgerrit" formatted="false">由 mGerrit 送出提交 %s</string>
+  <string name="found_cards_toast" formatted="false"><![CDATA[找到 %d 個提交於 %d 秒內]]></string>
+  <string name="menu_projects">以專案瀏覽</string>
   <string name="aokp_changelog">AOKP 更新日誌</string>
   <string name="download_update">下載</string>
   <string name="please_select_update_for_range">請選擇要查看更新日誌的檔案</string>
   <string name="download_rom_zip">下載 ROM 壓縮檔</string>
+  <string name="failed_to_decode_base64">無法解碼 Base64 回應。</string>
+  <string name="return_was_null">回應為空...... 請在瀏覽器中查看</string>
   <string name="using_gerrit_toast">使用 Gerrit：</string>
+  <string name="google_now_style_animations_title">卡片動畫</string>
   <string name="google_now_style_animations_summary">繪製卡片時使用 Google Now 風格動畫</string>
   <string name="loading">正在載入 diff\u2026</string>
   <string name="add_gerrit_team">新的 Gerrit</string>
+  <string name="please_enter_gerrit_name">請輸入 Gerrit 實例名稱</string>
   <string name="please_enter_gerrit_url">請輸入 Gerrit 網址</string>
+  <string name="add_team_url">新 Gerrit 團隊 URL</string>
+  <string name="add_gerrit_name">新 Gerrit 團隊名稱</string>
   <string name="server_timezone_title">伺服器時區</string>
   <string name="local_timezone_title">本地時區</string>
   <string name="remove_content">刪除此內容</string>

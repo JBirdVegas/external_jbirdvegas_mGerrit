@@ -51,12 +51,6 @@
   <string name="communications_error">Communicatie ERROR!!!</string>
   <string name="transferring_json_data">JSON geëncodeerde data versturen&#8230;</string>
   <string name="open_source_libs">Open Source Bibliotheken</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ListViewAnimations</string>
-  <string name="support_library">OndersteuningsBibliotheek v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Tijd</string>
   <string name="explain_status_title">Statussen uitleggen</string>
   <string name="explain_status_summary">Korte uitleg over de Status tabs</string>
   <string name="menu_gerrit_instance">Gerrit instantie</string>
@@ -68,7 +62,6 @@
 Sommige informatie zal niet beschikbaar zijn</string>
   <string name="comments_card_title">Reacties:</string>
   <string name="unknown">Onbekend</string>
-  <string name="aosp_volley_title">AOSP\'s Volley</string>
   <string name="developers_role">Kies rol van ontwikkelaar om te bekijken</string>
   <string name="commit_reviewer">Commit Beoordeler</string>
   <string name="context_menu_view_diff_viewer">Interne viewer gebruiken</string>

@@ -45,12 +45,6 @@
   <string name="initializing_data_transfer">Iniţializare transfer de date&#8230;</string>
   <string name="communications_error">EROARE de comunicare!!!</string>
   <string name="open_source_libs">Biblioteci Open Source</string>
-  <string name="nine_old_androids">NineOldAndroids</string>
-  <string name="listview_animations">ListViewAnimations</string>
-  <string name="support_library">Suport Biblioteca v4</string>
-  <string name="gson_library">Gson</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
-  <string name="jodatime">Joda-Time</string>
   <string name="explain_status_title">Explica stările</string>
   <string name="menu_gerrit_instance">Instanta Gerrit</string>
   <string name="owner_gravatar">Imaginea de profil proprietarului Gravatar</string>
@@ -60,7 +54,6 @@
 Unele informaţii vor fi indisponibile</string>
   <string name="comments_card_title">Comentarii:</string>
   <string name="unknown">Necunoscut</string>
-  <string name="aosp_volley_title">AOSP\'s Volley</string>
   <string name="developers_role">Alege rolul de dezvoltator pentru a vizualiza</string>
   <string name="download_update">Descarca</string>
   <string name="caused_by">Cauzat de:</string>

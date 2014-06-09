@@ -42,10 +42,6 @@
   <string name="communications_error">خطأ في الاتصال!!!</string>
   <string name="transferring_json_data">يتم نقل بيانات جي سون المشفرة&#8230;</string>
   <string name="open_source_libs">مكتبات مفتوحة المصدر</string>
-  <string name="listview_animations">قائمة مشاهدة الرسوم المتحركة</string>
-  <string name="support_library">ادعم Library v4</string>
-  <string name="gson_library">جي سون</string>
-  <string name="gson_library_website">http://code.google.com/p/google-gson/</string>
   <string name="explain_status_title">شرح الاوضاع</string>
   <string name="menu_refresh">تحديث</string>
   <string name="comments_card_title">تعليقات:</string>
