@@ -18,8 +18,6 @@ package com.jbirdvegas.mgerrit.objects;
  */
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -32,7 +30,7 @@ import java.util.List;
  * Contains information about a revision or patch set. This condenses both
  *  the RevisionInfo and CommitInfo objects together into the one level
  */
-public class CommitInfo implements Parcelable{
+public class CommitInfo {
 
     /** The Change-Id of the change. */
     private String mChangeId;
@@ -67,19 +65,6 @@ public class CommitInfo implements Parcelable{
 
     @SerializedName("draft")
     private boolean mIsDraft;
-
-
-    public CommitInfo(Parcel in) {
-        mAuthorObject = in.readParcelable(CommitterObject.class.getClassLoader());
-        mCommitterObject = in.readParcelable(CommitterObject.class.getClassLoader());
-        mMessage = in.readString();
-        mSubject = in.readString();
-        mPatchSetNumber = in.readString();
-        mChangeId = in.readString();
-        mCommit = in.readString();
-        mFileInfos = in.readParcelable(FileInfoList.class.getClassLoader());
-        mIsDraft = in.readInt() == 1;
-    }
 
     public static CommitInfo deserialise(JsonObject object, String changeId) {
         CommitInfo revision = new Gson().fromJson(object, CommitInfo.class);
@@ -161,23 +146,5 @@ public class CommitInfo implements Parcelable{
                 ", mFileInfos=" + mFileInfos +
                 ", mIsDraft=" + mIsDraft +
                 '}';
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(mAuthorObject, 0);
-        dest.writeParcelable(mCommitterObject, 0);
-        dest.writeString(mMessage);
-        dest.writeString(mSubject);
-        dest.writeString(mPatchSetNumber);
-        dest.writeString(mChangeId);
-        dest.writeString(mCommit);
-        dest.writeParcelable(mFileInfos, 0);
-        dest.writeInt(mIsDraft ? 1 : 0);
     }
 }

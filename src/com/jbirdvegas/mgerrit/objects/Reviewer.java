@@ -17,12 +17,9 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
-public class Reviewer implements Parcelable {
+public class Reviewer {
     public static final String NO_SCORE = "No score";
 
     @SerializedName("value")
@@ -49,12 +46,6 @@ public class Reviewer implements Parcelable {
     public Reviewer(Integer value, String name, String email) {
         mValue = value;
         mCommitter = CommitterObject.getInstance(name, email);
-        mDate = null;
-    }
-
-    public Reviewer(Parcel parcel) {
-        mValue = parcel.readInt();
-        mCommitter = new CommitterObject(parcel);
         mDate = null;
     }
 
@@ -86,17 +77,6 @@ public class Reviewer implements Parcelable {
                 ", mDate='" + mDate + '\'' +
                 ", mLabel='" + mLabel + '\'' +
                 '}';
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(mValue);
-        mCommitter.writeToParcel(parcel, i);
     }
 
     public Label getLabel() {

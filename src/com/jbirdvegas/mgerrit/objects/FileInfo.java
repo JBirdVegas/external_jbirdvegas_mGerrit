@@ -17,15 +17,12 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 
-public class FileInfo implements Parcelable {
+public class FileInfo {
 
     private String path;
 
@@ -130,35 +127,4 @@ public class FileInfo implements Parcelable {
                 ", isImage=" + isImage +
                 '}';
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(path);
-        parcel.writeString(oldPath);
-        parcel.writeInt(inserted);
-        parcel.writeInt(deleted);
-    }
-
-    public FileInfo(Parcel parcel) {
-        path = parcel.readString();
-        oldPath = parcel.readString();
-        inserted = parcel.readInt();
-        deleted = parcel.readInt();
-    }
-
-    public static final Parcelable.Creator<FileInfo> CREATOR
-            = new Parcelable.Creator<FileInfo>() {
-        public FileInfo createFromParcel(Parcel in) {
-            return new FileInfo(in);
-        }
-
-        public FileInfo[] newArray(int size) {
-            return new FileInfo[size];
-        }
-    };
 }

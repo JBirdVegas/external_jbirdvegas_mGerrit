@@ -17,9 +17,6 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONException;
@@ -30,7 +27,7 @@ import org.json.JSONObject;
  *  and GitPerson info objects into one. As a result, some of these fields will
  *  be null.
  */
-public class CommitterObject implements Parcelable {
+public class CommitterObject {
     private static final String OWNER = "owner";
 
     @SerializedName(JSONCommit.KEY_NAME)
@@ -128,42 +125,6 @@ public class CommitterObject implements Parcelable {
                 ", state='" + mState + '\'' +
                 '}';
     }
-
-    // Parcelable implementation
-    public CommitterObject(Parcel parcel) {
-        mName = parcel.readString();
-        mEmail = parcel.readString();
-        mDate = parcel.readString();
-        mTimezone = parcel.readString();
-        mAccountId = parcel.readInt();
-        mState = parcel.readString();
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(mName);
-        parcel.writeString(mEmail);
-        parcel.writeString(mDate);
-        parcel.writeString(mTimezone);
-        parcel.writeInt(mAccountId);
-        parcel.writeString(mState);
-    }
-
-    public static final Parcelable.Creator<CommitterObject> CREATOR
-            = new Parcelable.Creator<CommitterObject>() {
-        public CommitterObject createFromParcel(Parcel in) {
-            return new CommitterObject(in);
-        }
-
-        public CommitterObject[] newArray(int size) {
-            return new CommitterObject[size];
-        }
-    };
 
     /*
      * No two users should share the same account ID. This should be the same as the

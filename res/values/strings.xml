@@ -16,7 +16,7 @@
   ~  limitations under the License.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
     <string name="app_name">mGerrit</string>
     <string name="reviewable">Review</string>
     <string name="merged">Merged</string>

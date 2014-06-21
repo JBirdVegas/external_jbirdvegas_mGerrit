@@ -28,7 +28,6 @@ import com.jbirdvegas.mgerrit.R;
  * A layout that records whether it is selected or not through a custom state
  */
 public class CommitCard extends LinearLayout {
-    private static final String TAG = CommitCard.class.getSimpleName();
     private boolean isSelected;
     private static final int[] SELECTED_STATE_ATTR = { R.attr.isSelected };
 

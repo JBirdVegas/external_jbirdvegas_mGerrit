@@ -18,13 +18,12 @@ package com.jbirdvegas.mgerrit.objects;
  */
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ReviewerList implements Parcelable {
+public class ReviewerList  {
 
     private List<Reviewer> mReviewers;
 
@@ -50,15 +49,5 @@ public class ReviewerList implements Parcelable {
         return "ReviewerList{" +
                 "mReviewers=" + mReviewers +
                 '}';
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeTypedList(mReviewers);
     }
 }

@@ -1,8 +1,6 @@
 package com.jbirdvegas.mgerrit.objects;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -35,7 +33,7 @@ import java.util.Set;
  * Wrapper for a list of changed files. Provides methods to work with the list of changed files,
  *  delegating most of the work to the underlying FileInfo object.
  */
-public class FileInfoList implements Parcelable {
+public class FileInfoList {
 
     // This list of changed files
     @SerializedName(CommitInfo.KEY_CHANGED_FILES)
@@ -43,10 +41,6 @@ public class FileInfoList implements Parcelable {
 
     private FileInfoList(List<FileInfo> fileList) {
         this.mList = fileList;
-    }
-
-    public FileInfoList(Parcel in) {
-        this.mList = in.readArrayList(this.getClass().getClassLoader());
     }
 
     public List<FileInfo> getFiles() {
@@ -75,15 +69,5 @@ public class FileInfoList implements Parcelable {
         return "FileInfoList{" +
                 "mList=" + mList +
                 '}';
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeTypedList(mList);
     }
 }

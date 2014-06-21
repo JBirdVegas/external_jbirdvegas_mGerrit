@@ -17,15 +17,12 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONObject;
 
-public class CommitComment implements Parcelable {
+public class CommitComment {
     private static final String KEY_REVISION_NUMBER = "_revision_number";
 
     @SerializedName(CommitComment.KEY_REVISION_NUMBER)
@@ -65,27 +62,5 @@ public class CommitComment implements Parcelable {
 
     public String getId() {
         return mId;
-    }
-
-    public CommitComment(Parcel parcel) {
-        mId = parcel.readString();
-        mAuthorObject = parcel.readParcelable(CommitterObject.class.getClassLoader());
-        mDate = parcel.readString();
-        mMessage = parcel.readString();
-        mRevisionNumber = parcel.readInt();
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(mId);
-        parcel.writeParcelable(mAuthorObject, 0);
-        parcel.writeString(mDate);
-        parcel.writeString(mMessage);
-        parcel.writeInt(mRevisionNumber);
     }
 }

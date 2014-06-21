@@ -34,18 +34,8 @@ public class NewChangeSelected {
         this.mExpand = expand;
     }
 
-    public NewChangeSelected(String changeId, String status, boolean expand) {
-        this.mChangeId = changeId;
-        this.mStatus = status;
-        this.mExpand = expand;
-    }
-
     public String getChangeId() {
         return mChangeId;
-    }
-
-    public int getChangeNumber() {
-        return mChangeNumber;
     }
 
     public String getStatus() {

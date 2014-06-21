@@ -18,3 +18,70 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-injars      libs
+-outjars     bin/classes-processed.jar
+
+-dontpreverify
+-repackageclasses ''
+-allowaccessmodification
+-optimizations !code/simplification/arithmetic
+-dontwarn android.support.**
+
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.support.v4.app.Fragment
+-keep public class * extends android.app.Fragment
+
+# For Custom Views
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public void set*(...);
+}
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
+# Keep enum stuff (accessed by introspection)
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keepclassmembers class * implements android.os.Parcelable {
+    static android.os.Parcelable$Creator CREATOR;
+}
+
+# We definately don't need debugging or verbose logs in the release
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
+
+-keepclassmembers class * {
+    public void on*Click(android.view.View);
+}
+
+#For Database Tables
+-keep class * extends com.jbirdvegas.mgerrit.database.DatabaseTable { *; }
+
+# For EventBus
+-keepclassmembers class ** {
+    public void onEvent*(**);
+}
+
+# Keep Gson annotations
+-keepattributes SerializedName
+
+# For JodaTime
+-keep class org.joda.** { *; }
+-keep interface org.joda.** { *; }
+-dontwarn org.joda.convert.**

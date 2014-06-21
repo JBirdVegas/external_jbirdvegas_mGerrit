@@ -17,6 +17,8 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
+import android.util.Log;
+
 import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,7 +67,8 @@ public class ServerVersion implements Comparator<ServerVersion> {
         if (m2.find()) versionB = m2.group(0);
 
         if (versionA == null || versionB == null) {
-            throw new IllegalArgumentException("One of the version numbers was not valid");
+            Log.w("ServerVersion", "One of the version numbers was not valid");
+            return -1;
         }
 
         int maxlen = Math.min(versionA.length(), versionB.length());
