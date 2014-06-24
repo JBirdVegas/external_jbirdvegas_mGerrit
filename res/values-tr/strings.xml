@@ -48,7 +48,7 @@
   <string name="downloading_status" formatted="false">%d byte indirldi, toplam %d byte var\t%d%% tamamlandı</string>
   <string name="connection_established">Bağlantı kuruldu</string>
   <string name="initializing_data_transfer">Veri aktarımı başlatılıyor...</string>
-  <string name="communications_error">İletişim hatası!!!</string>
+  <string name="communications_error">İletişim HATASI!!!</string>
   <string name="transferring_json_data">JSON kodlanmış verisi transfer ediliyor&#8230;</string>
   <string name="open_source_libs">Açık kaynak kütüphaneleri</string>
   <string name="explain_status_title">Durumları açıkla</string>
@@ -111,7 +111,7 @@
   <string name="invalid_gerrit_url">Ayarlanan Gerrit URL\'si geçersiz</string>
   <string name="gerrit_protocol">https://</string>
   <string name="change_detail_heading" formatted="false">Değiştir %d</string>
-  <string name="commit_branch">Branş:</string>
+  <string name="commit_branch">Dal:</string>
   <string name="commit_topic">Konu:</string>
   <string name="change_theme">Tema seçin</string>
   <string name="theme_light">Aydınlık tema</string>

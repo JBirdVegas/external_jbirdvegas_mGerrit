@@ -63,5 +63,30 @@
     </string>
   <string name="comments_card_title">Kommentarer:</string>
   <string name="unknown">Ukendt</string>
+  <string name="developers_role">Vælg udviklerrolle for detaljer</string>
+  <string name="commit_reviewer">Commit reviewer</string>
+  <string name="context_menu_view_diff_viewer">Brug ekstern viewer</string>
+  <string name="context_menu_diff_view_in_browser">Vælg diff i browseren</string>
+  <string name="context_menu_change_browser">Se ændringer i browseren</string>
+  <string name="context_menu_change_viewer">Se detaljer om ændringer</string>
+  <string name="choose_diff_view">Hvordan vil du se diff\'en?</string>
+  <string name="context_menu_track_user" formatted="false">Track bruger %s</string>
+  <string name="context_menu_track_project">Track projektet</string>
+  <string name="stalker_mode_toast">Stalker nu brugeren:</string>
+  <string name="share">Del</string>
+  <string name="view_in_browser">Se denne ændring i default browseren</string>
+  <string name="moar_info">Vis flere detaljer om denne ændring</string>
+  <string name="commit_shared_from_mgerrit" formatted="false">Commit %s delt fra mGerrit!</string>
+  <string name="found_cards_toast" formatted="false"><![CDATA[Found %d commits in %d seconds]]></string>
   <string name="menu_projects">Se af projektet</string>
+  <string name="aokp_changelog">AOKP Changelog</string>
+  <string name="download_update">Download</string>
+  <string name="please_select_update_for_range">Vælg venligst en fil for at se changelog</string>
+  <string name="download_rom_zip">Download ROM zip</string>
+  <string name="failed_to_decode_base64">Dekodning af Base64 svar mislykkedes.</string>
+  <string name="return_was_null">Svar var null... Se venligst i browseren</string>
+  <string name="using_gerrit_toast">Bruger Gerrit:</string>
+  <string name="google_now_style_animations_title">Animer kort</string>
+  <string name="google_now_style_animations_summary">Aktiver Google Now animationsstil mens kort bliver tegnet</string>
+  <string name="loading">Loader diff\u2026</string>
 </resources>
