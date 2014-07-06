@@ -1,5 +1,13 @@
 package com.jbirdvegas.mgerrit.message;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+
+import com.jbirdvegas.mgerrit.PatchSetViewerActivity;
+import com.jbirdvegas.mgerrit.PatchSetViewerFragment;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
+
 /*
  * Copyright (C) 2014 Android Open Kang Project (AOKP)
  *  Author: Evan Conway (P4R4N01D), 2014
@@ -15,23 +23,30 @@ package com.jbirdvegas.mgerrit.message;
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
+ *  Event: A new change was selected to view the change details for
  */
 public class NewChangeSelected {
 
-    String mChangeId;
+    String mChangeId;   // The currently selected change ID
     int mChangeNumber;
     String mStatus;
-    boolean mExpand;
+    boolean mInflate;   // Whether to expand the change and view the change details.
+    PatchSetViewerFragment mFragment;
 
-    public NewChangeSelected(String changeId, int changeNumber, String status) {
-        this(changeId, changeNumber, status, true);
-    }
-
-    public NewChangeSelected(String changeId, int changeNumber, String status, boolean expand) {
+    public NewChangeSelected(String changeId, int changeNumber, String status, boolean inflate) {
         this.mChangeId = changeId;
         this.mChangeNumber = changeNumber;
         this.mStatus = status;
-        this.mExpand = expand;
+        this.mInflate = inflate;
+    }
+
+    public NewChangeSelected(String changeId, int changeNumber, String status, PatchSetViewerFragment fragment) {
+        this.mChangeId = changeId;
+        this.mChangeNumber = changeNumber;
+        this.mStatus = status;
+        this.mInflate = true;
+        this.mFragment = fragment;
     }
 
     public String getChangeId() {
@@ -42,7 +57,27 @@ public class NewChangeSelected {
         return mStatus;
     }
 
-    public boolean isExpanded() {
-        return mExpand;
+    public boolean compareStatuses(String status) {
+        JSONCommit.Status a = JSONCommit.Status.getStatusFromString(mStatus);
+        JSONCommit.Status b = JSONCommit.Status.getStatusFromString(status);
+        return a == b;
+    }
+
+    public void setFragment(PatchSetViewerFragment fragment) {
+        this.mFragment = fragment;
+    }
+
+    public void inflate(Context context) {
+        if (mInflate && mFragment != null) {
+            mFragment.loadChange(mChangeId);
+        } else if (mInflate) {
+            Bundle arguments = new Bundle();
+            arguments.putString(PatchSetViewerFragment.CHANGE_ID, mChangeId);
+            arguments.putString(PatchSetViewerFragment.STATUS, mStatus);
+            arguments.putInt(PatchSetViewerFragment.CHANGE_NO, mChangeNumber);
+            Intent detailIntent = new Intent(context, PatchSetViewerActivity.class);
+            detailIntent.putExtras(arguments);
+            context.startActivity(detailIntent);
+        }
     }
 }

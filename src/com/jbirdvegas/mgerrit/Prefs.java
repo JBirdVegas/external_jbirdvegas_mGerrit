@@ -260,7 +260,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String oldProject = prefs.getString(CURRENT_PROJECT, "");
         if (!oldProject.equals(project)) {
-            prefs.edit().putString(CURRENT_PROJECT, project).commit();
+            prefs.edit().putString(CURRENT_PROJECT, project).apply();
         }
     }
 
@@ -282,7 +282,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         int oldCommitter = prefs.getInt(TRACKING_USER, -1);
         if (oldCommitter != committer) {
-            prefs.edit().putInt(TRACKING_USER, committer).commit();
+            prefs.edit().putInt(TRACKING_USER, committer).apply();
         }
     }
 

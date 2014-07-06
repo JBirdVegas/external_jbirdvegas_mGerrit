@@ -54,10 +54,10 @@ public class TheApplication extends Application
     /**
      * Callback to be invoked when the Gerrit instance changes in the
      * sharedPreferences
+     *
      * @param newGerrit The URL to the new Gerrit instance
      */
-    public void onGerritChanged(String newGerrit)
-    {
+    public void onGerritChanged(String newGerrit) {
         DatabaseFactory.changeGerrit(this, newGerrit);
 
         // Unset the project - we don't track these across Gerrit instances

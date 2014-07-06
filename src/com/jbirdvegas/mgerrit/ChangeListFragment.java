@@ -27,8 +27,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.jbirdvegas.mgerrit.message.StatusSelected;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -71,7 +73,7 @@ public class ChangeListFragment extends Fragment {
         mParent = getActivity();
         mThisFragment = this.getView();
 
-        mEventBus = mEventBus.getDefault();
+        mEventBus = EventBus.getDefault();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the app.

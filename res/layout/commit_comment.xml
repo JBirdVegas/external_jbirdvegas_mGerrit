@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -20,8 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:contentDescription="@string/author_gravatar"
-            android:padding="@dimen/standard_padding"
-            />
+            android:padding="@dimen/standard_padding" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -34,15 +32,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="@dimen/standard_padding"
-                tools:text="John Smith"/>
+                tools:text="John Smith" />
 
             <TextView
                 android:id="@+id/comment_timestamp"
                 style="@style/CardText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                tools:text="January 1 1970, 12:00"/>
+                tools:text="January 1 1970, 12:00" />
         </LinearLayout>
     </LinearLayout>
 
@@ -56,5 +53,5 @@
         android:autoLink="web"
         android:padding="@dimen/standard_padding"
         android:textSize="@dimen/text_size_large"
-        tools:text="Patch Set 1:"/>
+        tools:text="Patch Set 1:" />
 </RelativeLayout>

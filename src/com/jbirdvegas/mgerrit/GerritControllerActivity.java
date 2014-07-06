@@ -268,32 +268,13 @@ public class GerritControllerActivity extends FragmentActivity {
 
     /**
      * Handler for when a change is selected in the list.
-     * @param changeID The currently selected change ID
-     * @param expand Whether to expand the change and view the change details.
-     *               Relevant only to the tablet layout.
      */
     public void onEventMainThread(NewChangeSelected ev) {
         String changeId = ev.getChangeId();
-        String status = ev.getStatus();
-
-        Bundle arguments = new Bundle();
-        arguments.putString(PatchSetViewerFragment.CHANGE_ID, changeId);
-        arguments.putString(PatchSetViewerFragment.STATUS, status);
-
         SelectedChange.setSelectedChange(this, changeId);
 
-        if (mChangeList.getCurrentFragment() != null) {
-            mChangeList.getCurrentFragment().markChangeAsSelected(changeId);
-        }
+        if (mTwoPane) ev.setFragment(mChangeDetail);
 
-        if (mTwoPane) {
-            mChangeDetail.setSelectedChange(changeId);
-        } else if (ev.isExpanded()) {
-            // In single-pane mode, simply start the detail activity
-            // for the selected item ID.
-            Intent detailIntent = new Intent(this, PatchSetViewerActivity.class);
-            detailIntent.putExtras(arguments);
-            startActivity(detailIntent);
-        }
+        ev.inflate(this);
     }
 }

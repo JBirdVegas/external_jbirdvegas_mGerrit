@@ -76,6 +76,7 @@ public class JSONCommit {
     private TimeZone mLocalTimeZone;
 
     private static Gson gson;
+
     static {
         GsonBuilder gsonBuilder = new GsonBuilder();
         Deserializers.addDeserializers(gsonBuilder);
@@ -126,12 +127,14 @@ public class JSONCommit {
 
         public static Status getStatusFromString(final String status) {
             String status_lower = status.toLowerCase();
-            if (KEY_STATUS_OPEN.equals(status_lower) || "new".equals(status_lower)) {
-                return NEW;
-            } else if (KEY_STATUS_MERGED.equals(status_lower)) {
-                return MERGED;
-            } else if (KEY_STATUS_ABANDONED.equals(status_lower)) {
-                return ABANDONED;
+            switch (status_lower) {
+                case KEY_STATUS_OPEN:
+                case "new":
+                    return NEW;
+                case KEY_STATUS_MERGED:
+                    return MERGED;
+                case KEY_STATUS_ABANDONED:
+                    return ABANDONED;
             }
             return SUBMITTED;
         }
@@ -172,69 +175,101 @@ public class JSONCommit {
         return thisCommit;
     }
 
-    /** gerritcodereview#change */
+    /**
+     * gerritcodereview#change
+     */
     @SerializedName(JSONCommit.KEY_KIND)
     private String mKind;
 
-    /** The ling-form ID of the change */
+    /**
+     * The ling-form ID of the change
+     */
     @SerializedName(JSONCommit.KEY_ID)
     private String mId;
 
-    /** The name of the project. **/
+    /**
+     * The name of the project. *
+     */
     @SerializedName(JSONCommit.KEY_PROJECT)
     private String mProject;
 
-    /** The name of the target branch.
-     The refs/heads/ prefix is omitted. **/
+    /**
+     * The name of the target branch.
+     * The refs/heads/ prefix is omitted. *
+     */
     @SerializedName(JSONCommit.KEY_BRANCH)
     private String mBranch;
 
-    /** The topic to which this change belongs. (optional) */
+    /**
+     * The topic to which this change belongs. (optional)
+     */
     @SerializedName(JSONCommit.KEY_TOPIC)
     private String mTopic;
 
-    /** The Change-Id of the change. */
+    /**
+     * The Change-Id of the change.
+     */
     @SerializedName(JSONCommit.KEY_CHANGE_ID)
     private String mChangeId;
 
-    /** The subject of the change (header line of the commit message). */
+    /**
+     * The subject of the change (header line of the commit message).
+     */
     @SerializedName(JSONCommit.KEY_SUBJECT)
     private String mSubject;
 
-    /** The status of the change (NEW, SUBMITTED, MERGED, ABANDONED, DRAFT). */
+    /**
+     * The status of the change (NEW, SUBMITTED, MERGED, ABANDONED, DRAFT).
+     */
     @SerializedName(JSONCommit.KEY_STATUS)
     private Status mStatus;
 
-    /** The timestamp of when the change was created. */
+    /**
+     * The timestamp of when the change was created.
+     */
     @SerializedName(JSONCommit.KEY_CREATED)
     private String mCreatedDate;
 
-    /** The timestamp of when the change was last updated. */
+    /**
+     * The timestamp of when the change was last updated.
+     */
     @SerializedName(JSONCommit.KEY_UPDATED)
     private String mLastUpdatedDate;
 
-    /** Whether the change is mergeable.
-     Not set for merged changes. */
+    /**
+     * Whether the change is mergeable.
+     * Not set for merged changes.
+     */
     @SerializedName(JSONCommit.KEY_MERGEABLE)
     private boolean mIsMergeable = false;
 
-    /** The sortkey of the change. Used internally for pagination and syncing*/
+    /**
+     * The sortkey of the change. Used internally for pagination and syncing
+     */
     @SerializedName(JSONCommit.KEY_SORT_KEY)
     private String mSortKey;
 
-    /** The legacy numeric ID of the change. */
+    /**
+     * The legacy numeric ID of the change.
+     */
     @SerializedName(JSONCommit.KEY_COMMIT_NUMBER)
     private int mCommitNumber;
 
-    /**The commit ID of the current patch set of this change. */
+    /**
+     * The commit ID of the current patch set of this change.
+     */
     @SerializedName(JSONCommit.KEY_CURRENT_REVISION)
     private String mCurrentRevision;
 
-    /** The owner of the change */
+    /**
+     * The owner of the change
+     */
     @SerializedName(JSONCommit.KEY_OWNER)
     private CommitterObject mOwnerObject;
 
-    /** Auto-generated field comprising of the Gerrit instance and the commit number */
+    /**
+     * Auto-generated field comprising of the Gerrit instance and the commit number
+     */
     @SerializedName(JSONCommit.KEY_WEBSITE)
     private String mWebAddress;
 
@@ -245,11 +280,15 @@ public class JSONCommit {
 
     private int mPatchSetNumber = -1;
 
-    /** The messages associated with the change */
+    /**
+     * The messages associated with the change
+     */
     @SerializedName(JSONCommit.KEY_MESSAGES)
     private List<CommitComment> mMessagesList;
 
-    /** The messages associated with the change */
+    /**
+     * The messages associated with the change
+     */
     @SerializedName(JSONCommit.KEY_MORE_CHANGES)
     private boolean mMoreChanges = true;
 
@@ -297,7 +336,7 @@ public class JSONCommit {
     /**
      * PrettyPrint the Gerrit provided timestamp
      * format into a more human readable format
-     *
+     * <p/>
      * I have no clue what the ten zeros
      * after the seconds are good for as
      * the exact same ten zeros are in all
@@ -309,7 +348,7 @@ public class JSONCommit {
      * to Jun 09, 2013 07:47 40ms PM
      *
      * @return String representation of the date
-     *         example: Jun 09, 2013 07:47 40ms PM
+     * example: Jun 09, 2013 07:47 40ms PM
      */
     public String getLastUpdatedDate(Context context) {
         return Tools.prettyPrintDate(context, mLastUpdatedDate, mServerTimeZone, mLocalTimeZone);
@@ -361,11 +400,18 @@ public class JSONCommit {
         this.mCurrentRevision = currentRevision;
     }
 
-    public CommitInfo getPatchSet() { return mPatchSet; }
-    public void setPatchSet(CommitInfo patchSet) { this.mPatchSet = patchSet; }
+    public CommitInfo getPatchSet() {
+        return mPatchSet;
+    }
+
+    public void setPatchSet(CommitInfo patchSet) {
+        this.mPatchSet = patchSet;
+    }
 
     // Note that this value can only be false for the first or last change returned from querying the server
-    public boolean areMoreChanges() { return mMoreChanges; }
+    public boolean areMoreChanges() {
+        return mMoreChanges;
+    }
 
     @Override
     public String toString() {

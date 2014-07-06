@@ -76,6 +76,7 @@ public class PatchSetViewerFragment extends Fragment
     private GerritURL mUrl;
     private String mSelectedChange;
     private String mStatus;
+    private int mChangeNumber;
     // Whether the server supports the new change details endpoint (false if so)
     private boolean sIsLegacyVersion;
 
@@ -98,7 +99,7 @@ public class PatchSetViewerFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.patch_set_list, container, false);
+        return inflater.inflate(R.layout.patchset_list, container, false);
     }
 
     @Override
@@ -197,10 +198,13 @@ public class PatchSetViewerFragment extends Fragment
             setStatus(JSONCommit.Status.NEW.toString());
             loadChange(true);
         } else {
-            setStatus(getArguments().getString(STATUS));
-            String changeid = getArguments().getString(CHANGE_ID);
+            Bundle args = getArguments();
+            setStatus(args.getString(STATUS));
+            String changeid = args.getString(CHANGE_ID);
+            mChangeNumber = args.getInt(CHANGE_NO);
+
             if (changeid != null && !changeid.isEmpty()) {
-                setSelectedChange(changeid);
+                loadChange(changeid);
             }
         }
 
@@ -224,37 +228,6 @@ public class PatchSetViewerFragment extends Fragment
         GerritService.sendRequest(mParent, dataType, mUrl);
     }
 
-    private void setTitle(int commitNumber) {
-        if (!Prefs.isTabletMode(mParent)) {
-            String s = mParent.getResources().getString(R.string.change_detail_heading);
-            mParent.setTitle(String.format(s, commitNumber));
-        }
-    }
-
-    /**
-     * Set the change id to load details for and load the change
-     * @param changeID A valid change id
-     */
-    public void setSelectedChange(String changeID) {
-        if (changeID == null || changeID.length() < 0) {
-            return; // Invalid changeID
-        } else if (changeID.equals(mSelectedChange)) {
-            return; // Same change selected, no need to do anything.
-        }
-
-        int changeNo = SelectedChange.setSelectedChange(mContext, changeID);
-        this.mSelectedChange = changeID;
-
-        mUrl.addSearchKeyword(new ChangeSearch(mSelectedChange));
-        mUrl.setChangeNumber(changeNo);
-        mUrl.requestChangeDetail(true, sIsLegacyVersion);
-
-        if (sIsLegacyVersion) sendRequest(GerritService.DataType.LegacyCommitDetails);
-        else sendRequest(GerritService.DataType.CommitDetails);
-
-        restartLoaders(changeID);
-    }
-
     private void restartLoaders(String changeID) {
         Bundle args = new Bundle();
         args.putString(CHANGE_ID, changeID);
@@ -266,10 +239,11 @@ public class PatchSetViewerFragment extends Fragment
 
     /**
      * Determine the changeid to load and send an intent to load the change.
-     *  By sending an intent, the main activity is notified (GerritControllerActivity
-     *  on tablets. This can then tell the change list adapter that we have selected
-     *  a change.
-     *  @param direct true: load this change directly, false: send out an intent
+     * By sending an intent, the main activity is notified (GerritControllerActivity
+     * on tablets. This can then tell the change list adapter that we have selected
+     * a change.
+     *
+     * @param direct true: load this change directly, false: send out an intent
      */
     private void loadChange(boolean direct) {
         if (mStatus == null) {
@@ -292,25 +266,39 @@ public class PatchSetViewerFragment extends Fragment
         }
 
         changeID = change.first;
-        changeNumber = change.second;
+        mChangeNumber = change.second;
 
-        if (direct) setSelectedChange(changeID);
+        if (direct) loadChange(changeID);
         else {
-            mEventBus.post(new NewChangeSelected(changeID, changeNumber, mStatus));
+            mEventBus.post(new NewChangeSelected(changeID, mChangeNumber, mStatus, this));
         }
     }
 
     /**
+     * Set the change id to load details for and load the change
+     *
+     * @param changeID A valid change id
+     */
+    public void loadChange(String changeId) {
+        this.mSelectedChange = changeId;
+
+        mUrl.addSearchKeyword(new ChangeSearch(mSelectedChange));
+        mUrl.setChangeNumber(mChangeNumber);
+        mUrl.requestChangeDetail(true, sIsLegacyVersion);
+
+        if (sIsLegacyVersion) sendRequest(GerritService.DataType.LegacyCommitDetails);
+        else sendRequest(GerritService.DataType.CommitDetails);
+
+        restartLoaders(changeId);
+    }
+
+    /**
      * Use this to set the status to ensure we only use the database status
+     *
      * @param status A valid change status string (database or web format)
      */
     public void setStatus(String status) {
         this.mStatus = JSONCommit.Status.getStatusString(status);
-        /* If we are running this in phone mode, notify the parent of the new status for the menu
-         *  items */
-        if (!Prefs.isTabletMode(mContext)) {
-            ((PatchSetViewerActivity) mParent).setSelectedStatus(mStatus);
-        }
     }
 
     public boolean compareStatus(String status1, String status2) {
@@ -319,8 +307,9 @@ public class PatchSetViewerFragment extends Fragment
 
     /**
      * Helper function to get the selected status in the change list fragment.
-     *  If it is phone mode (the parent is not the main activity), then this will
-     *  return null.
+     * If it is phone mode (the parent is not the main activity), then this will
+     * return null.
+     *
      * @return The selected status in the change list fragment, or null if not available
      */
     @Nullable
@@ -360,6 +349,7 @@ public class PatchSetViewerFragment extends Fragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(CHANGE_ID, mSelectedChange);
+        outState.putInt(CHANGE_NO, mChangeNumber);
         outState.putString(STATUS, mStatus);
     }
 
@@ -367,6 +357,7 @@ public class PatchSetViewerFragment extends Fragment
     public void onViewStateRestored(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             mSelectedChange = savedInstanceState.getString(CHANGE_ID);
+            mChangeNumber = savedInstanceState.getInt(CHANGE_NO);
             setStatus(savedInstanceState.getString(STATUS));
             restartLoaders(mSelectedChange);
         }
@@ -431,13 +422,6 @@ public class PatchSetViewerFragment extends Fragment
         switch (cursorLoader.getId()) {
             case LOADER_PROPERTIES:
                 cardType = CommitDetailsAdapter.Cards.PROPERTIES;
-
-                if (cursor != null && cursor.getCount() > 0) {
-                    // Set the screen title
-                    cursor.moveToFirst();
-                    int change = cursor.getInt(cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER));
-                    setTitle(change);
-                }
                 break;
             case LOADER_MESSAGE:
                 cardType = CommitDetailsAdapter.Cards.COMMIT_MSG;

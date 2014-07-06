@@ -25,6 +25,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Pair;
 
+import hugo.weaving.DebugLog;
+
 
 // Database table to store the last selected changeid for each status
 public class SelectedChange extends DatabaseTable {
@@ -97,6 +99,7 @@ public class SelectedChange extends DatabaseTable {
         setSelectedChange(context, changeid, changeno, status);
     }
 
+    @DebugLog
     public static void setSelectedChange(Context context, String changeid, int changeno, String status) {
         ContentValues contentValues = new ContentValues(2);
         contentValues.put(C_CHANGE_ID, changeid);
