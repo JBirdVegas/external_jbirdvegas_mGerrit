@@ -19,7 +19,10 @@ package com.jbirdvegas.mgerrit.message;
 
 import android.os.Bundle;
 
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
+
 import java.util.ArrayList;
+import java.util.Set;
 
 public class SearchQueryChanged {
 
@@ -28,13 +31,15 @@ public class SearchQueryChanged {
     public static final String KEY_TO = "TO";
 
     private final String mWhere;
-    private ArrayList<String> mBindArgs = new ArrayList<>();
+    private final ArrayList<String> mBindArgs;
     private final String mClazzName;
+    private final Set<SearchKeyword> mTokens;
 
-    public SearchQueryChanged(String where, ArrayList<String> bindArgs, String clazzName) {
+    public SearchQueryChanged(String where, ArrayList<String> bindArgs, String clazzName, Set<SearchKeyword> tokens) {
         this.mWhere = where;
         this.mBindArgs = bindArgs;
         this.mClazzName = clazzName;
+        this.mTokens = tokens;
     }
 
     public String getWhere() {
@@ -55,5 +60,16 @@ public class SearchQueryChanged {
         bundle.putSerializable(KEY_BINDARGS, mBindArgs);
         bundle.putString(KEY_TO, mClazzName);
         return bundle;
+    }
+
+    /**
+     * @return True if there was at most one result expected from this query
+     */
+    public boolean needsExpanding() {
+        if (mTokens == null) return false;
+        for (SearchKeyword token : mTokens) {
+            if (!token.multipleResults()) return true;
+        }
+        return false;
     }
 }

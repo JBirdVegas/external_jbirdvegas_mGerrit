@@ -429,10 +429,6 @@ public abstract class CardsFragment extends Fragment
             // Broadcast that we have finished loading changes
             mEventBus.post(new ChangeLoadingFinished(getQuery()));
         }
-
-        if (cursor.getCount() < 1 && mEndlessAdapter != null) {
-            mEndlessAdapter.startDataLoading();
-        }
     }
 
     public void onStartRefresh() {

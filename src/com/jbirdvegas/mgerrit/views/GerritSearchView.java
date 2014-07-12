@@ -159,7 +159,7 @@ public class GerritSearchView extends SearchView
         }
 
         EventBus.getDefault().postSticky(new SearchQueryChanged(where, bindArgs,
-                getContext().getClass().getSimpleName()));
+                getContext().getClass().getSimpleName(), tokens));
         return true;
     }
 

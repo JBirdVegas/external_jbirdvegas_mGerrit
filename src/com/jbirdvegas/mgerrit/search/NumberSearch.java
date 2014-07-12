@@ -1,8 +1,8 @@
 package com.jbirdvegas.mgerrit.search;
 
 /*
- * Copyright (C) 2013 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (P4R4N01D), 2013
+ * Copyright (C) 2014 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (P4R4N01D), 2014
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,32 +20,36 @@ package com.jbirdvegas.mgerrit.search;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
-public class SubjectSearch extends SearchKeyword {
+public class NumberSearch extends SearchKeyword {
 
-    public static final String OP_NAME = "message";
+    public static final String OP_NAME = "#";
 
     static {
-        registerKeyword(OP_NAME, SubjectSearch.class);
-        registerKeyword("subject", SubjectSearch.class);
-        registerKeyword("intitle", SubjectSearch.class);
+        registerKeyword(OP_NAME, NumberSearch.class);
+        registerKeyword("no", NumberSearch.class);
     }
 
-    public SubjectSearch(String param) {
+    public NumberSearch(String param) {
         super(OP_NAME, param);
     }
 
     @Override
     public String buildSearch() {
-        return UserChanges.C_SUBJECT + " LIKE ?";
-    }
-
-    @Override
-    public String[] getEscapeArgument() {
-        return new String[] { '%' + getParam() + '%' };
+        return UserChanges.C_COMMIT_NUMBER + " = ?";
     }
 
     @Override
     public String getGerritQuery(ServerVersion serverVersion) {
         return toString();
+    }
+
+    @Override
+    public String toString() {
+        return OP_NAME + getParam();
+    }
+
+    @Override
+    public boolean multipleResults() {
+        return false;
     }
 }

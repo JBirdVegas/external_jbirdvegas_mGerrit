@@ -61,6 +61,7 @@ public abstract class SearchKeyword implements Parcelable {
         _CLASSES.add(TopicSearch.class);
         _CLASSES.add(BranchSearch.class);
         _CLASSES.add(AgeSearch.class);
+        _CLASSES.add(NumberSearch.class);
 
         // This will load the class calling the class's static block
         for (Class<? extends SearchKeyword> clazz : _CLASSES) {
@@ -144,13 +145,17 @@ public abstract class SearchKeyword implements Parcelable {
 
     @Nullable
     private static SearchKeyword buildToken(@NotNull String tokenStr) {
+        SearchKeyword keyword = null;
         String[] s = tokenStr.split(":", 2);
         if (s.length == 2) {
             // Remove the beginning and ending double quotes
             s[1] = s[1].replaceAll("^\"|\"$", "");
-            return buildToken(s[0], s[1]);
+            keyword = buildToken(s[0], s[1]);
+        } else if (tokenStr.startsWith("#")) {
+            keyword =  buildToken("#", tokenStr.substring(1));
         }
-        else return null;
+        if (keyword == null) keyword = buildToken(SubjectSearch.OP_NAME, tokenStr.replaceAll("^\"|\"$", ""));
+        return keyword;
     }
 
     /**
@@ -330,6 +335,11 @@ public abstract class SearchKeyword implements Parcelable {
             currentToken.append(query.substring(i + 1, index));
             return index;
         }
+    }
+
+    /* Whether this query can return more than one result */
+    public boolean multipleResults() {
+        return false;
     }
 
     // --- Parcelable methods
