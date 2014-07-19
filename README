@@ -36,12 +36,15 @@ Searching the change lists, either the 'Review', 'Merged' or 'Abandoned' tabs is
 Keywords: Act as restrictions on the search. As more keywords are added to the same query string, they further restrict the returned
  results.
 
-As an example, searching for "subject:warnings" will return a list of chnages where the commit subject contains the string "warnings"
+As an example, searching for "subject:warnings" will return a list of changes where the commit subject contains the string "warnings"
  in the locally stored changes for the current tab.
 
-Note: these search queries operate on the data stored locally in the database and do not query the Gerrit server. It is recomended
- to refresh the data before quering to make sure the most recent changes will be available to be searched.
+Note: these search queries operate on the data stored locally in the database and do not query the Gerrit server. It is recommended
+ to refresh the data before querying to make sure the most recent changes will be available to be searched.
 Currently, it is required to re-submit the search query when changing tabs as each one operates independently.
+
+If the search does not match the format of one of the following keywords, it will be treated as a message search. So it is sufficient to
+ enter just a portion of the title of the commit you are searching for. This is new in mGerrit v2.10.010.
 
 Supported keywords
 ~~~~~~~~~~~~~~~~~~
@@ -71,8 +74,11 @@ Changes whose designated topic at upload was TOPIC. This is often combined with 
 branch:'BRANCH'
 Changes for BRANCH. This is the short name shown in the web interface without the 'refs/heads/' prefix.
 
+#'NUMBER'; no:'NUMBER'
+Changes with commit number 'NUMBER'. This is the legacy commit number and is shown as the title of the change details screen and also uniquely identifies a change in the Gerrit web interface
+
 age:'OP''AGE'
-    Amount of time that has expired since the change was last updated with a review comment or new patch set. Unlike the Gerrit web interface, this supports both specifing absolute and relative times.
+    Amount of time that has expired since the change was last updated with a review comment or new patch set. Unlike the Gerrit web interface, this supports both specifying absolute and relative times.
 Absolute:
  'AGE' must be of a form specified by the ISO standard, where the date is mandatory and the time is optional. YYYY-MM-DDTHH:mm:ss fits this format. Should be in server time as no datetime conversion is performed.
 Relative:
@@ -87,7 +93,7 @@ The supported unit suffices are:
     -   w, week, weeks
     -   mon, mons, mth, mths, month, months
     -   y, yr, yrs, year, years
-Multiple units can be specified in a single query, but they must be seperated with a space. The order of the units is not important. A space between the unit and its suffix is optional. 
+Multiple units can be specified in a single query, but they must be separated with a space. The order of the units is not important. A space between the unit and its suffix is optional.
 The following query is valid:
 	age:">2 years 4 days 3w  1d 2m"
 
@@ -97,9 +103,9 @@ The supported operators are:
     - '<=': Search for changes earlier than or equal to the given time
     - '>=': Search for changes later than or equal to the given time
     - '=': Default. Search for changes equal to the given time give or take one unit from the shortest time interval. For example the search:
-	age:"=5 weeks 2 days"	is equivilant to	age:">5 weeks 1 days" age:"<5 weeks 3 days"
+	age:"=5 weeks 2 days"	is equivalent to	age:">5 weeks 1 days" age:"<5 weeks 3 days"
 Note: Specifying the same unit multiple times in a single keyword stacks, with the value accumulating. For example:
-	age:"5 weeks 2w"		is equivilant to	age:"7 weeks"
+	age:"5 weeks 2w"		is equivalent to	age:"7 weeks"
 
 
 License
@@ -133,9 +139,9 @@ mGerrit building instructions (from base of repository):
 
 AOKP
 ----
-mGerrit's AOKP Embeded version:
+mGerrit's AOKP Embedded version:
    This software comes included in the AOKP firmware stack. The apk is included
 as a signed prebuilt apk.  This allows updating from the PlayStore, avoids
-provider authority collisions and removes mGerrit from AOKP version dependancy.
+provider authority collisions and removes mGerrit from AOKP version dependency.
 
 To find the prebuilt apk please see $TOP/vendor/aokp/prebuilt/common/mGerrit.apk
