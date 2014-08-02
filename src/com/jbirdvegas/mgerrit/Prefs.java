@@ -362,4 +362,13 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
                 .getString(DIFF_DEFAULT, r.getString(R.string.diff_option_ask));
         return DiffModes.getMode(context, soption);
     }
+
+    public static void setGerritInstanceByName(Context context, String gerrit) {
+        String[] gerritNames = context.getResources().getStringArray(R.array.gerrit_names);
+        for (int i = 0; i < gerritNames.length; i++) {
+            if (gerrit.compareToIgnoreCase(gerritNames[i]) == 0) {
+                setCurrentGerrit(context, context.getResources().getStringArray(R.array.gerrit_webaddresses)[i]);
+            }
+        }
+    }
 }

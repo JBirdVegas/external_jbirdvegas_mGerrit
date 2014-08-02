@@ -18,17 +18,18 @@
   -->
 <com.jbirdvegas.mgerrit.cards.CommitCard
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="?attr/clickableCardBackground"
-    android:paddingBottom="@dimen/standard_padding">
+    android:background="?attr/clickableCardBackground">
 
     <View
         android:id="@+id/commit_card_commit_status"
         android:layout_height="match_parent"
         android:layout_width="@dimen/card_stroke_width"
         android:background="@android:color/transparent"
+        tools:background="@color/text_green"
         android:paddingRight="@dimen/commit_card_stroke_padding"/>
 
     <LinearLayout
@@ -36,7 +37,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingBottom="@dimen/standard_padding">
 
         <TextView
             style="?attr/cardTitleStyle"
@@ -44,25 +46,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/commit_card_title"
-            android:paddingBottom="10dip"/>
+            tools:text="Tweak commit card layout"
+            android:paddingBottom="8dip" />
 
         <TextView
             style="@style/CardText.Committer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            tools:text="John Smith"
             android:id="@+id/commit_card_commit_owner"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/commit_card_project_name"
+            tools:text="AOKP/external_jbirdvegas_mGerrit"
             style="@style/CardText"
-            android:textSize="@dimen/text_size_large"/>
+            android:textSize="@dimen/text_size_medium" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/commit_card_last_updated"
+            tools:text="January 01, 1970, 12:00:00 am"
             style="@style/CardText" />
     </LinearLayout>
 </com.jbirdvegas.mgerrit.cards.CommitCard>

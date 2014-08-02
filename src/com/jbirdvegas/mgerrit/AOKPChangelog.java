@@ -37,7 +37,7 @@ import java.util.HashSet;
 
 public class AOKPChangelog extends FragmentActivity implements ChangelogActivity {
 
-    private String mQuery = "http://goo.im/json2&path=/devs/aokp/" + Build.DEVICE + "/nightly";
+    private String mQuery = "https://goo.im/json2&path=/devs/aokp/" + Build.DEVICE + "/nightly";
 
     private GerritSearchView mSearchView;
 
@@ -50,7 +50,8 @@ public class AOKPChangelog extends FragmentActivity implements ChangelogActivity
 
         // Action bar Up affordance
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        Prefs.setCurrentGerrit(this, getResources().getStringArray(R.array.gerrit_webaddresses)[0]);
+
+        Prefs.setGerritInstanceByName(this, "AOKP");
 
         ChangelogFragment frag;
         frag = (ChangelogFragment) getSupportFragmentManager().findFragmentById(R.id.changelog_fragment);

@@ -52,6 +52,6 @@
         android:layout_below="@+id/comment_details"
         android:autoLink="web"
         android:padding="@dimen/standard_padding"
-        android:textSize="@dimen/text_size_large"
+        android:textSize="@dimen/text_size_medium"
         tools:text="Patch Set 1:" />
 </RelativeLayout>
