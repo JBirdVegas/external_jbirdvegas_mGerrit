@@ -42,9 +42,10 @@ public class PatchSetAdapter extends FragmentStatePagerAdapter {
         if (change == null) return null;
 
         PatchSetViewerFragment fragment = new PatchSetViewerFragment();
-        mBundle.putString(PatchSetViewerFragment.CHANGE_ID, change.first);
-        mBundle.putInt(PatchSetViewerFragment.CHANGE_NO, change.second);
-        fragment.setArguments(mBundle);
+        Bundle b = new Bundle(mBundle);
+        b.putString(PatchSetViewerFragment.CHANGE_ID, change.first);
+        b.putInt(PatchSetViewerFragment.CHANGE_NO, change.second);
+        fragment.setArguments(b);
         return fragment;
     }
 

@@ -186,7 +186,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
 
         TagHolder(Context context, Cursor cursor) {
             changeid = cursor.getString(cursor.getColumnIndex(UserChanges.C_CHANGE_ID));
-            changeNumber = cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER);
+            changeNumber = cursor.getInt(cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER));
             changeStatus = cursor.getString(cursor.getColumnIndex(UserChanges.C_STATUS));
             webAddress = Tools.getWebAddress(context,
                     cursor.getInt(cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER)));

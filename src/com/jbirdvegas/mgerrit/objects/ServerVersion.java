@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.objects;
 import android.util.Log;
 
 import java.util.Comparator;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,23 +72,22 @@ public class ServerVersion implements Comparator<ServerVersion> {
             return -1;
         }
 
-        int maxlen = Math.min(versionA.length(), versionB.length());
-        for (int i = 0; i < maxlen; i++) {
-            if (versionA.charAt(i) != versionB.charAt(i)) {
-                char a = versionA.charAt(i);
-                char b = versionB.charAt(i);
-                if (a >= '0' && a <= '9' && b >= '0' && b <= '9') {
-                    return a > b ? 1 : -1;
-                } else {
-                    // One char must be a '.' which has a lower ASCII code than digits
-                    return a > b ? -1 : 1;
-                }
+        Scanner s1 = new Scanner(versionA);
+        Scanner s2 = new Scanner(versionB);
+        s1.useDelimiter("\\.");
+        s2.useDelimiter("\\.");
+
+        while (s1.hasNextInt() && s2.hasNextInt()) {
+            int v1 = s1.nextInt();
+            int v2 = s2.nextInt();
+            if (v1 < v2) {
+                return -1;
+            } else if (v1 > v2) {
+                return 1;
             }
         }
 
-        // Need to check the remaining characters
-        if (versionA.length() == versionB.length()) return 0;
-        else if (versionA.length() > versionB.length()) return 1;
-        else return -1;
+        if (s1.hasNextInt()) return 1; //str1 has an additional lower-level version number
+        return 0;
     }
 }

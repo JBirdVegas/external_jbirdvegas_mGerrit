@@ -359,7 +359,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public static DiffModes getDiffDefault(Context context) {
         Resources r = context.getResources();
         String soption = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(DIFF_DEFAULT, r.getString(R.string.diff_option_ask));
+                .getString(DIFF_DEFAULT, r.getString(R.string.diff_option_internal));
         return DiffModes.getMode(context, soption);
     }
 

@@ -237,9 +237,11 @@ public class PatchSetViewerActivity extends FragmentActivity
                 break;
             }
         }
+
         mAdapter.notifyDataSetChanged();
 
-        if (mCurrentTab == null) {
+        if (pos == mViewPager.getCurrentItem()) mCurrentTab = pos;
+        else if (mCurrentTab == null) {
             mCurrentTab = pos;
             if (mCurrentTab >= 0) mViewPager.setCurrentItem(mCurrentTab);
             onNewChangeSelected(mCurrentTab);
