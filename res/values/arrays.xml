@@ -24,6 +24,7 @@
         <item>CarbonROM</item>
         <item>CyanogenMod</item>
         <item>Gerrit Review</item>
+        <item>LiquidSmooth</item>
         <item>NamelessROM</item>
         <item>Omni</item>
         <item>PAC-man</item>
@@ -39,6 +40,7 @@
         <item>https://review.carbonrom.org/</item>
         <item>http://review.cyanogenmod.org/</item>
         <item>https://gerrit-review.googlesource.com/</item>
+        <item>http://gerrit.liquidsmooth.net</item>
         <item>http://gerrit.nameless-rom.org/</item>
         <item>https://gerrit.omnirom.org/</item>
         <item>http://review.pac-rom.com/</item>
