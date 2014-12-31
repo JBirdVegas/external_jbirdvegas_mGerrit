@@ -21,7 +21,7 @@
 
     <item
         android:id="@+id/menu_search"
-        android:icon="?attr/searchIcon"
+        android:icon="?attr/searchMenuIcon"
         android:showAsAction="ifRoom"
         android:title="@string/changes_search_hint"/>
 
@@ -44,7 +44,6 @@
 
     <item
         android:id="@+id/menu_save"
-        android:icon="?attr/overflowIcon"
         android:title="@string/menu_preferences"
         android:showAsAction="never"/>
 

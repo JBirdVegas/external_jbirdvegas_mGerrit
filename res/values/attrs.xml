@@ -25,7 +25,7 @@
         <attr name="projectsIcon" format="reference"/>
         <attr name="refreshIcon" format="reference"/>
         <attr name="overflowIcon" format="reference"/>
-        <attr name="searchIcon" format="reference"/>
+        <attr name="searchMenuIcon" format="reference"/>
         <attr name="browserIcon" format="reference"/>
         <attr name="viewIcon" format="reference"/>
         <attr name="acceptIcon" format="reference"/>

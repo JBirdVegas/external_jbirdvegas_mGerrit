@@ -22,7 +22,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="?attr/clickableCardBackground">
+    android:background="?attr/clickableCardBackground"
+    android:elevation="@dimen/z_offset_low">
 
     <View
         android:id="@+id/commit_card_commit_status"
@@ -38,7 +39,8 @@
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
-        android:paddingBottom="@dimen/standard_padding">
+        android:paddingBottom="@dimen/standard_padding"
+        android:background="?android:attr/selectableItemBackground">
 
         <TextView
             style="?attr/cardTitleStyle"
@@ -47,7 +49,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/commit_card_title"
             tools:text="Tweak commit card layout"
-            android:paddingBottom="8dip" />
+            android:paddingBottom="8dip"/>
 
         <TextView
             style="@style/CardText.Committer"

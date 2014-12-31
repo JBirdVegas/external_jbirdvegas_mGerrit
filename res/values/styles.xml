@@ -28,6 +28,14 @@
         <item name="android:background">@drawable/ab_transparent_dark</item>
     </style>
 
+    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_overflow</item>
+    </style>
+
+    <style name="OverFlow.Dark" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_overflow_dark</item>
+    </style>
+
     <!-- Resize the action bar activity indicator to match the other action items -->
     <style name="IndeterminateProgress" parent="@android:style/Widget.Holo.ProgressBar.Small">
         <item name="android:minWidth">32dp</item>
@@ -52,7 +60,6 @@
 
     <style name="CardText.Committer">
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="CardText.CommitOwnerText">
@@ -74,7 +81,7 @@
     <style name="CardTitle" parent="style/CardText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">@dimen/text_size_x_large</item>
+        <item name="android:textSize">@dimen/text_size_larger</item>
         <item name="android:textStyle">italic</item>
         <item name="android:paddingLeft">@dimen/standard_padding</item>
         <item name="android:paddingRight">@dimen/standard_padding</item>
@@ -101,7 +108,7 @@
     <style name="GerritUrl">
         <item name="android:layout_marginLeft">10dp</item>
         <item name="android:textColor">@color/card_text</item>
-        <item name="android:textSize">@dimen/text_size_micro</item>
+        <item name="android:textSize">@dimen/text_size_extra_micro</item>
         <item name="android:focusable">false</item>
     </style>
 

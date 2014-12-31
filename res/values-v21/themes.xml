@@ -17,7 +17,9 @@
   -->
 
 <resources>
-    <style name="Theme.Light" parent="android:style/Theme.Holo.Light">
+    <style name="Theme.Light" parent="android:style/Theme.Material.Light">
+        <item name="android:colorAccent">@color/text_green</item>
+
         <item name="android:actionBarStyle">@style/ActionBar.Light</item>
         <item name="android:actionModeBackground">@drawable/ab_transparent</item>
         <item name="android:textColorPrimary">@color/actionbar_text</item>
@@ -47,7 +49,9 @@
         <item name="cancelIcon">@drawable/ic_action_cancel</item>
     </style>
 
-    <style name="Theme.Dark" parent="android:style/Theme.Holo">
+    <style name="Theme.Dark" parent="android:style/Theme.Material">
+        <item name="android:colorAccent">@color/text_orange</item>
+
         <item name="android:actionBarStyle">@style/ActionBar.Dark</item>
         <item name="android:textColorPrimary">@color/actionbar_text_dark</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow.Dark</item>
