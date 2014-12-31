@@ -68,7 +68,7 @@ public class CommitMarker extends DatabaseTable {
         db.execSQL("create table " + TABLE + " ("
                 + C_CHANGE_ID + " text NOT NULL, "
                 + C_UPDATED + " text NOT NULL, "
-                + C_SORTKEY + " text NOT NULL, "
+                + C_SORTKEY + " text, "
                 + C_STATUS + " text PRIMARY KEY, "
                 + "FOREIGN KEY (" + C_CHANGE_ID + ") REFERENCES "
                     + Users.TABLE + "(" + Changes.C_CHANGE_ID + "), "

@@ -20,7 +20,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_search"
-        android:icon="?attr/searchIcon"
+        android:icon="?attr/searchMenuIcon"
         android:showAsAction="ifRoom"
         android:title="@string/changes_search_hint"/>
 </menu>

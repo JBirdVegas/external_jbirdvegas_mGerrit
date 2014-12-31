@@ -89,8 +89,8 @@
     <string name="commit_reviewer">Commit Reviewer</string>
 
     <!-- Context menu strings -->
-    <string name="context_menu_view_diff_viewer">Use internal viewer</string>
-    <string name="context_menu_diff_view_in_browser">View diff in browser</string>
+    <string name="context_menu_view_diff_viewer">Internally</string>
+    <string name="context_menu_diff_view_in_browser">Browser</string>
     <string name="context_menu_change_browser">View change in browser</string>
     <string name="context_menu_change_viewer">View change details</string>
     <string name="choose_diff_view">How would you like to view the diff?</string>

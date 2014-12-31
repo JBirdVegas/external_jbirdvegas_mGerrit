@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
+        classpath 'com.android.tools.build:gradle:1.0.0'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
     }
 }
@@ -17,20 +17,22 @@ repositories {
 dependencies {
     compile files('libs/android-support-v4.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
-    compile files('libs/joda-time-2.3.jar')
     compile files('libs/annotations.jar')
     compile 'com.nineoldandroids:library:2.4.0'
-    compile('com.nhaarman.listviewanimations:library:2.5.+') {
-        exclude module: 'support-v4'
-    }
-    compile 'com.google.code.gson:gson:2.2.4'
+
+    compile 'com.google.code.gson:gson:2.3'
     compile 'com.mcxiaoke.volley:library:1.0.+'
-    compile 'de.greenrobot:eventbus:2.2.+'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'joda-time:joda-time:2.6'
+
+    compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
+    compile 'com.nhaarman.listviewanimations:lib-manipulation:3.1.0@aar'
+    compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
     // compile Using Java 7
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -52,7 +54,7 @@ android {
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFile 'proguard-project.txt'
             signingConfig signingConfigs.release
             lintOptions {

@@ -31,7 +31,7 @@ class DBHelper extends SQLiteOpenHelper {
 
     // Don't forget to set this when a change to the database is made!
     // This must be strictly ascending, but can skip numbers
-    private static final int DB_VERSION = 16;
+    private static final int DB_VERSION = 17;
     private static List<DatabaseTable> mTables;
     private Context mContext;
 
