@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
   ~  Author: Jon Stanford (JBirdVegas), 2013
   ~
@@ -17,12 +16,13 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="?attr/cardBackgroundColor"
-              android:orientation="vertical"
-              android:padding="@dimen/standard_padding">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/cardBackgroundColor"
+    android:elevation="@dimen/z_offset_low"
+    android:orientation="vertical"
+    android:padding="@dimen/standard_padding">
 
     <TextView
         android:id="@+id/labels_card_reviewer_name"
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="2dp"
         android:singleLine="true"
-        tools:text="Reviewer's name here"/>
+        tools:text="Reviewer's name here" />
 
     <LinearLayout
         android:id="@+id/labels_card_code_review_layout"
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
-            android:text="@string/patchset_labels_code_reviewer"/>
+            android:text="@string/patchset_labels_code_reviewer" />
 
         <TextView
             android:id="@+id/labels_card_code_review"
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:paddingRight="@dimen/standard_padding"
             android:singleLine="true"
-            tools:text="+2"/>
+            tools:text="+2" />
     </LinearLayout>
 
     <LinearLayout
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.00"
             android:singleLine="true"
-            android:text="@string/patchset_labels_verified_reviewer"/>
+            android:text="@string/patchset_labels_verified_reviewer" />
 
         <TextView
             android:id="@+id/labels_card_verified"
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:paddingRight="@dimen/standard_padding"
             android:singleLine="true"
-            tools:text="+1"/>
+            tools:text="+1" />
     </LinearLayout>
 
 </LinearLayout>

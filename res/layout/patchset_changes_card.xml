@@ -23,7 +23,8 @@
               android:layout_height="wrap_content"
               android:background="?attr/selectableCardBackground"
               android:orientation="vertical"
-              android:paddingBottom="8dip">
+              android:paddingBottom="8dip"
+              android:elevation="@dimen/z_offset_low">
 
     <TextView
         android:id="@+id/changed_file_path"

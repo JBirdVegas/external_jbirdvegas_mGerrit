@@ -72,6 +72,10 @@ public class GerritSearchView extends SearchView
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        // screen is being viewed from inside an IDE
+        if (this.isInEditMode()) {
+            return;
+        }
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         Integer user = Prefs.getTrackingUser(mContext);

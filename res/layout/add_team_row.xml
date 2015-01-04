@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.jbirdvegas.mgerrit.objects.CheckableView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.jbirdvegas.mgerrit.objects.CheckableView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:paddingLeft="@dimen/checkable_view_padding"
     android:paddingRight="@dimen/checkable_view_padding">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -24,24 +24,24 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/add_gerrit_name"
                 android:imeOptions="actionNext"
-                android:inputType="text"/>
+                android:inputType="text" />
 
             <EditText
                 android:id="@+id/add_team_url_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/add_team_url"
-                android:inputType="textUri"
                 android:imeOptions="actionDone"
-                android:text="@string/gerrit_protocol"/>
-            </LinearLayout>
+                android:inputType="textUri"
+                android:text="@string/gerrit_protocol" />
+        </LinearLayout>
 
-    <RadioButton
-        android:id="@+id/chk_gerrit_selected"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:clickable="false"
-        android:focusable="false"
-        android:checkMark="?android:attr/listChoiceIndicatorSingle"/>
+        <RadioButton
+            android:id="@+id/chk_gerrit_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:checkMark="?android:attr/listChoiceIndicatorSingle"
+            android:clickable="false"
+            android:focusable="false" />
     </LinearLayout>
 </com.jbirdvegas.mgerrit.objects.CheckableView>

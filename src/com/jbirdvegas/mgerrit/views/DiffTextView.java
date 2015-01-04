@@ -29,6 +29,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 
 import org.jetbrains.annotations.Contract;
@@ -110,7 +111,9 @@ public class DiffTextView extends TextView {
         // colorize added/removed lines
         colorizeDiffs(split, spannableString, charCounter, lineTracker);
 
-        highlightUnwantedChars(spannableString);
+        if (Prefs.highlightWhitespaceStyle(getContext())) {
+            highlightUnwantedChars(spannableString);
+        }
         return spannableString;
     }
 
@@ -142,7 +145,8 @@ public class DiffTextView extends TextView {
                         charCounter + startWhitespace - 1, end, 0);
             }
 // test line with trailing whitespaces ->
-// Here are 3 tabs ->	-	-	<- this line ends with four whitespaces ->    
+// Here are 3 tabs ->	-	-	<- this line ends wi
+// th four whitespaces ->
             charCounter += string.length();
         }
     }

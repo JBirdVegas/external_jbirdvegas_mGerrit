@@ -180,4 +180,6 @@
     <string name="diff_text_loading">Loading diff text</string>
     <string name="diff_image_loading">Loading image</string>
     <string name="loading_changes">Loading More Changes&#8230;</string>
+    <string name="whitespace_codestyle_title">Whitespace/Tab highlighting</string>
+    <string name="whitespace_codestyle_summary">Should highlight tabs and trailing whitespace</string>
 </resources>

@@ -42,6 +42,11 @@
         android:entryValues="@array/diff_options_values"
         android:defaultValue="@string/diff_option_ask"/>
 
+    <CheckBoxPreference
+        android:key="whitespace_tab_code_style_highlighting"
+        android:title="@string/whitespace_codestyle_title"
+        android:summary="@string/whitespace_codestyle_summary"
+        android:defaultValue="true"/>
     <PreferenceCategory
         android:title="@string/locales">
 
@@ -59,6 +64,5 @@
 
     <PreferenceCategory
         android:title="@string/open_source_libs"
-        android:key="libraries">
-    </PreferenceCategory>
+        android:key="libraries"/>
 </PreferenceScreen>

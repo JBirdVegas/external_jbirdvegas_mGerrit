@@ -1,55 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="?attr/cardBackgroundColor">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/cardBackgroundColor"
+    android:elevation="@dimen/z_offset_low"
+    android:orientation="horizontal">
 
     <View
         android:id="@+id/prop_card_status"
-        android:layout_height="match_parent"
         android:layout_width="@dimen/card_stroke_width"
+        android:layout_height="match_parent"
         android:background="@android:color/transparent"
         android:paddingRight="@dimen/commit_card_stroke_padding"
-        tools:background="@android:color/holo_orange_light"/>
+        tools:background="@android:color/holo_orange_light" />
 
-    <LinearLayout android:orientation="vertical"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:paddingBottom="8dip">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="8dip">
 
         <TextView
-            android:gravity="center"
+            android:id="@+id/prop_card_subject"
+            style="?attr/cardTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:gravity="center"
             android:paddingLeft="@dimen/standard_padding"
             android:paddingRight="@dimen/standard_padding"
-            android:id="@+id/prop_card_subject"
-            style="?attr/cardTitleStyle"
-            tools:text="Commit Subject"/>
+            tools:text="Commit Subject" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                style="@style/CardText.CommitOwnerText"
                 android:id="@+id/commit_last_update_text"
-                android:text="@string/commit_updated"/>
+                style="@style/CardText.CommitOwnerText"
+                android:text="@string/commit_updated" />
 
             <TextView
-                style="@style/CardText.CommitOwnerDetails"
                 android:id="@+id/prop_card_last_update"
-                android:layout_toRightOf="@id/commit_last_update_text"/>
+                style="@style/CardText.CommitOwnerDetails"
+                android:layout_toRightOf="@id/commit_last_update_text" />
         </RelativeLayout>
 
         <TextView
-            style="@style/CardText.CommitOwnerText"
             android:id="@+id/prop_card_author"
-            tools:text="@string/commit_author"/>
+            style="@style/CardText.CommitOwnerText"
+            tools:text="@string/commit_author" />
 
 
         <RelativeLayout
@@ -57,51 +59,52 @@
             android:layout_height="wrap_content">
 
             <TextView
-                style="@style/CardText.CommitOwnerText"
                 android:id="@+id/commit_branch_text"
-                android:text="@string/commit_branch"/>
+                style="@style/CardText.CommitOwnerText"
+                android:text="@string/commit_branch" />
 
             <TextView
-                style="@style/CardText.CommitOwnerDetails"
                 android:id="@+id/prop_card_branch"
-                android:layout_toRightOf="@id/commit_branch_text"/>
+                style="@style/CardText.CommitOwnerDetails"
+                android:layout_toRightOf="@id/commit_branch_text" />
 
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/prop_card_topic_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
             android:visibility="gone"
-            tools:visibility="visible"
-            android:id="@+id/prop_card_topic_container">
+            tools:visibility="visible">
 
             <TextView
-                style="@style/CardText.CommitOwnerText"
                 android:id="@+id/commit_topic_text"
-                android:text="@string/commit_topic"/>
+                style="@style/CardText.CommitOwnerText"
+                android:text="@string/commit_topic" />
 
             <TextView
-                style="@style/CardText.CommitOwnerDetails"
                 android:id="@+id/prop_card_topic"
-                android:layout_toRightOf="@+id/commit_topic_text"/>
+                style="@style/CardText.CommitOwnerDetails"
+                android:layout_toRightOf="@+id/commit_topic_text" />
         </RelativeLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:gravity="right">
-            <ImageView
-                android:src="?attr/viewIcon"
-                android:id="@+id/properties_card_view_in_browser"
-                style="@style/ActionViewsStyle"/>
+            android:gravity="right"
+            android:orientation="horizontal">
 
             <ImageView
-                android:src="?attr/shareIcon"
+                android:id="@+id/properties_card_view_in_browser"
+                style="@style/ActionViewsStyle"
+                android:src="?attr/viewIcon" />
+
+            <ImageView
                 android:id="@+id/properties_card_share_info"
-                style="@style/ActionViewsStyle"/>
+                style="@style/ActionViewsStyle"
+                android:src="?attr/shareIcon" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

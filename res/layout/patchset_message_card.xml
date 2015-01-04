@@ -16,12 +16,13 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/cardBackgroundColor">
+    android:background="?attr/cardBackgroundColor"
+    android:elevation="@dimen/z_offset_low">
 
     <TextView
         android:layout_width="match_parent"
@@ -31,5 +32,6 @@
         android:paddingLeft="8dip"
         android:paddingRight="8dip"
         android:textSize="@dimen/text_size_medium"
-        android:autoLink="web" />
+        android:autoLink="web"
+        tools:text="This is a message\n\n Test message"/>
 </LinearLayout>

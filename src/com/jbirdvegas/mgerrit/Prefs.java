@@ -48,6 +48,8 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public static final String APP_THEME = "app_theme";
     private static final String TABLET_MODE = "tablet_layout_mode";
     private static final String DIFF_DEFAULT = "change_diff";
+    private static final String WHITESPACE_STYLE_HIGHLIGHTING = "whitespace_style_highlighting";
+    private static final String WHITESPACE_STYLE_HIGHLIGHTING_KEY = "whitespace_tab_code_style_highlighting";
 
     private Preference mGerritSwitcher;
     private Context mContext;
@@ -155,6 +157,14 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 DiffModes o = DiffModes.getMode(mContext, newValue.toString());
                 preference.setSummary(o.getSummary(mContext));
+                return true;
+            }
+        });
+
+        findPreference(WHITESPACE_STYLE_HIGHLIGHTING_KEY).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                setHighlightWhitespaceStyle(getActivity(), ((CheckBoxPreference) preference).isChecked());
                 return true;
             }
         });
@@ -370,5 +380,14 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
                 setCurrentGerrit(context, context.getResources().getStringArray(R.array.gerrit_webaddresses)[i]);
             }
         }
+    }
+
+    public static boolean highlightWhitespaceStyle(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(WHITESPACE_STYLE_HIGHLIGHTING, true);
+    }
+
+    public static void setHighlightWhitespaceStyle(Context context, boolean shouldHighlight) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit().putBoolean(WHITESPACE_STYLE_HIGHLIGHTING, shouldHighlight).commit();
     }
 }
