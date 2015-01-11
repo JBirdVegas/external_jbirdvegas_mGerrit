@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.tasks;
  */
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -43,6 +44,10 @@ public class GsonRequest<T> extends Request<T> {
     private final Listener<T> listener;
     private final int trim;
 
+    /* Set a request timeout of one minute - if we don't hear a response from the server by then it
+     *  is too slow */
+    public static final int REQUEST_TIMEOUT = 60*1000;
+
     /**
      * Make a GET request and return a parsed object from JSON.
      *
@@ -59,6 +64,9 @@ public class GsonRequest<T> extends Request<T> {
         this.clazz = clazz;
         this.listener = listener;
         this.trim = trimStart;
+        this.setRetryPolicy(new DefaultRetryPolicy(REQUEST_TIMEOUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
     @Override

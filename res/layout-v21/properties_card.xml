@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2015
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="?attr/cardBackgroundColor"
+              android:elevation="@dimen/z_offset_low">
+
+    <View
+        android:id="@+id/prop_card_status"
+        android:layout_height="match_parent"
+        android:layout_width="@dimen/card_stroke_width"
+        android:background="@android:color/transparent"
+        android:paddingRight="@dimen/commit_card_stroke_padding"
+        tools:background="@android:color/holo_orange_light"/>
+
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:paddingBottom="8dip">
+
+        <TextView
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingLeft="@dimen/standard_padding"
+            android:paddingRight="@dimen/standard_padding"
+            android:id="@+id/prop_card_subject"
+            style="?attr/cardTitleStyle"
+            tools:text="Commit Subject"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/CardText.CommitOwnerText"
+                android:id="@+id/commit_last_update_text"
+                android:text="@string/commit_updated"/>
+
+            <TextView
+                style="@style/CardText.CommitOwnerDetails"
+                android:id="@+id/prop_card_last_update"
+                android:layout_toRightOf="@id/commit_last_update_text"/>
+        </RelativeLayout>
+
+        <TextView
+            style="@style/CardText.CommitOwnerText"
+            android:id="@+id/prop_card_author"
+            tools:text="@string/commit_author"/>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/CardText.CommitOwnerText"
+                android:id="@+id/commit_branch_text"
+                android:text="@string/commit_branch"/>
+
+            <TextView
+                style="@style/CardText.CommitOwnerDetails"
+                android:id="@+id/prop_card_branch"
+                android:layout_toRightOf="@id/commit_branch_text"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:id="@+id/prop_card_topic_container">
+
+            <TextView
+                style="@style/CardText.CommitOwnerText"
+                android:id="@+id/commit_topic_text"
+                android:text="@string/commit_topic"/>
+
+            <TextView
+                style="@style/CardText.CommitOwnerDetails"
+                android:id="@+id/prop_card_topic"
+                android:layout_toRightOf="@+id/commit_topic_text"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="right">
+            <ImageView
+                android:src="?attr/viewIcon"
+                android:id="@+id/properties_card_view_in_browser"
+                style="@style/ActionViewsStyle"/>
+
+            <ImageView
+                android:src="?attr/shareIcon"
+                android:id="@+id/properties_card_share_info"
+                style="@style/ActionViewsStyle"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -26,8 +26,9 @@ dependencies {
     compile 'joda-time:joda-time:2.6'
 
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
-    compile 'com.nhaarman.listviewanimations:lib-manipulation:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
+
+    compile 'se.emilsjolander:stickylistheaders:2.5.2'
 }
 
 android {

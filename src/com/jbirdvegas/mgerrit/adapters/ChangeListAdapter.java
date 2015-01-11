@@ -23,6 +23,7 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.SimpleCursorAdapter;
 
+import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
@@ -30,14 +31,20 @@ import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
+import com.jbirdvegas.mgerrit.objects.Categorizable;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+
+import java.util.Locale;
+import java.util.TimeZone;
 
 import de.greenrobot.event.EventBus;
 
-public class ChangeListAdapter extends SimpleCursorAdapter {
+public class ChangeListAdapter extends SimpleCursorAdapter implements Categorizable {
 
     Context mContext;
 
@@ -47,6 +54,10 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
 
     private String selectedChangeId;
     private CommitCard selectedChangeView;
+
+    private final Locale mLocale;
+    private final TimeZone mServerTimeZone, mLocalTimeZone;
+    private Integer mDateColumnIndex;
 
     public ChangeListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags,
                              String status) {
@@ -60,6 +71,10 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
             // We only need the changeid
             selectedChangeId = change.first;
         }
+
+        mServerTimeZone = Prefs.getServerTimeZone(context);
+        mLocalTimeZone = Prefs.getLocalTimeZone(context);
+        mLocale = context.getResources().getConfiguration().locale;
     }
 
     @Override
@@ -176,6 +191,30 @@ public class ChangeListAdapter extends SimpleCursorAdapter {
         mProject_index = null;
 
         return super.swapCursor(c);
+    }
+
+    @Override
+    public String categoryName(int position) {
+        Cursor c = (Cursor) getItem(position);
+        Integer index = getDateColumnIndex(c);
+        // Convert to date
+        DateTime date = Tools.parseDate(c.getString(index), mServerTimeZone, mLocalTimeZone);
+        return DateTimeFormat.forPattern(mContext.getString(R.string.header_date_format)).withLocale(mLocale).print(date);
+    }
+
+    @Override
+    public long categoryId(int position) {
+        Cursor c = (Cursor) getItem(position);
+        Integer index = getDateColumnIndex(c);
+        // Convert to date
+        DateTime date = Tools.parseDate(c.getString(index), mServerTimeZone, mLocalTimeZone);
+        return date.getMillis();
+    }
+
+    private Integer getDateColumnIndex(Cursor cursor) {
+        if (mDateColumnIndex == null)
+            mDateColumnIndex = cursor.getColumnIndex(UserChanges.C_UPDATED);
+        return mDateColumnIndex;
     }
 
     private static class TagHolder {

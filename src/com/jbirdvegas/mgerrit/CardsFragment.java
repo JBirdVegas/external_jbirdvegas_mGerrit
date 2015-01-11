@@ -35,11 +35,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
+import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
@@ -69,6 +70,8 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import de.greenrobot.event.EventBus;
+import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
+import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -89,7 +92,7 @@ public abstract class CardsFragment extends Fragment
 
     private static boolean sIsTabletMode = false;
 
-    private ListView mListView;
+    private ExpandableStickyListHeadersListView mListView;
     // Adapter that binds data to the listview
     private ChangeListAdapter mAdapter;
     // Wrapper for mAdapter, enabling animations
@@ -109,6 +112,8 @@ public abstract class CardsFragment extends Fragment
         }
     };
     private EventBus mEventBus;
+    private HeaderAdapterDecorator mHeaderAdapterWrapper;
+    private HeaderAdapterWrapper mHeaderAdapter;
 
 
     @Override
@@ -153,14 +158,16 @@ public abstract class CardsFragment extends Fragment
         String[] from = new String[] { UserChanges.C_SUBJECT, UserChanges.C_NAME,
                 UserChanges.C_PROJECT, UserChanges.C_UPDATED, UserChanges.C_STATUS };
 
-        mListView = (ListView) mCurrentFragment.findViewById(R.id.commit_cards);
+        mListView = (ExpandableStickyListHeadersListView) mCurrentFragment.findViewById(R.id.commit_cards);
         registerForContextMenu(mListView);
 
         mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card, null, from, to, 0,
                 getQuery());
         mAdapter.setViewBinder(new CommitCardBinder(mParent, mRequestQueue));
 
-        mEndlessAdapter = new EndlessAdapterWrapper(mParent, mAdapter) {
+        mHeaderAdapter = new HeaderAdapterWrapper(mParent, mAdapter);
+
+        mEndlessAdapter = new EndlessAdapterWrapper(mParent, mHeaderAdapter) {
             @Override
             public void loadData() {
                 Set<SearchKeyword> keywords = mSearchView.getLastQuery();
@@ -180,6 +187,11 @@ public abstract class CardsFragment extends Fragment
                 mAdapter.itemClickListener(view);
             }
         });
+
+        mHeaderAdapterWrapper = new HeaderAdapterDecorator(mEndlessAdapter, mHeaderAdapter);
+        mListView.setAdapter(mHeaderAdapterWrapper);
+        mListView.setDrawingListUnderStickyHeader(false);
+        mListView.getWrappedList().setDividerHeight(16);
 
         sChangesLimit = mParent.getResources().getInteger(R.integer.changes_limit);
 
@@ -210,7 +222,7 @@ public abstract class CardsFragment extends Fragment
         if (mEndlessAdapter != null) {
             toggleAnimations(mEndlessAdapter);
             mListView.setOnScrollListener(mEndlessAdapter);
-        } else toggleAnimations(mAdapter);
+        } else toggleAnimations(mHeaderAdapter);
 
         EasyTracker.getInstance(getActivity()).activityStart(getActivity());
 
@@ -337,7 +349,7 @@ public abstract class CardsFragment extends Fragment
         String webAddress = (String) targetView.getTag(R.id.webAddress);
         switch (item.getItemId()) {
             case R.id.menu_change_details:
-                mListView.performItemClick(targetView, info.position, info.id);
+                mListView.getWrappedList().performItemClick(targetView, info.position, info.id);
                 return true;
             case R.id.menu_change_browser:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webAddress));
@@ -373,13 +385,13 @@ public abstract class CardsFragment extends Fragment
 
         /* If animations have been enabled, setup and use an animation adapter, otherwise use
          *  the regular adapter. The data should always be bound to mAdapter */
-        BaseAdapter adapter = Tools.toggleAnimations(mAnimationsEnabled, mListView, mAnimAdapter, baseAdapter);
+        BaseAdapter adapter = Tools.toggleAnimations(mAnimationsEnabled, mListView.getWrappedList(), mAnimAdapter, baseAdapter);
+        if (mEndlessAdapter != null) {
+            mEndlessAdapter.setParentAdatper(adapter);
+        }
 
         if (mAnimationsEnabled) {
             mAnimAdapter = (SingleAnimationAdapter) adapter;
-            if (baseAdapter == mEndlessAdapter) {
-                mEndlessAdapter.setParentAdatper(mAnimAdapter);
-            }
         }
     }
 
@@ -412,6 +424,7 @@ public abstract class CardsFragment extends Fragment
                 }
             }
         }
+
         return UserChanges.findCommits(mParent, getQuery(), null, null);
     }
 
@@ -428,6 +441,12 @@ public abstract class CardsFragment extends Fragment
         if (sIsTabletMode) {
             // Broadcast that we have finished loading changes
             mEventBus.post(new ChangeLoadingFinished(getQuery()));
+        }
+
+        if (mEndlessAdapter != null) {
+            mEndlessAdapter.notifyDataSetChanged();
+        } else {
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -467,11 +486,19 @@ public abstract class CardsFragment extends Fragment
         Intent processed = ev.getIntent();
         Direction direction = (Direction) processed.getSerializableExtra(GerritService.CHANGES_LIST_DIRECTION);
 
-        if (mEndlessAdapter == null || direction == Direction.Newer) return;
+        if (mEndlessAdapter != null) {
+            if (direction == Direction.Newer) {
+                // We loaded more changes so the data may have changed. finishedDataLoading is only for older changes
+                mEndlessAdapter.notifyDataSetChanged();
+            } else {
+                mEndlessAdapter.finishedDataLoading();
 
-        if (ev.getItems() < sChangesLimit) {
-            // Remove the endless adapter as we have no more changes to load
-            mEndlessAdapter.finishedDataLoading();
+                if (ev.getItems() < sChangesLimit) {
+                    // Remove the endless adapter as we have no more older changes to load
+                    // The scroll listener is only used for loading older changes
+                    mListView.setOnScrollListener(null);
+                }
+            }
         }
     }
 

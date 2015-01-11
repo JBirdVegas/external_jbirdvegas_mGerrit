@@ -34,17 +34,29 @@ import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.FileInfo;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
 public class Tools {
 
-    private static final String GERRIT_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
-    private static final String HUMAN_READABLE_DATE_FORMAT = "MMMM dd, yyyy '%s' hh:mm:ss aa";
+    private static final String GERRIT_DATETIME_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
+    private static final String HUMAN_READABLE_DATETIME_FORMAT = "MMMM dd, yyyy '%s' hh:mm:ss aa";
+    private static final String HUMAN_READABLE_DATE_FORMAT = "MMMM dd, yyyy";
+    private static final String HUMAN_READABLE_TIME_FORMAT = "hh:mm aa";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSS").withLocale(Locale.US);
 
     public static String stackTraceToString(Throwable e) {
         StringBuilder sb = new StringBuilder(0);
@@ -108,15 +120,33 @@ public class Tools {
      *         example: Jun 09, 2013 07:47 40ms PM
      */
     @SuppressWarnings("SimpleDateFormatWithoutLocale")
-    public static String prettyPrintDate(Context context, String date,
-                                   TimeZone serverTimeZone, TimeZone localTimeZone) {
+    public static String prettyPrintDateTime(Context context, String date,
+                                             TimeZone serverTimeZone, TimeZone localTimeZone) {
         try {
             SimpleDateFormat currentDateFormat
-                    = new SimpleDateFormat(GERRIT_DATE_FORMAT, Locale.US);
+                    = new SimpleDateFormat(GERRIT_DATETIME_FORMAT, Locale.US);
             DateFormat humanDateFormat = new SimpleDateFormat(
-                    String.format(HUMAN_READABLE_DATE_FORMAT,
+                    String.format(HUMAN_READABLE_DATETIME_FORMAT,
                             context.getString(R.string.at)),
                     Locale.getDefault());
+            // location of server
+            currentDateFormat.setTimeZone(serverTimeZone);
+            // local location
+            humanDateFormat.setTimeZone(localTimeZone);
+            return humanDateFormat.format(currentDateFormat.parse(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return date;
+        }
+    }
+
+    @SuppressWarnings("SimpleDateFormatWithoutLocale")
+    public static String prettyPrintTime(Context context, String date,
+                                         TimeZone serverTimeZone, TimeZone localTimeZone) {
+        try {
+            SimpleDateFormat currentDateFormat
+                    = new SimpleDateFormat(GERRIT_DATETIME_FORMAT, Locale.US);
+            DateFormat humanDateFormat = new SimpleDateFormat(HUMAN_READABLE_TIME_FORMAT, Locale.getDefault());
             // location of server
             currentDateFormat.setTimeZone(serverTimeZone);
             // local location
@@ -229,5 +259,14 @@ public class Tools {
         entry.serverDate = serverDate;
         entry.responseHeaders = headers;
         return entry;
+    }
+
+    public static DateTime parseDate(String dateStr, TimeZone serverTimeZone, TimeZone localTimeZone) {
+        try {
+            DateTime d = DATE_TIME_FORMATTER.withZone(DateTimeZone.forTimeZone(serverTimeZone)).parseDateTime(dateStr);
+            return d.withZone(DateTimeZone.forTimeZone(localTimeZone)).withMillisOfDay(0);
+        } catch (IllegalArgumentException e) {
+            return new DateTime(0);
+        }
     }
 }

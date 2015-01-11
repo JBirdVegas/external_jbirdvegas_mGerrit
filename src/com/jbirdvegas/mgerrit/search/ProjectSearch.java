@@ -48,12 +48,7 @@ public class ProjectSearch extends SearchKeyword {
         if (param == null || param.isEmpty()) return "";
 
         StringBuilder builder = new StringBuilder().append(OP_NAME).append(":\"");
-        try {
-            // We need to URL encode this
-            builder.append(URLEncoder.encode(param, "UTF-8")).append("\"");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        builder.append(param).append("\"");
         return builder.toString();
     }
 }

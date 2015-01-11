@@ -351,7 +351,7 @@ public class JSONCommit {
      * example: Jun 09, 2013 07:47 40ms PM
      */
     public String getLastUpdatedDate(Context context) {
-        return Tools.prettyPrintDate(context, mLastUpdatedDate, mServerTimeZone, mLocalTimeZone);
+        return Tools.prettyPrintDateTime(context, mLastUpdatedDate, mServerTimeZone, mLocalTimeZone);
     }
 
     public boolean isIsMergeable() {

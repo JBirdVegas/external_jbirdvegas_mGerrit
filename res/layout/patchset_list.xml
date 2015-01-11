@@ -37,7 +37,8 @@
         android:paddingRight="@dimen/cards_list_padding_horiz"
         android:divider="@android:color/transparent"
         android:dividerHeight="@dimen/cards_list_divider_height"
-        android:childDivider="@android:color/transparent" />
+        android:childDivider="@android:color/transparent"
+        android:clipToPadding="false"/>
 
 
 </LinearLayout>

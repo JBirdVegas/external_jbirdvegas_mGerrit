@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
-  ~  Author: Jon Stanford (JBirdVegas), 2013
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Jon Stanford (JBirdVegas), 2015
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="?attr/clickableCardBackground"
-    android:elevation="@dimen/z_offset_low">
+    android:elevation="@dimen/z_offset_medium">
 
     <View
         android:id="@+id/commit_card_commit_status"
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/commit_card_title"
             tools:text="Tweak commit card layout"
-            android:paddingBottom="8dip"/>
+            android:paddingBottom="8dip" />
 
         <TextView
             style="@style/CardText.Committer"
@@ -70,7 +70,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/commit_card_last_updated"
-            tools:text="January 01, 1970, 12:00:00 am"
+            tools:text="12:00 am"
             style="@style/CardText" />
     </LinearLayout>
+
 </com.jbirdvegas.mgerrit.cards.CommitCard>

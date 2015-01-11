@@ -280,16 +280,19 @@ public class PatchSetViewerFragment extends Fragment
      * @param changeID A valid change id
      */
     public void loadChange(String changeId) {
-        this.mSelectedChange = changeId;
+        // If we have already loaded this change there is nothing to do
+        if (!changeId.equals(this.mSelectedChange)) {
+            this.mSelectedChange = changeId;
 
-        mUrl.addSearchKeyword(new ChangeSearch(mSelectedChange));
-        mUrl.setChangeNumber(mChangeNumber);
-        mUrl.requestChangeDetail(true, sIsLegacyVersion);
+            mUrl.addSearchKeyword(new ChangeSearch(mSelectedChange));
+            mUrl.setChangeNumber(mChangeNumber);
+            mUrl.requestChangeDetail(true, sIsLegacyVersion);
 
-        if (sIsLegacyVersion) sendRequest(GerritService.DataType.LegacyCommitDetails);
-        else sendRequest(GerritService.DataType.CommitDetails);
+            if (sIsLegacyVersion) sendRequest(GerritService.DataType.LegacyCommitDetails);
+            else sendRequest(GerritService.DataType.CommitDetails);
 
-        restartLoaders(changeId);
+            restartLoaders(changeId);
+        }
     }
 
     /**

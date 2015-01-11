@@ -23,7 +23,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
+    <se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView
         android:id="@+id/commit_cards"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,5 +34,6 @@
         android:paddingBottom="@dimen/cards_list_padding_vert"
         android:paddingLeft="@dimen/cards_list_padding_horiz"
         android:paddingRight="@dimen/cards_list_padding_horiz"
-        android:paddingTop="@dimen/cards_list_padding_vert"/>
+        android:paddingTop="@dimen/cards_list_padding_vert"
+        android:drawSelectorOnTop="true"/>
 </android.support.v4.widget.SwipeRefreshLayout>

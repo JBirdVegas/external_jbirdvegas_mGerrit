@@ -163,6 +163,7 @@ abstract class SyncProcessor<T> {
 
 
     protected boolean isInSyncInterval(long syncInterval, long lastSync) {
+        if (lastSync == 0) return false; // Always sync if this is the first time
         long timeNow = System.currentTimeMillis();
         return ((timeNow - lastSync) < syncInterval);
     }

@@ -363,6 +363,20 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         return DiffModes.getMode(context, soption);
     }
 
+    public static void setDiffDefault(Context context, DiffModes diffMode) {
+        Resources r = context.getResources();
+        String val;
+        if (diffMode == DiffModes.INTERNAL) {
+            val = r.getString(R.string.diff_option_internal);
+        } else if (diffMode == DiffModes.EXTERNAL) {
+            val = r.getString(R.string.diff_option_external);
+        } else {
+            val = "ask";
+        }
+
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(DIFF_DEFAULT, val).commit();
+    }
+
     public static void setGerritInstanceByName(Context context, String gerrit) {
         String[] gerritNames = context.getResources().getStringArray(R.array.gerrit_names);
         for (int i = 0; i < gerritNames.length; i++) {

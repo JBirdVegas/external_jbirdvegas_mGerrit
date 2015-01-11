@@ -87,7 +87,7 @@ public class PatchSetCommentsCard implements CardBinder {
 
         String timestamp = cursor.getString(timestamp_index);
         if (timestamp != null) {
-            viewHolder.timestamp.setText(Tools.prettyPrintDate(mContext, timestamp,
+            viewHolder.timestamp.setText(Tools.prettyPrintDateTime(mContext, timestamp,
                     Prefs.getServerTimeZone(mContext),
                     Prefs.getLocalTimeZone(mContext)));
         }

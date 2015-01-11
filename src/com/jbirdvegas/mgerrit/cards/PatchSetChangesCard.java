@@ -27,6 +27,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -172,21 +174,31 @@ public class PatchSetChangesCard implements CardBinder {
     public static void launchDiffOptionDialog(final Context context, final Integer changeNumber,
                                               final Integer patchset,
                                         final String filePath) {
+        View checkBoxView = View.inflate(context, R.layout.diff_option_checkbox, null);
+        final CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.checkbox);
+
         AlertDialog.Builder ad = new AlertDialog.Builder(context)
                 .setTitle(R.string.choose_diff_view)
+                .setView(checkBoxView)
                 .setPositiveButton(R.string.context_menu_view_diff_viewer, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        if (checkBox.isChecked()) {
+                            Prefs.setDiffDefault(context, Prefs.DiffModes.INTERNAL);
+                        }
                         launchDiffViewer(context, changeNumber, patchset, filePath);
                     }
                 })
                 .setNegativeButton(
                         R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        launchDiffInBrowser(context, changeNumber, patchset, filePath);
-                    }
-                });
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (checkBox.isChecked()) {
+                                    Prefs.setDiffDefault(context, Prefs.DiffModes.EXTERNAL);
+                                }
+                                launchDiffInBrowser(context, changeNumber, patchset, filePath);
+                            }
+                        });
         ad.create().show();
     }
 

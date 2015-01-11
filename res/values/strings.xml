@@ -170,6 +170,7 @@
     <string name="diff_options_ask">Ask</string>
     <string name="diff_options_internal">In internal viewer when available</string>
     <string name="diff_options_external">In browser</string>
+    <string name="diff_options_always">Remember my decision</string>
 
     <string name="diff_menu_internal_condensed">Viewer</string>
     <string name="diff_menu_external_condensed">Browser</string>
@@ -180,4 +181,6 @@
     <string name="diff_text_loading">Loading diff text</string>
     <string name="diff_image_loading">Loading image</string>
     <string name="loading_changes">Loading More Changes&#8230;</string>
+
+    <string name="header_date_format">EEEE, MMMM dd yyyy</string>
 </resources>

@@ -54,7 +54,8 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
         long syncInterval = context.getResources().getInteger(R.integer.projects_sync_interval);
         long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, mUrl);
         boolean sync = isInSyncInterval(syncInterval, lastSync);
-        if (sync) return true;
+        // If lastSync was within the sync interval then it was recently synced and we don't need to again
+        if (!sync) return true;
 
         // Better just make sure that there are projects in the database
         return DatabaseTable.isEmpty(context, ProjectsTable.CONTENT_URI);

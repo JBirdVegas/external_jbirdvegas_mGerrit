@@ -104,8 +104,8 @@ public abstract class EndlessAdapterWrapper extends BaseAdapter
         if (mParentAdapter != null) mParentAdapter.notifyDataSetChanged();
     }
 
-    public void setParentAdatper(BaseAdapter child) {
-        mParentAdapter = child;
+    public void setParentAdatper(BaseAdapter parent) {
+        mParentAdapter = parent;
     }
 
     /**

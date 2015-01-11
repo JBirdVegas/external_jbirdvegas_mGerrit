@@ -89,7 +89,7 @@ public class PatchSetPropertiesCard implements CardBinder {
         setIndicies(cursor);
 
         String lastUpdated = cursor.getString(updated_index);
-        viewHolder.updated.setText(Tools.prettyPrintDate(mContext, lastUpdated,
+        viewHolder.updated.setText(Tools.prettyPrintDateTime(mContext, lastUpdated,
                 Prefs.getServerTimeZone(mContext),
                 Prefs.getLocalTimeZone(mContext)));
 

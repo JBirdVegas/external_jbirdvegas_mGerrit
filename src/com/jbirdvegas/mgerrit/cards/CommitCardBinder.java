@@ -120,7 +120,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
      */
     @SuppressWarnings("SimpleDateFormatWithoutLocale")
     private String prettyPrintDate(Context context, String date) {
-       return Tools.prettyPrintDate(context, date, mServerTimeZone, mLocalTimeZone);
+       return Tools.prettyPrintTime(context, date, mServerTimeZone, mLocalTimeZone);
     }
 
     // When the cursor changes, these may not be valid
