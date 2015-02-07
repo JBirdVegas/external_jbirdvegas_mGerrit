@@ -69,7 +69,7 @@ Part de la informació no estarà disponible</string>
   <string name="view_in_browser">Navegador</string>
   <string name="moar_info">Més Info!</string>
   <string name="commit_shared_from_mgerrit" formatted="false">S\'ha compartit la validació %s des d\'mGerrit!</string>
-  <string name="found_cards_toast" formatted="false"><![CDATA[S\'ha trobat %d validacions en %d segons]]></string>
+  <string name="found_cards_toast" formatted="false"><![CDATA[S'ha trobat %d validacions en %d segons]]></string>
   <string name="menu_projects">Visualització per projecte</string>
   <string name="aokp_changelog">Registre de canvis d\'AOKP</string>
   <string name="download_update">Baixa</string>
