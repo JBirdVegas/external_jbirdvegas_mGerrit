@@ -40,13 +40,13 @@
   <string name="show_exception">Mostra l\'excepció</string>
   <string name="exit">Surt</string>
   <string name="gerrit_call_failed">No s\'ha pogut aconseguir una resposta útil de la instància Gerrit. Comproveu la connexió i torneu a intentar-ho.</string>
-  <string name="establishing_connection">S\'està establint la connexió...</string>
-  <string name="transferring">S\'està transferint les dades codificades JSON...</string>
+  <string name="establishing_connection">S\'està establint la connexió…</string>
+  <string name="transferring">S\'està transferint les dades codificades JSON…</string>
   <string name="downloading_status" formatted="false">S\'ha baixat %d de %d bytes\t%d%% completat</string>
   <string name="connection_established">Connexió establerta</string>
-  <string name="initializing_data_transfer">S\'està iniciant la transferència de dades...</string>
+  <string name="initializing_data_transfer">S\'està iniciant la transferència de dades…</string>
   <string name="communications_error">ERROR de comunicació!!!</string>
-  <string name="transferring_json_data">S\'està transferint les dades codificades JSON...</string>
+  <string name="transferring_json_data">S\'està transferint les dades codificades JSON…</string>
   <string name="open_source_libs">Biblioteques de codi obert</string>
   <string name="explain_status_title">Explicació dels estats</string>
   <string name="explain_status_summary">Explicació breu dels significats de les pestanyes d\'estat</string>
@@ -69,14 +69,14 @@ Part de la informació no estarà disponible</string>
   <string name="view_in_browser">Navegador</string>
   <string name="moar_info">Més Info!</string>
   <string name="commit_shared_from_mgerrit" formatted="false">S\'ha compartit la validació %s des d\'mGerrit!</string>
-  <string name="found_cards_toast" formatted="false"><![CDATA[S'ha trobat %d validacions en %d segons]]></string>
+  <string name="found_cards_toast" formatted="false"><![CDATA[S\'ha trobat %d validacions en %d segons]]></string>
   <string name="menu_projects">Visualització per projecte</string>
   <string name="aokp_changelog">Registre de canvis d\'AOKP</string>
   <string name="download_update">Baixa</string>
   <string name="please_select_update_for_range">Seleccioneu el fitxer per visualitzar la llista de canvis</string>
   <string name="download_rom_zip">Baixa un zip de ROM</string>
   <string name="failed_to_decode_base64">No s\'ha pogut descodificar la resposta Base64.</string>
-  <string name="return_was_null">La resposta és nul·la... Visualitzeu-ho al navegador</string>
+  <string name="return_was_null">La resposta és nul·la… Visualitzeu-ho al navegador</string>
   <string name="using_gerrit_toast">S\'està utilitzant Gerrit:</string>
   <string name="google_now_style_animations_title">Anima les targetes</string>
   <string name="google_now_style_animations_summary">Habilita les animacions a l\'estil Google Now en dibuixar les targetes</string>
