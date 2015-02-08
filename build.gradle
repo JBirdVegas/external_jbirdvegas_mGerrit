@@ -9,6 +9,7 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'hugo'
+apply plugin: 'checkstyle'
 
 repositories {
     mavenCentral()
@@ -66,6 +67,17 @@ android {
     defaultConfig {}
     productFlavors {
     }
+}
+
+// config the style checks to run during the testing phase
+check.dependsOn 'checkstyle'
+
+task checkstyle(type: Checkstyle) {
+    configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    source 'src'
+    include "**/*.java"
+    exclude "**/gen/**"
+    classpath = files()
 }
 
 def Properties props = new Properties()
