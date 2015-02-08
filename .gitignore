@@ -22,3 +22,5 @@ caches/
 daemon/
 gradle/caches/
 gradle/daemon/
+*.*~
+.DS_Store
