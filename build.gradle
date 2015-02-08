@@ -42,13 +42,7 @@ android {
     }
     sourceSets {
         main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            resources.srcDirs = ['res']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
+            // accept defaut file structure of android plugin
         }
     }
     signingConfigs {
