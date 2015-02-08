@@ -1,7 +1,7 @@
 mGerrit
 =======
 
-[![Build Status](https://api.travis-ci.org/JBirdVegas/external_jbirdvegas_mGerrit.png?branch=travis)](https://api.travis-ci.org/JBirdVegas/external_jbirdvegas_mGerrit)
+[![Build Status](https://api.travis-ci.org/JBirdVegas/external_jbirdvegas_mGerrit.png?branch=master)](https://api.travis-ci.org/JBirdVegas/external_jbirdvegas_mGerrit)
 
 Gerrit instance viewer supporting the most popular Android ROMs. Supports tracking the Gerrit Instances for
 -   AOKP
