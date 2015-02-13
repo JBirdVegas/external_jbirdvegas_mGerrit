@@ -183,4 +183,10 @@
     <string name="loading_changes">Loading More Changes&#8230;</string>
 
     <string name="header_date_format">EEEE, MMMM dd yyyy</string>
+    <string name="gerrit_signin_heading">Sign in to %s</string>
+    <string name="gerrit_signin_username">Username</string>
+    <string name="gerrit_signin_password">Password</string>
+    <string name="gerrit_signin_signin">Sign in</string>
+    <string name="gerrit_signin_help">Enter your username and password to star changes from mGerrit. If you do not know your username/password, you can generate one on %s.</string>
+    <string name="gerrit_signin_help_link_text">your account settings page</string>
 </resources>
