@@ -25,15 +25,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/gerrit_signin_heading"
-        android:id="@+id/textView2"
-        android:paddingBottom="@dimen/standard_padding"
-        android:textSize="@dimen/text_size_large" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="@string/gerrit_signin_help"
         android:id="@+id/textView4"
+        android:paddingTop="@dimen/standard_padding"
         android:paddingBottom="@dimen/standard_padding" />
 
     <EditText

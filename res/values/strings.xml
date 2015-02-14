@@ -183,7 +183,8 @@
     <string name="loading_changes">Loading More Changes&#8230;</string>
 
     <string name="header_date_format">EEEE, MMMM dd yyyy</string>
-    <string name="gerrit_signin_heading">Sign in to %s</string>
+
+    <string name="gerrit_signin_title">Sign in to %s</string>
     <string name="gerrit_signin_username">Username</string>
     <string name="gerrit_signin_password">Password</string>
     <string name="gerrit_signin_signin">Sign in</string>
