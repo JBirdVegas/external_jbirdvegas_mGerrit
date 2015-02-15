@@ -23,6 +23,7 @@
         <item>AOSP</item>
         <item>CarbonROM</item>
         <item>CyanogenMod</item>
+        <item>DirtyUnicorns</item>
         <item>Gerrit Review</item>
         <item>LiquidSmooth</item>
         <item>MerkMod</item>
@@ -40,6 +41,7 @@
         <item>https://android-review.googlesource.com/</item>
         <item>https://review.carbonrom.org/</item>
         <item>http://review.cyanogenmod.org/</item>
+        <item>http://gerrit.dirtyunicorns.com</item>
         <item>https://gerrit-review.googlesource.com/</item>
         <item>http://gerrit.liquidsmooth.net</item>
         <item>http://review.merkmod.com/</item>
@@ -51,7 +53,7 @@
         <item>https://gerrit.slimroms.net</item>
         <item>https://gerrit.wikimedia.org/r/</item>
     </string-array>
-    <string-array name="status_entries">
+    <string-array name="status_entries" translatable="false">
         <item>@string/reviewable</item>
         <item>@string/merged</item>
         <item>@string/abandoned</item>

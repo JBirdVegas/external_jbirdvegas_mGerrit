@@ -31,15 +31,19 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
 import org.jetbrains.annotations.Contract;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.TimeZone;
 
 public class Prefs extends PreferenceFragment implements Preference.OnPreferenceClickListener {
-    public static final String GERRIT_KEY = "gerrit_instances_key";
+    public static final String GERRIT_URL_KEY = "gerrit_instances_key";
+    public static final String GERRIT_NAME_KEY = "current_gerrit_name";
     private static final String ANIMATION_KEY = "animation_key";
     private static final String SERVER_TIMEZONE_KEY = "server_timezone";
     private static final String LOCAL_TIMEZONE_KEY = "local_timezone";
@@ -97,7 +101,7 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         mContext = getActivity();
 
         // select gerrit instance
-        mGerritSwitcher = findPreference(GERRIT_KEY);
+        mGerritSwitcher = findPreference(GERRIT_URL_KEY);
         mGerritSwitcher.setSummary(getCurrentGerrit(getActivity()));
         mGerritSwitcher.setOnPreferenceClickListener(this);
         mGerritSwitcher.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -169,12 +173,16 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public static String getCurrentGerrit(Context context) {
         String[] gerrits = context.getResources().getStringArray(R.array.gerrit_webaddresses);
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(GERRIT_KEY, gerrits[0]);
+                .getString(GERRIT_URL_KEY, gerrits[0]);
     }
 
-    public static void setCurrentGerrit(Context context, String gerritInstanceUrl) {
+    public static void setCurrentGerrit(Context context, String gerritUrl, String gerritName) {
+        // We may only know the URL of the Gerrit. If so then we need to look up its name
+        if (gerritName == null) gerritName = getGerritNameFromUrl(context, gerritUrl);
+
         PreferenceManager.getDefaultSharedPreferences(context).edit()
-                .putString(GERRIT_KEY, gerritInstanceUrl)
+                .putString(GERRIT_URL_KEY, gerritUrl)
+                .putString(GERRIT_NAME_KEY, gerritName)
                 .commit();
     }
 
@@ -381,8 +389,50 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
         String[] gerritNames = context.getResources().getStringArray(R.array.gerrit_names);
         for (int i = 0; i < gerritNames.length; i++) {
             if (gerrit.compareToIgnoreCase(gerritNames[i]) == 0) {
-                setCurrentGerrit(context, context.getResources().getStringArray(R.array.gerrit_webaddresses)[i]);
+                setCurrentGerrit(context, context.getResources().getStringArray(R.array.gerrit_webaddresses)[i], gerrit);
             }
         }
+    }
+
+    /**
+     * Get the name of the current Gerrit instance.
+     * This uses the value saved in the shared preferences if there is one. Otherwise it will try and find its name.
+     * May return null if we don't have a name for it */
+    public static String getCurrentGerritName(Context context) {
+        String currentGerrit = PreferenceManager.getDefaultSharedPreferences(context).getString(GERRIT_NAME_KEY, null);
+
+        if (currentGerrit == null) {
+            // We did not previously save the current Gerrit name in the preferences
+            String currentUrl = getCurrentGerrit(context);
+            currentGerrit = getGerritNameFromUrl(context, currentUrl);
+            // Save the current Gerrit name in the preferences so we don't have to find it again.
+            PreferenceManager.getDefaultSharedPreferences(context)
+                    .edit().putString(GERRIT_NAME_KEY, currentGerrit).commit();
+        }
+
+        return currentGerrit;
+    }
+
+    private static String getGerritNameFromUrl(Context context, String url) {
+        String currentGerrit = null;
+        Resources res = context.getResources();
+        final ArrayList<String> teams = new ArrayList<>();
+        Collections.addAll(teams, res.getStringArray(R.array.gerrit_names));
+
+        final ArrayList<String> urls = new ArrayList<>();
+        Collections.addAll(urls, res.getStringArray(R.array.gerrit_webaddresses));
+
+        GerritTeamsHelper teamsHelper = new GerritTeamsHelper();
+        teams.addAll(teamsHelper.getGerritNamesList());
+        urls.addAll(teamsHelper.getGerritUrlsList());
+
+        int min = Math.min(teams.size(), urls.size());
+        for (int i = 0; i < min; i++) {
+            if (url.equals(urls.get(i))) {
+                currentGerrit = teams.get(i);
+                break;
+            }
+        }
+        return currentGerrit;
     }
 }
