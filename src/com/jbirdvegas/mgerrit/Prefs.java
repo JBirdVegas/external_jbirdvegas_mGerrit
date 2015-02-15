@@ -52,8 +52,9 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public static final String APP_THEME = "app_theme";
     private static final String TABLET_MODE = "tablet_layout_mode";
     private static final String DIFF_DEFAULT = "change_diff";
+    private static final String SIGNIN_KEY = "auth";
 
-    private Preference mGerritSwitcher;
+    private Preference mGerritSwitcher, mSigninPref;
     private Context mContext;
 
     public enum DiffModes {
@@ -162,6 +163,9 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
                 return true;
             }
         });
+
+        mSigninPref = findPreference(SIGNIN_KEY);
+        mSigninPref.setOnPreferenceClickListener(this);
     }
 
     /**
@@ -196,6 +200,12 @@ public class Prefs extends PreferenceFragment implements Preference.OnPreference
     public boolean onPreferenceClick(Preference preference) {
         if (preference.equals(mGerritSwitcher)) {
             Intent intent = new Intent(mContext, GerritSwitcher.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(intent);
+            return true;
+        } else if (preference.equals(mSigninPref)) {
+            Intent intent = new Intent(mContext, SigninActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);

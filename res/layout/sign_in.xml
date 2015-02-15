@@ -26,9 +26,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/gerrit_signin_help"
-        android:id="@+id/textView4"
-        android:paddingTop="@dimen/standard_padding"
-        android:paddingBottom="@dimen/standard_padding" />
+        android:id="@+id/txtSigninHelp"
+        android:layout_marginTop="@dimen/standard_padding"
+        android:layout_marginBottom="@dimen/standard_padding" />
 
     <EditText
         android:layout_width="match_parent"
@@ -43,13 +43,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/editText2"
         android:inputType="textVisiblePassword"
-        android:hint="@string/gerrit_signin_password" />
+        android:hint="@string/gerrit_signin_password"/>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="128dp"
+        android:layout_height="64dp"
         android:text="@string/gerrit_signin_signin"
         android:id="@+id/button"
         android:layout_gravity="center_horizontal"
-        android:paddingBottom="@dimen/standard_padding" />
+        android:layout_marginTop="@dimen/standard_padding"
+        android:height="48dp"/>
 </LinearLayout>

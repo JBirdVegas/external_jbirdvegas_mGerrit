@@ -20,11 +20,14 @@ package com.jbirdvegas.mgerrit;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class SigninActivity extends FragmentActivity
 {
-    String mCurrentGerrit;
+    String mCurrentGerritUrl, mCurrentGerritName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +38,17 @@ public class SigninActivity extends FragmentActivity
         // Action bar Up affordance
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mCurrentGerrit = Prefs.getCurrentGerrit(this);
+        mCurrentGerritUrl = Prefs.getCurrentGerrit(this);
+        mCurrentGerritName = Prefs.getCurrentGerritName(this);
 
-        setTitle(String.format(getResources().getString(R.string.gerrit_signin_title), mCurrentGerrit));
+        setTitle(String.format(getResources().getString(R.string.gerrit_signin_title), mCurrentGerritName));
         setContentView(R.layout.sign_in);
+
+        TextView textView = (TextView) findViewById(R.id.txtSigninHelp);
+        CharSequence formatText = getResources().getText(R.string.gerrit_signin_help);
+        CharSequence linkText = getResources().getText(R.string.gerrit_signin_help_link_text);
+        textView.setText(Html.fromHtml(String.format(formatText.toString(), "<a href=\"" + mCurrentGerritUrl + "#/settings/http-password\">" + linkText + "</a>")), TextView.BufferType.SPANNABLE);
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override

@@ -45,6 +45,12 @@ public class Users extends DatabaseTable {
     // The numeric ID of the account.
     public static final String C_ACCOUNT_ID = "account_id";
 
+    // Login details for this user - HTTP username
+    public static final String C_USENRAME = "http_user";
+
+    // Login details for this user - HTTP password
+    public static final String C_PASSWORD = "http_password";
+
     public static final String[] PRIMARY_KEY = { C_EMAIL };
 
     public static final int ITEM_LIST = UriType.UsersList.ordinal();
