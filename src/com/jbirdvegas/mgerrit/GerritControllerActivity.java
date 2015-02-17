@@ -128,6 +128,8 @@ public class GerritControllerActivity extends FragmentActivity {
         mChangeList = (ChangeListFragment) fm.findFragmentById(R.id.change_list_fragment);
 
         mGerritWebsite = Prefs.getCurrentGerrit(this);
+        String gerritName = Prefs.getCurrentGerritName(this);
+        if (gerritName != null) setTitle(gerritName);
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -196,6 +198,8 @@ public class GerritControllerActivity extends FragmentActivity {
         Toast.makeText(this,
                 getString(R.string.using_gerrit_toast) + ' ' + newGerrit,
                 Toast.LENGTH_LONG).show();
+        String gerritName = Prefs.getCurrentGerritName(this);
+        if (gerritName != null) setTitle(gerritName);
         hideChangelogOption(newGerrit);
         refreshTabs();
     }
@@ -264,7 +268,7 @@ public class GerritControllerActivity extends FragmentActivity {
     }
 
     public void onEventMainThread(GerritChanged ev) {
-        onGerritChanged(ev.getNewGerrit());
+        onGerritChanged(ev.getNewGerritUrl());
     }
 
     /**
