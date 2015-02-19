@@ -92,12 +92,13 @@ public class GerritControllerActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 
         // check if caller has a gerrit instance start screen preference
+        // TODO: Check if the GERRIT_INSTANCE URL is in the list of Gerrits we have names for
         String suppliedGerritInstance = getIntent().getStringExtra(GERRIT_INSTANCE);
         if (suppliedGerritInstance != null
                 && !suppliedGerritInstance.isEmpty()
                 && suppliedGerritInstance.contains("http")) {
             // just set the prefs and allow normal loading
-            PrefsFragment.setCurrentGerrit(this, suppliedGerritInstance);
+            PrefsFragment.setCurrentGerrit(this, suppliedGerritInstance, null);
         }
 
         GoogleAnalytics googleAnalytics = GoogleAnalytics.getInstance(this);

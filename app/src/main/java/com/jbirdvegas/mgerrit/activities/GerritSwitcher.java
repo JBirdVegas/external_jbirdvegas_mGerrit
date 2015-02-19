@@ -172,9 +172,8 @@ public class GerritSwitcher extends FragmentActivity {
             if ('/' != gerritUrl.charAt(gerritUrl.length() - 1)) {
                 gerritUrl += "/";
             }
-            Log.v(TAG, "Saving url: " + gerritUrl);
             GerritTeamsHelper.saveTeam(gerritName, gerritUrl);
-            PrefsFragment.setCurrentGerrit(this, gerritUrl);
+            PrefsFragment.setCurrentGerrit(this, gerritUrl, gerritName);
             return true;
         } else {
             Toast.makeText(this, getString(R.string.invalid_gerrit_url), Toast.LENGTH_SHORT).show();
