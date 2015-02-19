@@ -53,7 +53,7 @@
         <item>https://gerrit.slimroms.net</item>
         <item>https://gerrit.wikimedia.org/r/</item>
     </string-array>
-    <string-array name="status_entries">
+    <string-array name="status_entries" translatable="false">
         <item>@string/reviewable</item>
         <item>@string/merged</item>
         <item>@string/abandoned</item>
