@@ -33,7 +33,7 @@ Simplified Chinese translations by YULIANGMAX and Czech translation by Petr Rezn
 
 ## Change List Searching
 Searching the change lists, either the 'Review', 'Merged' or 'Abandoned' tabs is designed to mimic the functionality in the Gerrit
- web interface. As each change contains alot of different data, Gerrit uses what are known as operators. To avoid confusing these
+ web interface. As each change contains a lot of different data, Gerrit uses what are known as operators. To avoid confusing these
  with what they call boolean operators we will call these "keywords".
 
 **Keywords**: Act as restrictions on the search. As more keywords are added to the same query string, they further restrict the returned
