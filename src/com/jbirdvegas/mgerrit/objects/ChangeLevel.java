@@ -1,10 +1,25 @@
 package com.jbirdvegas.mgerrit.objects;
 
-import android.content.Context;
+/*
+ * Copyright (C) 2015 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (P4R4N01D), 2015
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
@@ -17,20 +32,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A class that helps to deconstruct Gerrit queries and assemble them
- *  when necessary. This allows for setting individual parts of a query
- *  without knowing other query parameters.
+ * Implementation for querying /changes/ Gerrit API endpoints
  */
-public class GerritURL implements Parcelable
-{
-    private static Context sContext;
+public class ChangeLevel extends RequestBuilder implements Parcelable {
+
     private String mStatus = "";
     private boolean mRequestDetailedAccounts = false;
     private String mSortkey = "";
     private int mChangeNo = 0;
 
     private Set<SearchKeyword> mSearchKeywords;
-    private int mLimit;
+
+    public ChangeLevel() { }
 
     private enum ChangeDetailLevels {
         DISABLED, // Do not fetch change details
@@ -54,20 +67,6 @@ public class GerritURL implements Parcelable
             .append("&o=MESSAGES")
             .toString();
 
-
-    // Default constructor to facilitate instantiation
-    public GerritURL() { }
-
-    public GerritURL(GerritURL url) {
-        mStatus = url.mStatus;
-        mRequestDetailedAccounts = url.mRequestDetailedAccounts;
-        mChangeNo = url.mChangeNo;
-        mRequestChangeDetail = url.mRequestChangeDetail;
-    }
-
-    public static void setContext(Context context) {
-        GerritURL.sContext = context;
-    }
 
     public void addSearchKeyword(SearchKeyword keyword) {
         if (mSearchKeywords == null) {
@@ -119,57 +118,18 @@ public class GerritURL implements Parcelable
         mSortkey = sortKey;
     }
 
-    /**
-     * @param limit The maximum number of changes to include in the response
-     */
-    public void setLimit(int limit) {
-        this.mLimit = limit;
-    }
-
-    @Override
-    @Nullable
-    public String toString()
-    {
-        boolean addSeperator;
-
-        StringBuilder builder = new StringBuilder(0).append(Prefs.getCurrentGerrit(sContext));
-        builder.append("changes/");
-
-        if (mRequestChangeDetail == ChangeDetailLevels.ENABLED) {
-            if (mChangeNo > 0) {
-                builder.append(mChangeNo).append("/detail/")
-                        .append(GerritURL.CURRENT_PATCHSET_ARGS);
-            }
-            // Cannot request change detail without a change number.
-            else return "";
-        } else {
-            builder.append("?q=");
-            addSeperator = appendStatus(builder, false);
-            try {
-                appendSearchKeywords(builder, addSeperator);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-
-        appendArgs(builder);
-        return builder.toString();
-    }
 
     public String getStatus() {
         return mStatus;
     }
 
     @Nullable
+    @Override
     public String getQuery() {
         if (mStatus == null) return null;
         else {
             return JSONCommit.KEY_STATUS + ":" + mStatus;
         }
-    }
-
-    public boolean equals(String str) {
-        return str != null && str.equals(this.toString());
     }
 
     private boolean appendStatus(StringBuilder builder, boolean addSeperator) {
@@ -198,7 +158,7 @@ public class GerritURL implements Parcelable
                     addSeperator = false;
                 }
 
-                String operator =  URLEncoder.encode(keyword.getGerritQuery(version),"UTF-8");
+                String operator =  URLEncoder.encode(keyword.getGerritQuery(version), "UTF-8");
                 if (operator != null && !operator.isEmpty()) {
                     builder.append(operator);
                     addSeperator = true;
@@ -213,28 +173,53 @@ public class GerritURL implements Parcelable
             builder.append("&P=").append(mSortkey);
         }
         if (mRequestChangeDetail == ChangeDetailLevels.LEGACY) {
-            builder.append(GerritURL.OLD_CHANGE_DETAIL_ARGS);
+            builder.append(ChangeLevel.OLD_CHANGE_DETAIL_ARGS);
         }
         if (mRequestDetailedAccounts) {
-            builder.append(GerritURL.DETAILED_ACCOUNTS_ARG);
+            builder.append(ChangeLevel.DETAILED_ACCOUNTS_ARG);
         }
 
-        if (mLimit > 0) {
-            builder.append("&n=").append(mLimit);
+        int limit = getLimit();
+        if (limit > 0) {
+            builder.append("&n=").append(limit);
         }
     }
 
+    public String getPath() {
+        boolean addSeperator;
+        StringBuilder builder = new StringBuilder(0).append("changes/");
+
+        if (mRequestChangeDetail == ChangeDetailLevels.ENABLED) {
+            if (mChangeNo > 0) {
+                builder.append(mChangeNo).append("/detail/")
+                        .append(ChangeLevel.CURRENT_PATCHSET_ARGS);
+            }
+            // Cannot request change detail without a change number.
+            else return "";
+        } else {
+            builder.append("?q=");
+            addSeperator = appendStatus(builder, false);
+            try {
+                appendSearchKeywords(builder, addSeperator);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        appendArgs(builder);
+        return builder.toString();
+    }
 
     // --- Parcelable stuff so we can send this object through intents ---
-    public static final Creator<GerritURL> CREATOR
-            = new Creator<GerritURL>() {
-        public GerritURL createFromParcel(Parcel in) {
-            return new GerritURL(in);
+    public static final Parcelable.Creator<ChangeLevel> CREATOR
+            = new Parcelable.Creator<ChangeLevel>() {
+        public ChangeLevel createFromParcel(Parcel in) {
+            return new ChangeLevel(in);
         }
 
         @Override
-        public GerritURL[] newArray(int size) {
-            return new GerritURL[0];
+        public ChangeLevel[] newArray(int size) {
+            return new ChangeLevel[0];
         }
     };
 
@@ -250,7 +235,6 @@ public class GerritURL implements Parcelable
         dest.writeInt(mRequestDetailedAccounts ? 1 : 0);
         dest.writeString(mSortkey);
         dest.writeString(mRequestChangeDetail.name());
-        dest.writeInt(mLimit);
 
         int size;
         if (mSearchKeywords == null) size = 0;
@@ -263,13 +247,12 @@ public class GerritURL implements Parcelable
         }
     }
 
-    public GerritURL(Parcel in) {
+    public ChangeLevel(Parcel in) {
         mChangeNo = in.readInt();
         mStatus = in.readString();
         mRequestDetailedAccounts = in.readInt() == 1;
         mSortkey = in.readString();
         mRequestChangeDetail = ChangeDetailLevels.valueOf(in.readString());
-        mLimit = in.readInt();
 
         int size = in.readInt();
         if (size > 0) {
@@ -278,4 +261,5 @@ public class GerritURL implements Parcelable
             mSearchKeywords = new HashSet<>(Arrays.asList(keywords));
         }
     }
+
 }

@@ -25,7 +25,7 @@ import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
+import com.jbirdvegas.mgerrit.objects.RequestBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,10 +51,10 @@ public class GerritService extends IntentService {
 
     private static RequestQueue mRequestQueue;
 
-    private GerritURL mCurrentUrl;
+    private RequestBuilder mCurrentUrl;
 
     // A list of the currently running sync processors
-    private static HashMap<GerritURL, SyncProcessor> sRunningTasks;
+    private static HashMap<RequestBuilder, SyncProcessor> sRunningTasks;
 
     // This is required for the service to be started
     public GerritService() {
@@ -110,7 +110,7 @@ public class GerritService extends IntentService {
         context.startService(it);
     }
 
-    public static void sendRequest(Context context, DataType dataType, GerritURL url) {
+    public static void sendRequest(Context context, DataType dataType, RequestBuilder url) {
         Bundle b = new Bundle();
         b.putParcelable(GerritService.URL_KEY, url);
         GerritService.sendRequest(context, dataType, b);
@@ -124,11 +124,11 @@ public class GerritService extends IntentService {
         return false;
     }
 
-    protected static HashMap<GerritURL, SyncProcessor> getRunningProcessors() {
+    protected static HashMap<RequestBuilder, SyncProcessor> getRunningProcessors() {
         return sRunningTasks;
     }
 
-    protected static void finishedRequest(GerritURL url) {
+    protected static void finishedRequest(RequestBuilder url) {
         sRunningTasks.remove(url);
     }
 }

@@ -21,21 +21,13 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.android.volley.RequestQueue;
-import com.google.gerrit.extensions.api.GerritApi;
-import com.google.gerrit.extensions.api.accounts.AccountApi;
-import com.google.gerrit.extensions.common.AccountInfo;
-import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
-import com.urswolfer.gerrit.client.rest.GerritAuthData;
-import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
+import com.jbirdvegas.mgerrit.objects.AccountInfo;
+
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by Evan on 21/02/2015.
- */
 public class AccountProcessor extends SyncProcessor<AccountInfo> {
 
     private final String mCurrentGerritUrl, mUrl;
@@ -72,21 +64,5 @@ public class AccountProcessor extends SyncProcessor<AccountInfo> {
     @Override
     int count(AccountInfo version) {
         return 1;
-    }
-
-    @Override
-    protected void fetchData(RequestQueue queue) {
-        String url = mCurrentGerritUrl + "accounts/self";
-
-        GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
-        GerritAuthData.Basic authData = new GerritAuthData.Basic(mCurrentGerritUrl, username, password);
-        GerritApi gerritApi = gerritRestApiFactory.create(authData);
-        try {
-            AccountInfo self = gerritApi.accounts().self().get();
-            super.getSimpleListener(self, url);
-        } catch (RestApiException e) {
-            e.printStackTrace();
-            mEventBus.post(new ErrorDuringConnection(mIntent, url, null, e));
-        }
     }
 }

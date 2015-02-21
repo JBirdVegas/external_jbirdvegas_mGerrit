@@ -27,12 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gerrit.extensions.api.GerritApi;
-import com.google.gerrit.extensions.api.accounts.AccountApi;
-import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
-import com.urswolfer.gerrit.client.rest.GerritAuthData;
-import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
 
 public class SigninActivity extends FragmentActivity
 {

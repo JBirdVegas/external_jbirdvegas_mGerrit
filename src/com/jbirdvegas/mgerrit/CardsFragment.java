@@ -41,6 +41,8 @@ import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
+import com.jbirdvegas.mgerrit.objects.ChangeLevel;
+import com.jbirdvegas.mgerrit.objects.RequestBuilder;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
@@ -56,7 +58,6 @@ import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.search.AfterSearch;
 import com.jbirdvegas.mgerrit.search.BeforeSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
@@ -71,7 +72,6 @@ import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
-import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -79,7 +79,7 @@ public abstract class CardsFragment extends Fragment
     private static int sChangesLimit = 0;
     protected String TAG = "CardsFragment";
 
-    private GerritURL mUrl;
+    private ChangeLevel mUrl;
 
     private FragmentActivity mParent;
 
@@ -195,7 +195,7 @@ public abstract class CardsFragment extends Fragment
 
         sChangesLimit = mParent.getResources().getInteger(R.integer.changes_limit);
 
-        mUrl = new GerritURL();
+        mUrl = new ChangeLevel();
         // Need the account id of the owner here to maintain FK db constraint
         mUrl.setRequestDetailedAccounts(true);
         mUrl.setStatus(getQuery());
@@ -270,7 +270,7 @@ public abstract class CardsFragment extends Fragment
             SyncTime.clear(mParent);
         }
 
-        GerritURL url = new GerritURL(mUrl);
+        ChangeLevel url = new ChangeLevel(mUrl);
         if (sChangesLimit > 0) url.setLimit(sChangesLimit);
 
         if (keywords == null || keywords.isEmpty()) {

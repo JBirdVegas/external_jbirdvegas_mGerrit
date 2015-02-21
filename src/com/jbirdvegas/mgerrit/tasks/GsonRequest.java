@@ -17,6 +17,8 @@ package com.jbirdvegas.mgerrit.tasks;
  *  limitations under the License.
  */
 
+import android.util.Base64;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
@@ -44,6 +46,8 @@ public class GsonRequest<T> extends Request<T> {
     private final Listener<T> listener;
     private final int trim;
 
+    private String _http_username, _http_password;
+
     /* Set a request timeout of one minute - if we don't hear a response from the server by then it
      *  is too slow */
     public static final int REQUEST_TIMEOUT = 60*1000;
@@ -69,6 +73,11 @@ public class GsonRequest<T> extends Request<T> {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 
+    public void setHttpBasicAuth(String username, String password) {
+        _http_username = username;
+        _http_password = password;
+    }
+
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         // super.getHeaders() returns an empty AbstractMap<K, V> which
@@ -80,6 +89,13 @@ public class GsonRequest<T> extends Request<T> {
             map.putAll(headers);
         // Always request non-pretty printed JSON responses.
         map.put("Accept", "application/json");
+
+        if (_http_password != null && _http_username != null) {
+            String creds = String.format("%s:%s",_http_username, _http_password);
+            String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
+            headers.put("Authorization", auth);
+        }
+
         return map;
     }
 

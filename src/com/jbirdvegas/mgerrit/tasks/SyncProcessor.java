@@ -30,7 +30,7 @@ import com.google.gson.GsonBuilder;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
+import com.jbirdvegas.mgerrit.objects.RequestBuilder;
 
 import de.greenrobot.event.EventBus;
 
@@ -42,7 +42,7 @@ import de.greenrobot.event.EventBus;
 abstract class SyncProcessor<T> {
     protected final Context mContext;
     private final EventBus mEventBus;
-    private GerritURL mCurrentUrl;
+    private RequestBuilder mCurrentUrl;
     private ResponseHandler mResponseHandler;
     private final Intent mIntent;
 
@@ -73,7 +73,7 @@ abstract class SyncProcessor<T> {
      *               this SyncProcessor.
      * @param url The Gerrit URL from which to retrieve the data from
      */
-    SyncProcessor(Context context, Intent intent, GerritURL url) {
+    SyncProcessor(Context context, Intent intent, RequestBuilder url) {
         this.mContext = context;
         this.mCurrentUrl = url;
         this.mIntent = intent;
@@ -81,8 +81,8 @@ abstract class SyncProcessor<T> {
     }
 
     protected Context getContext() { return mContext; }
-    protected GerritURL getUrl() { return mCurrentUrl; }
-    protected void setUrl(GerritURL url) { mCurrentUrl = url; }
+    protected RequestBuilder getUrl() { return mCurrentUrl; }
+    protected void setUrl(RequestBuilder url) { mCurrentUrl = url; }
 
     // Helper method to extract the relevant query portion of the URL
     protected String getQuery() {
@@ -129,7 +129,7 @@ abstract class SyncProcessor<T> {
 
     /**
      * Sends a request to the Gerrit server for the url set in the constructor
-     *  SyncProcessor(Context, GerritURL). The default simply calls
+     *  SyncProcessor(Context, RequestBuilder). The default simply calls
      *  fetchData(String, RequestQueue).
      */
     protected void fetchData(RequestQueue queue) {
