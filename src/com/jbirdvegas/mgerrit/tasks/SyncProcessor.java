@@ -178,12 +178,16 @@ abstract class SyncProcessor<T> {
         return new Response.Listener<T>() {
             @Override
             public void onResponse(T data) {
-            /* Offload all the work to a separate thread so database activity is not
-             * done on the main thread. */
-                mResponseHandler = new ResponseHandler(data, url);
-                mResponseHandler.start();
+                getSimpleListener(data, url);
             }
         };
+    }
+
+    protected void getSimpleListener(T data, final String url) {
+        /* Offload all the work to a separate thread so database activity is not
+         * done on the main thread. */
+        mResponseHandler = new ResponseHandler(data, url);
+        mResponseHandler.start();
     }
 
     class ResponseHandler extends Thread {

@@ -17,17 +17,27 @@ package com.jbirdvegas.mgerrit;
  *  limitations under the License.
  */
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+
+import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.api.accounts.AccountApi;
+import com.google.gerrit.extensions.restapi.RestApiException;
+import com.jbirdvegas.mgerrit.tasks.GerritService;
+import com.urswolfer.gerrit.client.rest.GerritAuthData;
+import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
 
 public class SigninActivity extends FragmentActivity
 {
-    String mCurrentGerritUrl, mCurrentGerritName;
+    String mCurrentGerritUrl;
+    TextView txtUser, txtPass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +49,7 @@ public class SigninActivity extends FragmentActivity
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         mCurrentGerritUrl = Prefs.getCurrentGerrit(this);
-        mCurrentGerritName = Prefs.getCurrentGerritName(this);
+        String mCurrentGerritName = Prefs.getCurrentGerritName(this);
 
         setTitle(String.format(getResources().getString(R.string.gerrit_signin_title), mCurrentGerritName));
         setContentView(R.layout.sign_in);
@@ -49,6 +59,9 @@ public class SigninActivity extends FragmentActivity
         CharSequence linkText = getResources().getText(R.string.gerrit_signin_help_link_text);
         textView.setText(Html.fromHtml(String.format(formatText.toString(), "<a href=\"" + mCurrentGerritUrl + "#/settings/http-password\">" + linkText + "</a>")), TextView.BufferType.SPANNABLE);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        txtUser = (TextView) findViewById(R.id.txtUser);
+        txtPass = (TextView) findViewById(R.id.txtPass);
     }
 
     @Override
@@ -60,5 +73,14 @@ public class SigninActivity extends FragmentActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onSignin(View view) {
+        Intent it = new Intent(this, GerritService.class);
+        it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Account);
+        it.putExtra(GerritService.URL_KEY, mCurrentGerritUrl + "accounts/self");
+        it.putExtra(GerritService.HTTP_USERNAME, txtUser.getText().toString());
+        it.putExtra(GerritService.HTTP_PASSWORD, txtPass.getText().toString());
+        startService(it);
     }
 }

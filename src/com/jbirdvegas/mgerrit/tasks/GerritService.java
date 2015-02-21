@@ -43,7 +43,11 @@ public class GerritService extends IntentService {
     public enum Direction { Newer, Older }
     public static final String CHANGES_LIST_DIRECTION = "direction";
 
-    public static enum DataType { Project, Commit, CommitDetails, GetVersion, LegacyCommitDetails }
+    // AccountProcessor
+    public static final String HTTP_USERNAME = "username";
+    public static final String HTTP_PASSWORD = "password";
+
+    public static enum DataType { Project, Commit, CommitDetails, GetVersion, LegacyCommitDetails, Account }
 
     private static RequestQueue mRequestQueue;
 
@@ -81,6 +85,8 @@ public class GerritService extends IntentService {
             processor = new LegacyCommitProcessor(this, intent, mCurrentUrl);
         } else if (dataType == DataType.GetVersion) {
             processor = new VersionProcessor(this, intent);
+        } else if (dataType == DataType.Account) {
+                processor = new AccountProcessor(this, intent);
         } else {
             Log.w(TAG, "Don't know how to handle synchronization of type " + DATA_TYPE_KEY);
             return;

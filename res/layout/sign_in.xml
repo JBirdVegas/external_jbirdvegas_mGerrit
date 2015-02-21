@@ -33,7 +33,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
+        android:id="@+id/txtUser"
         android:inputType="text"
         android:hint="@string/gerrit_signin_username"
         android:paddingTop="@dimen/standard_padding" />
@@ -41,7 +41,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText2"
+        android:id="@+id/txtPass"
         android:inputType="textVisiblePassword"
         android:hint="@string/gerrit_signin_password"/>
 
@@ -52,5 +52,6 @@
         android:id="@+id/button"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/standard_padding"
-        android:height="48dp"/>
+        android:height="48dp"
+        android:onClick="onSignin" />
 </LinearLayout>
