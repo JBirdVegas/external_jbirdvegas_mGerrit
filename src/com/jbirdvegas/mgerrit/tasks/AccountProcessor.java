@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.Prefs;
@@ -31,19 +32,20 @@ import de.greenrobot.event.EventBus;
 
 public class AccountProcessor extends SyncProcessor<AccountInfo> {
 
-    private final String username, password;
     private final Intent mIntent;
 
     AccountProcessor(Context context, Intent intent, AccountEndpoints url) {
         super(context, intent, url);
-        username = intent.getStringExtra(GerritService.HTTP_USERNAME);
-        password = intent.getStringExtra(GerritService.HTTP_PASSWORD);
         mIntent = intent;
     }
 
     @Override
     int insert(AccountInfo data) {
-
+        Log.d("AccountProcessor", data._account_id.toString());
+        Log.d("AccountProcessor", data.name);
+        Log.d("AccountProcessor", data.email);
+        Log.d("AccountProcessor", data.username);
+        // password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
         return 1;
     }
 

@@ -17,18 +17,13 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
-/**
- * Created by Evan on 21/02/2015.
- */
-import java.util.List;
-
 public class AccountInfo {
-    public Integer _accountId;
+    public Integer _account_id;
     public String name;
     public String email;
     public String username;
 
     public AccountInfo(Integer id) {
-        this._accountId = id;
+        this._account_id = id;
     }
 }

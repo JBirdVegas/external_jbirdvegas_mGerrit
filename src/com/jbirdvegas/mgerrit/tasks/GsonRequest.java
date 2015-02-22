@@ -51,6 +51,7 @@ public class GsonRequest<T> extends Request<T> {
     /* Set a request timeout of one minute - if we don't hear a response from the server by then it
      *  is too slow */
     public static final int REQUEST_TIMEOUT = 60*1000;
+    private DigestRetryPolicy retryPolicy;
 
     /**
      * Make a GET request and return a parsed object from JSON.
@@ -92,9 +93,11 @@ public class GsonRequest<T> extends Request<T> {
 
         // See: https://gist.githubusercontent.com/yamanetoshi/402a9ea071b71afb6639/raw/gistfile1.txt
         if (_http_password != null && _http_username != null) {
-            String creds = String.format("%s:%s",_http_username, _http_password);
-            String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
-            map.put("Authorization", auth);
+            if (retryPolicy == null) {
+                retryPolicy = new DigestRetryPolicy(REQUEST_TIMEOUT);
+                this.setRetryPolicy(retryPolicy);
+            }
+            map.putAll(retryPolicy.setHeaders(map, _http_username, _http_password, getUrl()));
         }
 
         return map;
