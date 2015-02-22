@@ -1,21 +1,12 @@
 package com.jbirdvegas.mgerrit.objects;
 
 import android.content.Context;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Pair;
 
 import com.jbirdvegas.mgerrit.Prefs;
-import com.jbirdvegas.mgerrit.database.Config;
-import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
 import org.jetbrains.annotations.Nullable;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * A class that helps to deconstruct Gerrit queries and assemble them
@@ -25,11 +16,18 @@ import java.util.Set;
 public abstract class RequestBuilder implements Parcelable
 {
     protected static Context sContext;
-    private Pair<String, String> mAuthDetails;
     private int mLimit;
+    private boolean mAuthenticating;
 
     public static void setContext(Context context) {
         RequestBuilder.sContext = context;
+    }
+
+    public RequestBuilder() { }
+
+    public RequestBuilder(RequestBuilder url) {
+        mLimit = url.mLimit;
+        mAuthenticating = url.mAuthenticating;
     }
 
     /**
@@ -43,8 +41,12 @@ public abstract class RequestBuilder implements Parcelable
         return mLimit;
     }
 
-    public void setAuthenticationDetails(String username, String password) {
-        mAuthDetails = new Pair<>(username, password);
+    public boolean isAuthenticating() {
+        return mAuthenticating;
+    }
+
+    public void setAuthenticating(boolean authenticate) {
+        this.mAuthenticating = authenticate;
     }
 
     @Override
@@ -52,6 +54,7 @@ public abstract class RequestBuilder implements Parcelable
     public String toString()
     {
         StringBuilder builder = new StringBuilder(0).append(Prefs.getCurrentGerrit(sContext));
+        if (mAuthenticating) builder.append("a/");
         builder.append(getPath());
         return builder.toString();
     }
@@ -68,5 +71,11 @@ public abstract class RequestBuilder implements Parcelable
 
     public abstract String getPath();
 
-    public abstract String getQuery();
+    public String getQuery() {
+        return null;
+    }
+
+    public String getStatus() {
+        return null;
+    }
 }

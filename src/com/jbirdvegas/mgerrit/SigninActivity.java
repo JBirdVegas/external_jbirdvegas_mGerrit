@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 public class SigninActivity extends FragmentActivity
@@ -71,9 +72,10 @@ public class SigninActivity extends FragmentActivity
     }
 
     public void onSignin(View view) {
+        AccountEndpoints url = AccountEndpoints.self();
         Intent it = new Intent(this, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Account);
-        it.putExtra(GerritService.URL_KEY, mCurrentGerritUrl + "accounts/self");
+        it.putExtra(GerritService.URL_KEY, url);
         it.putExtra(GerritService.HTTP_USERNAME, txtUser.getText().toString());
         it.putExtra(GerritService.HTTP_PASSWORD, txtPass.getText().toString());
         startService(it);

@@ -25,6 +25,7 @@ import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
 import com.jbirdvegas.mgerrit.objects.RequestBuilder;
 
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +87,7 @@ public class GerritService extends IntentService {
         } else if (dataType == DataType.GetVersion) {
             processor = new VersionProcessor(this, intent);
         } else if (dataType == DataType.Account) {
-                processor = new AccountProcessor(this, intent);
+            processor = new AccountProcessor(this, intent, (AccountEndpoints) mCurrentUrl);
         } else {
             Log.w(TAG, "Don't know how to handle synchronization of type " + DATA_TYPE_KEY);
             return;

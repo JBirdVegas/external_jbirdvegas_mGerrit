@@ -23,6 +23,7 @@ import android.content.Intent;
 import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
+import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
 import com.jbirdvegas.mgerrit.objects.AccountInfo;
 
 
@@ -30,18 +31,13 @@ import de.greenrobot.event.EventBus;
 
 public class AccountProcessor extends SyncProcessor<AccountInfo> {
 
-    private final String mCurrentGerritUrl, mUrl;
-    private final EventBus mEventBus;
     private final String username, password;
     private final Intent mIntent;
 
-    AccountProcessor(Context context, Intent intent) {
-        super(context, intent);
-        mCurrentGerritUrl = Prefs.getCurrentGerrit(context);
-        mEventBus = EventBus.getDefault();
+    AccountProcessor(Context context, Intent intent, AccountEndpoints url) {
+        super(context, intent, url);
         username = intent.getStringExtra(GerritService.HTTP_USERNAME);
         password = intent.getStringExtra(GerritService.HTTP_PASSWORD);
-        mUrl = intent.getStringExtra(GerritService.URL_KEY);
         mIntent = intent;
     }
 

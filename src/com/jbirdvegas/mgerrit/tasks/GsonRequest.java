@@ -90,10 +90,11 @@ public class GsonRequest<T> extends Request<T> {
         // Always request non-pretty printed JSON responses.
         map.put("Accept", "application/json");
 
+        // See: https://gist.githubusercontent.com/yamanetoshi/402a9ea071b71afb6639/raw/gistfile1.txt
         if (_http_password != null && _http_username != null) {
             String creds = String.format("%s:%s",_http_username, _http_password);
             String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
-            headers.put("Authorization", auth);
+            map.put("Authorization", auth);
         }
 
         return map;

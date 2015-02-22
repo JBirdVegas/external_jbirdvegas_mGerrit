@@ -34,7 +34,7 @@ import java.util.Set;
 /**
  * Implementation for querying /changes/ Gerrit API endpoints
  */
-public class ChangeLevel extends RequestBuilder implements Parcelable {
+public class ChangeEndpoints extends RequestBuilder implements Parcelable {
 
     private String mStatus = "";
     private boolean mRequestDetailedAccounts = false;
@@ -43,7 +43,7 @@ public class ChangeLevel extends RequestBuilder implements Parcelable {
 
     private Set<SearchKeyword> mSearchKeywords;
 
-    public ChangeLevel() { }
+    public ChangeEndpoints() { }
 
     private enum ChangeDetailLevels {
         DISABLED, // Do not fetch change details
@@ -67,6 +67,14 @@ public class ChangeLevel extends RequestBuilder implements Parcelable {
             .append("&o=MESSAGES")
             .toString();
 
+
+    public ChangeEndpoints(ChangeEndpoints url) {
+        super(url);
+        mStatus = url.mStatus;
+        mRequestDetailedAccounts = url.mRequestDetailedAccounts;
+        mChangeNo = url.mChangeNo;
+        mRequestChangeDetail = url.mRequestChangeDetail;
+    }
 
     public void addSearchKeyword(SearchKeyword keyword) {
         if (mSearchKeywords == null) {
@@ -118,7 +126,7 @@ public class ChangeLevel extends RequestBuilder implements Parcelable {
         mSortkey = sortKey;
     }
 
-
+    @Override
     public String getStatus() {
         return mStatus;
     }
@@ -173,10 +181,10 @@ public class ChangeLevel extends RequestBuilder implements Parcelable {
             builder.append("&P=").append(mSortkey);
         }
         if (mRequestChangeDetail == ChangeDetailLevels.LEGACY) {
-            builder.append(ChangeLevel.OLD_CHANGE_DETAIL_ARGS);
+            builder.append(ChangeEndpoints.OLD_CHANGE_DETAIL_ARGS);
         }
         if (mRequestDetailedAccounts) {
-            builder.append(ChangeLevel.DETAILED_ACCOUNTS_ARG);
+            builder.append(ChangeEndpoints.DETAILED_ACCOUNTS_ARG);
         }
 
         int limit = getLimit();
@@ -192,7 +200,7 @@ public class ChangeLevel extends RequestBuilder implements Parcelable {
         if (mRequestChangeDetail == ChangeDetailLevels.ENABLED) {
             if (mChangeNo > 0) {
                 builder.append(mChangeNo).append("/detail/")
-                        .append(ChangeLevel.CURRENT_PATCHSET_ARGS);
+                        .append(ChangeEndpoints.CURRENT_PATCHSET_ARGS);
             }
             // Cannot request change detail without a change number.
             else return "";
@@ -211,15 +219,15 @@ public class ChangeLevel extends RequestBuilder implements Parcelable {
     }
 
     // --- Parcelable stuff so we can send this object through intents ---
-    public static final Parcelable.Creator<ChangeLevel> CREATOR
-            = new Parcelable.Creator<ChangeLevel>() {
-        public ChangeLevel createFromParcel(Parcel in) {
-            return new ChangeLevel(in);
+    public static final Parcelable.Creator<ChangeEndpoints> CREATOR
+            = new Parcelable.Creator<ChangeEndpoints>() {
+        public ChangeEndpoints createFromParcel(Parcel in) {
+            return new ChangeEndpoints(in);
         }
 
         @Override
-        public ChangeLevel[] newArray(int size) {
-            return new ChangeLevel[0];
+        public ChangeEndpoints[] newArray(int size) {
+            return new ChangeEndpoints[0];
         }
     };
 
@@ -230,6 +238,7 @@ public class ChangeLevel extends RequestBuilder implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(getLimit());
         dest.writeInt(mChangeNo);
         dest.writeString(mStatus);
         dest.writeInt(mRequestDetailedAccounts ? 1 : 0);
@@ -247,7 +256,8 @@ public class ChangeLevel extends RequestBuilder implements Parcelable {
         }
     }
 
-    public ChangeLevel(Parcel in) {
+    public ChangeEndpoints(Parcel in) {
+        setLimit(in.readInt());
         mChangeNo = in.readInt();
         mStatus = in.readString();
         mRequestDetailedAccounts = in.readInt() == 1;

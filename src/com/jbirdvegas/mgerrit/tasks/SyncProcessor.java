@@ -147,9 +147,17 @@ abstract class SyncProcessor<T> {
                 getListener(url), new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
+                // if (volleyError.networkResponse.statusCode == 401) --> invalid username or password
+
                 mEventBus.post(new ErrorDuringConnection(mIntent, url, getStatus(), volleyError));
             }
         });
+
+        String username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
+        String password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
+        if (username != null && password != null) {
+            request.setHttpBasicAuth(username, password);
+        }
 
         fetchData(url, request, queue);
     }

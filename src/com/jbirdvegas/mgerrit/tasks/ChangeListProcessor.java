@@ -29,7 +29,7 @@ import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.MoreChanges;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.objects.ChangeLevel;
+import com.jbirdvegas.mgerrit.objects.ChangeEndpoints;
 import com.jbirdvegas.mgerrit.objects.RequestBuilder;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
@@ -90,7 +90,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
 
     @Override
     void doPostProcess(JSONCommit[] data) {
-        ChangeLevel originalURL = (ChangeLevel) getUrl();
+        ChangeEndpoints originalURL = (ChangeEndpoints) getUrl();
         String status = originalURL.getStatus();
         boolean moreChanges = false;
 
@@ -126,7 +126,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
      *  we can modify the url given to include that sortkey.
      */
     protected void setResumableUrl() {
-        ChangeLevel originalURL = (ChangeLevel) getUrl();
+        ChangeEndpoints originalURL = (ChangeEndpoints) getUrl();
         String sortKey = CommitMarker.getSortKeyForQuery(mContext, originalURL.getStatus());
         if (sortKey != null) {
             originalURL.setSortKey(sortKey);
