@@ -23,9 +23,11 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.v4.content.CursorLoader;
 import android.util.Log;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
+import com.jbirdvegas.mgerrit.objects.AccountInfo;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
 import java.util.ArrayList;
@@ -64,6 +66,9 @@ public class Users extends DatabaseTable {
     // Sort by condition for querying results.
     public static final String SORT_BY = C_NAME + " ASC";
 
+    public static final String[] ALL_PROJECTION = new String[] {
+            C_ACCOUNT_ID, C_EMAIL, C_NAME, C_USENRAME, C_PASSWORD };
+
     private static Users mInstance = null;
 
     public static Users getInstance() {
@@ -76,8 +81,10 @@ public class Users extends DatabaseTable {
         // Specify a conflict algorithm here so we don't have to worry about it later
         db.execSQL("create table " + TABLE + " ("
                 + C_ACCOUNT_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
-                + C_EMAIL + " text, "
-                + C_NAME + " text NOT NULL)");
+                + C_EMAIL + " text NOT NULL, "
+                + C_NAME + " text NOT NULL, "
+                + C_USENRAME + " text, "
+                + C_PASSWORD + " text)");
     }
 
     public static void addURIMatches(UriMatcher _urim) {
@@ -156,11 +163,43 @@ public class Users extends DatabaseTable {
      * @param userid A user id
      * @return A cursor object containing at most one row
      */
-    public static Cursor getUser(Context context, Integer userid) {
-        String columns[] = { C_ACCOUNT_ID, C_NAME, C_EMAIL};
+    public static AccountInfo getUser(Context context, Integer userid) {
         Uri uri = DBParams.fetchOneRow(CONTENT_URI);
-        return context.getContentResolver().query(uri,
-                columns, C_ACCOUNT_ID + " = ?", new String[] { userid.toString() },
-                null);
+        Cursor c;
+        AccountInfo ai = null;
+
+        if (userid == null) {
+            // If the user id is null then we will treat this as a call to get self
+            //  i.e. the currently logged in user
+            c = context.getContentResolver().query(uri,
+                    ALL_PROJECTION, C_USENRAME + " IS NOT NULL AND " + C_PASSWORD + " IS NOT NULL", null,
+                    null);
+        } else {
+            c = context.getContentResolver().query(uri,
+                    ALL_PROJECTION, C_ACCOUNT_ID + " = ?", new String[] { userid.toString() },
+                    null);
+        }
+        if (c.moveToFirst()) {
+            ai = new AccountInfo(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4));
+        }
+        c.close();
+        return ai;
+    }
+
+    public static CursorLoader getSelf(Context context) {
+        Uri uri = DBParams.fetchOneRow(CONTENT_URI);
+        return new CursorLoader(context, uri, ALL_PROJECTION,
+                C_USENRAME + " IS NOT NULL AND " + C_PASSWORD + " IS NOT NULL", null, null);
+    }
+
+    public static void setUserDetails(Context context, AccountInfo info) {
+        ContentValues userValues = new ContentValues(3);
+        userValues.put(C_ACCOUNT_ID, info._account_id);
+        userValues.put(C_EMAIL, info.email);
+        userValues.put(C_NAME, info.name);
+        userValues.put(C_USENRAME, info.username);
+        userValues.put(C_PASSWORD, info.password);
+        Uri uri = DBParams.insertWithReplace(CONTENT_URI);
+        context.getContentResolver().insert(uri, userValues);
     }
 }

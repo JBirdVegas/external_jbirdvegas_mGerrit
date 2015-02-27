@@ -23,6 +23,7 @@ import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.Prefs;
+import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
 import com.jbirdvegas.mgerrit.objects.AccountInfo;
@@ -41,11 +42,10 @@ public class AccountProcessor extends SyncProcessor<AccountInfo> {
 
     @Override
     int insert(AccountInfo data) {
-        Log.d("AccountProcessor", data._account_id.toString());
-        Log.d("AccountProcessor", data.name);
-        Log.d("AccountProcessor", data.email);
-        Log.d("AccountProcessor", data.username);
-        // password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
+        // Password is not returned in the response, but we can get it from the original intent
+        data.password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
+        Users.setUserDetails(mContext, data);
+        Log.d(this.getClass().getName(), "You have successfully signed in: " + data.name + "(" + data.email + ")");
         return 1;
     }
 

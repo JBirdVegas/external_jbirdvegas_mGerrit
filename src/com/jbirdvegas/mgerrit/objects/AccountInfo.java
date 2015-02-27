@@ -22,8 +22,17 @@ public class AccountInfo {
     public String name;
     public String email;
     public String username;
+    public String password;
 
     public AccountInfo(Integer id) {
         this._account_id = id;
+    }
+
+    public AccountInfo(int id, String email, String name, String username, String password) {
+        this._account_id = id;
+        this.email = email;
+        this.name = name;
+        this.username = username;
+        this.password = password;
     }
 }

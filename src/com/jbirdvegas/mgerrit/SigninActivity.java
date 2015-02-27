@@ -18,19 +18,24 @@ package com.jbirdvegas.mgerrit;
  */
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.Loader;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 public class SigninActivity extends FragmentActivity
+        implements LoaderManager.LoaderCallbacks<Cursor>
 {
     String mCurrentGerritUrl;
     TextView txtUser, txtPass;
@@ -58,6 +63,8 @@ public class SigninActivity extends FragmentActivity
 
         txtUser = (TextView) findViewById(R.id.txtUser);
         txtPass = (TextView) findViewById(R.id.txtPass);
+
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -79,5 +86,25 @@ public class SigninActivity extends FragmentActivity
         it.putExtra(GerritService.HTTP_USERNAME, txtUser.getText().toString());
         it.putExtra(GerritService.HTTP_PASSWORD, txtPass.getText().toString());
         startService(it);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return Users.getSelf(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> accountInfoLoader, Cursor info) {
+        if (info.moveToFirst()) {
+            String username = info.getString(info.getColumnIndex(Users.C_USENRAME));
+            String password = info.getString(info.getColumnIndex(Users.C_PASSWORD));
+            txtUser.setText(username);
+            txtPass.setText(password);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> accountInfoLoader) {
+        // Not used
     }
 }

@@ -17,24 +17,26 @@ package com.jbirdvegas.mgerrit.tasks;
  *  limitations under the License.
  */
 
-import android.util.Base64;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.VolleyError;
 
+import org.apache.http.Header;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.MalformedChallengeException;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.auth.DigestScheme;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicHttpRequest;
-import org.apache.http.Header;
-
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Retry and reply to authentication challenge (using Apache HTTP methods) if the authentication is
+ *  not successful.
+ * We will always try an unauthenticated request first so we can receive the challenge.
+ */
 class DigestRetryPolicy extends DefaultRetryPolicy {
 
     public static final int HTTP_UNAUTHORIZED = 401;
