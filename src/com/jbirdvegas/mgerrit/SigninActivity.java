@@ -30,15 +30,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.jbirdvegas.mgerrit.database.Users;
+import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
+import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
+
+import de.greenrobot.event.EventBus;
 
 public class SigninActivity extends FragmentActivity
         implements LoaderManager.LoaderCallbacks<Cursor>
 {
-    String mCurrentGerritUrl;
-    TextView txtUser, txtPass;
+    private EventBus mEventBus;
+
+    private String mCurrentGerritUrl;
+    private TextView txtUser, txtPass;
+    private ActionProcessButton btnSignIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +72,22 @@ public class SigninActivity extends FragmentActivity
         txtUser = (TextView) findViewById(R.id.txtUser);
         txtPass = (TextView) findViewById(R.id.txtPass);
 
+        btnSignIn = (ActionProcessButton) findViewById(R.id.btnSignin);
+        btnSignIn.setMode(ActionProcessButton.Mode.ENDLESS);
+
         getSupportLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -79,6 +102,8 @@ public class SigninActivity extends FragmentActivity
     }
 
     public void onSignin(View view) {
+        btnSignIn.setProgress(1);
+
         AccountEndpoints url = AccountEndpoints.self();
         Intent it = new Intent(this, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Account);
@@ -100,11 +125,26 @@ public class SigninActivity extends FragmentActivity
             String password = info.getString(info.getColumnIndex(Users.C_PASSWORD));
             txtUser.setText(username);
             txtPass.setText(password);
+
+            btnSignIn.setProgress(100);
+            findViewById(R.id.txtAuthFailure).setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> accountInfoLoader) {
         // Not used
+    }
+
+    public void onEventMainThread(SigninCompleted ev) {
+        btnSignIn.setProgress(100);
+        findViewById(R.id.txtAuthFailure).setVisibility(View.GONE);
+    }
+
+    public void onEventMainThread(ErrorDuringConnection ev) {
+        btnSignIn.setProgress(-1);
+        if (ev.getException().getClass() == com.android.volley.AuthFailureError.class) {
+            findViewById(R.id.txtAuthFailure).setVisibility(View.VISIBLE);
+        }
     }
 }

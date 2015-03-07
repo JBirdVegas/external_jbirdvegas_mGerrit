@@ -190,4 +190,10 @@
     <string name="gerrit_signin_signin">Sign in</string>
     <string name="gerrit_signin_help">Enter your username and password to star changes from mGerrit. If you do not know your username/password, you can generate one on %s.</string>
     <string name="gerrit_signin_help_link_text">your account settings page</string>
+    <string name="gerrit_signin_btn_success">Signed in</string>
+    <string name="gerrit_signin_btn_progress">Signing in...</string>
+    <string name="gerrit_signin_btn_error">Error</string>
+    <string name="gerrit_signin_btn_loader_searching">Searching for credentials...</string>
+    <string name="gerrit_signin_username_password_failure">Your username and/or password is incorrect.
+        Please try again.</string>
 </resources>

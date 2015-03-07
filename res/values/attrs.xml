@@ -74,4 +74,13 @@
         <attr name="deletedStripeColor" format="color"/>
         <attr name="modifiedStripeColor" format="color"/>
     </declare-styleable>
+
+    <attr name="signinButtonStyle" format="reference"/>
+    <attr name="signinErrorStyle" format="reference"/>
+    <declare-styleable name="ActionProcessButton">
+        <attr name="pb_colorComplete"/>
+        <attr name="pb_colorNormal"/>
+        <attr name="pb_colorPressed"/>
+        <attr name="pb_colorError"/>
+    </declare-styleable>
 </resources>

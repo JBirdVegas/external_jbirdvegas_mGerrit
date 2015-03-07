@@ -25,6 +25,8 @@ import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
+import com.jbirdvegas.mgerrit.message.Finished;
+import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
 import com.jbirdvegas.mgerrit.objects.AccountInfo;
 
@@ -34,10 +36,12 @@ import de.greenrobot.event.EventBus;
 public class AccountProcessor extends SyncProcessor<AccountInfo> {
 
     private final Intent mIntent;
+    private final String mUrl;
 
     AccountProcessor(Context context, Intent intent, AccountEndpoints url) {
         super(context, intent, url);
         mIntent = intent;
+        mUrl = url.toString();
     }
 
     @Override
@@ -46,6 +50,7 @@ public class AccountProcessor extends SyncProcessor<AccountInfo> {
         data.password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
         Users.setUserDetails(mContext, data);
         Log.d(this.getClass().getName(), "You have successfully signed in: " + data.name + "(" + data.email + ")");
+        EventBus.getDefault().post(new SigninCompleted(mIntent, mUrl));
         return 1;
     }
 
