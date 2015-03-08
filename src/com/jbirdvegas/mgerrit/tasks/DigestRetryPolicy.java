@@ -17,6 +17,8 @@ package com.jbirdvegas.mgerrit.tasks;
  *  limitations under the License.
  */
 
+import android.content.Intent;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.VolleyError;
@@ -36,6 +38,7 @@ import java.util.Map;
  * Retry and reply to authentication challenge (using Apache HTTP methods) if the authentication is
  *  not successful.
  * We will always try an unauthenticated request first so we can receive the challenge.
+ * See: https://gist.githubusercontent.com/yamanetoshi/402a9ea071b71afb6639/raw/gistfile1.txt
  */
 class DigestRetryPolicy extends DefaultRetryPolicy {
 
@@ -45,6 +48,7 @@ class DigestRetryPolicy extends DefaultRetryPolicy {
 
     public static String DIGEST_AUTH_HEADER_NAME = "WWW-Authenticate";
     public static String REQUEST_METHOD = "GET";
+    private Intent mResolutionIntent;
 
     public DigestRetryPolicy(int request_timeout) {
         super(request_timeout,
@@ -77,21 +81,31 @@ class DigestRetryPolicy extends DefaultRetryPolicy {
                 ds.processChallenge(new BasicHeader(DIGEST_AUTH_HEADER_NAME,
                         mChallengeHeaders.get(DIGEST_AUTH_HEADER_NAME)));
             } catch (MalformedChallengeException e) {
-                e.printStackTrace();
-                throw new AuthFailureError(e.getMessage(), (Exception) e.fillInStackTrace());
+                throwException(e);
             }
 
-            Header header;
             try {
-                header = ds.authenticate(new UsernamePasswordCredentials(username, password),
+                Header header = ds.authenticate(new UsernamePasswordCredentials(username, password),
                         new BasicHttpRequest(REQUEST_METHOD, url));
+                headers.put(header.getName(), header.getValue());
             } catch (AuthenticationException e) {
-                e.printStackTrace();
-                throw new AuthFailureError();
+                throwException(e);
             }
-            headers.put(header.getName(), header.getValue());
         }
         // We will need to retry if we have not received DIGEST_AUTH_HEADER_NAME yet
         return headers;
+    }
+
+    public void setResolutionIntent(Intent intent) {
+        mResolutionIntent = intent;
+    }
+
+    // Takes an exception and throws it. Guaranteed to throw an exception
+    private void throwException(Exception e) throws AuthFailureError {
+        if (mResolutionIntent != null) {
+            throw new AuthFailureError(mResolutionIntent);
+        } else {
+            throw new AuthFailureError(e.getMessage(), (Exception) e.fillInStackTrace());
+        }
     }
 }

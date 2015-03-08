@@ -17,10 +17,9 @@ package com.jbirdvegas.mgerrit.tasks;
  *  limitations under the License.
  */
 
-import android.util.Base64;
+import android.content.Intent;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -52,6 +51,7 @@ public class GsonRequest<T> extends Request<T> {
      *  is too slow */
     public static final int REQUEST_TIMEOUT = 60*1000;
     private DigestRetryPolicy retryPolicy;
+    private Intent mIntent;
 
     /**
      * Make a GET request and return a parsed object from JSON.
@@ -69,9 +69,8 @@ public class GsonRequest<T> extends Request<T> {
         this.clazz = clazz;
         this.listener = listener;
         this.trim = trimStart;
-        this.setRetryPolicy(new DefaultRetryPolicy(REQUEST_TIMEOUT,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        this.retryPolicy = new DigestRetryPolicy(REQUEST_TIMEOUT);
+        this.setRetryPolicy(retryPolicy);
     }
 
     public void setHttpBasicAuth(String username, String password) {
@@ -91,14 +90,10 @@ public class GsonRequest<T> extends Request<T> {
         // Always request non-pretty printed JSON responses.
         map.put("Accept", "application/json");
 
-        // See: https://gist.githubusercontent.com/yamanetoshi/402a9ea071b71afb6639/raw/gistfile1.txt
         if (_http_password != null && _http_username != null) {
-            if (retryPolicy == null) {
-                retryPolicy = new DigestRetryPolicy(REQUEST_TIMEOUT);
-                this.setRetryPolicy(retryPolicy);
-            }
             map.putAll(retryPolicy.setHeaders(map, _http_username, _http_password, getUrl()));
         }
+        if (mIntent != null) retryPolicy.setResolutionIntent(mIntent);
 
         return map;
     }

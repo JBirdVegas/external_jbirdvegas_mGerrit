@@ -29,6 +29,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.jbirdvegas.mgerrit.database.Users;
@@ -37,16 +38,22 @@ import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.greenrobot.event.EventBus;
 
 public class SigninActivity extends FragmentActivity
         implements LoaderManager.LoaderCallbacks<Cursor>
 {
-    private EventBus mEventBus;
-
     private String mCurrentGerritUrl;
     private TextView txtUser, txtPass;
     private ActionProcessButton btnSignIn;
+
+    List<ErrorDuringConnection> errorQueue;
+
+    public static String CLOSE_ON_SUCCESSFUL_SIGNIN = "close on success";
+    private boolean closeOnSuccess = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,13 +82,15 @@ public class SigninActivity extends FragmentActivity
         btnSignIn = (ActionProcessButton) findViewById(R.id.btnSignin);
         btnSignIn.setMode(ActionProcessButton.Mode.ENDLESS);
 
+        closeOnSuccess = getIntent().getBooleanExtra(CLOSE_ON_SUCCESSFUL_SIGNIN, false);
+
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().registerSticky(this);
     }
 
     @Override
@@ -139,6 +148,18 @@ public class SigninActivity extends FragmentActivity
     public void onEventMainThread(SigninCompleted ev) {
         btnSignIn.setProgress(100);
         findViewById(R.id.txtAuthFailure).setVisibility(View.GONE);
+
+        // Sign in successful, retry all the error messages we have queued
+        if (errorQueue != null) {
+            for (ErrorDuringConnection error : errorQueue) {
+                startService(error.getIntent());
+            }
+        }
+        if (closeOnSuccess) {
+            // If this activity was started automatically, then we should close it and show a toast
+            Toast.makeText(this, "You have successfully signed in!", Toast.LENGTH_SHORT).show();
+            this.finish();
+        }
     }
 
     public void onEventMainThread(ErrorDuringConnection ev) {
@@ -146,5 +167,12 @@ public class SigninActivity extends FragmentActivity
         if (ev.getException().getClass() == com.android.volley.AuthFailureError.class) {
             findViewById(R.id.txtAuthFailure).setVisibility(View.VISIBLE);
         }
+        // Add the error onto the queue so we can retry it when sign in succeeds.
+        if (errorQueue == null) {
+            errorQueue = new ArrayList<>();
+        }
+        errorQueue.add(ev);
     }
+
+
 }

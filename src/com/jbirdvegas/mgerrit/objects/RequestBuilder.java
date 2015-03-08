@@ -2,11 +2,13 @@ package com.jbirdvegas.mgerrit.objects;
 
 import android.content.Context;
 import android.os.Parcelable;
-import android.util.Pair;
 
 import com.jbirdvegas.mgerrit.Prefs;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * A class that helps to deconstruct Gerrit queries and assemble them
@@ -51,10 +53,15 @@ public abstract class RequestBuilder implements Parcelable
 
     @Override
     @Nullable
-    public String toString()
-    {
+    public String toString() {
+        //TODO: Check if current Gerrit ends with /a/ and if so set mAuthenticating to true
+        // but don't append it again
         StringBuilder builder = new StringBuilder(0).append(Prefs.getCurrentGerrit(sContext));
-        if (mAuthenticating) builder.append("a/");
+        if (isAuthenticated(builder.toString())) {
+            mAuthenticating = true;
+        } else if (mAuthenticating) {
+            builder.append("a/");
+        }
         builder.append(getPath());
         return builder.toString();
     }
@@ -77,5 +84,17 @@ public abstract class RequestBuilder implements Parcelable
 
     public String getStatus() {
         return null;
+    }
+
+    // --- Helpers ---
+
+    // Helper method to determine if a URL (as a String) is authenticated
+    public static boolean isAuthenticated(String url) {
+        try {
+            return new URI(url).getPath().startsWith("/a");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

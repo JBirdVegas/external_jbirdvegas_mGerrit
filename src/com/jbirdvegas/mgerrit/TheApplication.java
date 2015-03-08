@@ -42,6 +42,9 @@ public class TheApplication extends Application
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
+        // Don't spam logs with no subscriber event messages as some are used only on tablet devices
+        EventBus.builder().logNoSubscriberMessages(false).sendNoSubscriberEvent(false).installDefaultEventBus();
+
         requestServerVersion();
     }
 

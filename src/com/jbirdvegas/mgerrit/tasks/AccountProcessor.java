@@ -21,11 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.android.volley.RequestQueue;
-import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.database.Users;
-import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
-import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
 import com.jbirdvegas.mgerrit.objects.AccountInfo;

@@ -25,6 +25,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
+import android.util.Pair;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.AccountInfo;
@@ -81,7 +82,7 @@ public class Users extends DatabaseTable {
         // Specify a conflict algorithm here so we don't have to worry about it later
         db.execSQL("create table " + TABLE + " ("
                 + C_ACCOUNT_ID + " INTEGER PRIMARY KEY ON CONFLICT REPLACE, "
-                + C_EMAIL + " text NOT NULL, "
+                + C_EMAIL + " text, "
                 + C_NAME + " text NOT NULL, "
                 + C_USENRAME + " text, "
                 + C_PASSWORD + " text)");

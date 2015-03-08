@@ -27,9 +27,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jbirdvegas.mgerrit.SigninActivity;
+import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
+import com.jbirdvegas.mgerrit.objects.AccountInfo;
 import com.jbirdvegas.mgerrit.objects.RequestBuilder;
 
 import de.greenrobot.event.EventBus;
@@ -133,7 +136,7 @@ abstract class SyncProcessor<T> {
      *  fetchData(String, RequestQueue).
      */
     protected void fetchData(RequestQueue queue) {
-        fetchData(mCurrentUrl.toString(), queue);
+        fetchData(mCurrentUrl, queue);
     }
 
     /**
@@ -142,22 +145,32 @@ abstract class SyncProcessor<T> {
      * @param url The URL of the request
      * @param queue An instance of the Volley request queue.
      */
-    protected void fetchData(final String url, RequestQueue queue) {
+    protected void fetchData(final RequestBuilder requestBuilder, RequestQueue queue) {
+        final String url = requestBuilder.toString();
+
         GsonRequest request = new GsonRequest<>(url, gson, getType(), 5,
                 getListener(url), new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                // if (volleyError.networkResponse.statusCode == 401) --> invalid username or password
-
-                mEventBus.post(new ErrorDuringConnection(mIntent, url, getStatus(), volleyError));
+                // We don't want to open the sign in screen multiple times
+                // If the sign in activity is open it will be registered.
+                if (!EventBus.getDefault().isRegistered(SigninActivity.class)) {
+                    // We have an invalid username or password so launch the sign in activity to request a new one
+                    if (volleyError.networkResponse.statusCode == 401) {
+                        Intent intent = new Intent(mContext, SigninActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra(SigninActivity.CLOSE_ON_SUCCESSFUL_SIGNIN, true);
+                        mContext.startActivity(intent);
+                    }
+                }
+                // We still want to post the exception
+                // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
+                mEventBus.postSticky(new ErrorDuringConnection(mIntent, url, getStatus(), volleyError));
             }
         });
 
-        String username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
-        String password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
-        if (username != null && password != null) {
-            request.setHttpBasicAuth(username, password);
-        }
+        setUsernamePasswordOnRequest(requestBuilder, request);
 
         fetchData(url, request, queue);
     }
@@ -196,6 +209,26 @@ abstract class SyncProcessor<T> {
          * done on the main thread. */
         mResponseHandler = new ResponseHandler(data, url);
         mResponseHandler.start();
+    }
+
+    private boolean setUsernamePasswordOnRequest(RequestBuilder requestBuilder, GsonRequest request) {
+        if (requestBuilder.isAuthenticating()) {
+            String username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
+            String password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
+            if (username == null || password == null) {
+                AccountInfo ai = Users.getUser(mContext, null);
+                if (ai != null) {
+                    username = ai.username;
+                    password = ai.password;
+                }
+            }
+            if (username != null && password != null) {
+                request.setHttpBasicAuth(username, password);
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
     class ResponseHandler extends Thread {

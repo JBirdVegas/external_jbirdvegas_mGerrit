@@ -21,25 +21,25 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.android.volley.RequestQueue;
-import com.jbirdvegas.mgerrit.Prefs;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.objects.Project;
+import com.jbirdvegas.mgerrit.objects.ProjectEndpoints;
 import com.jbirdvegas.mgerrit.objects.Projects;
+import com.jbirdvegas.mgerrit.objects.RequestBuilder;
 
 import java.util.Collections;
 import java.util.List;
 
 class ProjectListProcessor extends SyncProcessor<Projects> {
 
-    private final String mUrl;
+    private final RequestBuilder mUrl;
 
     ProjectListProcessor(Context context, Intent intent) {
         super(context, intent);
-        String gerrit = Prefs.getCurrentGerrit(context);
-        mUrl = gerrit + "projects/?d";
+        mUrl = ProjectEndpoints.get();
     }
 
     @Override
@@ -52,7 +52,7 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     @Override
     boolean isSyncRequired(Context context) {
         long syncInterval = context.getResources().getInteger(R.integer.projects_sync_interval);
-        long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, mUrl);
+        long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, mUrl.toString());
         boolean sync = isInSyncInterval(syncInterval, lastSync);
         // If lastSync was within the sync interval then it was recently synced and we don't need to again
         if (!sync) return true;
@@ -69,17 +69,12 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     @Override
     void doPostProcess(Projects data) {
         SyncTime.setValue(mContext, SyncTime.PROJECTS_LIST_SYNC_TIME,
-                System.currentTimeMillis(), mUrl);
+                System.currentTimeMillis(), mUrl.toString());
     }
 
     @Override
     int count(Projects projects) {
         if (projects != null) return projects.getProjectCount();
         else return 0;
-    }
-
-    @Override
-    protected void fetchData(RequestQueue queue) {
-        super.fetchData(mUrl, queue);
     }
 }
