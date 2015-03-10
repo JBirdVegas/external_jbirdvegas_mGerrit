@@ -35,7 +35,7 @@ import java.util.zip.ZipInputStream;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-public class ZipRequest extends Request<String> {
+public class ZipRequest extends Authenticateable<String> {
     /** Decoding lock so that we don't decode more than one archive at a time (to avoid OOM's) */
     private static final Object sDecodeLock = new Object();
 

@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jbirdvegas.mgerrit.SigninActivity;
 import com.jbirdvegas.mgerrit.database.Users;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
@@ -152,18 +153,7 @@ abstract class SyncProcessor<T> {
                 getListener(url), new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                // We don't want to open the sign in screen multiple times
-                // If the sign in activity is open it will be registered.
-                if (!EventBus.getDefault().isRegistered(SigninActivity.class)) {
-                    // We have an invalid username or password so launch the sign in activity to request a new one
-                    if (volleyError.networkResponse.statusCode == 401) {
-                        Intent intent = new Intent(mContext, SigninActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra(SigninActivity.CLOSE_ON_SUCCESSFUL_SIGNIN, true);
-                        mContext.startActivity(intent);
-                    }
-                }
+                Tools.launchSignin(mContext);
                 // We still want to post the exception
                 // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
                 mEventBus.postSticky(new ErrorDuringConnection(mIntent, url, getStatus(), volleyError));
@@ -175,8 +165,10 @@ abstract class SyncProcessor<T> {
         fetchData(url, request, queue);
     }
 
-    protected void fetchData(final String url, Request<T> request, RequestQueue queue) {
+    protected void fetchData(final String url, Authenticateable<T> request, RequestQueue queue) {
         if (queue == null) queue = Volley.newRequestQueue(getContext());
+
+        // setUsernamePasswordOnRequest(requestBuilder, request); TODO: We need to set the username/password on the request if we have one!
 
         mEventBus.post(new StartingRequest(mIntent, url, getStatus()));
         queue.add(request);

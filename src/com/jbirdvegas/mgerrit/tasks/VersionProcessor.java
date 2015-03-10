@@ -3,12 +3,15 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.jbirdvegas.mgerrit.Prefs;
+import com.jbirdvegas.mgerrit.SigninActivity;
 import com.jbirdvegas.mgerrit.database.Config;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 
 import java.util.regex.Matcher;
@@ -36,12 +39,16 @@ public class VersionProcessor extends SyncProcessor<String> {
 
     private final String mUrl;
     private final EventBus mEventBus;
+    private final Context mContext;
+    private final Intent mIntent;
 
     VersionProcessor(Context context, Intent intent) {
         super(context, intent);
         String url = Prefs.getCurrentGerrit(context);
         mUrl = url + "config/server/version";
         mEventBus = EventBus.getDefault();
+        mContext = context;
+        mIntent = intent;
     }
 
     @Override
@@ -78,13 +85,19 @@ public class VersionProcessor extends SyncProcessor<String> {
     protected void fetchData(RequestQueue queue) {
         Response.Listener<String> listener = getListener(mUrl);
 
-        StringRequest request = new StringRequest(mUrl,
+        Authenticateable<String> request = new TextRequest(mUrl,
                 listener, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 if (volleyError == null || volleyError.networkResponse == null) {
-                    mEventBus.postSticky(new ErrorDuringConnection(getIntent(), mUrl, null, volleyError));
-                // TODO: Add authentication handling here and in StringRequest in case the Gerrit url requires authentication
+                    mEventBus.postSticky(new ErrorDuringConnection(mIntent, mUrl, null, volleyError));
+                // Authentication handling here and in StringRequest in case the Gerrit url requires authentication
+                } else if (volleyError.networkResponse.statusCode == 401) {
+                    // Tools.launchSignin(mContext); TODO: Commenting this out until we send the username/password in the request
+
+                    // We still want to post the exception
+                    // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
+                    mEventBus.postSticky(new ErrorDuringConnection(mIntent, mUrl, null, volleyError));
                 } else if (volleyError.networkResponse.statusCode == 404) {
                     // Pretend we got a response
                     getListener(mUrl).onResponse(Config.VERSION_DEFAULT);

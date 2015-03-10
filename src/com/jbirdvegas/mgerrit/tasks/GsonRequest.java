@@ -39,19 +39,11 @@ import java.util.Map;
  * This class was modified slightly from its original source to include trimming support
  * Original source: https://gist.github.com/ficusk/5474673
  */
-public class GsonRequest<T> extends Request<T> {
+public class GsonRequest<T> extends Authenticateable<T> {
     private final Gson gson;
     private final Class<T> clazz;
     private final Listener<T> listener;
     private final int trim;
-
-    private String _http_username, _http_password;
-
-    /* Set a request timeout of one minute - if we don't hear a response from the server by then it
-     *  is too slow */
-    public static final int REQUEST_TIMEOUT = 60*1000;
-    private DigestRetryPolicy retryPolicy;
-    private Intent mIntent;
 
     /**
      * Make a GET request and return a parsed object from JSON.
@@ -69,31 +61,14 @@ public class GsonRequest<T> extends Request<T> {
         this.clazz = clazz;
         this.listener = listener;
         this.trim = trimStart;
-        this.retryPolicy = new DigestRetryPolicy(REQUEST_TIMEOUT);
-        this.setRetryPolicy(retryPolicy);
-    }
-
-    public void setHttpBasicAuth(String username, String password) {
-        _http_username = username;
-        _http_password = password;
     }
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        // super.getHeaders() returns an empty AbstractMap<K, V> which
-        // throw UnsupportedOperation during calls to put(K, V)
-        HashMap<String, String> map = new HashMap<>(0);
+        Map<String, String> map = super.getHeaders();
 
-        Map<String, String> headers = super.getHeaders();
-        if (headers != null)
-            map.putAll(headers);
         // Always request non-pretty printed JSON responses.
         map.put("Accept", "application/json");
-
-        if (_http_password != null && _http_username != null) {
-            map.putAll(retryPolicy.setHeaders(map, _http_username, _http_password, getUrl()));
-        }
-        if (mIntent != null) retryPolicy.setResolutionIntent(mIntent);
 
         return map;
     }

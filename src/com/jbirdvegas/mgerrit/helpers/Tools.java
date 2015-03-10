@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.jbirdvegas.mgerrit.SigninActivity;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.jbirdvegas.mgerrit.Prefs;
@@ -49,6 +50,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+
+import de.greenrobot.event.EventBus;
 
 public class Tools {
 
@@ -267,6 +270,19 @@ public class Tools {
             return d.withZone(DateTimeZone.forTimeZone(localTimeZone)).withMillisOfDay(0);
         } catch (IllegalArgumentException e) {
             return new DateTime(0);
+        }
+    }
+
+    public static void launchSignin(Context context) {
+        // We don't want to open the sign in screen multiple times
+        // If the sign in activity is open it will be registered.
+        if (!EventBus.getDefault().isRegistered(SigninActivity.class)) {
+            // We have an invalid username or password so launch the sign in activity to request a new one
+            Intent intent = new Intent(context, SigninActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.putExtra(SigninActivity.CLOSE_ON_SUCCESSFUL_SIGNIN, true);
+            context.startActivity(intent);
         }
     }
 }
