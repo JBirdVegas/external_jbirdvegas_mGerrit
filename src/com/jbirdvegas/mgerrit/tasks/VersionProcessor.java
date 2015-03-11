@@ -13,6 +13,7 @@ import com.jbirdvegas.mgerrit.SigninActivity;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
+import com.jbirdvegas.mgerrit.objects.ConfigEndpoints;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,15 +38,14 @@ import de.greenrobot.event.EventBus;
  */
 public class VersionProcessor extends SyncProcessor<String> {
 
-    private final String mUrl;
+    private final ConfigEndpoints mUrl;
     private final EventBus mEventBus;
     private final Context mContext;
     private final Intent mIntent;
 
     VersionProcessor(Context context, Intent intent) {
         super(context, intent);
-        String url = Prefs.getCurrentGerrit(context);
-        mUrl = url + "config/server/version";
+        mUrl = ConfigEndpoints.server_verion();
         mEventBus = EventBus.getDefault();
         mContext = context;
         mIntent = intent;
@@ -83,26 +83,27 @@ public class VersionProcessor extends SyncProcessor<String> {
 
     @Override
     protected void fetchData(RequestQueue queue) {
-        Response.Listener<String> listener = getListener(mUrl);
+        final String url = mUrl.toString();
+        Response.Listener<String> listener = getListener(url);
 
-        Authenticateable<String> request = new TextRequest(mUrl,
+        Authenticateable<String> request = new TextRequest(url,
                 listener, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 if (volleyError == null || volleyError.networkResponse == null) {
-                    mEventBus.postSticky(new ErrorDuringConnection(mIntent, mUrl, null, volleyError));
+                    mEventBus.postSticky(new ErrorDuringConnection(mIntent, url, null, volleyError));
                 // Authentication handling here and in StringRequest in case the Gerrit url requires authentication
                 } else if (volleyError.networkResponse.statusCode == 401) {
-                    // Tools.launchSignin(mContext); TODO: Commenting this out until we send the username/password in the request
+                    Tools.launchSignin(mContext);
 
                     // We still want to post the exception
                     // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
-                    mEventBus.postSticky(new ErrorDuringConnection(mIntent, mUrl, null, volleyError));
+                    mEventBus.postSticky(new ErrorDuringConnection(mIntent, url, null, volleyError));
                 } else if (volleyError.networkResponse.statusCode == 404) {
                     // Pretend we got a response
-                    getListener(mUrl).onResponse(Config.VERSION_DEFAULT);
+                    getListener(url).onResponse(Config.VERSION_DEFAULT);
                 } else {
-                    mEventBus.postSticky(new ErrorDuringConnection(getIntent(), mUrl, null, volleyError));
+                    mEventBus.postSticky(new ErrorDuringConnection(getIntent(), url, null, volleyError));
                 }
             }
         });

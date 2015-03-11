@@ -162,15 +162,15 @@ abstract class SyncProcessor<T> {
 
         setUsernamePasswordOnRequest(requestBuilder, request);
 
-        fetchData(url, request, queue);
+        fetchData(requestBuilder, request, queue);
     }
 
-    protected void fetchData(final String url, Authenticateable<T> request, RequestQueue queue) {
+    protected void fetchData(final RequestBuilder requestBuilder, Authenticateable<T> request, RequestQueue queue) {
         if (queue == null) queue = Volley.newRequestQueue(getContext());
 
-        // setUsernamePasswordOnRequest(requestBuilder, request); TODO: We need to set the username/password on the request if we have one!
+        setUsernamePasswordOnRequest(requestBuilder, request);
 
-        mEventBus.post(new StartingRequest(mIntent, url, getStatus()));
+        mEventBus.post(new StartingRequest(mIntent, requestBuilder.toString(), getStatus()));
         queue.add(request);
     }
 
@@ -203,7 +203,7 @@ abstract class SyncProcessor<T> {
         mResponseHandler.start();
     }
 
-    private boolean setUsernamePasswordOnRequest(RequestBuilder requestBuilder, GsonRequest request) {
+    private boolean setUsernamePasswordOnRequest(RequestBuilder requestBuilder, Authenticateable request) {
         if (requestBuilder.isAuthenticating()) {
             String username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
             String password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
