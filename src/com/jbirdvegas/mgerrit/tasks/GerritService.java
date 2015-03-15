@@ -25,8 +25,8 @@ import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
-import com.jbirdvegas.mgerrit.objects.RequestBuilder;
+import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 
 import org.jetbrains.annotations.NotNull;
 

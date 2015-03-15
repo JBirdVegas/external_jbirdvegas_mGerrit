@@ -50,7 +50,7 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
-import com.jbirdvegas.mgerrit.objects.ChangeEndpoints;
+import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
 import com.jbirdvegas.mgerrit.objects.FilesCAB;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.search.ChangeSearch;

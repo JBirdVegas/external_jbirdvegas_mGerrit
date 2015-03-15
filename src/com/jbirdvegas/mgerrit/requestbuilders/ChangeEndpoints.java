@@ -1,4 +1,4 @@
-package com.jbirdvegas.mgerrit.objects;
+package com.jbirdvegas.mgerrit.requestbuilders;
 
 /*
  * Copyright (C) 2015 Android Open Kang Project (AOKP)
@@ -21,6 +21,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.jbirdvegas.mgerrit.database.Config;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.objects.ServerVersion;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
 import org.jetbrains.annotations.Nullable;

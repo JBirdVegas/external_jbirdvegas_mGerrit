@@ -31,11 +31,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.VolleyError;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
-import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
+import com.jbirdvegas.mgerrit.objects.EventQueue;
+import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.ArrayList;
@@ -49,8 +52,6 @@ public class SigninActivity extends FragmentActivity
     private String mCurrentGerritUrl;
     private TextView txtUser, txtPass;
     private ActionProcessButton btnSignIn;
-
-    List<ErrorDuringConnection> errorQueue;
 
     public static String CLOSE_ON_SUCCESSFUL_SIGNIN = "close on success";
     private boolean closeOnSuccess = false;
@@ -150,11 +151,16 @@ public class SigninActivity extends FragmentActivity
         findViewById(R.id.txtAuthFailure).setVisibility(View.GONE);
 
         // Sign in successful, retry all the error messages we have queued
-        if (errorQueue != null) {
-            for (ErrorDuringConnection error : errorQueue) {
+
+        EventQueue errorQueue = EventQueue.getInstance();
+        ErrorDuringConnection error;
+        do {
+            error = (ErrorDuringConnection) errorQueue.dequeueWithError(AuthFailureError.class);
+            if (error != null) {
                 startService(error.getIntent());
             }
-        }
+        } while (error != null);
+
         if (closeOnSuccess) {
             // If this activity was started automatically, then we should close it and show a toast
             Toast.makeText(this, "You have successfully signed in!", Toast.LENGTH_SHORT).show();
@@ -167,11 +173,6 @@ public class SigninActivity extends FragmentActivity
         if (ev.getException().getClass() == com.android.volley.AuthFailureError.class) {
             findViewById(R.id.txtAuthFailure).setVisibility(View.VISIBLE);
         }
-        // Add the error onto the queue so we can retry it when sign in succeeds.
-        if (errorQueue == null) {
-            errorQueue = new ArrayList<>();
-        }
-        errorQueue.add(ev);
     }
 
 

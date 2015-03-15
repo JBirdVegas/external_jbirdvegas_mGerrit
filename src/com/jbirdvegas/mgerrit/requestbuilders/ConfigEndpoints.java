@@ -1,4 +1,4 @@
-package com.jbirdvegas.mgerrit.objects;
+package com.jbirdvegas.mgerrit.requestbuilders;
 
 /*
  * Copyright (C) 2015 Android Open Kang Project (AOKP)

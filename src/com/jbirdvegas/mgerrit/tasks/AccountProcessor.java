@@ -23,7 +23,7 @@ import android.util.Log;
 
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
-import com.jbirdvegas.mgerrit.objects.AccountEndpoints;
+import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
 import com.jbirdvegas.mgerrit.objects.AccountInfo;
 
 

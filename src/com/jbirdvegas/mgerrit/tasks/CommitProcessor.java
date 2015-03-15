@@ -24,7 +24,7 @@ import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.objects.RequestBuilder;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 

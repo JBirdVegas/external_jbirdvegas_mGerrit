@@ -1,4 +1,4 @@
-package com.jbirdvegas.mgerrit.objects;
+package com.jbirdvegas.mgerrit.requestbuilders;
 
 import android.content.Context;
 import android.os.Parcelable;

@@ -20,21 +20,21 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.jbirdvegas.mgerrit.SigninActivity;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
 import com.jbirdvegas.mgerrit.objects.AccountInfo;
-import com.jbirdvegas.mgerrit.objects.RequestBuilder;
+import com.jbirdvegas.mgerrit.objects.EventQueue;
+import com.jbirdvegas.mgerrit.objects.GerritMessage;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 
 import de.greenrobot.event.EventBus;
 
@@ -143,7 +143,7 @@ abstract class SyncProcessor<T> {
     /**
      * Send a request to the Gerrit server. Expects the response to be in
      *  Json format.
-     * @param url The URL of the request
+     * @param requestBuilder The URL of the request
      * @param queue An instance of the Volley request queue.
      */
     protected void fetchData(final RequestBuilder requestBuilder, RequestQueue queue) {
@@ -156,7 +156,8 @@ abstract class SyncProcessor<T> {
                 Tools.launchSignin(mContext);
                 // We still want to post the exception
                 // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
-                mEventBus.postSticky(new ErrorDuringConnection(mIntent, url, getStatus(), volleyError));
+                GerritMessage ev = new ErrorDuringConnection(mIntent, url, getStatus(), volleyError);
+                EventQueue.getInstance().enqueue(ev, true);
             }
         });
 

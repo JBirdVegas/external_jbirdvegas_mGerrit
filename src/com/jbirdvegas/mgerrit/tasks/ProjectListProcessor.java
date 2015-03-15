@@ -20,15 +20,14 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.objects.Project;
-import com.jbirdvegas.mgerrit.objects.ProjectEndpoints;
+import com.jbirdvegas.mgerrit.requestbuilders.ProjectEndpoints;
 import com.jbirdvegas.mgerrit.objects.Projects;
-import com.jbirdvegas.mgerrit.objects.RequestBuilder;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 
 import java.util.Collections;
 import java.util.List;

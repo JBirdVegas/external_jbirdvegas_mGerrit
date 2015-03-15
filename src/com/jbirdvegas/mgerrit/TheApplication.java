@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 
 import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
-import com.jbirdvegas.mgerrit.objects.RequestBuilder;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import de.greenrobot.event.EventBus;

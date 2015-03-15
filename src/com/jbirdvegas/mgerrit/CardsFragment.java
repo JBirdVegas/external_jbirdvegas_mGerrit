@@ -41,7 +41,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
-import com.jbirdvegas.mgerrit.objects.ChangeEndpoints;
+import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;

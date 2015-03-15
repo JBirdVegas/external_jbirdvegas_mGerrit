@@ -20,7 +20,7 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.jbirdvegas.mgerrit.objects.RequestBuilder;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 class LegacyCommitProcessor extends SyncProcessor<JSONCommit[]> {
