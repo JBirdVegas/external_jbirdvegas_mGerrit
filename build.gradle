@@ -18,6 +18,8 @@ repositories {
 
 // Holder for versionCode
 String versionHolder
+String releaseTag = "-release"
+boolean performRelease = false
 
 dependencies {
     compile files('libs/android-support-v4.jar')
@@ -75,6 +77,12 @@ android {
         def Properties versionProps = new Properties()
         versionProps.load(new FileInputStream(versionPropsFile))
         String full = versionProps['version'].toString()
+        versionHolder = full
+        if (versionHolder.endsWith(releaseTag)) {
+            println('Release tag found... performing release build')
+            performRelease = true
+            full = full.substring(0, releaseTag.length())
+        }
         String[] parts = full.split('\\.')
         println("Version parts: " + parts.toString())
         int last = parts[parts.length - 1].toInteger() + 1
@@ -88,7 +96,9 @@ android {
         }
         versionHolder = builder.toString()
         versionProps['version'] = versionHolder
-        versionProps.store(versionPropsFile.newWriter(), null)
+        if (getCurrentBranch().equalsIgnoreCase('master')) {
+            versionProps.store(versionPropsFile.newWriter(), null)
+        }
         defaultConfig {
             versionCode versionHolder.replaceAll("\\.", "").toInteger()
             versionName String.format("%s-%s", getCurrentBranch(), versionHolder)
@@ -140,6 +150,22 @@ task tagRelease << {
         name = versionHolder
         message = "Release of ${versionHolder}"
         annotate = true
+    }
+}
+
+tagRelease.dependsOn 'verifyReleasableBuild'
+
+task verifyReleasableBuild << {
+    if (getCurrentBranch().equalsIgnoreCase('master')) {
+        println('Master branch detected!')
+    } else {
+        throw new GradleException("Release cannot be performed from a branch other than master.")
+    }
+
+    if (versionHolder.endsWith(releaseTag)) {
+        println('Release tag found... performing release build')
+    } else {
+        throw new GradleException("Version tag denoting a release was not found. Aborting release")
     }
 }
 
