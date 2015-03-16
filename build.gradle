@@ -3,8 +3,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:1.1.0'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
+        classpath 'org.ajoberstar:gradle-git:1.1.0'
     }
 }
 apply plugin: 'com.android.application'
@@ -15,6 +16,9 @@ repositories {
     mavenCentral()
 }
 
+// Holder for versionCode
+String versionHolder
+
 dependencies {
     compile files('libs/android-support-v4.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
@@ -22,7 +26,7 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
 
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.mcxiaoke.volley:library:1.0.+'
+    compile 'com.mcxiaoke.volley:library:1.0.12'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'joda-time:joda-time:2.7'
 
@@ -30,11 +34,13 @@ dependencies {
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
 
     compile 'se.emilsjolander:stickylistheaders:2.5.2'
+    compile 'org.ajoberstar:gradle-git:1.1.0'
+    compile 'org.ajoberstar:gradle-git:1.1.0'
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion 22
+    buildToolsVersion '22'
     // compile Using Java 7
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -64,8 +70,35 @@ android {
             }
         }
     }
-    defaultConfig {}
-    productFlavors {
+    def versionPropsFile = file('version.properties')
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        String full = versionProps['version'].toString()
+        String[] parts = full.split('\\.')
+        println("Version parts: " + parts.toString())
+        int last = parts[parts.length - 1].toInteger() + 1
+        parts[parts.length - 1] = String.format("%03d", last);
+        StringBuilder builder = new StringBuilder(0);
+        for (int i = 0; i < parts.length; i++) {
+            builder.append(parts[i])
+            if (i != parts.length - 1) {
+                builder.append('.')
+            }
+        }
+        versionHolder = builder.toString()
+        versionProps['version'] = versionHolder
+        versionProps.store(versionPropsFile.newWriter(), null)
+        defaultConfig {
+            versionCode versionHolder.replaceAll("\\.", "").toInteger()
+            versionName String.format("%s-%s", getCurrentBranch(), versionHolder)
+            minSdkVersion 15
+            targetSdkVersion 22
+            println("versionCode: $versionCode versionName: $versionName")
+        }
+    }
+    else {
+        throw new GradleException("Could not read version.properties!")
     }
 }
 
@@ -96,4 +129,32 @@ if (props.containsKey('storeFile') &&
     android.signingConfigs.release.keyPassword = props['keyPassword']
 } else {
     android.buildTypes.release.signingConfig = null
+}
+
+import org.ajoberstar.grgit.*
+
+ext.repo = Grgit.open(project.file('.'))
+
+task tagRelease << {
+    repo.tag.add {
+        name = versionHolder
+        message = "Release of ${versionHolder}"
+        annotate = true
+    }
+}
+
+task pushTags << {
+    def git = Grgit.open(project.file('.'))
+    Set<String> paths = new TreeSet<>()
+    paths.add(new File(project.file('.'), 'version.properties').absolutePath)
+    git.add(patterns: ['version.properties', project.file('.').getAbsolutePath()])
+    git.commit(all: true, message: "Update version to latest build: ${versionHolder}")
+    git.push()
+    git.push(tags: true)
+
+}
+pushTags.dependsOn 'tagRelease'
+
+def String getCurrentBranch() {
+    return Grgit.open(project.file('.')).branch.getCurrent().getName()
 }
