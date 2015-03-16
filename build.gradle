@@ -185,8 +185,8 @@ def String getCurrentBranch() {
     return Grgit.open(project.file('.')).branch.getCurrent().getName()
 }
 
-fullRelease.dependsOn 'pushReleaseFiles'
-
 task fullRelease << {
-
+    // just an anchor for complete release builds
 }
+
+fullRelease.dependsOn 'pushReleaseFiles'
