@@ -149,7 +149,6 @@ task pushTags << {
     paths.add(new File(project.file('.'), 'version.properties').absolutePath)
     git.add(patterns: ['version.properties', project.file('.').getAbsolutePath()])
     git.commit(all: true, message: "Update version to latest build: ${versionHolder}")
-    git.push()
     git.push(tags: true)
 
 }
