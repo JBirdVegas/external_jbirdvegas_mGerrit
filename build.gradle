@@ -179,7 +179,7 @@ task pushReleaseFiles << {
     git.commit(all: true, message: "Update version to latest build: ${versionHolder}")
     git.push(tags: true)
 }
-pushTags.dependsOn 'tagRelease'
+pushReleaseFiles.dependsOn 'tagRelease'
 
 def String getCurrentBranch() {
     return Grgit.open(project.file('.')).branch.getCurrent().getName()
