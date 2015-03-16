@@ -18,13 +18,13 @@ package com.jbirdvegas.mgerrit.message;
  */
 public class GerritChanged {
 
-    private final String mNewGerrit;
+    private final String mNewGerritUrl;
 
-    public GerritChanged(String newGerrit) {
-        this.mNewGerrit = newGerrit;
+    public GerritChanged(String newGerritUrl) {
+        this.mNewGerritUrl = newGerritUrl;
     }
 
-    public String getNewGerrit() {
-        return mNewGerrit;
+    public String getNewGerritUrl() {
+        return mNewGerritUrl;
     }
 }
