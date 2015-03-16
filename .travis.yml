@@ -8,4 +8,4 @@ android:
   components:
     - build-tools-22
 
-script: 'gradle build'
+script: 'travisBuilder.sh'

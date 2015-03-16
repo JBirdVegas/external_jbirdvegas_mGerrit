@@ -6,8 +6,11 @@ buildscript {
         classpath 'com.android.tools.build:gradle:1.1.0'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
         classpath 'org.ajoberstar:gradle-git:1.1.0'
+        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
     }
 }
+
+apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'hugo'
 apply plugin: 'checkstyle'
@@ -36,7 +39,6 @@ dependencies {
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
 
     compile 'se.emilsjolander:stickylistheaders:2.5.2'
-    compile 'org.ajoberstar:gradle-git:1.1.0'
     compile 'org.ajoberstar:gradle-git:1.1.0'
 }
 
@@ -169,17 +171,22 @@ task verifyReleasableBuild << {
     }
 }
 
-task pushTags << {
+task pushReleaseFiles << {
     def git = Grgit.open(project.file('.'))
     Set<String> paths = new TreeSet<>()
     paths.add(new File(project.file('.'), 'version.properties').absolutePath)
     git.add(patterns: ['version.properties', project.file('.').getAbsolutePath()])
     git.commit(all: true, message: "Update version to latest build: ${versionHolder}")
     git.push(tags: true)
-
 }
 pushTags.dependsOn 'tagRelease'
 
 def String getCurrentBranch() {
     return Grgit.open(project.file('.')).branch.getCurrent().getName()
+}
+
+fullRelease.dependsOn 'pushReleaseFiles'
+
+task fullRelease << {
+
 }
