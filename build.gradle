@@ -3,97 +3,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
-        classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
-    }
-}
-apply plugin: 'com.android.application'
-apply plugin: 'hugo'
-apply plugin: 'checkstyle'
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compile files('libs/android-support-v4.jar')
-    compile files('libs/libGoogleAnalyticsServices.jar')
-    compile files('libs/annotations.jar')
-    compile 'com.nineoldandroids:library:2.4.0'
-
-    compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.mcxiaoke.volley:library:1.0.+'
-    compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'joda-time:joda-time:2.7'
-
-    compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
-    compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
-
-    compile 'se.emilsjolander:stickylistheaders:2.5.2'
-}
-
-android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
-    // compile Using Java 7
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            resources.srcDirs = ['res']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
-    }
-    signingConfigs {
-        release {}
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFile 'proguard-project.txt'
-            signingConfig signingConfigs.release
-            lintOptions {
-                abortOnError false
-            }
-        }
-    }
-    defaultConfig {}
-    productFlavors {
+        classpath 'com.android.tools.build:gradle:1.1.0-rc3'
     }
 }
 
-// config the style checks to run during the testing phase
-check.dependsOn 'checkstyle'
-
-task checkstyle(type: Checkstyle) {
-    configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
-    source 'src'
-    include "**/*.java"
-    exclude "**/gen/**"
-    classpath = files()
-}
-
-def Properties props = new Properties()
-def File signingFile = new File('signing.properties')
-
-if (signingFile.exists()) {
-    props.load(new FileInputStream(signingFile))
-}
-if (props.containsKey('storeFile') &&
-        props.containsKey('storePassword') &&
-        props.containsKey('keyAlias') &&
-        props.containsKey('keyPassword')) {
-    android.signingConfigs.release.storeFile = file(props['storeFile'])
-    android.signingConfigs.release.storePassword = props['storePassword']
-    android.signingConfigs.release.keyAlias = props['keyAlias']
-    android.signingConfigs.release.keyPassword = props['keyPassword']
-} else {
-    android.buildTypes.release.signingConfig = null
+allprojects {
+    repositories {
+        mavenCentral()
+    }
 }
