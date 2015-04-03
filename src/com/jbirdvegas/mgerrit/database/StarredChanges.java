@@ -72,6 +72,10 @@ public class StarredChanges extends DatabaseTable {
                     + Changes.TABLE + "(" + Changes.C_CHANGE_ID + "), "
                 + "FOREIGN KEY (" + C_COMMIT_NUMBER + ") REFERENCES "
                     + Changes.TABLE + "(" + Changes.C_COMMIT_NUMBER + "))");
+
+        // We need at least one row in this table for querying changes to return results.
+        //  So add an invalid row in (we will need to filter this out later)
+        db.execSQL(String.format("INSERT INTO %s VALUES ('%s', %s)", TABLE, "INVALID", 0));
     }
 
     @SuppressWarnings("unused")
