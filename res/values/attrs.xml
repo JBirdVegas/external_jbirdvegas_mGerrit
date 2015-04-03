@@ -30,6 +30,7 @@
         <attr name="viewIcon" format="reference"/>
         <attr name="acceptIcon" format="reference"/>
         <attr name="cancelIcon" format="reference"/>
+        <attr name="secureIcon" format="reference"/>
     </declare-styleable>
     <declare-styleable name="LinearLayout">
         <attr name="mainBackgroundColor" format="color"/>

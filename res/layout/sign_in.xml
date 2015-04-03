@@ -24,6 +24,13 @@
     android:padding="@dimen/standard_padding"
     android:weightSum="1">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgProtected"
+        android:layout_gravity="center_horizontal"
+        android:src="?attr/secureIcon"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,6 +38,17 @@
         android:id="@+id/txtSigninHelp"
         android:layout_marginTop="@dimen/standard_padding"
         android:layout_marginBottom="@dimen/standard_padding" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?attr/signinErrorStyle"
+        android:text="@string/gerrit_signin_username_password_failure"
+        android:id="@+id/txtAuthFailure"
+        android:layout_marginTop="@dimen/standard_padding"
+        android:layout_marginBottom="@dimen/standard_padding"
+        android:gravity="center"
+        android:visibility="visible"/>
 
     <EditText
         android:layout_width="match_parent"
@@ -53,24 +71,17 @@
         style="?attr/signinButtonStyle"
         android:text="@string/gerrit_signin_signin"
         android:id="@+id/btnSignin"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="@dimen/standard_padding"
-        android:layout_marginBottom="@dimen/standard_padding"
         android:height="48dp"
         android:onClick="onSignin"
         custom:pb_textComplete="@string/gerrit_signin_btn_success"
         custom:pb_textProgress="@string/gerrit_signin_btn_progress"
         custom:pb_textError="@string/gerrit_signin_btn_error"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="?attr/signinErrorStyle"
-        android:text="@string/gerrit_signin_username_password_failure"
-        android:id="@+id/txtAuthFailure"
-        android:layout_marginTop="@dimen/standard_padding"
-        android:layout_marginBottom="@dimen/standard_padding"
-        android:gravity="center"
-        android:visibility="visible"/>
+    <Button
+        android:layout_width="128dp"
+        android:layout_height="60dp"
+        android:id="@+id/btnLogout"
+        android:text="logout"
+        style="?attr/signinButtonStyle" />
 
 </LinearLayout>

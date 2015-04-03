@@ -55,6 +55,7 @@ public class SigninActivity extends FragmentActivity
 
     public static String CLOSE_ON_SUCCESSFUL_SIGNIN = "close on success";
     private boolean closeOnSuccess = false;
+    private boolean isProtected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +72,21 @@ public class SigninActivity extends FragmentActivity
         setTitle(String.format(getResources().getString(R.string.gerrit_signin_title), mCurrentGerritName));
         setContentView(R.layout.sign_in);
 
+        closeOnSuccess = getIntent().getBooleanExtra(CLOSE_ON_SUCCESSFUL_SIGNIN, false);
+        // Currently, we only set closeOnSuccess when prompting authorization for a protected Gerrit
+        isProtected = closeOnSuccess;
+
         TextView textView = (TextView) findViewById(R.id.txtSigninHelp);
-        CharSequence formatText = getResources().getText(R.string.gerrit_signin_help);
+
+        CharSequence formatText;
+        if (isProtected) {
+            formatText = getResources().getText(R.string.gerrit_signin_protected_help);
+            findViewById(R.id.imgProtected).setVisibility(View.VISIBLE);
+        } else {
+            formatText = getResources().getText(R.string.gerrit_signin_help);
+            findViewById(R.id.imgProtected).setVisibility(View.GONE);
+        }
+
         CharSequence linkText = getResources().getText(R.string.gerrit_signin_help_link_text);
         textView.setText(Html.fromHtml(String.format(formatText.toString(), "<a href=\"" + mCurrentGerritUrl + "#/settings/http-password\">" + linkText + "</a>")), TextView.BufferType.SPANNABLE);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -82,8 +96,6 @@ public class SigninActivity extends FragmentActivity
 
         btnSignIn = (ActionProcessButton) findViewById(R.id.btnSignin);
         btnSignIn.setMode(ActionProcessButton.Mode.ENDLESS);
-
-        closeOnSuccess = getIntent().getBooleanExtra(CLOSE_ON_SUCCESSFUL_SIGNIN, false);
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -121,6 +133,12 @@ public class SigninActivity extends FragmentActivity
         it.putExtra(GerritService.HTTP_USERNAME, txtUser.getText().toString());
         it.putExtra(GerritService.HTTP_PASSWORD, txtPass.getText().toString());
         startService(it);
+    }
+
+    public void onLogout(View view) {
+        Users.logout(this);
+        txtUser.setText("");
+        txtPass.setText("");
     }
 
     @Override

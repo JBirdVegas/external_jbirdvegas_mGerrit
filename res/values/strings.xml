@@ -196,4 +196,5 @@
     <string name="gerrit_signin_btn_loader_searching">Searching for credentials...</string>
     <string name="gerrit_signin_username_password_failure">Your username and/or password is incorrect.
         Please try again.</string>
+    <string name="gerrit_signin_protected_help">This Gerrit is protected and requires you to sign in before you can view changes. If you do not know your username/password, you can generate one on %s.</string>
 </resources>

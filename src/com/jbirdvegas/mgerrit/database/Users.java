@@ -203,4 +203,11 @@ public class Users extends DatabaseTable {
         Uri uri = DBParams.insertWithReplace(CONTENT_URI);
         context.getContentResolver().insert(uri, userValues);
     }
+
+    public static void logout(Context context) {
+        ContentValues userValues = new ContentValues(2);
+        userValues.putNull(C_USENRAME);
+        userValues.putNull(C_PASSWORD);
+        context.getContentResolver().update(CONTENT_URI, userValues, C_USENRAME + " IS NOT NULL AND " + C_PASSWORD + " IS NOT NULL", null);
+    }
 }

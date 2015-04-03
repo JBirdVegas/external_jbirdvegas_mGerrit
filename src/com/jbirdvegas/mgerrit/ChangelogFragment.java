@@ -113,7 +113,7 @@ public class ChangelogFragment extends Fragment {
         // use Volley to get our packages list
         Log.d(TAG, "Calling: " + mQuery);
 
-        mRequestQueue.add(
+        /*mRequestQueue.add(
                 new JsonObjectRequest(
                         Request.Method.GET,
                         mQuery,
@@ -126,7 +126,7 @@ public class ChangelogFragment extends Fragment {
                                 mParent.setProgressBarIndeterminateVisibility(false);
                             }
                         }));
-        mRequestQueue.start();
+        mRequestQueue.start();*/
     }
 
     private void setupList(List<GooFileObject> gooFilesList) {

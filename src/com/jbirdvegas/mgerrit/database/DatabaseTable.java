@@ -79,6 +79,7 @@ public abstract class DatabaseTable {
         UserMessageList, UserMessageID,
         UserReviewersList, UserReviewersID,
         UsersList, UsersID,
+        StarredChangesList, StarredChangesID
     }
 
     // Add each DatabaseTable class here, we need to add the virtual tables as well
@@ -101,6 +102,7 @@ public abstract class DatabaseTable {
         tables.add(UserMessage.class);
         tables.add(UserReviewers.class);
         tables.add(Users.class);
+        tables.add(StarredChanges.class);
     }
 
     /* Gathers information from the DatabaseTable classes to help implement the
