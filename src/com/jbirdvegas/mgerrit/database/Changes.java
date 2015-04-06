@@ -63,6 +63,8 @@ public class Changes extends DatabaseTable {
     // The name of the target branch. The refs/heads/ prefix is omitted.
     public static final String C_BRANCH = "branch";
 
+    public static final String C_IS_STARRED = "starred";
+
     public static final String[] PRIMARY_KEY = { C_CHANGE_ID };
 
     public static final int ITEM_LIST = UriType.ChangesList.ordinal();
@@ -97,6 +99,7 @@ public class Changes extends DatabaseTable {
                 + C_TOPIC + " text, "
                 + C_BRANCH + " text, "
                 + C_COMMIT_NUMBER + " INTEGER NOT NULL, "
+                + C_IS_STARRED + " INTEGER NOT NULL DEFAULT 0, "
                 + "FOREIGN KEY (" + C_OWNER + ") REFERENCES "
                     + Users.TABLE + "(" + Users.C_ACCOUNT_ID + "), "
                 + "FOREIGN KEY (" + C_PROJECT + ") REFERENCES "

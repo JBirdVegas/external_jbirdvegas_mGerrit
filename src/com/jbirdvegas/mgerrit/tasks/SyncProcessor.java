@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -152,16 +153,16 @@ abstract class SyncProcessor<T> {
         GsonRequest request = new GsonRequest<>(url, gson, getType(), 5,
                 getListener(url), new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Tools.launchSignin(mContext);
+            public void onErrorResponse(VolleyError error) {
+                if (error instanceof AuthFailureError) {
+                    Tools.launchSignin(mContext);
+                }
                 // We still want to post the exception
                 // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
-                GerritMessage ev = new ErrorDuringConnection(mIntent, url, getStatus(), volleyError);
+                GerritMessage ev = new ErrorDuringConnection(mIntent, url, getStatus(), error);
                 EventQueue.getInstance().enqueue(ev, true);
             }
         });
-
-        setUsernamePasswordOnRequest(requestBuilder, request);
 
         fetchData(requestBuilder, request, queue);
     }
@@ -169,9 +170,8 @@ abstract class SyncProcessor<T> {
     protected void fetchData(final RequestBuilder requestBuilder, Authenticateable<T> request, RequestQueue queue) {
         if (queue == null) queue = Volley.newRequestQueue(getContext());
 
-        setUsernamePasswordOnRequest(requestBuilder, request);
-
         mEventBus.post(new StartingRequest(mIntent, requestBuilder.toString(), getStatus()));
+        setUsernamePasswordOnRequest(requestBuilder, request);
         queue.add(request);
     }
 
@@ -219,6 +219,32 @@ abstract class SyncProcessor<T> {
                 request.setHttpBasicAuth(username, password);
             } else {
                 return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if we have either provided or stored a username/password we can authenticate with.
+     * If so, set this on the intent and make sure the request is using the authenticated URL
+     * @param requestBuilder A RequestBuilder used to build the URL
+     * @return Whether we are authenticating as part of the request
+     */
+    protected boolean attemptAuthenticatedRequest(RequestBuilder requestBuilder) {
+        if (!requestBuilder.isAuthenticating()) {
+            String username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
+            String password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
+            if (username == null || password == null) {
+                AccountInfo ai = Users.getUser(mContext, null);
+                if (ai != null) {
+                    requestBuilder.setAuthenticating(true);
+                    mIntent.putExtra(GerritService.HTTP_USERNAME, ai.username);
+                    mIntent.putExtra(GerritService.HTTP_PASSWORD, ai.password);
+                } else {
+                    return false;
+                }
+            } else {
+                requestBuilder.setAuthenticating(true);
             }
         }
         return true;

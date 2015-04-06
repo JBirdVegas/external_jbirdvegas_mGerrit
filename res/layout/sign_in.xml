@@ -82,6 +82,8 @@
         android:layout_height="60dp"
         android:id="@+id/btnLogout"
         android:text="logout"
-        style="?attr/signinButtonStyle" />
+        style="?attr/signinButtonStyle"
+        android:onClick="onLogout"
+        android:visibility="gone"/>
 
 </LinearLayout>

@@ -39,6 +39,8 @@ import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
+import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.ArrayList;
@@ -53,6 +55,10 @@ public class SigninActivity extends FragmentActivity
     private TextView txtUser, txtPass;
     private ActionProcessButton btnSignIn;
 
+    // Whether this activity is already running. As we launch this automatically when a request
+    // requires authentication, we don't want to launch this if it is currently being shown.
+    private static boolean mActive = false;
+
     public static String CLOSE_ON_SUCCESSFUL_SIGNIN = "close on success";
     private boolean closeOnSuccess = false;
     private boolean isProtected = false;
@@ -60,6 +66,7 @@ public class SigninActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActive = true;
 
         setTheme(Prefs.getCurrentThemeID(this));
 
@@ -104,12 +111,14 @@ public class SigninActivity extends FragmentActivity
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().registerSticky(this);
+        mActive = true;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        mActive = false;
     }
 
     @Override
@@ -130,8 +139,7 @@ public class SigninActivity extends FragmentActivity
         Intent it = new Intent(this, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Account);
         it.putExtra(GerritService.URL_KEY, url);
-        it.putExtra(GerritService.HTTP_USERNAME, txtUser.getText().toString());
-        it.putExtra(GerritService.HTTP_PASSWORD, txtPass.getText().toString());
+        addUsernamePasswordToIntent(it, null, null);
         startService(it);
     }
 
@@ -156,6 +164,7 @@ public class SigninActivity extends FragmentActivity
 
             btnSignIn.setProgress(100);
             findViewById(R.id.txtAuthFailure).setVisibility(View.GONE);
+            findViewById(R.id.btnLogout).setVisibility(View.VISIBLE);
         }
     }
 
@@ -167,17 +176,36 @@ public class SigninActivity extends FragmentActivity
     public void onEventMainThread(SigninCompleted ev) {
         btnSignIn.setProgress(100);
         findViewById(R.id.txtAuthFailure).setVisibility(View.GONE);
+        findViewById(R.id.btnLogout).setVisibility(View.VISIBLE);
+
+        String username = ev.getUsername();
+        String password = ev.getPassword();
 
         // Sign in successful, retry all the error messages we have queued
-
         EventQueue errorQueue = EventQueue.getInstance();
         ErrorDuringConnection error;
         do {
             error = (ErrorDuringConnection) errorQueue.dequeueWithError(AuthFailureError.class);
             if (error != null) {
-                startService(error.getIntent());
+                Intent it = error.getIntent();
+                // Exclude account info checks as these are to check the login is correct
+                if (it.getSerializableExtra(GerritService.DATA_TYPE_KEY) != GerritService.DataType.Account) {
+                    // The intent may have already had the username and password included, so overwrite these with the latest
+                    addUsernamePasswordToIntent(it, username, password);
+                    startService(it);
+                }
             }
         } while (error != null);
+
+        // Get the starred changes
+        RequestBuilder starredUrl = ChangeEndpoints.starred().setLimit(this.getResources().getInteger(R.integer.changes_limit));
+        Intent it = new Intent(this, GerritService.class);
+        it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
+        it.putExtra(GerritService.URL_KEY, starredUrl);
+        it.putExtra(GerritService.CHANGES_LIST_DIRECTION, GerritService.Direction.Older);
+        addUsernamePasswordToIntent(it, username, password);
+        startService(it);
+
 
         if (closeOnSuccess) {
             // If this activity was started automatically, then we should close it and show a toast
@@ -188,10 +216,21 @@ public class SigninActivity extends FragmentActivity
 
     public void onEventMainThread(ErrorDuringConnection ev) {
         btnSignIn.setProgress(-1);
-        if (ev.getException().getClass() == com.android.volley.AuthFailureError.class) {
+        if (ev.getException().getClass() == AuthFailureError.class) {
             findViewById(R.id.txtAuthFailure).setVisibility(View.VISIBLE);
         }
     }
 
+    private Intent addUsernamePasswordToIntent(Intent it, String username, String password) {
+        if (username == null) username = txtUser.getText().toString();
+        if (password == null) password = txtPass.getText().toString();
+        it.putExtra(GerritService.HTTP_USERNAME, username);
+        it.putExtra(GerritService.HTTP_PASSWORD, password);
+        return it;
+    }
+
+    public static boolean isActive() {
+        return mActive;
+    }
 
 }

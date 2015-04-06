@@ -57,6 +57,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
             ServerVersion version = Config.getServerVersion(context);
             if (version == null || !version.isFeatureSupported("2.8.1")) setResumableUrl();
         }
+        attemptAuthenticatedRequest(url);
     }
 
     @Override
@@ -71,7 +72,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
     boolean isSyncRequired(Context context) {
         // Are we already fetching changes for this status?
         if (areFetchingChangesForStatus(getQuery())) return false;
-
+        else if (getQuery() == null) return true; // If we have not specified a status we are doing a query on all past changes
         else if (mDirection == Direction.Older) return true;
 
         long syncInterval = context.getResources().getInteger(R.integer.changes_sync_interval);

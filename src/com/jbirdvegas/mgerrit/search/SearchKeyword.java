@@ -54,6 +54,7 @@ public abstract class SearchKeyword implements Parcelable {
         _CLASSES = new HashSet<>();
 
         // Add each search keyword here
+        _CLASSES.add(IsSearch.class);
         _CLASSES.add(ChangeSearch.class);
         _CLASSES.add(SubjectSearch.class);
         _CLASSES.add(ProjectSearch.class);
@@ -134,7 +135,11 @@ public abstract class SearchKeyword implements Parcelable {
                 Constructor<? extends SearchKeyword> constructor;
                 try {
                     constructor = entry.getValue().getDeclaredConstructor(String.class);
-                    return constructor.newInstance(param);
+                    SearchKeyword keyword = constructor.newInstance(param);
+                    List<String> params = keyword.whiteListedParameters(); // TODO: This calls the base SearchKeyword method not the child one.
+                    if (params == null || params.contains(param)) {
+                        return keyword;
+                    }
                 } catch (Exception e) {
                     Log.e(TAG, "Could not call constructor for " + name, e);
                 }
@@ -238,6 +243,16 @@ public abstract class SearchKeyword implements Parcelable {
         return "";
     }
 
+    /**
+     * Allows specifing a list of whitelisted parameters for this search keyword.
+     *  If the parameter does not match one of the listed white parameters when building
+     *  the token from a string an instance of this search keyword will not be created.
+     * @return A list of whitelisted parameters. Returns null if all parameters are allowed (default)
+     */
+    public List<String> whiteListedParameters() {
+        return null;
+    }
+
     public static String replaceKeyword(final String query, final SearchKeyword keyword) {
         Set<SearchKeyword> tokens = SearchKeyword.constructTokens(query);
         tokens = replaceKeyword(tokens, keyword);
@@ -339,6 +354,13 @@ public abstract class SearchKeyword implements Parcelable {
 
     /* Whether this query can return more than one result */
     public boolean multipleResults() {
+        return false;
+    }
+
+    /** Whether performing this query requires the user is authenticated.
+     * This will only affect querying the server for more results
+     */
+    public boolean requiresAuthentication() {
         return false;
     }
 

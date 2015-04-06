@@ -46,7 +46,7 @@ public class AccountProcessor extends SyncProcessor<AccountInfo> {
         data.password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
         Users.setUserDetails(mContext, data);
         Log.d(this.getClass().getName(), "You have successfully signed in: " + data.name + "(" + data.email + ")");
-        EventBus.getDefault().post(new SigninCompleted(mIntent, mUrl));
+        EventBus.getDefault().post(new SigninCompleted(mIntent, mUrl, data.username, data.password));
         return 1;
     }
 

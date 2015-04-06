@@ -23,6 +23,7 @@ import android.os.Parcelable;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
+import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
 import org.jetbrains.annotations.Nullable;
@@ -82,12 +83,22 @@ public class ChangeEndpoints extends RequestBuilder implements Parcelable {
         if (mSearchKeywords == null) {
             mSearchKeywords = new HashSet<>();
         }
+        if (keyword.requiresAuthentication()) {
+            setAuthenticating(true);
+        }
         mSearchKeywords.add(keyword);
     }
 
     public void addSearchKeywords(Set<SearchKeyword> keywords) {
         if (keywords == null) return;
         for (SearchKeyword keyword : keywords) addSearchKeyword(keyword);
+    }
+
+    public static ChangeEndpoints starred() {
+        ChangeEndpoints ce = new ChangeEndpoints();
+        ce.addSearchKeyword(new IsSearch("starred"));
+        ce.setAuthenticating(true);
+        return ce;
     }
 
     public void setStatus(String status) {
@@ -157,19 +168,12 @@ public class ChangeEndpoints extends RequestBuilder implements Parcelable {
             throws UnsupportedEncodingException {
         ServerVersion version = Config.getServerVersion(sContext);
         if (mSearchKeywords != null && !mSearchKeywords.isEmpty()) {
-            if (addSeperator) {
-                builder.append('+');
-                addSeperator = false;
-            }
             for (SearchKeyword keyword : mSearchKeywords) {
-
-                if (addSeperator) {
-                    builder.append('+');
-                    addSeperator = false;
-                }
-
                 String operator =  URLEncoder.encode(keyword.getGerritQuery(version), "UTF-8");
                 if (operator != null && !operator.isEmpty()) {
+                    if (addSeperator) {
+                        builder.append('+');
+                    }
                     builder.append(operator);
                     addSeperator = true;
                 }
@@ -246,6 +250,7 @@ public class ChangeEndpoints extends RequestBuilder implements Parcelable {
         dest.writeInt(mRequestDetailedAccounts ? 1 : 0);
         dest.writeString(mSortkey);
         dest.writeString(mRequestChangeDetail.name());
+        dest.writeInt(isAuthenticating() ? 1 : 0);
 
         int size;
         if (mSearchKeywords == null) size = 0;
@@ -265,6 +270,7 @@ public class ChangeEndpoints extends RequestBuilder implements Parcelable {
         mRequestDetailedAccounts = in.readInt() == 1;
         mSortkey = in.readString();
         mRequestChangeDetail = ChangeDetailLevels.valueOf(in.readString());
+        setAuthenticating(in.readInt() == 1);
 
         int size = in.readInt();
         if (size > 0) {

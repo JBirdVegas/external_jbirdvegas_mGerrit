@@ -276,7 +276,7 @@ public class Tools {
     public static void launchSignin(Context context) {
         // We don't want to open the sign in screen multiple times
         // If the sign in activity is open it will be registered.
-        if (!EventBus.getDefault().isRegistered(SigninActivity.class)) {
+        if (!EventBus.getDefault().isRegistered(SigninActivity.class) && !SigninActivity.isActive()) {
             // We have an invalid username or password so launch the sign in activity to request a new one
             Intent intent = new Intent(context, SigninActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

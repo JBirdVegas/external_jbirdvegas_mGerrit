@@ -91,7 +91,7 @@ public class UserChanges extends DatabaseTable {
     public static final String C_NAME = Users.C_NAME;
 
     // Virtual column set by the existance of this change in the StarredChanges table
-    public static final String C_STARRED = String.format("(%s.%s = %s.%s) AS is_starred", Changes.TABLE, Changes.C_CHANGE_ID, StarredChanges.TABLE, StarredChanges.C_CHANGE_ID);
+    public static final String C_STARRED = Changes.C_IS_STARRED;
 
 
     // --- Content Provider stuff ---
@@ -139,9 +139,6 @@ public class UserChanges extends DatabaseTable {
         List<ContentValues> values = new ArrayList<>();
         Set<CommitterObject> committers = new HashSet<>();
 
-        // List of starred changes to be inserted seperately
-        List<JSONCommit> starred = new ArrayList<>();
-
         for (JSONCommit commit : commits) {
             ContentValues row = new ContentValues(9);
 
@@ -155,20 +152,15 @@ public class UserChanges extends DatabaseTable {
             row.put(C_STATUS, commit.getStatus().toString());
             row.put(C_TOPIC, commit.getTopic());
             row.put(C_BRANCH, commit.getBranch());
+            row.put(C_STARRED, commit.isStarred());
             values.add(row);
 
             committers.add(commit.getOwnerObject());
-
-            if (commit.isStarred()) starred.add(commit);
         }
 
         // Insert the list of users into the database as well.
         CommitterObject usersArray[] = new CommitterObject[committers.size()];
         Users.insertUsers(context, committers.toArray(usersArray));
-
-        if (starred.size() > 0) {
-            StarredChanges.insertChanges(context, starred);
-        }
 
         // Now insert the commits
         Uri uri = DBParams.insertWithReplace(Changes.CONTENT_URI);
@@ -296,8 +288,6 @@ public class UserChanges extends DatabaseTable {
         context.getContentResolver().registerContentObserver(Users.CONTENT_URI, true,
                 mObserver);
         context.getContentResolver().registerContentObserver(Changes.CONTENT_URI, true,
-                mObserver);
-        context.getContentResolver().registerContentObserver(StarredChanges.CONTENT_URI, true,
                 mObserver);
     }
 

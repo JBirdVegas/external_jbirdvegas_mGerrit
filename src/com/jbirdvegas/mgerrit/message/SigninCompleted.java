@@ -23,7 +23,20 @@ import com.jbirdvegas.mgerrit.objects.GerritMessage;
 
 public class SigninCompleted extends GerritMessage {
 
-    public SigninCompleted(Intent intent, String url) {
+    private final String mUsername;
+    private final String mPassword;
+
+    public SigninCompleted(Intent intent, String url, String username, String password) {
         super(intent, url, "success");
+        this.mUsername = username;
+        this.mPassword = password;
+    }
+
+    public String getUsername() {
+        return mUsername;
+    }
+
+    public String getPassword() {
+        return mPassword;
     }
 }

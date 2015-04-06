@@ -35,8 +35,9 @@ public abstract class RequestBuilder implements Parcelable
     /**
      * @param limit The maximum number of changes to include in the response
      */
-    public void setLimit(int limit) {
+    public RequestBuilder setLimit(int limit) {
         this.mLimit = limit;
+        return this;
     }
 
     public int getLimit() {

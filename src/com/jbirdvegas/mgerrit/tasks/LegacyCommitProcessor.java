@@ -27,6 +27,7 @@ class LegacyCommitProcessor extends SyncProcessor<JSONCommit[]> {
 
     LegacyCommitProcessor(Context context, Intent intent, RequestBuilder url) {
         super(context, intent, url);
+        attemptAuthenticatedRequest(url);
     }
 
     @Override

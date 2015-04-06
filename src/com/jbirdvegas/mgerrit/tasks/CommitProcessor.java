@@ -36,6 +36,7 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
 
     CommitProcessor(Context context, Intent intent, RequestBuilder url) {
         super(context, intent, url);
+        attemptAuthenticatedRequest(url);
     }
 
     @Override
