@@ -41,7 +41,6 @@ public class GravatarHelper {
         String url = getGravatarUrl(email);
 
         if (url != null) {
-            Log.d(TAG, "Gravatar url called: " + url);
             GravatarHelper.imageVolleyRequest(imageView, url, imageRequest).start();
             imageView.setVisibility(View.VISIBLE);
         } else {

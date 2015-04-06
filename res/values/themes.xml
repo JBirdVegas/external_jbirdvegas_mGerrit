@@ -48,6 +48,8 @@
         <item name="signinButtonStyle">@style/SignInButton.Light</item>
         <item name="signinErrorStyle">@style/SigninFailure.Light</item>
         <item name="secureIcon">@drawable/ic_action_secure</item>
+        <item name="starredIcon">@drawable/ic_action_starred</item>
+        <item name="unstarredIcon">@drawable/ic_action_unstarred</item>
     </style>
 
     <style name="Theme.Dark" parent="android:style/Theme.Holo">
@@ -80,5 +82,7 @@
         <item name="signinButtonStyle">@style/SignInButton</item>
         <item name="signinErrorStyle">@style/SigninFailure</item>
         <item name="secureIcon">@drawable/ic_action_secure_dark</item>
+        <item name="starredIcon">@drawable/ic_action_starred_dark</item>
+        <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
     </style>
 </resources>

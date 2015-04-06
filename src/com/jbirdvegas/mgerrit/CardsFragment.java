@@ -152,10 +152,10 @@ public abstract class CardsFragment extends Fragment
         // Setup the list
         int[] to = new int[] { R.id.commit_card_title, R.id.commit_card_commit_owner,
                 R.id.commit_card_project_name, R.id.commit_card_last_updated,
-                R.id.commit_card_commit_status };
+                R.id.commit_card_commit_status, R.id.commit_card_committer_image };
 
         String[] from = new String[] { UserChanges.C_SUBJECT, UserChanges.C_NAME,
-                UserChanges.C_PROJECT, UserChanges.C_UPDATED, UserChanges.C_STATUS };
+                UserChanges.C_PROJECT, UserChanges.C_UPDATED, UserChanges.C_STATUS, UserChanges.C_EMAIL };
 
         mListView = (ExpandableStickyListHeadersListView) mCurrentFragment.findViewById(R.id.commit_cards);
         registerForContextMenu(mListView);

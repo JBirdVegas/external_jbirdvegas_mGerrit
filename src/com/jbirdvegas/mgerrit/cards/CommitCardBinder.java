@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.cards;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -80,9 +81,17 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
                     Prefs.setTrackingUser(mContext, (Integer) v.getTag());
                 }
             });
-            GravatarHelper.attachGravatarToTextView(owner,
-                    cursor.getString(useremail_index),
+        } else if (view.getId() == R.id.commit_card_committer_image) {
+            ImageView imageView = (ImageView) view;
+            GravatarHelper.populateProfilePicture((ImageView) view, cursor.getString(useremail_index),
                     mRequestQuery);
+            imageView.setTag(cursor.getInt(userid_index));
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Prefs.setTrackingUser(mContext, (Integer) v.getTag());
+                }
+            });
         } else if (view.getId() == R.id.commit_card_project_name) {
             final TextView project = (TextView) view;
             project.setText(cursor.getString(columnIndex));
