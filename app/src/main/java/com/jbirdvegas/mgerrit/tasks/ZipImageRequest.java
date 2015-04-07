@@ -103,17 +103,17 @@ public class ZipImageRequest extends Request<Bitmap> {
         mListener.onResponse(bitmap);
     }
 
-    /** Format: <Gerrit>/cat/<change number>,<revision number>,<path>^<parent>
+    /** Format: <Gerrit>/cat/<change number>,<mRevision number>,<path>^<parent>
      * Gerrit: The current Gerrit instance
      * Change number: The change number of the change where the file was added/modified/removed
-     * Revision number: The revision number
+     * Revision number: The mRevision number
      * Path: Full file path of the file to retreive
      * Parent: 0 to get new file (added), 1 to get old file (removed)
      */
     public static String getBinaryDownloadUrl(Context context, int changeNumber,
                                               int patchSetNumber, String path, boolean wasDeleted)
             throws UnsupportedEncodingException {
-        // Url Encoding must be applied to the change and revision args
+        // Url Encoding must be applied to the change and mRevision args
         String needsEncoded = URLEncoder.encode(String.format("%d,%d", changeNumber, patchSetNumber),
                 DEFAULT_CHARSET);
         // Url Encoding must also be applied to the postpended arg

@@ -27,7 +27,7 @@ import com.jbirdvegas.mgerrit.R;
 import java.util.List;
 
 /**
- * Contains information about a revision or patch set. This condenses both
+ * Contains information about a mRevision or patch set. This condenses both
  *  the RevisionInfo and CommitInfo objects together into the one level
  */
 public class CommitInfo {
