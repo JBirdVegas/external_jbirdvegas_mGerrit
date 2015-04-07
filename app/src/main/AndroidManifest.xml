@@ -17,12 +17,10 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.jbirdvegas.mgerrit"
-          android:versionCode="211000"
-          android:versionName="2.11.000">
+          package="com.jbirdvegas.mgerrit">
+    <!-- versionName  & versionCode are managed by gradle -->
 
-    <uses-sdk android:minSdkVersion="14"
-        android:targetSdkVersion="21"/>
+    <!-- uses-sdk is managed by grale -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
