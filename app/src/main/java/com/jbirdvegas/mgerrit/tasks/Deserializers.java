@@ -112,7 +112,7 @@ public final class Deserializers {
                 }
             }
 
-            // If we don't have a revision number, there is no further information
+            // If we don't have a mRevision number, there is no further information
             String currentRevision = commit.getCurrentRevision();
             if (currentRevision == null) return commit;
 

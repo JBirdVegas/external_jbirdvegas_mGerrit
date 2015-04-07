@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Contains information about a file in a patch set (revision)
+ * Contains information about a file in a patch set (mRevision)
  */
 public class FileInfoTable extends DatabaseTable {
 

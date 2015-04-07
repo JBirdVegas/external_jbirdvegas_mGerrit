@@ -49,7 +49,7 @@ public class ZipRequest extends Request<String> {
      *  UTF-8 encoding.
      *
      * @param changeNumber index of change provided by gerrit
-     * @param patchSetNumber revision number of change
+     * @param patchSetNumber mRevision number of change
      * @param listener Listener to receive the decoded diff string
      * @param errorListener Error listener, or null to ignore errors
      */
