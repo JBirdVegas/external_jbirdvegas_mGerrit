@@ -14,25 +14,25 @@ We will NEVER collect any personally identifiable information (this is
 Information collected and how it is used
 ----------------------------------------
 - The Current ROM being used:
- Agregate data may be collected on what ROM is being used by the
+ Aggregate data may be collected on what ROM is being used by the
   user. This will be used to determine what ROMs people who are
   most active on Gerrit use and to change the Gerrit instances which
   mGerrit officially supports.
 - The current Gerrit that is being used
- Agregate data used in a similar way to the data collected on the
+ Aggregate data used in a similar way to the data collected on the
   current ROM being used. If one Gerrit instance that is not officially
   supported is regularly used, officially supporting it may be considered
   even if the server Gerrit version does not meet the minimum standard.
 - Data transfer statistics:
  Statistics on how long the server takes to respond to requests, time
   taken to process the responses and error rates can be collected. This
-  data can then be used to assist implementing data and batery optimisation
-  strategies such as reducing the data transfered when using mobile data
+  data can then be used to assist implementing data and battery optimisation
+  strategies such as reducing the data transferred when using mobile data
   compared to a WiFi connection.
 - Decoding failures
  Collecting data on failures processing server responses, particularly change
   diffs will help improve the decoding algorithms used to decode similar
-  server respones.
+  server responses.
 - Search queries and the number of results returned:
  Collecting data on the way users write search queries will allow optimisation
   of search processing in mGerrit, adding support for more keywords and aliasing
