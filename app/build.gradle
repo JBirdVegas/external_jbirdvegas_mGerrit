@@ -150,8 +150,7 @@ task tagRelease << {
 tagRelease.dependsOn 'clean', 'build', 'pushReleaseFiles'
 
 task pushReleaseFiles << {
-    git push --set-upstream origin jenkinsBranch
-    Set<String> paths = new TreeSet<>()
+    def git = Grgit.open(project.file(project.getRootProject().path))
     git.add(patterns: ["${project.rootDir}/version.properties"])
     git.commit(message: "Update version to latest build: ${versionHolder}")
     git.push(all:false, remote: 'origin')
