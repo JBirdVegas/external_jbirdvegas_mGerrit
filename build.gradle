@@ -19,32 +19,27 @@ repositories {
     mavenCentral()
 }
 
-// Holder for versionCode
-String versionHolder
-String releaseTag = "-release"
-boolean performRelease = false
-
 dependencies {
     compile files('libs/android-support-v4.jar')
-    compile files('libs/libGoogleAnalyticsServices.jar')
     compile files('libs/annotations.jar')
-    compile 'com.nineoldandroids:library:2.4.0'
+    compile files('libs/libGoogleAnalyticsServices.jar')
 
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.mcxiaoke.volley:library:1.0.12'
-    compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'joda-time:joda-time:2.7'
-
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
-
-    compile 'se.emilsjolander:stickylistheaders:2.5.2'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'joda-time:joda-time:2.7'
     compile 'org.ajoberstar:gradle-git:1.1.0'
+    compile 'se.emilsjolander:stickylistheaders:2.5.2'
 }
+def versionHolder
+def releaseTag = '-RELEASE'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion '22'
+    buildToolsVersion '22.0.1'
     // compile Using Java 7
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -69,10 +64,11 @@ android {
             minifyEnabled false
             proguardFile 'proguard-project.txt'
             signingConfig signingConfigs.release
-            lintOptions {
-                abortOnError false
-            }
+
         }
+    }
+    lintOptions {
+        abortOnError false
     }
     packagingOptions {
         exclude 'plugin.properties'
@@ -83,27 +79,25 @@ android {
         versionProps.load(new FileInputStream(versionPropsFile))
         String full = versionProps['version'].toString()
         versionHolder = full
-        if (versionHolder.endsWith(releaseTag)) {
-            println('Release tag found... performing release build')
-            performRelease = true
-            full = full.substring(0, releaseTag.length())
-        }
-        String[] parts = full.split('\\.')
-        println("Version parts: " + parts.toString())
-        int last = parts[parts.length - 1].toInteger() + 1
-        parts[parts.length - 1] = String.format("%03d", last);
-        StringBuilder builder = new StringBuilder(0);
-        for (int i = 0; i < parts.length; i++) {
-            builder.append(parts[i])
-            if (i != parts.length - 1) {
-                builder.append('.')
+        if (project.hasProperty('incrementVersion')) {
+            if (incrementVersion) {
+                String[] parts = full.split('\\.')
+                println("Original version: " + parts.toString())
+                parts[parts.length - 1] = parts[parts.length - 1].toInteger() + 1
+                println("Incremented version: " + parts.toString())
+                StringBuilder builder = new StringBuilder()
+                for (int i = 0; i < parts.length; i++) {
+                    if (i == 0) {
+                        builder.append(parts[i])
+                    } else {
+                        builder.append(String.format("%03d", parts[i].toInteger()))
+                    }
+                }
+                versionProps.save(new FileOutputStream(versionPropsFile), "mGerrit release version")
+                versionHolder = builder.toString()
             }
         }
-        versionHolder = builder.toString()
-        versionProps['version'] = versionHolder
-        if (getCurrentBranch().equalsIgnoreCase('master')) {
-            versionProps.store(versionPropsFile.newWriter(), null)
-        }
+
         defaultConfig {
             versionCode versionHolder.replaceAll("\\.", "").toInteger()
             versionName String.format("%s-%s", getCurrentBranch(), versionHolder)
@@ -148,31 +142,21 @@ if (props.containsKey('storeFile') &&
 
 import org.ajoberstar.grgit.*
 
-ext.repo = Grgit.open(project.file('.'))
-
 task tagRelease << {
-    repo.tag.add {
+    def grgit = Grgit.open(project.file('.'))
+    String message = "Release of v${versionHolder}"
+    grgit.tag.add(name: "v${versionHolder}", message: message)
+    //grgit.tag.add(name: tagName)
+    grgit.push(remote: 'origin', refsOrSpecs: ["refs/tags/v${versionHolder}:refs/tags/v${versionHolder}"])
+
+    /*.add {
         name = versionHolder
         message = "Release of ${versionHolder}"
         annotate = true
-    }
+    }*/
 }
 
-tagRelease.dependsOn 'verifyReleasableBuild'
-
-task verifyReleasableBuild << {
-    if (getCurrentBranch().equalsIgnoreCase('master')) {
-        println('Master branch detected!')
-    } else {
-        throw new GradleException("Release cannot be performed from a branch other than master.")
-    }
-
-    if (versionHolder.endsWith(releaseTag)) {
-        println('Release tag found... performing release build')
-    } else {
-        throw new GradleException("Version tag denoting a release was not found. Aborting release")
-    }
-}
+//tagRelease.dependsOn 'clean', 'build'
 
 task pushReleaseFiles << {
     def git = Grgit.open(project.file('.'))
