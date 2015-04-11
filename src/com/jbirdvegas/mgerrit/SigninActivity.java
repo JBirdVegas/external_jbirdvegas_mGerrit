@@ -32,7 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.VolleyError;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
@@ -42,9 +41,6 @@ import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
 import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
 import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 

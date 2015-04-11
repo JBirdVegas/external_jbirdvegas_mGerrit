@@ -105,8 +105,9 @@
                     android:layout_weight="1"/>
 
                 <ImageButton
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:id="@+id/commit_card_starred"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:src="?attr/unstarredIcon"
                     android:contentDescription="@string/commit_card_star_change"
                     android:layout_gravity="bottom"

@@ -27,4 +27,5 @@
     <item type="id" name="userName" />
     <item type="id" name="project" />
     <item type="id" name="status"/>
+    <item type="id" name="imageRequest" />
 </resources>

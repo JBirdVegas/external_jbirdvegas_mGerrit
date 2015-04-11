@@ -22,6 +22,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.jbirdvegas.mgerrit.helpers.Tools;
+
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +78,12 @@ class DBHelper extends SQLiteOpenHelper {
             } catch (NoSuchFieldException e) {
                 throw new NoSuchFieldError(DatabaseTable.NO_TABLE_CONST);
             }
+        }
+
+        // We are now cancelling no longer needed profile picture requests.
+        // Clear the cache to make sure the correct pictures are loaded
+        if (oldVersion < 22 && newVersion >= 22) {
+            Tools.trimCache(mContext);
         }
 
         Log.d(TAG, "Database Updated.");

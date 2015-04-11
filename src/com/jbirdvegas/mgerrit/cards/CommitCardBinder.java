@@ -18,8 +18,11 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -85,11 +88,11 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
             ImageView imageView = (ImageView) view;
             GravatarHelper.populateProfilePicture((ImageView) view, cursor.getString(useremail_index),
                     mRequestQuery);
-            imageView.setTag(cursor.getInt(userid_index));
+            imageView.setTag(R.id.user, cursor.getInt(userid_index));
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Prefs.setTrackingUser(mContext, (Integer) v.getTag());
+                    Prefs.setTrackingUser(mContext, (Integer) v.getTag(R.id.user));
                 }
             });
         } else if (view.getId() == R.id.commit_card_project_name) {
@@ -118,6 +121,14 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
             String lastUpdated = cursor.getString(columnIndex);
             TextView textView = (TextView) view;
             textView.setText(prettyPrintDate(mContext, lastUpdated));
+        } else if (view.getId() == R.id.commit_card_starred) {
+            ImageButton imageButton = (ImageButton) view;
+            int starred = cursor.getInt(columnIndex);
+            if (starred == 1) {
+                imageButton.setImageResource(Tools.getResIdFromAttribute(mContext, R.attr.starredIcon));
+            } else {
+                imageButton.setImageResource(Tools.getResIdFromAttribute(mContext, R.attr.unstarredIcon));
+            }
         } else {
             return false;
         }

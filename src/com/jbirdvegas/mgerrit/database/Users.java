@@ -98,11 +98,19 @@ public class Users extends DatabaseTable {
 
         List<ContentValues> values = new ArrayList<>();
 
+        AccountInfo self = getUser(context, null);
+
         for (CommitterObject user : users) {
+            ContentValues row = new ContentValues();
             if (user == null) {
                 continue;
+            } else if (self != null && user.getAccountId() == self._account_id) {
+                // If we find ourself in this list, add in the username and password otherwise the
+                // user will be signed out.
+                row.put(C_USENRAME, self.username);
+                row.put(C_PASSWORD, self.password);
             }
-            ContentValues row = new ContentValues();
+
             row.put(C_ACCOUNT_ID, user.getAccountId());
             row.put(C_EMAIL, user.getEmail());
             String name = user.getName();
@@ -122,10 +130,20 @@ public class Users extends DatabaseTable {
     }
 
     public static Uri insertUser(Context context, int id, String name, String email) {
-        ContentValues userValues = new ContentValues(3);
+        ContentValues userValues = new ContentValues();
+        AccountInfo self = getUser(context, null);
+
         userValues.put(C_ACCOUNT_ID, id);
         userValues.put(C_EMAIL, email);
         userValues.put(C_NAME, name);
+
+        if (self != null && id == self._account_id) {
+            // If we find ourself in this list, add in the username and password otherwise the
+            // user will be signed out.
+            userValues.put(C_USENRAME, self.username);
+            userValues.put(C_PASSWORD, self.password);
+        }
+
         Uri uri = DBParams.insertWithReplace(CONTENT_URI);
         return context.getContentResolver().insert(uri, userValues);
     }
@@ -169,7 +187,7 @@ public class Users extends DatabaseTable {
         Cursor c;
         AccountInfo ai = null;
 
-        if (userid == null) {
+        if (userid == null || userid < 0) {
             // If the user id is null then we will treat this as a call to get self
             //  i.e. the currently logged in user
             c = context.getContentResolver().query(uri,
