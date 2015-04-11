@@ -87,6 +87,10 @@ android {
                 }
                 versionProps.store(new FileOutputStream(versionPropsFile), "mGerrit release version")
                 versionHolder = builder.toString()
+                def git = Grgit.open("${project.rootDir}")
+                // Jenkins won't be on master at this point... move to master before attempting to commit anything
+                // you can't commit from a detached HEAD.
+                git.branch.change(name: 'master', startPoint: 'origin/master', mode: BranchChangeOp.Mode.TRACK)
             }
         }
 
@@ -132,7 +136,9 @@ if (props.containsKey('storeFile') &&
     android.buildTypes.release.signingConfig = null
 }
 
-import org.ajoberstar.grgit.*
+
+import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.grgit.operation.BranchChangeOp
 
 task tagRelease << {
     def grgit = Grgit.open(project.file(project.getRootProject().path))
@@ -144,7 +150,6 @@ task tagRelease << {
 tagRelease.dependsOn 'clean', 'build', 'pushReleaseFiles'
 
 task pushReleaseFiles << {
-    def git = Grgit.open("${project.rootDir}")
     Set<String> paths = new TreeSet<>()
     paths.add(new File("${project.rootDir}", 'version.properties').absolutePath)
     git.add(patterns: ["${project.rootDir}/version.properties"])
