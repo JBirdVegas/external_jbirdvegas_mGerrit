@@ -146,20 +146,19 @@ task tagRelease << {
     def grgit = Grgit.open(project.file('.'))
     String message = "Release of v${versionHolder}"
     grgit.tag.add(name: "v${versionHolder}", message: message)
+    grgit.push(tags: true, refsOrSpecs: ["refs/tags/v${versionHolder}:refs/tags/v${versionHolder}"])
 }
 
-tagRelease.dependsOn 'clean', 'build'
+tagRelease.dependsOn 'clean', 'build', 'pushReleaseFiles'
 
 task pushReleaseFiles << {
     def git = Grgit.open(project.file('.'))
     Set<String> paths = new TreeSet<>()
-    paths.add(new File(project.file('.'), 'version.properties').absolutePath)
+    paths.add(new File('version.properties').absolutePath)
     git.add(patterns: ['version.properties', project.file('.').getAbsolutePath()])
-    git.commit(all: true, message: "Update version to latest build: ${versionHolder}")
-    git.push(tags: true)
-    git.push(remote: 'origin', refsOrSpecs: ["refs/tags/v${versionHolder}:refs/tags/v${versionHolder}"])
+    git.commit(message: "Update version to latest build: ${versionHolder}")
+    git.push(all:false, remote: 'origin')
 }
-pushReleaseFiles.dependsOn 'tagRelease'
 
 def String getCurrentBranch() {
     return Grgit.open(project.file('.')).branch.getCurrent().getName()
