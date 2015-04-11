@@ -1,11 +1,11 @@
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.3'
+        classpath 'com.android.tools.build:gradle:1.1.0'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
+        classpath 'org.ajoberstar:gradle-git:1.1.0'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
     }
 }
@@ -17,22 +17,25 @@ apply plugin: 'checkstyle'
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencies {
     compile files('libs/android-support-v4.jar')
-    compile files('libs/libGoogleAnalyticsServices.jar')
     compile files('libs/annotations.jar')
-    compile 'com.nineoldandroids:library:2.4.0'
+    compile files('libs/libGoogleAnalyticsServices.jar')
+
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.mcxiaoke.volley:library:1.0.10'
-    compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'joda-time:joda-time:2.7'
+    compile 'com.mcxiaoke.volley:library:1.0.12'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'joda-time:joda-time:2.7'
+    compile 'org.ajoberstar:gradle-git:1.1.0'
     compile 'se.emilsjolander:stickylistheaders:2.5.2'
 }
+def versionHolder
+def rootDir = project.getRootProject().path
 
 android {
     compileSdkVersion 22
@@ -43,34 +46,60 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     sourceSets {
-        main {
-            // accept default file structure of android plugin
-        }
+        main {}
     }
     signingConfigs {
         release {}
-    }
-    aaptOptions {
-        failOnMissingConfigEntry true
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFile 'proguard-project.txt'
             signingConfig signingConfigs.release
-            lintOptions {
-                abortOnError false
-            }
+
         }
     }
-    defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 22
-        versionCode VersionInfo.getVersionInfo().getVersionCode()
-        versionName VersionInfo.getVersionInfo().toString()
-        applicationId 'com.jbirdvegas.mgerrit'
+    lintOptions {
+        abortOnError false
     }
-    productFlavors {
+    packagingOptions {
+        exclude 'plugin.properties'
+    }
+    def versionPropsFile = new File("${project.rootDir}", 'version.properties')
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        String full = versionProps['version'].toString()
+        versionHolder = full
+        if (project.hasProperty('incrementVersion')) {
+            if (incrementVersion) {
+                String[] parts = full.split('\\.')
+                println("Original version: " + parts.toString())
+                parts[parts.length - 1] = parts[parts.length - 1].toInteger() + 1
+                println("Incremented version: " + parts.toString())
+                StringBuilder builder = new StringBuilder()
+                for (int i = 0; i < parts.length; i++) {
+                    if (i == 0) {
+                        builder.append(parts[i])
+                    } else {
+                        builder.append(String.format("%03d", parts[i].toInteger()))
+                    }
+                }
+                versionProps.store(new FileOutputStream(versionPropsFile), "mGerrit release version")
+                versionHolder = builder.toString()
+            }
+        }
+
+        defaultConfig {
+            versionCode versionHolder.replaceAll("\\.", "").toInteger()
+            versionName versionHolder
+            minSdkVersion 15
+            targetSdkVersion 22
+            println("versionCode: $versionCode versionName: $versionName")
+        }
+    }
+    else {
+        throw new GradleException("Could not read version.properties!")
     }
 }
 
@@ -85,9 +114,6 @@ task checkstyle(type: Checkstyle) {
     classpath = files()
 }
 
-/*
- * If signing properties file is found then sign with release key
- */
 def Properties props = new Properties()
 def File signingFile = new File('signing.properties')
 
@@ -106,61 +132,32 @@ if (props.containsKey('storeFile') &&
     android.buildTypes.release.signingConfig = null
 }
 
-/**
- * Bump versions for releases
- */
-task incrementRevision << {
-    VersionInfo versionInfo = VersionInfo.getVersionInfo()
-    println(String.format("#Pre - VersionInfo{\n%s\n}", versionInfo.toString()))
-    versionInfo.mRevision++
-    println(String.format("#Post - VersionInfo{\n%s\n}", versionInfo.toString()))
-    versionInfo.storeProperties()
-    return versionInfo
+import org.ajoberstar.grgit.*
+
+task tagRelease << {
+    def grgit = Grgit.open(project.file(project.getRootProject().path))
+    String message = "Release of v${versionHolder}"
+    grgit.tag.add(name: "v${versionHolder}", message: message)
+    grgit.push(tags: true, refsOrSpecs: ["refs/tags/v${versionHolder}:refs/tags/v${versionHolder}"])
 }
 
-incrementRevision.dependsOn 'clean'
+tagRelease.dependsOn 'clean', 'build', 'pushReleaseFiles'
 
-/**
- * Holder class to hold, increment and persist versioning
- */
-public class VersionInfo {
-    public int mMajor;
-    public int mMinor;
-    public int mRevision;
-
-    private static final String VERSION_FILE = 'version.properties'
-    private static final String MAJOR = 'major'
-    private static final String MINOR = 'minor'
-    private static final String REVISION = 'revision'
-    private static final String COMMENT = 'mGerrit release version'
-
-    public static VersionInfo getVersionInfo() {
-        Properties properties = new Properties()
-        properties.load(new FileInputStream(new File(VERSION_FILE)))
-        return new VersionInfo(properties.getProperty(MAJOR), properties.getProperty(MINOR), properties.getProperty(REVISION));
-    }
-
-    private VersionInfo(String maj, String min, String rev) {
-        mMajor = Integer.parseInt(maj)
-        mMinor = Integer.parseInt(min)
-        mRevision = Integer.parseInt(rev)
-    }
-
-    public Properties storeProperties() {
-        Properties properties = new Properties()
-        properties.put(MAJOR, String.valueOf(mMajor))
-        properties.put(MINOR, String.valueOf(mMinor))
-        properties.put(REVISION, String.valueOf(mRevision))
-        properties.store(new FileOutputStream(new File(VERSION_FILE)), COMMENT)
-        return properties
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%d.%d.%04d", mMajor, mMinor, mRevision)
-    }
-
-    public int getVersionCode() {
-        return Integer.parseInt(String.format("%d%d%04d", mMajor, mMinor, mRevision))
-    }
+task pushReleaseFiles << {
+    def git = Grgit.open("${project.rootDir}")
+    Set<String> paths = new TreeSet<>()
+    paths.add(new File("${project.rootDir}", 'version.properties').absolutePath)
+    git.add(patterns: ["${project.rootDir}/version.properties"])
+    git.commit(message: "Update version to latest build: ${versionHolder}")
+    git.push(all:false, remote: 'origin')
 }
+
+def String getCurrentBranch() {
+    return Grgit.open(project.file("${project.rootDir}")).branch.getCurrent().getName()
+}
+
+task fullRelease << {
+    // just an anchor for complete release builds
+}
+
+fullRelease.dependsOn 'pushReleaseFiles'
