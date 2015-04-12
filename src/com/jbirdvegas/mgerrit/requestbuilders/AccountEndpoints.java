@@ -39,6 +39,12 @@ public class AccountEndpoints extends RequestBuilder implements Parcelable {
         return ae;
     }
 
+    public static AccountEndpoints starChange(String changeId) {
+        AccountEndpoints ae = new AccountEndpoints("self/starred.changes/" + changeId);
+        ae.setAuthenticating(true);
+        return ae;
+    }
+
     @Override
     public String getPath() {
         StringBuilder builder = new StringBuilder(0).append("accounts/").append(mUrl);

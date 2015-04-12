@@ -17,6 +17,7 @@ package com.jbirdvegas.mgerrit.database;
  *  limitations under the License.
  */
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -188,5 +189,13 @@ public class Changes extends DatabaseTable {
         if (c.moveToFirst()) changeNo = c.getInt(0);
         c.close();
         return changeNo;
+    }
+
+    public static void starChange(Context context, String changeId, int changeNumber, boolean isStarred) {
+        ContentValues userValues = new ContentValues(1);
+        userValues.put(C_IS_STARRED, isStarred);
+        Uri uri = DBParams.insertWithReplace(CONTENT_URI);
+        context.getContentResolver().update(uri, userValues, C_CHANGE_ID + " = ? AND " + C_COMMIT_NUMBER + " = ?",
+                new String[]{changeId, String.valueOf(changeNumber)});
     }
 }

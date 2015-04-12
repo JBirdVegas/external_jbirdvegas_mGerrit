@@ -101,7 +101,7 @@ class DBHelper extends SQLiteOpenHelper {
         return name.toLowerCase().replaceAll("[^a-z0-9_]+", "") + ".db";
     }
 
-    private static void instantiateTables() {
+    private void instantiateTables() {
         mTables = new ArrayList<>();
         for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
             try {

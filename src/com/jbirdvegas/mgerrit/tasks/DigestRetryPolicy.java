@@ -21,6 +21,8 @@ import android.content.Intent;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Request.Method;
 import com.android.volley.VolleyError;
 
 import org.apache.http.Header;
@@ -43,24 +45,30 @@ import java.util.Map;
 class DigestRetryPolicy extends DefaultRetryPolicy {
 
     public static final int HTTP_UNAUTHORIZED = 401;
-    private int retryCount;
+    private final Request mRequest;
+    private int MAX_RETRY_COUNT = 1;
     private Map<String, String> mChallengeHeaders;
 
     public static String DIGEST_AUTH_HEADER_NAME = "WWW-Authenticate";
-    public static String REQUEST_METHOD = "GET";
     private Intent mResolutionIntent;
 
-    public DigestRetryPolicy(int request_timeout) {
+    /**
+     * Construct a digest retry policy instance
+     * @param request_timeout
+     * @param request A request instance which is used to get the request method
+     */
+    public DigestRetryPolicy(int request_timeout, Request request) {
         super(request_timeout,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        retryCount = 1;
+        MAX_RETRY_COUNT = 1;
+        mRequest = request;
     }
 
     @Override
     public void retry(VolleyError error) throws VolleyError {
         if (error.networkResponse.statusCode == HTTP_UNAUTHORIZED) {
-            if (retryCount <= 0) {
+            if (MAX_RETRY_COUNT <= 0) {
                 throw error;
             }
             String authHeader = error.networkResponse.headers.get(DIGEST_AUTH_HEADER_NAME);
@@ -68,7 +76,7 @@ class DigestRetryPolicy extends DefaultRetryPolicy {
                 mChallengeHeaders = new HashMap<>();
                 mChallengeHeaders.put(DIGEST_AUTH_HEADER_NAME, authHeader);
             }
-            retryCount--;
+            MAX_RETRY_COUNT--;
         } else {
             throw error;
         }
@@ -86,7 +94,7 @@ class DigestRetryPolicy extends DefaultRetryPolicy {
 
             try {
                 Header header = ds.authenticate(new UsernamePasswordCredentials(username, password),
-                        new BasicHttpRequest(REQUEST_METHOD, url));
+                        new BasicHttpRequest(getRequestMethodString(), url));
                 headers.put(header.getName(), header.getValue());
             } catch (AuthenticationException e) {
                 throwException(e);
@@ -106,6 +114,29 @@ class DigestRetryPolicy extends DefaultRetryPolicy {
             throw new AuthFailureError(mResolutionIntent);
         } else {
             throw new AuthFailureError(e.getMessage(), (Exception) e.fillInStackTrace());
+        }
+    }
+
+    private String getRequestMethodString() {
+        switch (mRequest.getMethod()) {
+            case Method.GET:
+                return "GET";
+            case Method.POST:
+                return "POST";
+            case Method.PUT:
+                return "PUT";
+            case Method.PATCH:
+                return "PATCH";
+            case Method.DELETE:
+                return "DELETE";
+            case Method.HEAD:
+                return "HEAD";
+            case Method.OPTIONS:
+                return "OPTIONS";
+            case Method.TRACE:
+                return "OPTIONS";
+            default:
+                return "GET";
         }
     }
 }

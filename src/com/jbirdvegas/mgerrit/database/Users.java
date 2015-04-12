@@ -212,7 +212,7 @@ public class Users extends DatabaseTable {
     }
 
     public static void setUserDetails(Context context, AccountInfo info) {
-        ContentValues userValues = new ContentValues(3);
+        ContentValues userValues = new ContentValues(5);
         userValues.put(C_ACCOUNT_ID, info._account_id);
         userValues.put(C_EMAIL, info.email);
         userValues.put(C_NAME, info.name);

@@ -48,7 +48,12 @@ public class GerritService extends IntentService {
     public static final String HTTP_USERNAME = "username";
     public static final String HTTP_PASSWORD = "password";
 
-    public static enum DataType { Project, Commit, CommitDetails, GetVersion, LegacyCommitDetails, Account }
+    // StarProcessor
+    public static final String IS_STARRING = "is_starred";
+    public static final String CHANGE_ID = "change_id";
+    public static final String CHANGE_NUMBER = "change_no";
+
+    public static enum DataType { Project, Commit, CommitDetails, GetVersion, LegacyCommitDetails, Account, Star }
 
     private static RequestQueue mRequestQueue;
 
@@ -88,6 +93,8 @@ public class GerritService extends IntentService {
             processor = new VersionProcessor(this, intent);
         } else if (dataType == DataType.Account) {
             processor = new AccountProcessor(this, intent, (AccountEndpoints) mCurrentUrl);
+        } else if (dataType == DataType.Star) {
+            processor = new StarProcessor(this, intent, (AccountEndpoints) mCurrentUrl);
         } else {
             Log.w(TAG, "Don't know how to handle synchronization of type " + DATA_TYPE_KEY);
             return;

@@ -42,7 +42,7 @@ public abstract class Authenticateable<T> extends Request<T> {
 
     public Authenticateable(int method, String url, Response.ErrorListener listener) {
         super(method, url, listener);
-        this.retryPolicy = new DigestRetryPolicy(REQUEST_TIMEOUT);
+        this.retryPolicy = new DigestRetryPolicy(REQUEST_TIMEOUT, this);
         this.setRetryPolicy(retryPolicy);
     }
 
