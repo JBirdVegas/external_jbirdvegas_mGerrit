@@ -201,4 +201,5 @@
         Please try again.</string>
     <string name="gerrit_signin_protected_help">This Gerrit is protected and requires you to sign in before you can view changes. If you do not know your username/password, you can generate one on %s.</string>
     <string name="commit_card_star_change">Star this change</string>
+    <string name="star_change_not_supported" formatted="false">%s does not support starring or unstarring changes in this version. Please ask them to upgrade to version %s or later.</string>
 </resources>

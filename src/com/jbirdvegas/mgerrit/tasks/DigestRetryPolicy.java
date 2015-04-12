@@ -52,11 +52,6 @@ class DigestRetryPolicy extends DefaultRetryPolicy {
     public static String DIGEST_AUTH_HEADER_NAME = "WWW-Authenticate";
     private Intent mResolutionIntent;
 
-    /**
-     * Construct a digest retry policy instance
-     * @param request_timeout
-     * @param request A request instance which is used to get the request method
-     */
     public DigestRetryPolicy(int request_timeout, Request request) {
         super(request_timeout,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,

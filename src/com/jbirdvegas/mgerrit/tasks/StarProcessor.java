@@ -25,11 +25,16 @@ import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.jbirdvegas.mgerrit.Prefs;
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
+import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
+import com.jbirdvegas.mgerrit.message.NotSupported;
 import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
+import com.jbirdvegas.mgerrit.objects.ServerVersion;
 import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
 
 public class StarProcessor extends SyncProcessor<String> {
@@ -56,7 +61,17 @@ public class StarProcessor extends SyncProcessor<String> {
 
     @Override
     boolean isSyncRequired(Context context) {
-        return true;
+        ServerVersion version = Config.getServerVersion(context);
+        if (version.isFeatureSupported(ServerVersion.VERSION_STAR)) {
+            return true;
+        } else {
+            String gerrit = Prefs.getCurrentGerritName(context);
+            String msg = String.format(context.getString(R.string.star_change_not_supported), gerrit, ServerVersion.VERSION_STAR);
+            GerritMessage ev = new NotSupported(mIntent, mUrl.toString(), msg);
+            EventQueue.getInstance().enqueue(ev, false);
+            return false;
+        }
+
     }
 
     @Override

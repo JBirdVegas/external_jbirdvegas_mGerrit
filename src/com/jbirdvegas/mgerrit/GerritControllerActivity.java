@@ -43,6 +43,7 @@ import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.ROMHelper;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
+import com.jbirdvegas.mgerrit.message.NotSupported;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
 import de.greenrobot.event.EventBus;
@@ -281,5 +282,9 @@ public class GerritControllerActivity extends FragmentActivity {
         if (mTwoPane) ev.setFragment(mChangeDetail);
 
         ev.inflate(this);
+    }
+
+    public void onEventMainThread(NotSupported ev) {
+        Toast.makeText(this, ev.getMessage(), Toast.LENGTH_LONG).show();
     }
 }

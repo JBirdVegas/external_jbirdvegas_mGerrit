@@ -29,6 +29,7 @@ public class ServerVersion implements Comparator<ServerVersion> {
     /*** Constants indicating the first release of significant features **/
     // Release where support for getting change diffs was added
     public static final String VERSION_DIFF = "2.8";
+    public static final String VERSION_STAR = "2.8";
     /* Release where support for before/after search operators (keywords) was added */
     public static final String VERSION_BEFORE_SEARCH = "2.9";
 
@@ -89,5 +90,10 @@ public class ServerVersion implements Comparator<ServerVersion> {
 
         if (s1.hasNextInt()) return 1; //str1 has an additional lower-level version number
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return mVersion.toString();
     }
 }
