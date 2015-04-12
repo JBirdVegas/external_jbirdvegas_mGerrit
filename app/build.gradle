@@ -85,18 +85,30 @@ android {
                         builder.append(String.format("%03d", parts[i].toInteger()))
                     }
                 }
-                versionProps.store(new FileOutputStream(versionPropsFile), "mGerrit release version")
-                versionHolder = builder.toString()
                 def git = Grgit.open("${project.rootDir}")
                 // Jenkins won't be on master at this point... move to master before attempting to commit anything
                 // you can't commit from a detached HEAD.
                 println "Current branch: " + getCurrentBranch()
-                println 'Attempting to use branch.change'
-                git.branch.change(name: 'master', startPoint: 'origin/master', mode: BranchChangeOp.Mode.TRACK)
-                println "Current branch: " + getCurrentBranch()
                 println 'Attempting to use checkout'
-                git.checkout(branch: 'master')
+                def branches = git.branch.list(mode: BranchListOp.Mode.LOCAL)
+                boolean branchExists
+                def branchToCheckout = 'master'
+
+                for (Branch branch : branches) {
+                    println "Found local branch: " + branch.name
+                    if (branch.name.equals(branchToCheckout)) {
+                        branchExists = true
+                    }
+                }
+
+                if (branchExists) {
+                    git.checkout(branch: branchToCheckout)
+                } else {
+                    git.checkout(branch: branchToCheckout, createBranch: true)
+                }
                 println "Current branch: " + getCurrentBranch()
+                versionProps.store(new FileOutputStream(versionPropsFile), "mGerrit release version")
+                versionHolder = builder.toString()
             }
         }
 
@@ -143,8 +155,9 @@ if (props.containsKey('storeFile') &&
 }
 
 
+import org.ajoberstar.grgit.Branch
 import org.ajoberstar.grgit.Grgit
-import org.ajoberstar.grgit.operation.BranchChangeOp
+import org.ajoberstar.grgit.operation.BranchListOp
 
 task tagRelease << {
     def grgit = Grgit.open(project.file(project.getRootProject().path))
