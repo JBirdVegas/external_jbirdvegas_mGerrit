@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
@@ -141,8 +142,11 @@ public class SigninActivity extends FragmentActivity
 
     public void onLogout(View view) {
         Users.logout(this);
+        Changes.unstarAllChanges(this);
         txtUser.setText("");
         txtPass.setText("");
+        btnSignIn.setProgress(0);
+        findViewById(R.id.btnLogout).setVisibility(View.GONE);
     }
 
     @Override

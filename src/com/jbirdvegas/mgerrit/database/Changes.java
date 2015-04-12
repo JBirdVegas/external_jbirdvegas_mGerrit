@@ -192,10 +192,16 @@ public class Changes extends DatabaseTable {
     }
 
     public static void starChange(Context context, String changeId, int changeNumber, boolean isStarred) {
-        ContentValues userValues = new ContentValues(1);
-        userValues.put(C_IS_STARRED, isStarred);
+        ContentValues contentValues = new ContentValues(1);
+        contentValues.put(C_IS_STARRED, isStarred);
         Uri uri = DBParams.insertWithReplace(CONTENT_URI);
-        context.getContentResolver().update(uri, userValues, C_CHANGE_ID + " = ? AND " + C_COMMIT_NUMBER + " = ?",
+        context.getContentResolver().update(uri, contentValues, C_CHANGE_ID + " = ? AND " + C_COMMIT_NUMBER + " = ?",
                 new String[]{changeId, String.valueOf(changeNumber)});
+    }
+
+    public static void unstarAllChanges(Context context) {
+        ContentValues contentValues = new ContentValues(1);
+        contentValues.put(C_IS_STARRED, false);
+        context.getContentResolver().update(CONTENT_URI, contentValues, C_IS_STARRED + " = 1", null);
     }
 }

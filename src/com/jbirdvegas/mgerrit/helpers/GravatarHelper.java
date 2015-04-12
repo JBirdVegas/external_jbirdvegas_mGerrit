@@ -50,9 +50,9 @@ public class GravatarHelper {
     public static void populateProfilePicture(@NotNull final ImageView imageView, String email,
                                               @NotNull RequestQueue requestQueue) {
         String url = getGravatarUrl(email);
+        imageView.setVisibility(View.VISIBLE);
 
         if (url != null) {
-            imageView.setVisibility(View.VISIBLE);
             ImageRequest imageRequest = (ImageRequest) imageView.getTag(R.id.imageRequest);
             if (imageRequest == null) {
                 imageRequest = GravatarHelper.imageVolleyRequest(imageView, url, requestQueue);
@@ -65,7 +65,7 @@ public class GravatarHelper {
                 imageView.setTag(R.id.imageRequest, imageRequest);
             }
         } else {
-            imageView.setVisibility(View.GONE);
+            imageView.setImageResource(R.drawable.gravatar);
             imageView.setTag(null);
         }
     }
