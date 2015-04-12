@@ -169,14 +169,14 @@ task tagRelease << {
 tagRelease.dependsOn 'clean', 'build', 'pushReleaseFiles'
 
 task pushReleaseFiles << {
-    def git = Grgit.open(project.file(project.getRootProject().path))
+    def git = Grgit.open(project.rootDir)
     git.add(patterns: ["${project.rootDir}/version.properties"])
     git.commit(message: "Update version to latest build: ${versionHolder}")
     git.push(all:false, remote: 'origin')
 }
 
 def String getCurrentBranch() {
-    return Grgit.open(project.file("${project.rootDir}")).branch.getCurrent().getName()
+    return Grgit.open(project.rootDir).branch.getCurrent().getName()
 }
 
 task fullRelease << {
