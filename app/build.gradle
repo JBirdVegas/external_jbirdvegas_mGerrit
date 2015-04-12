@@ -90,7 +90,13 @@ android {
                 def git = Grgit.open("${project.rootDir}")
                 // Jenkins won't be on master at this point... move to master before attempting to commit anything
                 // you can't commit from a detached HEAD.
+                println "Current branch: " + getCurrentBranch()
+                println 'Attempting to use branch.change'
                 git.branch.change(name: 'master', startPoint: 'origin/master', mode: BranchChangeOp.Mode.TRACK)
+                println "Current branch: " + getCurrentBranch()
+                println 'Attempting to use checkout'
+                git.checkout(branch: 'master')
+                println "Current branch: " + getCurrentBranch()
             }
         }
 
