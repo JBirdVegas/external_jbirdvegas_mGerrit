@@ -194,7 +194,7 @@ task commitFiles << {
     }
 
     // switch to the new branch
-    grgit.checkout(branch: branchName, createBranch: branchExists)
+    grgit.checkout(branch: branchName, createBranch: !branchExists)
     // write the updated properties to file
     FileOutputStream outStream = null;
     try {
