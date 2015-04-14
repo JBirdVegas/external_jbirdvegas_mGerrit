@@ -209,6 +209,10 @@ task commitFiles << {
 task push << {
     grgit.push()
     grgit.merge(head: 'master')
+    String branchName = getCurrentBranch()
+    grgit.checkout(branch: 'master')
+    grgit.merge(branchName)
+    grgit.push()
 
 }
 
