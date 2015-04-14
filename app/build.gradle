@@ -11,7 +11,6 @@ buildscript {
     }
 }
 
-
 import org.ajoberstar.grgit.Branch
 import org.ajoberstar.grgit.Credentials
 import org.ajoberstar.grgit.Grgit
@@ -61,9 +60,10 @@ def String keyStoreAliasPass
 
 // Cannot be null
 def File  versionPropsFile = new File(project.rootDir, 'version.properties')
+// Holder for version information
+def Properties versionProps = new Properties()
 /**
- * Git client used during releases to increment version, commit, create a tag and push the result
- * to 'refs/heads/master'
+ * A git client that's groovy ;)
  */
 def grgit
 
@@ -114,7 +114,6 @@ android {
         exclude 'plugin.properties'
     }
     if (versionPropsFile.canRead()) {
-        def Properties versionProps = new Properties()
         versionProps.load(new FileInputStream(versionPropsFile))
         String full = versionProps['version'].toString()
         versionHolder = full
@@ -132,15 +131,7 @@ android {
                     builder.append(String.format("%03d", parts[i].toInteger()))
                 }
             }
-            FileOutputStream outStream = null;
-            try {
-                versionProps.store(new FileOutputStream(versionPropsFile), "mGerrit release version")
-                versionHolder = builder.toString()
-            } finally {
-                if (outStream != null) {
-                    outStream.close()
-                }
-            }
+            versionHolder = builder.toString()
         }
 
         defaultConfig {
@@ -166,6 +157,9 @@ if (keyStoreFile != null && new File(keyStoreFile).exists() &&
     android.buildTypes.release.signingConfig = null
 }
 
+/**
+ * Code style check task.  checkstyle task runs as part of the check task
+ */
 task checkstyle(type: Checkstyle) {
     configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
     source 'src'
@@ -174,38 +168,67 @@ task checkstyle(type: Checkstyle) {
     classpath = files()
 }
 
+/**
+ * Handles local git operations.
+ *
+ * 1) Checkout feature branch (create if required)
+ * 2) Persist version.properties
+ * 2) Add changed files to git staging
+ * 3) Commit changed files from git staging
+ * 4) Create a tag of the new version
+ */
 task commitFiles << {
     /**
-     * Checkout master branch, if branch does not exist create the branch
+     * Checkout feature branch, if branch does not exist create the branch
      */
     def branchName = 'mgerrit.org-jenkins-bot'
-    def branchExists
+    def branchExists = false
+    // get a List<Branch> of all local branches
     def branches = grgit.branch.list(mode: BranchListOp.Mode.LOCAL)
+
+    // check if branch already exists
     for (Branch branch : branches) {
         if (branch.name.equals(branchName)) {
             branchExists = true
         }
     }
 
-    if (branchExists) {
-        grgit.checkout(branch: branchName)
-    } else {
-        grgit.checkout(branch: branchName, createBranch: true)
+    // switch to the new branch
+    grgit.checkout(branch: branchName, createbranch: branchExists)
+    // write the updated properties to file
+    FileOutputStream outStream = null;
+    try {
+        versionProps.store(new FileOutputStream(versionPropsFile), "mGerrit release version")
+    } finally {
+        if (outStream != null) {
+            outStream.close()
+        }
     }
-    println getCurrentBranch()
+    println 'Current Branch: ' + getCurrentBranch()
     if (versionPropsFile.exists() && versionPropsFile.canRead()) {
+        // Stage changed files for commit
         grgit.add(patterns: ['.'])
         println "Grgit status: " + grgit.status()
+        // Commit the updated version.properties
         grgit.commit(message: "Update version to latest build: ${versionHolder}", amend: false)
         println "Grgit status: " + grgit.status()
         String message = "Release of v${versionHolder}"
-        // push tags
+        // Create tag for version
         grgit.tag.add(name: "v${versionHolder}", message: message)
     } else {
         throw new GradleException("FATAL: Missing ${project.rootDir.absolutePath}/version.properties")
     }
 }
 
+/**
+ * Pushes the changed files to github.
+ * 1) push to the feature branch `mgerrit.org-jenkins-bot`
+ * 2) merge master to current branch
+ * 3) checkout master
+ * 4) merge feature branch to master
+ * 5) push merged branch to master
+ * 6) push release tags
+ */
 task push << {
     grgit.push()
     grgit.merge(head: 'master')
@@ -225,12 +248,18 @@ def String getCurrentBranch() {
     return Grgit.open(project.rootDir).branch.getCurrent().getName()
 }
 
+/**
+ * Task that's acts as an anchor for complete releases
+ */
 task fullRelease << {
     // just an anchor for complete release builds
 }
 
 // config the style checks to run during the testing phase
 check.dependsOn 'checkstyle'
+// Configure commit to only run after clean builds
 commitFiles.dependsOn 'clean', 'build'
+// Pushing requires having committed files and created tags
 push.dependsOn 'commitFiles'
+// full release can only be successful if all pushes were successful
 fullRelease.dependsOn 'push'
