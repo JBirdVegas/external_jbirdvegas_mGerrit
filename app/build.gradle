@@ -7,8 +7,16 @@ buildscript {
         classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
         classpath 'org.ajoberstar:gradle-git:1.1.0'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+        classpath 'org.apache.commons:commons-lang3:3.4'
     }
 }
+
+
+import org.ajoberstar.grgit.Branch
+import org.ajoberstar.grgit.Credentials
+import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.grgit.operation.BranchListOp
+import org.eclipse.jgit.util.StringUtils
 
 apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
@@ -35,7 +43,47 @@ dependencies {
     compile 'se.emilsjolander:stickylistheaders:2.5.2'
 }
 def versionHolder
-def rootDir = project.getRootProject().path
+
+/* This can be null, if private.creds is empty or does not exists be sure to check before accessing */
+
+// github account user name
+def String gitUsername
+// github user password
+def String gitPassword
+// Release signing keystore file
+def String keyStoreFile
+// Release signing keystore password
+def String keyStorePass
+// Release signing alias
+def String keyStoreAlias
+// Release signing alias password
+def String keyStoreAliasPass
+
+// Cannot be null
+def File  versionPropsFile = new File(project.rootDir, 'version.properties')
+/**
+ * Git client used during releases to increment version, commit, create a tag and push the result
+ * to 'refs/heads/master'
+ */
+def grgit
+
+// setup
+try {
+    def Properties props = new Properties()
+    def File credsFile = new File("${project.rootDir}/private.creds")
+    props.load(new FileInputStream(credsFile))
+    gitUsername = props['gitUsername']
+    gitPassword = props['gitPassword']
+    keyStoreFile = props['keyStoreFile']
+    keyStorePass = props['keyStorePass']
+    keyStoreAlias = props['keyStoreAlias']
+    keyStoreAliasPass = props['keyStoreAliasPass']
+    grgit = Grgit.open(project.rootDir, new Credentials(gitUsername.toString(), gitPassword.toString()))
+} catch (Exception e) {
+    println "Credentials file not found {private.creds} Releases will fail fast, as long as you don't attempt" +
+            " a release build is fail-safe."
+    e.printStackTrace()
+}
 
 android {
     compileSdkVersion 22
@@ -65,50 +113,33 @@ android {
     packagingOptions {
         exclude 'plugin.properties'
     }
-    def versionPropsFile = new File("${project.rootDir}", 'version.properties')
     if (versionPropsFile.canRead()) {
         def Properties versionProps = new Properties()
         versionProps.load(new FileInputStream(versionPropsFile))
         String full = versionProps['version'].toString()
         versionHolder = full
-        if (project.hasProperty('incrementVersion')) {
-            if (incrementVersion) {
-                String[] parts = full.split('\\.')
-                println("Original version: " + parts.toString())
-                parts[parts.length - 1] = parts[parts.length - 1].toInteger() + 1
-                println("Incremented version: " + parts.toString())
-                StringBuilder builder = new StringBuilder()
-                for (int i = 0; i < parts.length; i++) {
-                    if (i == 0) {
-                        builder.append(parts[i])
-                    } else {
-                        builder.append(String.format("%03d", parts[i].toInteger()))
-                    }
-                }
-                def git = Grgit.open("${project.rootDir}")
-                // Jenkins won't be on master at this point... move to master before attempting to commit anything
-                // you can't commit from a detached HEAD.
-                println "Current branch: " + getCurrentBranch()
-                println 'Attempting to use checkout'
-                def branches = git.branch.list(mode: BranchListOp.Mode.LOCAL)
-                boolean branchExists
-                def branchToCheckout = 'master'
-
-                for (Branch branch : branches) {
-                    println "Found local branch: " + branch.name
-                    if (branch.name.equals(branchToCheckout)) {
-                        branchExists = true
-                    }
-                }
-
-                if (branchExists) {
-                    git.checkout(branch: branchToCheckout)
+        if (project.hasProperty('incrementVersion') && incrementVersion) {
+            String[] parts = full.split('\\.')
+            println("Original version: " + parts.toString())
+            parts[parts.length - 1] = parts[parts.length - 1].toInteger() + 1
+            versionProps.put('version', StringUtils.join(Arrays.asList(parts), '.'))
+            println("Incremented version: " + parts.toString())
+            StringBuilder builder = new StringBuilder()
+            for (int i = 0; i < parts.length; i++) {
+                if (i == 0) {
+                    builder.append(parts[i])
                 } else {
-                    git.checkout(branch: branchToCheckout, createBranch: true)
+                    builder.append(String.format("%03d", parts[i].toInteger()))
                 }
-                println "Current branch: " + getCurrentBranch()
+            }
+            FileOutputStream outStream = null;
+            try {
                 versionProps.store(new FileOutputStream(versionPropsFile), "mGerrit release version")
                 versionHolder = builder.toString()
+            } finally {
+                if (outStream != null) {
+                    outStream.close()
+                }
             }
         }
 
@@ -119,14 +150,21 @@ android {
             targetSdkVersion 22
             println("versionCode: $versionCode versionName: $versionName")
         }
-    }
-    else {
-        throw new GradleException("Could not read version.properties!")
+    } else {
+        throw new GradleException("Fatal: Could not read version.properties!")
     }
 }
 
-// config the style checks to run during the testing phase
-check.dependsOn 'checkstyle'
+if (keyStoreFile != null && new File(keyStoreFile).exists() &&
+        keyStorePass != null &&  keyStoreAlias != null &&
+        keyStoreAliasPass != null) {
+    android.signingConfigs.release.storeFile = file(keyStoreFile)
+    android.signingConfigs.release.storePassword = keyStorePass
+    android.signingConfigs.release.keyAlias = keyStoreAlias
+    android.signingConfigs.release.keyPassword = keyStoreAliasPass
+} else {
+    android.buildTypes.release.signingConfig = null
+}
 
 task checkstyle(type: Checkstyle) {
     configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
@@ -136,45 +174,58 @@ task checkstyle(type: Checkstyle) {
     classpath = files()
 }
 
-def Properties props = new Properties()
-def File signingFile = new File('signing.properties')
-
-if (signingFile.exists()) {
-    props.load(new FileInputStream(signingFile))
-}
-if (props.containsKey('storeFile') &&
-        props.containsKey('storePassword') &&
-        props.containsKey('keyAlias') &&
-        props.containsKey('keyPassword')) {
-    android.signingConfigs.release.storeFile = file(props['storeFile'])
-    android.signingConfigs.release.storePassword = props['storePassword']
-    android.signingConfigs.release.keyAlias = props['keyAlias']
-    android.signingConfigs.release.keyPassword = props['keyPassword']
-} else {
-    android.buildTypes.release.signingConfig = null
-}
-
-
-import org.ajoberstar.grgit.Branch
-import org.ajoberstar.grgit.Grgit
-import org.ajoberstar.grgit.operation.BranchListOp
-
-task tagRelease << {
-    def grgit = Grgit.open(project.file(project.getRootProject().path))
-    String message = "Release of v${versionHolder}"
-    grgit.tag.add(name: "v${versionHolder}", message: message)
-    grgit.push(tags: true, refsOrSpecs: ["refs/tags/v${versionHolder}:refs/tags/v${versionHolder}"])
-}
-
-tagRelease.dependsOn 'clean', 'build', 'pushReleaseFiles'
-
 task pushReleaseFiles << {
-    def git = Grgit.open(project.rootDir)
-    git.add(patterns: ["${project.rootDir}/version.properties"])
-    git.commit(message: "Update version to latest build: ${versionHolder}")
-    git.push(all:false, remote: 'origin')
+    /**
+     * Checkout master branch, if branch does not exist create the branch
+     */
+    def branchName = 'master'
+    def branchExists
+    def branches = grgit.branch.list(mode: BranchListOp.Mode.LOCAL)
+    for (Branch branch : branches) {
+        if (branch.name.equals(branchName)) {
+            branchExists = true
+        }
+    }
+
+    if (branchExists) {
+        grgit.checkout(branch: branchName)
+    } else {
+        grgit.checkout(branch: branchName, createBranch: true)
+    }
+    println getCurrentBranch()
+    if (versionPropsFile.exists() && versionPropsFile.canRead()) {
+        grgit.add(patterns: ['.'])
+        println "Grgit status: " + grgit.status()
+        grgit.commit(message: "Update version to latest build: ${versionHolder}", amend: false)
+        println "Grgit status: " + grgit.status()
+        String message = "Release of v${versionHolder}"
+
+        // push version file changes
+        //grgit.push(all: true, /*refsOrSpecs: ['remotes/origin/master'],*/ tags: false)
+        println "Grgit status: " + grgit.status()
+        // push tags
+        //grgit.tag.add(name: "v${versionHolder}", message: message)
+        //grgit.push(tags: true)
+    } else {
+        throw new GradleException("FATAL: Missing ${project.rootDir.absolutePath}/version.properties")
+    }
 }
 
+task push << {
+    println "Pre add Grgit status: " + grgit.status()
+    grgit.add(patterns: ['.'])
+    println "Pre commit Grgit status: " + grgit.status()
+    grgit.commit(message: "Update version to latest build: ${versionHolder}", amend: false)
+    println "Pre-push Grgit status: " + grgit.status()
+    grgit.push()
+    println "Post-push Grgit status: " + grgit.status()
+}
+
+/**
+ * Gets the name of the current git branch
+ * @return
+ *      git branch name
+ */
 def String getCurrentBranch() {
     return Grgit.open(project.rootDir).branch.getCurrent().getName()
 }
@@ -183,4 +234,7 @@ task fullRelease << {
     // just an anchor for complete release builds
 }
 
+// config the style checks to run during the testing phase
+check.dependsOn 'checkstyle'
+pushReleaseFiles.dependsOn 'clean', 'build'
 fullRelease.dependsOn 'pushReleaseFiles'
