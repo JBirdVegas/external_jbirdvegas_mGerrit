@@ -174,11 +174,11 @@ task checkstyle(type: Checkstyle) {
     classpath = files()
 }
 
-task pushReleaseFiles << {
+task commitFiles << {
     /**
      * Checkout master branch, if branch does not exist create the branch
      */
-    def branchName = 'master'
+    def branchName = 'mgerrit.org-jenkins-bot'
     def branchExists
     def branches = grgit.branch.list(mode: BranchListOp.Mode.LOCAL)
     for (Branch branch : branches) {
@@ -199,26 +199,17 @@ task pushReleaseFiles << {
         grgit.commit(message: "Update version to latest build: ${versionHolder}", amend: false)
         println "Grgit status: " + grgit.status()
         String message = "Release of v${versionHolder}"
-
-        // push version file changes
-        //grgit.push(all: true, /*refsOrSpecs: ['remotes/origin/master'],*/ tags: false)
-        println "Grgit status: " + grgit.status()
         // push tags
-        //grgit.tag.add(name: "v${versionHolder}", message: message)
-        //grgit.push(tags: true)
+        grgit.tag.add(name: "v${versionHolder}", message: message)
     } else {
         throw new GradleException("FATAL: Missing ${project.rootDir.absolutePath}/version.properties")
     }
 }
 
 task push << {
-    println "Pre add Grgit status: " + grgit.status()
-    grgit.add(patterns: ['.'])
-    println "Pre commit Grgit status: " + grgit.status()
-    grgit.commit(message: "Update version to latest build: ${versionHolder}", amend: false)
-    println "Pre-push Grgit status: " + grgit.status()
     grgit.push()
-    println "Post-push Grgit status: " + grgit.status()
+    grgit.merge(head: 'master')
+
 }
 
 /**
@@ -236,5 +227,6 @@ task fullRelease << {
 
 // config the style checks to run during the testing phase
 check.dependsOn 'checkstyle'
-pushReleaseFiles.dependsOn 'clean', 'build'
-fullRelease.dependsOn 'pushReleaseFiles'
+commitFiles.dependsOn 'clean', 'build'
+push.dependsOn 'commitFiles'
+fullRelease.dependsOn 'push'
