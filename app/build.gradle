@@ -213,7 +213,7 @@ task push << {
     grgit.checkout(branch: 'master')
     grgit.merge(head: branchName)
     grgit.push()
-
+    grgit.push(tags: true)
 }
 
 /**
