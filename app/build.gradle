@@ -211,7 +211,7 @@ task push << {
     grgit.merge(head: 'master')
     String branchName = getCurrentBranch()
     grgit.checkout(branch: 'master')
-    grgit.merge(branchName)
+    grgit.merge(head: branchName)
     grgit.push()
 
 }
