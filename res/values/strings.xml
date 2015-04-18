@@ -62,7 +62,7 @@
     <string name="nine_old_androids_website" translatable="false">http://nineoldandroids.com/</string>
     <string name="listview_animations" translatable="false">ListViewAnimations</string>
     <string name="listview_animations_website" translatable="false">https://github.com/nhaarman/ListViewAnimations</string>
-    <string name="support_library" translatable="false">Support Library v4</string>
+    <string name="support_library" translatable="false">Support Library v4 &amp; v7</string>
     <string name="support_library_website" translatable="false">http://developer.android.com/tools/support-library/index.html</string>
     <string name="gson_library" translatable="false">Gson</string>
     <string name="gson_library_website" translatable="false">http://code.google.com/p/google-gson/</string>
