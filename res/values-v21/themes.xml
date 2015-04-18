@@ -31,7 +31,7 @@
         <item name="mainBackgroundColor">@color/main_background</item>
         <item name="cardTextStyle">@style/CardText.Light</item>
         <item name="cardTitleStyle">@style/CardTitle.Light</item>
-        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="colorCardBackground">@color/card_background</item>
         <item name="clickableCardBackground">@drawable/commit_card_background_states</item>
         <item name="selectableCardBackground">@drawable/files_card_background_states</item>
         <item name="viewIcon">@drawable/ic_menu_view</item>
@@ -52,6 +52,7 @@
         <item name="secureIcon">@drawable/ic_action_secure</item>
         <item name="starredIcon">@drawable/ic_action_starred</item>
         <item name="unstarredIcon">@drawable/ic_action_unstarred</item>
+        <item name="borderlessButtonBackground">@drawable/ripple_light</item>
     </style>
 
     <style name="Theme.Dark" parent="android:style/Theme.Material">
@@ -67,7 +68,7 @@
         <item name="mainBackgroundColor">@color/main_background_dark</item>
         <item name="cardTextStyle">@style/CardText.Dark</item>
         <item name="cardTitleStyle">@style/CardTitle.Dark</item>
-        <item name="cardBackgroundColor">@color/card_background_dark</item>
+        <item name="colorCardBackground">@color/card_background_dark</item>
         <item name="clickableCardBackground">@drawable/commit_card_background_states_dark</item>
         <item name="selectableCardBackground">@drawable/files_card_background_states_dark</item>
         <item name="viewIcon">@android:drawable/ic_menu_view</item>
@@ -88,5 +89,6 @@
         <item name="secureIcon">@drawable/ic_action_secure_dark</item>
         <item name="starredIcon">@drawable/ic_action_starred_dark</item>
         <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
+        <item name="borderlessButtonBackground">@drawable/ripple_dark</item>
     </style>
 </resources>

@@ -17,9 +17,6 @@
   -->
 
 <resources>
-    <declare-styleable name="CardUI">
-        <attr name="columnCount" format="integer"/>
-    </declare-styleable>
     <declare-styleable name="item">
         <attr name="gerritIcon" format="reference"/>
         <attr name="projectsIcon" format="reference"/>
@@ -36,7 +33,7 @@
     </declare-styleable>
     <declare-styleable name="LinearLayout">
         <attr name="mainBackgroundColor" format="color"/>
-        <attr name="cardBackgroundColor" format="color"/>
+        <attr name="colorCardBackground" format="color"/>
         <attr name="clickableCardBackground" format="reference" />
         <attr name="selectableCardBackground" format="reference" />
         <attr name="backgroundTop" format="reference"/>
@@ -86,4 +83,6 @@
         <attr name="pb_colorPressed"/>
         <attr name="pb_colorError"/>
     </declare-styleable>
+
+    <attr name="borderlessButtonBackground" format="reference" />
 </resources>

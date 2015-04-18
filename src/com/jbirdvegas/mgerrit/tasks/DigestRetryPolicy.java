@@ -62,7 +62,7 @@ class DigestRetryPolicy extends DefaultRetryPolicy {
 
     @Override
     public void retry(VolleyError error) throws VolleyError {
-        if (error.networkResponse.statusCode == HTTP_UNAUTHORIZED) {
+        if (error instanceof AuthFailureError) {
             if (MAX_RETRY_COUNT <= 0) {
                 throw error;
             }

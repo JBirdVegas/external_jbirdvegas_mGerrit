@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -131,7 +130,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
             TextView textView = (TextView) view;
             textView.setText(prettyPrintDate(mContext, lastUpdated));
         } else if (view.getId() == R.id.commit_card_starred) {
-            final ImageButton star = (ImageButton) view;
+            final ImageView star = (ImageView) view;
             final int starred = cursor.getInt(columnIndex);
 
             setStarIcon(star, starred == 1);

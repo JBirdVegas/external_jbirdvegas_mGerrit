@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
   ~  Author: Evan Conway (P4R4N01D), 2015
@@ -16,21 +15,6 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/colorCardBackground"
-    android:elevation="@dimen/z_offset_low">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/message_card_message"
-        android:layout_gravity="center"
-        android:paddingLeft="8dip"
-        android:paddingRight="8dip"
-        android:textSize="@dimen/text_size_medium"
-        android:autoLink="web" />
-</LinearLayout>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/ripple_material_dark" />

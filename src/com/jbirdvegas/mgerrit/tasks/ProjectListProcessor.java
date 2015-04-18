@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
+import com.android.volley.RequestQueue;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
@@ -75,5 +76,10 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     int count(Projects projects) {
         if (projects != null) return projects.getProjectCount();
         else return 0;
+    }
+
+    @Override
+    protected void fetchData(RequestQueue queue) {
+        fetchData(mUrl, queue);
     }
 }

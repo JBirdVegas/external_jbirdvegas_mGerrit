@@ -51,7 +51,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
             android:paddingBottom="@dimen/standard_padding">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -94,7 +93,6 @@
                 android:layout_toEndOf="@id/commit_card_committer_image"
                 android:layout_toRightOf="@id/commit_card_committer_image"
                 android:layout_alignParentBottom="true"
-                android:layout_marginRight="@dimen/standard_padding"
                 android:weightSum="1">
                 <TextView
                     android:id="@+id/commit_card_project_name"
@@ -103,19 +101,21 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_small"
                     tools:text="AOKP/external_jbirdvegas_mGerrit"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:layout_marginTop="6dp" />
 
                 <ImageButton
                     android:id="@+id/commit_card_starred"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
                     android:src="?attr/unstarredIcon"
                     android:contentDescription="@string/commit_card_star_change"
                     android:layout_gravity="bottom"
-                    android:layout_marginLeft="@dimen/standard_padding"
-                    android:layout_marginRight="@dimen/standard_padding"
-                    android:layout_alignParentBottom="true"
-                    style="?android:attr/borderlessButtonStyle"/>
+                    android:layout_marginBottom="-8dp"
+                    android:padding="0dp"
+                    android:background="?attr/borderlessButtonBackground"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="-2dp" />
             </LinearLayout>
         </RelativeLayout>
 

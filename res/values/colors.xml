@@ -63,5 +63,7 @@
 
     <color name="signin_complete_light">#ff9cea8d</color>
     <color name="signin_error_light">#ffcc6164</color>
+    <color name="ripple_material_dark">#20ffffff</color>
+    <color name="ripple_material_light">#40000000</color>
 
 </resources>

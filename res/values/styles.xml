@@ -185,4 +185,7 @@
     <style name="SigninFailure" parent="CardText.Deleted.Dark" />
     <style name="SigninFailure.Light" parent="CardText.Deleted.Light" />
 
+    <style name="BorderlessBackground" parent="android:Widget.Holo.Light.Button.Borderless.Small"/>
+    <style name="BorderlessBackground.Dark" parent="android:Widget.Holo.Button.Borderless.Small"/>
+
 </resources>
