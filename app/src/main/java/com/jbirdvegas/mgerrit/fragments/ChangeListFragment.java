@@ -80,7 +80,7 @@ public class ChangeListFragment extends Fragment {
 
         // Set up the ViewPager with the sections adapter.
         /** The {@link android.support.v4.view.ViewPager} that will host the section contents. */
-        mViewPager = (ViewPager) this.getView();
+        mViewPager = (ViewPager) this.getView().findViewById(R.id.tabs);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         // When swiping between different sections, select the corresponding
