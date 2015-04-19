@@ -1,0 +1,270 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.1.0'
+        classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
+        classpath 'org.ajoberstar:gradle-git:1.1.0'
+        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
+        classpath 'org.apache.commons:commons-lang3:3.4'
+    }
+}
+
+import org.ajoberstar.grgit.Branch
+import org.ajoberstar.grgit.Credentials
+import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.grgit.operation.BranchListOp
+import org.eclipse.jgit.util.StringUtils
+
+apply plugin: 'android-sdk-manager'
+apply plugin: 'com.android.application'
+apply plugin: 'hugo'
+apply plugin: 'checkstyle'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile files('libs/android-support-v4.jar')
+    compile files('libs/libGoogleAnalyticsServices.jar')
+    compile files('libs/annotations.jar')
+    compile files('libs/android-support-v7-appcompat.jar')
+
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.mcxiaoke.volley:library:1.0.12'
+    compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
+    compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'joda-time:joda-time:2.7'
+    compile 'org.ajoberstar:gradle-git:1.1.0'
+    compile 'se.emilsjolander:stickylistheaders:2.6.0'
+    compile('com.github.dmytrodanylyk.android-process-button:library:1.0.3') {
+        exclude module: 'support-v4'
+    }
+    compile 'de.hdodenhof:circleimageview:1.2.2'
+}
+def versionHolder
+
+/* This can be null, if private.creds is empty or does not exists be sure to check before accessing */
+
+// github account user name
+def String gitUsername
+// github user password
+def String gitPassword
+// Release signing keystore file
+def String keyStoreFile
+// Release signing keystore password
+def String keyStorePass
+// Release signing alias
+def String keyStoreAlias
+// Release signing alias password
+def String keyStoreAliasPass
+
+// Cannot be null
+def File  versionPropsFile = new File(project.rootDir, 'version.properties')
+// Holder for version information
+def Properties versionProps = new Properties()
+/**
+ * A git client that's groovy ;)
+ */
+def grgit
+
+// setup
+try {
+    def Properties props = new Properties()
+    def File credsFile = new File("${project.rootDir}/private.creds")
+    props.load(new FileInputStream(credsFile))
+    gitUsername = props['gitUsername']
+    gitPassword = props['gitPassword']
+    keyStoreFile = props['keyStoreFile']
+    keyStorePass = props['keyStorePass']
+    keyStoreAlias = props['keyStoreAlias']
+    keyStoreAliasPass = props['keyStoreAliasPass']
+    grgit = Grgit.open(project.rootDir, new Credentials(gitUsername.toString(), gitPassword.toString()))
+} catch (Exception e) {
+    println "Credentials file not found {private.creds} Releases will fail fast, as long as you don't attempt" +
+            " a release build is fail-safe."
+    e.printStackTrace()
+}
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
+    // compile Using Java 7
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    sourceSets {
+        main {}
+    }
+    signingConfigs {
+        release {}
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFile 'proguard-project.txt'
+            signingConfig signingConfigs.release
+
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+    packagingOptions {
+        exclude 'plugin.properties'
+    }
+    if (versionPropsFile.canRead()) {
+        versionProps.load(new FileInputStream(versionPropsFile))
+        String full = versionProps['version'].toString()
+        versionHolder = full
+        if (project.hasProperty('incrementVersion') && incrementVersion) {
+            String[] parts = full.split('\\.')
+            println("Original version: " + parts.toString())
+            parts[parts.length - 1] = parts[parts.length - 1].toInteger() + 1
+            versionProps.put('version', StringUtils.join(Arrays.asList(parts), '.'))
+            println("Incremented version: " + parts.toString())
+            StringBuilder builder = new StringBuilder()
+            for (int i = 0; i < parts.length; i++) {
+                if (i == 0) {
+                    builder.append(parts[i])
+                } else {
+                    builder.append(String.format("%03d", parts[i].toInteger()))
+                }
+            }
+            versionHolder = builder.toString()
+        }
+
+        defaultConfig {
+            versionCode versionHolder.replaceAll("\\.", "").toInteger()
+            versionName versionHolder
+            minSdkVersion 15
+            targetSdkVersion 22
+            println("versionCode: $versionCode versionName: $versionName")
+        }
+    } else {
+        throw new GradleException("Fatal: Could not read version.properties!")
+    }
+}
+
+if (keyStoreFile != null && new File(keyStoreFile).exists() &&
+        keyStorePass != null &&  keyStoreAlias != null &&
+        keyStoreAliasPass != null) {
+    android.signingConfigs.release.storeFile = file(keyStoreFile)
+    android.signingConfigs.release.storePassword = keyStorePass
+    android.signingConfigs.release.keyAlias = keyStoreAlias
+    android.signingConfigs.release.keyPassword = keyStoreAliasPass
+} else {
+    android.buildTypes.release.signingConfig = null
+}
+
+/**
+ * Code style check task.  checkstyle task runs as part of the check task
+ */
+task checkstyle(type: Checkstyle) {
+    configFile file("${project.rootDir}/config/checkstyle/checkstyle.xml")
+    source 'src'
+    include "**/*.java"
+    exclude "**/gen/**"
+    classpath = files()
+}
+
+/**
+ * Handles local git operations.
+ *
+ * 1) Checkout feature branch (create if required)
+ * 2) Persist version.properties
+ * 2) Add changed files to git staging
+ * 3) Commit changed files from git staging
+ * 4) Create a tag of the new version
+ */
+task commitFiles << {
+    /**
+     * Checkout feature branch, if branch does not exist create the branch
+     */
+    def branchName = 'mgerrit.org-jenkins-bot'
+    def branchExists = false
+    // get a List<Branch> of all local branches
+    def branches = grgit.branch.list(mode: BranchListOp.Mode.LOCAL)
+
+    // check if branch already exists
+    for (Branch branch : branches) {
+        if (branch.name.equals(branchName)) {
+            branchExists = true
+        }
+    }
+
+    // switch to the new branch
+    grgit.checkout(branch: branchName, createBranch: !branchExists)
+    // write the updated properties to file
+    FileOutputStream outStream = null;
+    try {
+        versionProps.store(new FileOutputStream(versionPropsFile), "mGerrit release version")
+    } finally {
+        if (outStream != null) {
+            outStream.close()
+        }
+    }
+    println 'Current Branch: ' + getCurrentBranch()
+    if (versionPropsFile.exists() && versionPropsFile.canRead()) {
+        // Stage changed files for commit
+        grgit.add(patterns: ['.'])
+        println "Grgit status: " + grgit.status()
+        // Commit the updated version.properties
+        grgit.commit(message: "Update version to latest build: ${versionHolder}", amend: false)
+        println "Grgit status: " + grgit.status()
+        String message = "Release of v${versionHolder}"
+        // Create tag for version
+        grgit.tag.add(name: "v${versionHolder}", message: message)
+    } else {
+        throw new GradleException("FATAL: Missing ${project.rootDir.absolutePath}/version.properties")
+    }
+}
+
+/**
+ * Pushes the changed files to github.
+ * 1) push to the feature branch `mgerrit.org-jenkins-bot`
+ * 2) merge master to current branch
+ * 3) checkout master
+ * 4) merge feature branch to master
+ * 5) push merged branch to master
+ * 6) push release tags
+ */
+task push << {
+    grgit.push()
+    grgit.merge(head: 'master')
+    String branchName = getCurrentBranch()
+    grgit.checkout(branch: 'master')
+    grgit.merge(head: branchName)
+    grgit.push()
+    grgit.push(tags: true)
+}
+
+/**
+ * Gets the name of the current git branch
+ * @return
+ *      git branch name
+ */
+def String getCurrentBranch() {
+    return Grgit.open(project.rootDir).branch.getCurrent().getName()
+}
+
+/**
+ * Task that's acts as an anchor for complete releases
+ */
+task fullRelease << {
+    // just an anchor for complete release builds
+}
+
+// config the style checks to run during the testing phase
+check.dependsOn 'checkstyle'
+// Configure commit to only run after clean builds
+commitFiles.dependsOn 'clean', 'build'
+// Pushing requires having committed files and created tags
+push.dependsOn 'commitFiles'
+// full release can only be successful if all pushes were successful
+fullRelease.dependsOn 'push'

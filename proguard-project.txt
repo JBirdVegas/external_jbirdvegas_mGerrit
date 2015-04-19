@@ -27,6 +27,7 @@
 -allowaccessmodification
 -optimizations !code/simplification/arithmetic
 -dontwarn android.support.**
+-dontwarn com.sun.jna.**
 
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
