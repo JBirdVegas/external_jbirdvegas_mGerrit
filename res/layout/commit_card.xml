@@ -113,7 +113,7 @@
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="-8dp"
                     android:padding="0dp"
-                    android:background="?attr/borderlessButtonBackground"
+                    style="?attr/borderlessButtonBackground"
                     android:layout_marginLeft="2dp"
                     android:layout_marginRight="-2dp" />
             </LinearLayout>

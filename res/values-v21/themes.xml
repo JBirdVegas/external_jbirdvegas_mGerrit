@@ -52,7 +52,7 @@
         <item name="secureIcon">@drawable/ic_action_secure</item>
         <item name="starredIcon">@drawable/ic_action_starred</item>
         <item name="unstarredIcon">@drawable/ic_action_unstarred</item>
-        <item name="borderlessButtonBackground">@drawable/ripple_light</item>
+        <item name="borderlessButtonBackground">@style/BorderlessBackground</item>
     </style>
 
     <style name="Theme.Dark" parent="android:style/Theme.Material">
@@ -89,6 +89,6 @@
         <item name="secureIcon">@drawable/ic_action_secure_dark</item>
         <item name="starredIcon">@drawable/ic_action_starred_dark</item>
         <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
-        <item name="borderlessButtonBackground">@drawable/ripple_dark</item>
+        <item name="borderlessButtonBackground">@style/BorderlessBackground.Dark</item>
     </style>
 </resources>
