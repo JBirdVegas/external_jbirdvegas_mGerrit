@@ -162,6 +162,7 @@ if (keyStoreFile != null) {
     }
 } else {
     println 'Not signing release.  keyStoreFile was not defined in private.creds'
+    android.buildTypes.release.signingConfig = null
 }
 
 /**
