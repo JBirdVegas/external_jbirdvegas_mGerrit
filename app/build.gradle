@@ -14,6 +14,7 @@ buildscript {
 import org.ajoberstar.grgit.Branch
 import org.ajoberstar.grgit.Credentials
 import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.grgit.Tag
 import org.ajoberstar.grgit.operation.BranchListOp
 import org.eclipse.jgit.util.StringUtils
 
@@ -213,8 +214,17 @@ task commitFiles << {
         grgit.commit(message: "Update version to latest build: ${versionHolder}", amend: false)
         println "Grgit status: " + grgit.status()
         String message = "Release of v${versionHolder}"
-        // Create tag for version
-        grgit.tag.add(name: "v${versionHolder}", message: message)
+        List<Tag> tags = grgit.tag.list();
+        boolean tagExists = false;
+        for (Tag tag : tags) {
+            if (tag.name.contains("v${versionHolder}")) {
+                tagExists = true;
+            }
+        }
+        if (!tagExists) {
+            // Create tag for version
+            grgit.tag.add(name: "v${versionHolder}", message: message)
+        }
     } else {
         throw new GradleException("FATAL: Missing ${project.rootDir.absolutePath}/version.properties")
     }
