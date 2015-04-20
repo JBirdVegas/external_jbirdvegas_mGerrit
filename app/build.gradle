@@ -139,7 +139,7 @@ android {
         defaultConfig {
             versionCode versionHolder.replaceAll("\\.", "").toInteger()
             versionName versionHolder
-            minSdkVersion 15
+            minSdkVersion 14
             targetSdkVersion 22
             println("versionCode: $versionCode versionName: $versionName")
         }
