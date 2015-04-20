@@ -137,7 +137,6 @@ android {
             }
             versionHolder = builder.toString()
         }
-
         defaultConfig {
             versionCode versionHolder.replaceAll("\\.", "").toInteger()
             versionName versionHolder
@@ -149,16 +148,21 @@ android {
         throw new GradleException("Fatal: Could not read version.properties!")
     }
 }
-
-if (keyStoreFile != null && new File(keyStoreFile).exists() &&
-        keyStorePass != null &&  keyStoreAlias != null &&
-        keyStoreAliasPass != null) {
-    android.signingConfigs.release.storeFile = file(keyStoreFile)
-    android.signingConfigs.release.storePassword = keyStorePass
-    android.signingConfigs.release.keyAlias = keyStoreAlias
-    android.signingConfigs.release.keyPassword = keyStoreAliasPass
+if (keyStoreFile != null) {
+    File keystore = new File(project.rootDir, keyStoreFile).exists()
+    if (keyStoreFile != null && keystore.exists() &&
+            keyStorePass != null && keyStoreAlias != null &&
+            keyStoreAliasPass != null) {
+        android.signingConfigs.release.storeFile = new File(project.rootDir, keyStoreFile)
+        android.signingConfigs.release.storePassword = keyStorePass
+        android.signingConfigs.release.keyAlias = keyStoreAlias
+        android.signingConfigs.release.keyPassword = keyStoreAliasPass
+    } else {
+        println 'Not signing release.  Failed to resolve credentials'
+        android.buildTypes.release.signingConfig = null
+    }
 } else {
-    android.buildTypes.release.signingConfig = null
+    println 'Not signing release.  keyStoreFile was not defined in private.creds'
 }
 
 /**
