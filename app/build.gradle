@@ -165,6 +165,25 @@ if (keyStoreFile != null) {
     android.buildTypes.release.signingConfig = null
 }
 
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    def androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator), files(androidJar))
+    destinationDir = file("../javadoc/")
+    failOnError false
+    options {
+        links "http://docs.oracle.com/javase/7/docs/api/"
+        linksOffline "http://d.android.com/reference", "${android.sdkDirectory}/docs/reference"
+    }
+    exclude '**/BuildConfig.java'
+    exclude '**/R.java'
+}
+
+task sources(type: Jar, dependsOn: assembleRelease) {
+    classifier = 'sources'
+    from android.sourceSets.main.java
+}
+
 /**
  * Code style check task.  checkstyle task runs as part of the check task
  */
