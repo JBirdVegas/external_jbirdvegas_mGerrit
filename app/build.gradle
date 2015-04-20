@@ -149,7 +149,7 @@ android {
     }
 }
 if (keyStoreFile != null) {
-    File keystore = new File(project.rootDir, keyStoreFile).exists()
+    File keystore = new File(project.rootDir, keyStoreFile)
     if (keyStoreFile != null && keystore.exists() &&
             keyStorePass != null && keyStoreAlias != null &&
             keyStoreAliasPass != null) {
