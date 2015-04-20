@@ -108,7 +108,6 @@ android {
             minifyEnabled false
             proguardFile 'proguard-project.txt'
             signingConfig signingConfigs.release
-
         }
     }
     lintOptions {
@@ -153,7 +152,7 @@ if (keyStoreFile != null) {
     if (keyStoreFile != null && keystore.exists() &&
             keyStorePass != null && keyStoreAlias != null &&
             keyStoreAliasPass != null) {
-        android.signingConfigs.release.storeFile = new File(project.rootDir, keyStoreFile)
+        android.signingConfigs.release.storeFile = keystore
         android.signingConfigs.release.storePassword = keyStorePass
         android.signingConfigs.release.keyAlias = keyStoreAlias
         android.signingConfigs.release.keyPassword = keyStoreAliasPass
