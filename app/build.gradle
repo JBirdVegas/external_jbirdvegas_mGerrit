@@ -63,6 +63,9 @@ def String keyStoreAliasPass
 def File  versionPropsFile = new File(project.rootDir, 'version.properties')
 // Holder for version information
 def Properties versionProps = new Properties()
+// Build branch
+def branchName = 'mgerrit.org-jenkins-bot'
+
 /**
  * A git client that's groovy ;)
  */
@@ -182,7 +185,6 @@ task commitFiles << {
     /**
      * Checkout feature branch, if branch does not exist create the branch
      */
-    def branchName = 'mgerrit.org-jenkins-bot'
     def branchExists = false
     // get a List<Branch> of all local branches
     def branches = grgit.branch.list(mode: BranchListOp.Mode.LOCAL)
@@ -242,11 +244,11 @@ task commitFiles << {
 task push << {
     grgit.push()
     grgit.merge(head: 'master')
-    String branchName = getCurrentBranch()
     grgit.checkout(branch: 'master')
-    grgit.merge(head: branchName)
+    grgit.merge(head: getCurrentBranch())
     grgit.push()
     grgit.push(tags: true)
+    grgit.checkout(branch: branchName)
 }
 
 /**
@@ -268,7 +270,7 @@ task fullRelease << {
 // config the style checks to run during the testing phase
 check.dependsOn 'checkstyle'
 // Configure commit to only run after clean builds
-commitFiles.dependsOn 'clean', 'build'
+commitFiles.dependsOn 'build'
 // Pushing requires having committed files and created tags
 push.dependsOn 'commitFiles'
 // full release can only be successful if all pushes were successful
