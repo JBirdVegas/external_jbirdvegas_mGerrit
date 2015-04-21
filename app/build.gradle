@@ -14,6 +14,7 @@ buildscript {
 import org.ajoberstar.grgit.Branch
 import org.ajoberstar.grgit.Credentials
 import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.grgit.Tag
 import org.ajoberstar.grgit.operation.BranchListOp
 import org.eclipse.jgit.util.StringUtils
 
@@ -45,33 +46,67 @@ dependencies {
     }
     compile 'de.hdodenhof:circleimageview:1.2.2'
 }
+/**
+ * Holds the complete formatted (incremented in specified) android:versionCode
+ */
 def versionHolder
 
-/* This can be null, if private.creds is empty or does not exists be sure to check before accessing */
+/* These can be null, if private.creds is empty or does not exists
+ be sure to check before accessing */
 
-// github account user name
+/**
+ * github account user name
+ */
 def String gitUsername
-// github user password
+
+/**
+ * github user password
+ */
 def String gitPassword
-// Release signing keystore file
+
+/**
+ * Release signing keystore file
+ */
 def String keyStoreFile
-// Release signing keystore password
+
+/**
+ * Release signing keystore password
+ */
 def String keyStorePass
-// Release signing alias
+
+/**
+ * Release signing alias
+ */
 def String keyStoreAlias
-// Release signing alias password
+
+/**
+ * Release signing alias password
+ */
 def String keyStoreAliasPass
 
-// Cannot be null
+/**
+ * File used for persisting versioning information
+ * Required: Cannot be null or FileNotFound
+ */
 def File  versionPropsFile = new File(project.rootDir, 'version.properties')
-// Holder for version information
+
+/**
+ * Versioning information properties map
+ */
 def Properties versionProps = new Properties()
+
+/**
+ * Jenkins release bot runs on its own git branch then merges the result to master.
+ * This is the branch jenkins bot will run in.
+ */
+def branchName = 'mgerrit.org-jenkins-bot'
+
 /**
  * A git client that's groovy ;)
  */
 def grgit
 
-// setup
+// Setup private creds.
 try {
     def Properties props = new Properties()
     def File credsFile = new File("${project.rootDir}/private.creds")
@@ -84,9 +119,7 @@ try {
     keyStoreAliasPass = props['keyStoreAliasPass']
     grgit = Grgit.open(project.rootDir, new Credentials(gitUsername.toString(), gitPassword.toString()))
 } catch (Exception e) {
-    println "Credentials file not found {private.creds} Releases will fail fast, as long as you don't attempt" +
-            " a release build is fail-safe."
-    e.printStackTrace()
+    println "Credentials file not found {private.creds} Releases will fail.  Debug builds should not be affected"
 }
 
 android {
@@ -108,7 +141,6 @@ android {
             minifyEnabled false
             proguardFile 'proguard-project.txt'
             signingConfig signingConfigs.release
-
         }
     }
     lintOptions {
@@ -137,28 +169,62 @@ android {
             }
             versionHolder = builder.toString()
         }
-
         defaultConfig {
             versionCode versionHolder.replaceAll("\\.", "").toInteger()
             versionName versionHolder
-            minSdkVersion 15
+            minSdkVersion 14
             targetSdkVersion 22
             println("versionCode: $versionCode versionName: $versionName")
         }
     } else {
-        throw new GradleException("Fatal: Could not read version.properties!")
+        throw new GradleException("Fatal: Could not read ${versionPropsFile.absolutePath}!")
     }
 }
-
-if (keyStoreFile != null && new File(keyStoreFile).exists() &&
-        keyStorePass != null &&  keyStoreAlias != null &&
-        keyStoreAliasPass != null) {
-    android.signingConfigs.release.storeFile = file(keyStoreFile)
-    android.signingConfigs.release.storePassword = keyStorePass
-    android.signingConfigs.release.keyAlias = keyStoreAlias
-    android.signingConfigs.release.keyPassword = keyStoreAliasPass
+/**
+ * Setup signing configuration.
+ *
+ * Requirements for release signing:
+ * 1) storeFile file ${project.rootDir}, ie mGerrit/keystore.file, under the key:keyStoreFile
+ * 2) storePassword set in the properties file under the key:keyStorePass
+ * 3) keyStoreAlias set in the properties file under the key:keyStoreAlias
+ * 4) keyStoreAliasPass set in the properties file under teh key:keyStoreAliasPass
+ *
+ * Non release builds don't need this. Default debug signing key will be used
+ */
+if (keyStoreFile != null) {
+    File keystore = new File(project.rootDir, keyStoreFile)
+    if (keyStoreFile != null && keystore.exists() &&
+            keyStorePass != null && keyStoreAlias != null &&
+            keyStoreAliasPass != null) {
+        android.signingConfigs.release.storeFile = keystore
+        android.signingConfigs.release.storePassword = keyStorePass
+        android.signingConfigs.release.keyAlias = keyStoreAlias
+        android.signingConfigs.release.keyPassword = keyStoreAliasPass
+    } else {
+        println 'Not signing release.  Failed to resolve credentials'
+        android.buildTypes.release.signingConfig = null
+    }
 } else {
+    println 'Not signing release.  keyStoreFile was not defined in private.creds'
     android.buildTypes.release.signingConfig = null
+}
+
+/**
+ * Generates JavaDoc website.  Jenkins picks this up as an artifact.
+ * Allows standardized api usage docs.
+ */
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    def androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator), files(androidJar))
+    destinationDir = file("../javadoc/")
+    failOnError false
+    options {
+        links "http://docs.oracle.com/javase/7/docs/api/"
+        linksOffline "http://d.android.com/reference", "${android.sdkDirectory}/docs/reference"
+    }
+    exclude '**/BuildConfig.java'
+    exclude '**/R.java'
 }
 
 /**
@@ -185,7 +251,6 @@ task commitFiles << {
     /**
      * Checkout feature branch, if branch does not exist create the branch
      */
-    def branchName = 'mgerrit.org-jenkins-bot'
     def branchExists = false
     // get a List<Branch> of all local branches
     def branches = grgit.branch.list(mode: BranchListOp.Mode.LOCAL)
@@ -212,15 +277,28 @@ task commitFiles << {
     if (versionPropsFile.exists() && versionPropsFile.canRead()) {
         // Stage changed files for commit
         grgit.add(patterns: ['.'])
-        println "Grgit status: " + grgit.status()
+        println "Grgit file staging: " + grgit.status()
         // Commit the updated version.properties
-        grgit.commit(message: "Update version to latest build: ${versionHolder}", amend: false)
-        println "Grgit status: " + grgit.status()
-        String message = "Release of v${versionHolder}"
-        // Create tag for version
-        grgit.tag.add(name: "v${versionHolder}", message: message)
+        grgit.commit(message: "Release: update version to: ${versionHolder}", amend: false)
+        String message = "Release of v${versionHolder}, ${new Date()}"
+
+        // Check if the version tag already exists.  If it does, don't fail.
+        // Just don't push the new tag
+        // TODO: This was for debugging without creating a thousand tags.
+        //       Should probably remove it and fail-fast here
+        List<Tag> tags = grgit.tag.list();
+        boolean tagExists = false;
+        for (Tag tag : tags) {
+            if (tag.name.contains("v${versionHolder}")) {
+                tagExists = true;
+            }
+        }
+        if (!tagExists) {
+            // Create tag for version
+            grgit.tag.add(name: "v${versionHolder}", message: message)
+        }
     } else {
-        throw new GradleException("FATAL: Missing ${project.rootDir.absolutePath}/version.properties")
+        throw new GradleException("FATAL: Missing ${versionPropsFile.absolutePath}")
     }
 }
 
@@ -232,15 +310,25 @@ task commitFiles << {
  * 4) merge feature branch to master
  * 5) push merged branch to master
  * 6) push release tags
+ * 7) Remove feature branch
  */
 task push << {
-    grgit.push()
-    grgit.merge(head: 'master')
-    String branchName = getCurrentBranch()
-    grgit.checkout(branch: 'master')
-    grgit.merge(head: branchName)
-    grgit.push()
-    grgit.push(tags: true)
+    try {
+        // push version update to remote
+        grgit.push()
+        // merge master's head into our bot branch
+        grgit.merge(head: 'master')
+        // switch to master branch
+        grgit.checkout(branch: 'master')
+        // merge our bot's branch into master
+        grgit.merge(head: branchName)
+        // push the merge to remote
+        grgit.push()
+        // push tags to remote
+        grgit.push(tags: true)
+    } finally {
+        grgit.branch.remove(names: [branchName], force: true)
+    }
 }
 
 /**
@@ -262,7 +350,7 @@ task fullRelease << {
 // config the style checks to run during the testing phase
 check.dependsOn 'checkstyle'
 // Configure commit to only run after clean builds
-commitFiles.dependsOn 'clean', 'build'
+commitFiles.dependsOn 'build'
 // Pushing requires having committed files and created tags
 push.dependsOn 'commitFiles'
 // full release can only be successful if all pushes were successful
