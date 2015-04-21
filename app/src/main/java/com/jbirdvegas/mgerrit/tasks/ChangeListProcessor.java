@@ -29,7 +29,8 @@ import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.MoreChanges;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
+import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 import com.jbirdvegas.mgerrit.tasks.GerritService.Direction;
@@ -44,7 +45,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
 
     GerritService.Direction mDirection;
 
-    ChangeListProcessor(Context context, Intent intent, GerritURL url) {
+    ChangeListProcessor(Context context, Intent intent, RequestBuilder url) {
         super(context, intent, url);
 
         Direction direction = (Direction) getIntent().getSerializableExtra(GerritService.CHANGES_LIST_DIRECTION);
@@ -56,6 +57,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
             ServerVersion version = Config.getServerVersion(context);
             if (version == null || !version.isFeatureSupported("2.8.1")) setResumableUrl();
         }
+        attemptAuthenticatedRequest(url);
     }
 
     @Override
@@ -70,7 +72,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
     boolean isSyncRequired(Context context) {
         // Are we already fetching changes for this status?
         if (areFetchingChangesForStatus(getQuery())) return false;
-
+        else if (getQuery() == null) return true; // If we have not specified a status we are doing a query on all past changes
         else if (mDirection == Direction.Older) return true;
 
         long syncInterval = context.getResources().getInteger(R.integer.changes_sync_interval);
@@ -89,7 +91,8 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
 
     @Override
     void doPostProcess(JSONCommit[] data) {
-        String status = getUrl().getStatus();
+        ChangeEndpoints originalURL = (ChangeEndpoints) getUrl();
+        String status = originalURL.getStatus();
         boolean moreChanges = false;
 
         if (mDirection == Direction.Older) {
@@ -124,8 +127,8 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
      *  we can modify the url given to include that sortkey.
      */
     protected void setResumableUrl() {
-        GerritURL originalURL = getUrl();
-        String sortKey = CommitMarker.getSortKeyForQuery(mContext, getUrl().getStatus());
+        ChangeEndpoints originalURL = (ChangeEndpoints) getUrl();
+        String sortKey = CommitMarker.getSortKeyForQuery(mContext, originalURL.getStatus());
         if (sortKey != null) {
             originalURL.setSortKey(sortKey);
             super.setUrl(originalURL);
@@ -142,9 +145,9 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
 
     private boolean areFetchingChangesForStatus(@NotNull String status) {
         Class<? extends SyncProcessor> clazz = ChangeListProcessor.class;
-        HashMap<GerritURL, SyncProcessor> processors = GerritService.getRunningProcessors();
+        HashMap<RequestBuilder, SyncProcessor> processors = GerritService.getRunningProcessors();
 
-        for (Map.Entry<GerritURL, SyncProcessor> entry : processors.entrySet()) {
+        for (Map.Entry<RequestBuilder, SyncProcessor> entry : processors.entrySet()) {
             if (entry.getValue().getClass().equals(clazz) && status.equals(entry.getKey().getQuery()))
                 return true;
         }

@@ -21,7 +21,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/cardBackgroundColor">
+    android:background="?attr/colorCardBackground">
 
     <TextView
         android:layout_width="match_parent"

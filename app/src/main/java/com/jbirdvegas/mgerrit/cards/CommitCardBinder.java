@@ -18,8 +18,10 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -29,6 +31,8 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
+import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.TimeZone;
 
@@ -44,8 +48,10 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
     private final TimeZone mLocalTimeZone;
 
     // Cursor indices
-    private Integer useremail_index;
-    private Integer userid_index;
+    private Integer userEmailIndex;
+    private Integer userIdIndex;
+    private Integer changeIdIndex;
+    private Integer changeNumberIndex;
 
     public CommitCardBinder(Context context, RequestQueue requestQueue) {
         this.mRequestQuery = requestQueue;
@@ -62,27 +68,41 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
     @Override
     public boolean setViewValue(View view, final Cursor cursor, final int columnIndex) {
         // These indicies will not change regardless of the view
-        if (useremail_index == null) {
-            useremail_index = cursor.getColumnIndex(UserChanges.C_EMAIL);
+        if (userEmailIndex == null) {
+            userEmailIndex = cursor.getColumnIndex(UserChanges.C_EMAIL);
         }
-        if (userid_index == null) {
-            userid_index = cursor.getColumnIndex(UserChanges.C_USER_ID);
+        if (userIdIndex == null) {
+            userIdIndex = cursor.getColumnIndex(UserChanges.C_USER_ID);
+        }
+        if (changeIdIndex == null) {
+            changeIdIndex = cursor.getColumnIndex(UserChanges.C_CHANGE_ID);
+        }
+        if (changeNumberIndex == null) {
+            changeNumberIndex = cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER);
         }
 
         if (view.getId() == R.id.commit_card_commit_owner) {
             TextView owner = (TextView) view;
             owner.setText(cursor.getString(columnIndex));
             // Set the user so we can get it in the onClickListener
-            owner.setTag(cursor.getInt(userid_index));
+            owner.setTag(cursor.getInt(userIdIndex));
             owner.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     PrefsFragment.setTrackingUser(mContext, (Integer) v.getTag());
                 }
             });
-            GravatarHelper.attachGravatarToTextView(owner,
-                    cursor.getString(useremail_index),
+        } else if (view.getId() == R.id.commit_card_committer_image) {
+            ImageView imageView = (ImageView) view;
+            GravatarHelper.populateProfilePicture((ImageView) view, cursor.getString(userEmailIndex),
                     mRequestQuery);
+            imageView.setTag(R.id.user, cursor.getInt(userIdIndex));
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PrefsFragment.setTrackingUser(mContext, (Integer) v.getTag(R.id.user));
+                }
+            });
         } else if (view.getId() == R.id.commit_card_project_name) {
             final TextView project = (TextView) view;
             project.setText(cursor.getString(columnIndex));
@@ -109,6 +129,23 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
             String lastUpdated = cursor.getString(columnIndex);
             TextView textView = (TextView) view;
             textView.setText(prettyPrintDate(mContext, lastUpdated));
+        } else if (view.getId() == R.id.commit_card_starred) {
+            final ImageView star = (ImageView) view;
+            final int starred = cursor.getInt(columnIndex);
+
+            setStarIcon(star, starred == 1);
+            star.setTag(R.id.changeID, cursor.getString(changeIdIndex));
+            star.setTag(R.id.changeNumber, cursor.getInt(changeNumberIndex));
+
+            star.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String changeId = (String) star.getTag(R.id.changeID);
+                    int changeNumber = (int) star.getTag(R.id.changeNumber);
+                    onStarChange(changeId, changeNumber, starred != 1);
+                    setStarIcon(star, starred == 1);
+                }
+            });
         } else {
             return false;
         }
@@ -125,7 +162,28 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
 
     // When the cursor changes, these may not be valid
     public void onCursorChanged() {
-        useremail_index = null;
-        userid_index = null;
+        userEmailIndex = null;
+        userIdIndex = null;
+        changeIdIndex = null;
+        changeNumberIndex = null;
+    }
+
+    private void setStarIcon(ImageView view, boolean starred) {
+        if (starred) {
+            view.setImageResource(Tools.getResIdFromAttribute(mContext, R.attr.starredIcon));
+        } else {
+            view.setImageResource(Tools.getResIdFromAttribute(mContext, R.attr.unstarredIcon));
+        }
+    }
+
+    private void onStarChange(String changeId, int changeNumber, boolean starred) {
+        AccountEndpoints url = AccountEndpoints.starChange(changeId);
+        Intent it = new Intent(mContext, GerritService.class);
+        it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Star);
+        it.putExtra(GerritService.URL_KEY, url);
+        it.putExtra(GerritService.CHANGE_ID, changeId);
+        it.putExtra(GerritService.CHANGE_NUMBER, changeNumber);
+        it.putExtra(GerritService.IS_STARRING, starred);
+        mContext.startService(it);
     }
 }

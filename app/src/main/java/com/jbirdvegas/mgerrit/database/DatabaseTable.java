@@ -78,7 +78,7 @@ public abstract class DatabaseTable {
         UserChangesList, UserChangesID,
         UserMessageList, UserMessageID,
         UserReviewersList, UserReviewersID,
-        UsersList, UsersID,
+        UsersList, UsersID
     }
 
     // Add each DatabaseTable class here, we need to add the virtual tables as well

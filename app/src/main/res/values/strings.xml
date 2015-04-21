@@ -72,6 +72,9 @@
     <string name="event_bus_website" translatable="false">http://greenrobot.github.io/EventBus/</string>
     <string name="aosp_volley_website" translatable="false">https://android.googlesource.com/platform/frameworks/volley/</string>
     <string name="aosp_volley_title" translatable="false">AOSP\'s Volley</string>
+    <string name="circle_image_view_title" translatable="false">CircleImageView</string>
+    <string name="circle_image_view_website" translatable="false">https://github.com/hdodenhof/CircleImageView</string>
+
 
     <string name="explain_status_title">Explain statuses</string>
     <string name="explain_status_summary">Brief explanation of the Status tabs meanings</string>
@@ -183,4 +186,20 @@
     <string name="loading_changes">Loading More Changes&#8230;</string>
 
     <string name="header_date_format">EEEE, MMMM dd yyyy</string>
+
+    <string name="gerrit_signin_title">Sign in to %s</string>
+    <string name="gerrit_signin_username">Username</string>
+    <string name="gerrit_signin_password">Password</string>
+    <string name="gerrit_signin_signin">Sign in</string>
+    <string name="gerrit_signin_help">Enter your username and password to star changes from mGerrit. If you do not know your username/password, you can generate one on %s.</string>
+    <string name="gerrit_signin_help_link_text">your account settings page</string>
+    <string name="gerrit_signin_btn_success">Signed in</string>
+    <string name="gerrit_signin_btn_progress">Signing in...</string>
+    <string name="gerrit_signin_btn_error">Error</string>
+    <string name="gerrit_signin_btn_loader_searching">Searching for credentials...</string>
+    <string name="gerrit_signin_username_password_failure">Your username and/or password is incorrect.
+        Please try again.</string>
+    <string name="gerrit_signin_protected_help">This Gerrit is protected and requires you to sign in before you can view changes. If you do not know your username/password, you can generate one on %s.</string>
+    <string name="commit_card_star_change">Star this change</string>
+    <string name="star_change_not_supported" formatted="false">%s does not support starring or unstarring changes in this version. Please ask them to upgrade to version %s or later.</string>
 </resources>

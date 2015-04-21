@@ -52,8 +52,8 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
+import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
 import com.jbirdvegas.mgerrit.objects.FilesCAB;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.search.ChangeSearch;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
@@ -75,7 +75,7 @@ public class PatchSetViewerFragment extends Fragment
     private Activity mParent;
     private Context mContext;
 
-    private GerritURL mUrl;
+    private ChangeEndpoints mUrl;
     private String mSelectedChange;
     private String mStatus;
     private int mChangeNumber;
@@ -184,14 +184,14 @@ public class PatchSetViewerFragment extends Fragment
             }
         });
 
-        mUrl = new GerritURL();
+        mUrl = new ChangeEndpoints();
 
         Button retryButton = (Button) currentFragment.findViewById(R.id.btn_retry);
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (sIsLegacyVersion) sendRequest(GerritService.DataType.Commit);
-                else sendRequest(GerritService.DataType.LegacyCommitDetails);
+                if (sIsLegacyVersion) sendRequest(GerritService.DataType.LegacyCommitDetails);
+                else sendRequest(GerritService.DataType.Commit);
             }
         });
 

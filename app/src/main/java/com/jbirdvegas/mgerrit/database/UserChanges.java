@@ -90,6 +90,9 @@ public class UserChanges extends DatabaseTable {
     // The full name of the user.
     public static final String C_NAME = Users.C_NAME;
 
+    // Virtual column set by the existance of this change in the StarredChanges table
+    public static final String C_STARRED = Changes.C_IS_STARRED;
+
 
     // --- Content Provider stuff ---
     public static final int ITEM_LIST = UriType.UserChangesList.ordinal();
@@ -105,9 +108,10 @@ public class UserChanges extends DatabaseTable {
     public static final String SORT_BY = C_UPDATED + " DESC";
 
     public static final String[] CHANGE_LIST_PROJECTION = new String[] {
-            Changes.TABLE + ".rowid AS _id", C_CHANGE_ID, C_SUBJECT, C_PROJECT, C_UPDATED,
-            C_STATUS, C_TOPIC, C_USER_ID, C_EMAIL, C_NAME, C_BRANCH,
-            C_COMMIT_NUMBER };
+            Changes.TABLE + ".rowid AS _id",
+            String.format("%s.%s", Changes.TABLE, Changes.C_CHANGE_ID), C_SUBJECT, C_PROJECT,
+            C_UPDATED, C_STATUS, C_TOPIC, C_USER_ID, C_EMAIL, C_NAME, C_BRANCH,
+            String.format("%s.%s", Changes.TABLE, Changes.C_COMMIT_NUMBER), C_STARRED };
 
     private static UserChanges mInstance = null;
     private MyObserver mObserver;
@@ -148,6 +152,7 @@ public class UserChanges extends DatabaseTable {
             row.put(C_STATUS, commit.getStatus().toString());
             row.put(C_TOPIC, commit.getTopic());
             row.put(C_BRANCH, commit.getBranch());
+            row.put(C_STARRED, commit.isStarred());
             values.add(row);
 
             committers.add(commit.getOwnerObject());

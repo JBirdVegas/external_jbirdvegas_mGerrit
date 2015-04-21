@@ -38,18 +38,17 @@ import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Logger;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.Tracker;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.fragments.ChangeListFragment;
 import com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.ROMHelper;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
+import com.jbirdvegas.mgerrit.message.NotSupported;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
-
-import java.util.prefs.PreferencesFactory;
 
 import de.greenrobot.event.EventBus;
 
@@ -287,5 +286,9 @@ public class GerritControllerActivity extends FragmentActivity {
         if (mTwoPane) ev.setFragment(mChangeDetail);
 
         ev.inflate(this);
+    }
+
+    public void onEventMainThread(NotSupported ev) {
+        Toast.makeText(this, ev.getMessage(), Toast.LENGTH_LONG).show();
     }
 }

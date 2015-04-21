@@ -31,9 +31,9 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="@dimen/cards_list_divider_height"
         android:fastScrollEnabled="true"
+        android:scrollbarStyle="outsideInset"
         android:paddingBottom="@dimen/cards_list_padding_vert"
         android:paddingLeft="@dimen/cards_list_padding_horiz"
-        android:paddingRight="@dimen/cards_list_padding_horiz"
         android:paddingTop="@dimen/cards_list_padding_vert"
         android:drawSelectorOnTop="true"/>
 </android.support.v4.widget.SwipeRefreshLayout>

@@ -66,11 +66,9 @@ public class JSONCommit {
     private static final String KEY_MESSAGES = "messages";
     private static final String KEY_CURRENT_REVISION = "current_revision";
     private static final String KEY_LABELS = "labels";
-    private static final String KEY_VERIFIED = "Verified";
-    private static final String KEY_CODE_REVIEW = "Code-Review";
     public static final String KEY_REVISIONS = "revisions";
-    private static final String KEY_TIMEZONE = "tz";
     private static final String KEY_MORE_CHANGES = "_more_changes";
+    private static final String KEY_STARRED = "starred";
 
     private TimeZone mServerTimeZone;
     private TimeZone mLocalTimeZone;
@@ -292,6 +290,12 @@ public class JSONCommit {
     @SerializedName(JSONCommit.KEY_MORE_CHANGES)
     private boolean mMoreChanges = true;
 
+    /**
+     * Whether the calling user has starred this change.
+     */
+    @SerializedName(JSONCommit.KEY_STARRED)
+    private boolean mStarred = false;
+
 
     public String getKind() {
         return mKind;
@@ -331,27 +335,6 @@ public class JSONCommit {
 
     public List<CommitComment> getMessagesList() {
         return mMessagesList;
-    }
-
-    /**
-     * PrettyPrint the Gerrit provided timestamp
-     * format into a more human readable format
-     * <p/>
-     * I have no clue what the ten zeros
-     * after the seconds are good for as
-     * the exact same ten zeros are in all
-     * databases regardless of the stamp's
-     * time or timezone... it comes from
-     * Google so we just handle oddities
-     * downstream :(
-     * from "2013-06-09 19:47:40.000000000"
-     * to Jun 09, 2013 07:47 40ms PM
-     *
-     * @return String representation of the date
-     * example: Jun 09, 2013 07:47 40ms PM
-     */
-    public String getLastUpdatedDate(Context context) {
-        return Tools.prettyPrintDateTime(context, mLastUpdatedDate, mServerTimeZone, mLocalTimeZone);
     }
 
     public boolean isIsMergeable() {
@@ -413,6 +396,10 @@ public class JSONCommit {
         return mMoreChanges;
     }
 
+    public boolean isStarred() {
+        return mStarred;
+    }
+
     @Override
     public String toString() {
         return "JSONCommit{" +
@@ -439,6 +426,7 @@ public class JSONCommit {
                 ", mPatchSetNumber=" + mPatchSetNumber +
                 ", mMessagesList=" + mMessagesList +
                 ", mMoreChanges=" + mMoreChanges +
+                ", mStarred=" + mStarred +
                 '}';
     }
 }

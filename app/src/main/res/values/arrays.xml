@@ -72,6 +72,7 @@
         <item>@string/theme_dark_value</item>
     </string-array>
     <string-array name="library_titles" translatable="false">
+        <item>@string/circle_image_view_title</item>
 		<item>@string/event_bus</item>
         <item>@string/gson_library</item>
         <item>@string/jodatime</item>
@@ -82,6 +83,7 @@
     </string-array>
 
     <string-array name="library_websites" translatable="false">
+        <item>@string/circle_image_view_website</item>
 		<item>@string/event_bus_website</item>
         <item>@string/gson_library_website</item>
         <item>@string/jodatime_website</item>

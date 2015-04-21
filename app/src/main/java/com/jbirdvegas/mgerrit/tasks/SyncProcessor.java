@@ -20,17 +20,22 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.volley.Request;
+import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jbirdvegas.mgerrit.database.Users;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
+import com.jbirdvegas.mgerrit.objects.AccountInfo;
+import com.jbirdvegas.mgerrit.objects.EventQueue;
+import com.jbirdvegas.mgerrit.objects.GerritMessage;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 
 import de.greenrobot.event.EventBus;
 
@@ -42,7 +47,7 @@ import de.greenrobot.event.EventBus;
 abstract class SyncProcessor<T> {
     protected final Context mContext;
     private final EventBus mEventBus;
-    private GerritURL mCurrentUrl;
+    private RequestBuilder mCurrentUrl;
     private ResponseHandler mResponseHandler;
     private final Intent mIntent;
 
@@ -73,7 +78,7 @@ abstract class SyncProcessor<T> {
      *               this SyncProcessor.
      * @param url The Gerrit URL from which to retrieve the data from
      */
-    SyncProcessor(Context context, Intent intent, GerritURL url) {
+    SyncProcessor(Context context, Intent intent, RequestBuilder url) {
         this.mContext = context;
         this.mCurrentUrl = url;
         this.mIntent = intent;
@@ -81,8 +86,8 @@ abstract class SyncProcessor<T> {
     }
 
     protected Context getContext() { return mContext; }
-    protected GerritURL getUrl() { return mCurrentUrl; }
-    protected void setUrl(GerritURL url) { mCurrentUrl = url; }
+    protected RequestBuilder getUrl() { return mCurrentUrl; }
+    protected void setUrl(RequestBuilder url) { mCurrentUrl = url; }
 
     // Helper method to extract the relevant query portion of the URL
     protected String getQuery() {
@@ -129,35 +134,44 @@ abstract class SyncProcessor<T> {
 
     /**
      * Sends a request to the Gerrit server for the url set in the constructor
-     *  SyncProcessor(Context, GerritURL). The default simply calls
+     *  SyncProcessor(Context, RequestBuilder). The default simply calls
      *  fetchData(String, RequestQueue).
      */
     protected void fetchData(RequestQueue queue) {
-        fetchData(mCurrentUrl.toString(), queue);
+        fetchData(mCurrentUrl, queue);
     }
 
     /**
      * Send a request to the Gerrit server. Expects the response to be in
      *  Json format.
-     * @param url The URL of the request
+     * @param requestBuilder The URL of the request
      * @param queue An instance of the Volley request queue.
      */
-    protected void fetchData(final String url, RequestQueue queue) {
+    protected void fetchData(final RequestBuilder requestBuilder, RequestQueue queue) {
+        final String url = requestBuilder.toString();
+
         GsonRequest request = new GsonRequest<>(url, gson, getType(), 5,
                 getListener(url), new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                mEventBus.post(new ErrorDuringConnection(mIntent, url, getStatus(), volleyError));
+            public void onErrorResponse(VolleyError error) {
+                if (error instanceof AuthFailureError) {
+                    Tools.launchSignin(mContext);
+                }
+                // We still want to post the exception
+                // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
+                GerritMessage ev = new ErrorDuringConnection(mIntent, url, getStatus(), error);
+                EventQueue.getInstance().enqueue(ev, true);
             }
         });
 
-        fetchData(url, request, queue);
+        fetchData(requestBuilder, request, queue);
     }
 
-    protected void fetchData(final String url, Request<T> request, RequestQueue queue) {
+    protected void fetchData(final RequestBuilder requestBuilder, Authenticateable<T> request, RequestQueue queue) {
         if (queue == null) queue = Volley.newRequestQueue(getContext());
 
-        mEventBus.post(new StartingRequest(mIntent, url, getStatus()));
+        mEventBus.post(new StartingRequest(mIntent, requestBuilder.toString(), getStatus()));
+        setUsernamePasswordOnRequest(requestBuilder, request);
         queue.add(request);
     }
 
@@ -178,12 +192,62 @@ abstract class SyncProcessor<T> {
         return new Response.Listener<T>() {
             @Override
             public void onResponse(T data) {
-            /* Offload all the work to a separate thread so database activity is not
-             * done on the main thread. */
-                mResponseHandler = new ResponseHandler(data, url);
-                mResponseHandler.start();
+                getSimpleListener(data, url);
             }
         };
+    }
+
+    protected void getSimpleListener(T data, final String url) {
+        /* Offload all the work to a separate thread so database activity is not
+         * done on the main thread. */
+        mResponseHandler = new ResponseHandler(data, url);
+        mResponseHandler.start();
+    }
+
+    private boolean setUsernamePasswordOnRequest(RequestBuilder requestBuilder, Authenticateable request) {
+        if (requestBuilder.isAuthenticating()) {
+            String username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
+            String password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
+            if (username == null || password == null) {
+                AccountInfo ai = Users.getUser(mContext, null);
+                if (ai != null) {
+                    username = ai.username;
+                    password = ai.password;
+                }
+            }
+            if (username != null && password != null) {
+                request.setHttpBasicAuth(username, password);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if we have either provided or stored a username/password we can authenticate with.
+     * If so, set this on the intent and make sure the request is using the authenticated URL
+     * @param requestBuilder A RequestBuilder used to build the URL
+     * @return Whether we are authenticating as part of the request
+     */
+    protected boolean attemptAuthenticatedRequest(RequestBuilder requestBuilder) {
+        if (!requestBuilder.isAuthenticating()) {
+            String username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
+            String password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
+            if (username == null || password == null) {
+                AccountInfo ai = Users.getUser(mContext, null);
+                if (ai != null) {
+                    requestBuilder.setAuthenticating(true);
+                    mIntent.putExtra(GerritService.HTTP_USERNAME, ai.username);
+                    mIntent.putExtra(GerritService.HTTP_PASSWORD, ai.password);
+                } else {
+                    return false;
+                }
+            } else {
+                requestBuilder.setAuthenticating(true);
+            }
+        }
+        return true;
     }
 
     class ResponseHandler extends Thread {

@@ -20,13 +20,14 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.jbirdvegas.mgerrit.objects.GerritURL;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 class LegacyCommitProcessor extends SyncProcessor<JSONCommit[]> {
 
-    LegacyCommitProcessor(Context context, Intent intent, GerritURL url) {
+    LegacyCommitProcessor(Context context, Intent intent, RequestBuilder url) {
         super(context, intent, url);
+        attemptAuthenticatedRequest(url);
     }
 
     @Override

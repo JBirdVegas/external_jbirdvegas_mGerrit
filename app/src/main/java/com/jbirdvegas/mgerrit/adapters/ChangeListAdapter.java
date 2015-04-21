@@ -53,7 +53,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
     private Integer mProject_index;
 
     private String selectedChangeId;
-    private CommitCard selectedChangeView;
+    private View selectedChangeView;
 
     private final Locale mLocale;
     private final TimeZone mServerTimeZone, mLocalTimeZone;
@@ -86,11 +86,12 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
         view.setTag(tagHolder);
 
         if (tagHolder.changeid.equals(selectedChangeId)) {
-            CommitCard commitCard = (CommitCard) view;
+            CommitCard commitCard = (CommitCard) view.findViewById(R.id.commit_card_wrapper);
             commitCard.setChangeSelected(true);
-            selectedChangeView = commitCard;
+            selectedChangeView = view;
         } else {
-            ((CommitCard) view).setChangeSelected(false);
+            CommitCard commitCard = (CommitCard) view.findViewById(R.id.commit_card_wrapper);
+            commitCard.setChangeSelected(false);
         }
 
         view.setTag(R.id.changeID, tagHolder.changeid);
@@ -119,7 +120,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
         EventBus.getDefault().postSticky(new NewChangeSelected(vh.changeid, vh.changeNumber, vh.changeStatus, true));
 
         // Set this view as selected
-        setSelectedChangeId((CommitCard) view, vh.changeid);
+        setSelectedChangeId(view, vh.changeid);
     }
 
     /**
@@ -146,24 +147,27 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
          *  will still refresh it.
          */
         if (selectedChangeView != null) {
-            selectedChangeView.setChangeSelected(false);
+            CommitCard commitCard = (CommitCard) selectedChangeView.findViewById(R.id.commit_card_wrapper);
+            commitCard.setChangeSelected(false);
             selectedChangeView = null;
         }
         this.notifyDataSetChanged();
     }
 
-    private void setSelectedChangeId(CommitCard card, String selectedChangeId) {
+    private void setSelectedChangeId(View card, String selectedChangeId) {
         //  Only invalidate the view if the changeid matches (i.e. it hasn't already been recycled)
         if (selectedChangeView != null) {
             TagHolder tagHolder = (TagHolder) selectedChangeView.getTag();
             if (tagHolder.changeid.equals(this.selectedChangeId)) {
-                selectedChangeView.setChangeSelected(false);
+                CommitCard commitCard = (CommitCard) selectedChangeView.findViewById(R.id.commit_card_wrapper);
+                commitCard.setChangeSelected(false);
             }
         }
 
         selectedChangeView = card;
         this.selectedChangeId = selectedChangeId;
-        card.setChangeSelected(true);
+        CommitCard commitCard = (CommitCard) selectedChangeView.findViewById(R.id.commit_card_wrapper);
+        commitCard.setChangeSelected(true);
     }
 
     private void setIndicies(@NotNull Cursor cursor) {

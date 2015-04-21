@@ -17,9 +17,6 @@
   -->
 
 <resources>
-    <declare-styleable name="CardUI">
-        <attr name="columnCount" format="integer"/>
-    </declare-styleable>
     <declare-styleable name="item">
         <attr name="gerritIcon" format="reference"/>
         <attr name="projectsIcon" format="reference"/>
@@ -30,10 +27,13 @@
         <attr name="viewIcon" format="reference"/>
         <attr name="acceptIcon" format="reference"/>
         <attr name="cancelIcon" format="reference"/>
+        <attr name="secureIcon" format="reference"/>
+        <attr name="starredIcon" format="reference"/>
+        <attr name="unstarredIcon" format="reference"/>
     </declare-styleable>
     <declare-styleable name="LinearLayout">
         <attr name="mainBackgroundColor" format="color"/>
-        <attr name="cardBackgroundColor" format="color"/>
+        <attr name="colorCardBackground" format="color"/>
         <attr name="clickableCardBackground" format="reference" />
         <attr name="selectableCardBackground" format="reference" />
         <attr name="backgroundTop" format="reference"/>
@@ -74,4 +74,15 @@
         <attr name="deletedStripeColor" format="color"/>
         <attr name="modifiedStripeColor" format="color"/>
     </declare-styleable>
+
+    <attr name="signinButtonStyle" format="reference"/>
+    <attr name="signinErrorStyle" format="reference"/>
+    <declare-styleable name="ActionProcessButton">
+        <attr name="pb_colorComplete"/>
+        <attr name="pb_colorNormal"/>
+        <attr name="pb_colorPressed"/>
+        <attr name="pb_colorError"/>
+    </declare-styleable>
+
+    <attr name="borderlessButtonBackground" format="reference" />
 </resources>

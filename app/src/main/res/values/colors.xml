@@ -58,4 +58,12 @@
     <color name="card_selected">#ffececec</color>
     <color name="card_selected_dark">#ff0f0f0f</color>
 
+    <color name="signin_complete">#ff468945</color>
+    <color name="signin_error">#ff7e2624</color>
+
+    <color name="signin_complete_light">#ff9cea8d</color>
+    <color name="signin_error_light">#ffcc6164</color>
+    <color name="ripple_material_dark">#20ffffff</color>
+    <color name="ripple_material_light">#40000000</color>
+
 </resources>

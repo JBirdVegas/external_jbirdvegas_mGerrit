@@ -24,7 +24,7 @@ import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 
@@ -34,8 +34,9 @@ import java.util.List;
 
 class CommitProcessor extends SyncProcessor<JSONCommit> {
 
-    CommitProcessor(Context context, Intent intent, GerritURL url) {
+    CommitProcessor(Context context, Intent intent, RequestBuilder url) {
         super(context, intent, url);
+        attemptAuthenticatedRequest(url);
     }
 
     @Override

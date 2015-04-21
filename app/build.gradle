@@ -29,8 +29,8 @@ repositories {
 
 dependencies {
     compile files('libs/android-support-v4.jar')
-    compile files('libs/annotations.jar')
     compile files('libs/libGoogleAnalyticsServices.jar')
+    compile files('libs/annotations.jar')
 
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.mcxiaoke.volley:library:1.0.12'
@@ -40,7 +40,11 @@ dependencies {
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'joda-time:joda-time:2.7'
     compile 'org.ajoberstar:gradle-git:1.1.0'
-    compile 'se.emilsjolander:stickylistheaders:2.5.2'
+    compile 'se.emilsjolander:stickylistheaders:2.6.0'
+    compile('com.github.dmytrodanylyk.android-process-button:library:1.0.3') {
+        exclude module: 'support-v4'
+    }
+    compile 'de.hdodenhof:circleimageview:1.2.2'
 }
 /**
  * Holds the complete formatted (incremented in specified) android:versionCode

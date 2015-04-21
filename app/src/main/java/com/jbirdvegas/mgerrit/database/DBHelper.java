@@ -22,6 +22,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.jbirdvegas.mgerrit.helpers.Tools;
+
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,7 @@ class DBHelper extends SQLiteOpenHelper {
 
     // Don't forget to set this when a change to the database is made!
     // This must be strictly ascending, but can skip numbers
-    private static final int DB_VERSION = 17;
+    private static final int DB_VERSION = 22;
     private static List<DatabaseTable> mTables;
     private Context mContext;
 
@@ -77,6 +80,12 @@ class DBHelper extends SQLiteOpenHelper {
             }
         }
 
+        // We are now cancelling no longer needed profile picture requests.
+        // Clear the cache to make sure the correct pictures are loaded
+        if (oldVersion < 22 && newVersion >= 22) {
+            Tools.trimCache(mContext);
+        }
+
         Log.d(TAG, "Database Updated.");
         onCreate(db); // run onCreate to get new database
     }
@@ -92,7 +101,7 @@ class DBHelper extends SQLiteOpenHelper {
         return name.toLowerCase().replaceAll("[^a-z0-9_]+", "") + ".db";
     }
 
-    private static void instantiateTables() {
+    private void instantiateTables() {
         mTables = new ArrayList<>();
         for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
             try {

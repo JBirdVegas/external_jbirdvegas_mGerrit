@@ -30,22 +30,43 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.jbirdvegas.mgerrit.R;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public class GravatarHelper {
     private static final String TAG = GravatarHelper.class.getSimpleName();
     public static final String GRAVATAR_API = "http://www.gravatar.com/avatar/";
     public static final String DEFAULT_AVATAR_SIZE = "80";
 
-    public static void populateProfilePicture(final ImageView imageView, String email,
-                                              RequestQueue imageRequest) {
+
+    /**
+     * Populates an imageview with the Gravatar of the user with the specified email.
+     *  If email is null, the imageview will be hidden.
+     *  This sets a tag (R.id.imageRequest) on the imageView for the image request and
+     *  should not be overwritten
+     * @param imageView The view where the image will be shown
+     * @param email The user's email to fetch the Gravatar for
+     * @param requestQueue A request queue instance to use
+     */
+    public static void populateProfilePicture(@NotNull final ImageView imageView, String email,
+                                              @NotNull RequestQueue requestQueue) {
         String url = getGravatarUrl(email);
+        imageView.setVisibility(View.VISIBLE);
 
         if (url != null) {
-            Log.d(TAG, "Gravatar url called: " + url);
-            GravatarHelper.imageVolleyRequest(imageView, url, imageRequest).start();
-            imageView.setVisibility(View.VISIBLE);
+            ImageRequest imageRequest = (ImageRequest) imageView.getTag(R.id.imageRequest);
+            if (imageRequest == null) {
+                imageRequest = GravatarHelper.imageVolleyRequest(imageView, url, requestQueue);
+                requestQueue.start();
+                imageView.setTag(R.id.imageRequest, imageRequest);
+            } else if (!imageRequest.getOriginUrl().equals(url)) {
+                imageRequest.cancel();
+                imageRequest = GravatarHelper.imageVolleyRequest(imageView, url, requestQueue);
+                requestQueue.start();
+                imageView.setTag(R.id.imageRequest, imageRequest);
+            }
         } else {
-            imageView.setVisibility(View.GONE);
+            imageView.setImageResource(R.drawable.gravatar);
+            imageView.setTag(null);
         }
     }
 
@@ -70,9 +91,9 @@ public class GravatarHelper {
          * return builder.toString();*/
     }
 
-    private static RequestQueue imageVolleyRequest(final ImageView imageView, String url,
-                                                   RequestQueue imageRequest) {
-        imageRequest.add(new ImageRequest(url, new Response.Listener<Bitmap>() {
+    private static ImageRequest imageVolleyRequest(final ImageView imageView, String url,
+                                                   RequestQueue requestQueue) {
+        ImageRequest imageRequest = new ImageRequest(url, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap bitmap) {
                 imageView.setImageBitmap(bitmap);
@@ -80,6 +101,7 @@ public class GravatarHelper {
         },
                 1028,
                 1028,
+                ImageView.ScaleType.CENTER_INSIDE,
                 Bitmap.Config.ARGB_8888,
                 new Response.ErrorListener() {
                     @Override
@@ -87,7 +109,8 @@ public class GravatarHelper {
                         Log.e(TAG, "http Volley request failed!", volleyError);
                     }
                 }
-        ));
+        );
+        requestQueue.add(imageRequest);
         return imageRequest;
     }
 

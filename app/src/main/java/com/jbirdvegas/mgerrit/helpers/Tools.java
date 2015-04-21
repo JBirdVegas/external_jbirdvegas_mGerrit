@@ -22,12 +22,14 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.TypedValue;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.jbirdvegas.mgerrit.SigninActivity;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
@@ -39,12 +41,15 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+
+import de.greenrobot.event.EventBus;
 
 public class Tools {
 
@@ -264,5 +269,53 @@ public class Tools {
         } catch (IllegalArgumentException e) {
             return new DateTime(0);
         }
+    }
+
+    public static void launchSignin(Context context) {
+        // We don't want to open the sign in screen multiple times
+        // If the sign in activity is open it will be registered.
+        if (!EventBus.getDefault().isRegistered(SigninActivity.class) && !SigninActivity.isActive()) {
+            // We have an invalid username or password so launch the sign in activity to request a new one
+            Intent intent = new Intent(context, SigninActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.putExtra(SigninActivity.CLOSE_ON_SUCCESSFUL_SIGNIN, true);
+            context.startActivity(intent);
+        }
+    }
+
+    public static int getResIdFromAttribute(final Context activity, final int attr)
+    {
+        if(attr==0) return 0;
+        final TypedValue typedvalueattr = new TypedValue();
+        activity.getTheme().resolveAttribute(attr, typedvalueattr, true);
+        return typedvalueattr.resourceId;
+    }
+
+
+    // See: http://stackoverflow.com/questions/18200811/android-clear-cache-programmatically
+    public static void trimCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            if (dir != null && dir.isDirectory()) {
+                deleteDir(dir);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+
+        // The directory is now empty so delete it
+        return dir.delete();
     }
 }

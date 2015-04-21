@@ -43,6 +43,14 @@
         android:defaultValue="@string/diff_option_ask"/>
 
     <PreferenceCategory
+        android:title="Services">
+
+        <Preference
+            android:key="auth"
+            android:title="Sign in"/>
+        </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/locales">
 
         <ListPreference

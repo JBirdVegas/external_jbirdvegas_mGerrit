@@ -165,4 +165,27 @@
         <item name="android:textColor">@color/text_red_light</item>
     </style>
 
+    <style name="SignInButton">
+        <item name="pb_colorComplete">@color/signin_complete</item>
+        <item name="pb_colorNormal">@android:color/black</item>
+        <item name="pb_colorPressed">@android:color/black</item>
+        <item name="pb_colorError">@color/signin_error</item>
+        <item name="android:background">@android:color/black</item>
+        <item name="android:layout_marginTop">@dimen/standard_padding</item>
+        <item name="android:layout_marginBottom">@dimen/standard_padding</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+    <style name="SignInButton.Light">
+        <item name="pb_colorComplete">@color/signin_complete_light</item>
+        <item name="pb_colorNormal">@android:color/white</item>
+        <item name="pb_colorPressed">@android:color/white</item>
+        <item name="pb_colorError">@color/signin_error_light</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+    <style name="SigninFailure" parent="CardText.Deleted.Dark" />
+    <style name="SigninFailure.Light" parent="CardText.Deleted.Light" />
+
+    <style name="BorderlessBackground" parent="android:Widget.Holo.Light.Button.Borderless.Small"/>
+    <style name="BorderlessBackground.Dark" parent="android:Widget.Holo.Button.Borderless.Small"/>
+
 </resources>

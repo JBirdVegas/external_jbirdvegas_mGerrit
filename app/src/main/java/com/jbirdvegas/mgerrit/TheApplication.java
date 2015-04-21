@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import de.greenrobot.event.EventBus;
@@ -38,10 +38,13 @@ public class TheApplication extends Application
     public void onCreate() {
         super.onCreate();
         // Ensure Gerrit URL has a context set
-        GerritURL.setContext(this);
+        RequestBuilder.setContext(this);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
+
+        // Don't spam logs with no subscriber event messages as some are used only on tablet devices
+        EventBus.builder().logNoSubscriberMessages(false).sendNoSubscriberEvent(false).installDefaultEventBus();
 
         requestServerVersion();
     }

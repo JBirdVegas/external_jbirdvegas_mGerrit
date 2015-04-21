@@ -39,6 +39,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.SigninActivity;
 import com.jbirdvegas.mgerrit.activities.GerritSwitcher;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
@@ -54,8 +55,9 @@ public class PrefsFragment extends PreferenceFragment implements Preference.OnPr
     public static final String APP_THEME = "app_theme";
     private static final String TABLET_MODE = "tablet_layout_mode";
     private static final String DIFF_DEFAULT = "change_diff";
+    private static final String SIGNIN_KEY = "auth";
 
-    private Preference mGerritSwitcher;
+    private Preference mGerritSwitcher, mSigninPref;
     private Context mContext;
 
     public enum DiffModes {
@@ -164,6 +166,9 @@ public class PrefsFragment extends PreferenceFragment implements Preference.OnPr
                 return true;
             }
         });
+
+        mSigninPref = findPreference(SIGNIN_KEY);
+        mSigninPref.setOnPreferenceClickListener(this);
     }
 
     /**
@@ -198,6 +203,12 @@ public class PrefsFragment extends PreferenceFragment implements Preference.OnPr
     public boolean onPreferenceClick(Preference preference) {
         if (preference.equals(mGerritSwitcher)) {
             Intent intent = new Intent(mContext, GerritSwitcher.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(intent);
+            return true;
+        } else if (preference.equals(mSigninPref)) {
+            Intent intent = new Intent(mContext, SigninActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);

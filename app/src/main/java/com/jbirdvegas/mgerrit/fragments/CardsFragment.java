@@ -42,6 +42,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
+import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
@@ -57,7 +58,6 @@ import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
 import com.jbirdvegas.mgerrit.search.AfterSearch;
 import com.jbirdvegas.mgerrit.search.BeforeSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
@@ -79,7 +79,7 @@ public abstract class CardsFragment extends Fragment
     private static int sChangesLimit = 0;
     protected String TAG = "CardsFragment";
 
-    private GerritURL mUrl;
+    private ChangeEndpoints mUrl;
 
     private FragmentActivity mParent;
 
@@ -153,10 +153,12 @@ public abstract class CardsFragment extends Fragment
         // Setup the list
         int[] to = new int[] { R.id.commit_card_title, R.id.commit_card_commit_owner,
                 R.id.commit_card_project_name, R.id.commit_card_last_updated,
-                R.id.commit_card_commit_status };
+                R.id.commit_card_commit_status, R.id.commit_card_committer_image,
+                R.id.commit_card_starred };
 
         String[] from = new String[] { UserChanges.C_SUBJECT, UserChanges.C_NAME,
-                UserChanges.C_PROJECT, UserChanges.C_UPDATED, UserChanges.C_STATUS };
+                UserChanges.C_PROJECT, UserChanges.C_UPDATED, UserChanges.C_STATUS, UserChanges.C_EMAIL,
+                UserChanges.C_STARRED };
 
         mListView = (ExpandableStickyListHeadersListView) mCurrentFragment.findViewById(R.id.commit_cards);
         registerForContextMenu(mListView);
@@ -195,7 +197,7 @@ public abstract class CardsFragment extends Fragment
 
         sChangesLimit = mParent.getResources().getInteger(R.integer.changes_limit);
 
-        mUrl = new GerritURL();
+        mUrl = new ChangeEndpoints();
         // Need the account id of the owner here to maintain FK db constraint
         mUrl.setRequestDetailedAccounts(true);
         mUrl.setStatus(getQuery());
@@ -270,7 +272,7 @@ public abstract class CardsFragment extends Fragment
             SyncTime.clear(mParent);
         }
 
-        GerritURL url = new GerritURL(mUrl);
+        ChangeEndpoints url = new ChangeEndpoints(mUrl);
         if (sChangesLimit > 0) url.setLimit(sChangesLimit);
 
         if (keywords == null || keywords.isEmpty()) {

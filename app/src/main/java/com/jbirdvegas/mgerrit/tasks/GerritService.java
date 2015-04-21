@@ -25,7 +25,8 @@ import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.jbirdvegas.mgerrit.objects.GerritURL;
+import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -43,14 +44,23 @@ public class GerritService extends IntentService {
     public enum Direction { Newer, Older }
     public static final String CHANGES_LIST_DIRECTION = "direction";
 
-    public static enum DataType { Project, Commit, CommitDetails, GetVersion, LegacyCommitDetails }
+    // AccountProcessor
+    public static final String HTTP_USERNAME = "username";
+    public static final String HTTP_PASSWORD = "password";
+
+    // StarProcessor
+    public static final String IS_STARRING = "is_starred";
+    public static final String CHANGE_ID = "change_id";
+    public static final String CHANGE_NUMBER = "change_no";
+
+    public static enum DataType { Project, Commit, CommitDetails, GetVersion, LegacyCommitDetails, Account, Star }
 
     private static RequestQueue mRequestQueue;
 
-    private GerritURL mCurrentUrl;
+    private RequestBuilder mCurrentUrl;
 
     // A list of the currently running sync processors
-    private static HashMap<GerritURL, SyncProcessor> sRunningTasks;
+    private static HashMap<RequestBuilder, SyncProcessor> sRunningTasks;
 
     // This is required for the service to be started
     public GerritService() {
@@ -81,6 +91,10 @@ public class GerritService extends IntentService {
             processor = new LegacyCommitProcessor(this, intent, mCurrentUrl);
         } else if (dataType == DataType.GetVersion) {
             processor = new VersionProcessor(this, intent);
+        } else if (dataType == DataType.Account) {
+            processor = new AccountProcessor(this, intent, (AccountEndpoints) mCurrentUrl);
+        } else if (dataType == DataType.Star) {
+            processor = new StarProcessor(this, intent, (AccountEndpoints) mCurrentUrl);
         } else {
             Log.w(TAG, "Don't know how to handle synchronization of type " + DATA_TYPE_KEY);
             return;
@@ -104,7 +118,7 @@ public class GerritService extends IntentService {
         context.startService(it);
     }
 
-    public static void sendRequest(Context context, DataType dataType, GerritURL url) {
+    public static void sendRequest(Context context, DataType dataType, RequestBuilder url) {
         Bundle b = new Bundle();
         b.putParcelable(GerritService.URL_KEY, url);
         GerritService.sendRequest(context, dataType, b);
@@ -118,11 +132,11 @@ public class GerritService extends IntentService {
         return false;
     }
 
-    protected static HashMap<GerritURL, SyncProcessor> getRunningProcessors() {
+    protected static HashMap<RequestBuilder, SyncProcessor> getRunningProcessors() {
         return sRunningTasks;
     }
 
-    protected static void finishedRequest(GerritURL url) {
+    protected static void finishedRequest(RequestBuilder url) {
         sRunningTasks.remove(url);
     }
 }
