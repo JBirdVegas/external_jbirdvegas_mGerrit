@@ -23,6 +23,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.v4.content.CursorLoader;
 import android.util.Pair;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
@@ -80,6 +81,10 @@ public class Changes extends DatabaseTable {
     public static final String SORT_BY = C_UPDATED + " DESC";
 
     private static Changes mInstance = null;
+
+    public static final String[] CHANGE_LIST_PROJECTION =  new String[] {
+            Changes.TABLE + ".rowid AS _id", C_CHANGE_ID, C_CREATED, C_UPDATED,
+            C_STATUS, C_TOPIC, C_BRANCH, C_COMMIT_NUMBER };
 
     public static Changes getInstance() {
         if (mInstance == null) mInstance = new Changes();
@@ -204,4 +209,17 @@ public class Changes extends DatabaseTable {
         contentValues.put(C_IS_STARRED, false);
         context.getContentResolver().update(CONTENT_URI, contentValues, C_IS_STARRED + " = 1", null);
     }
+
+    /**
+     * Get the commit properties for a change.
+     * @param context Context for database access
+     * @param changeid The Change-Id of the change to get the properties
+     * @return A CursorLoader
+     */
+    public static CursorLoader getCommitProperties(Context context, String changeid) {
+        Uri uri = DBParams.fetchOneRow(CONTENT_URI);
+        return new CursorLoader(context, uri, CHANGE_LIST_PROJECTION,
+                C_CHANGE_ID + " = ?", new String[] { changeid }, null);
+    }
+
 }

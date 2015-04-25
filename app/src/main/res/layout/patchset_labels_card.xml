@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
   ~  Author: Jon Stanford (JBirdVegas), 2013
   ~
@@ -16,28 +15,45 @@
   ~  limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="?attr/colorCardBackground"
-              android:orientation="vertical"
-              android:padding="@dimen/standard_padding">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorCardBackground"
+    android:elevation="@dimen/z_offset_low"
+    android:orientation="vertical"
+    android:padding="@dimen/standard_padding">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/reviewer_gravatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/standard_padding"
+        android:contentDescription="@string/author_gravatar"
+        android:src="@drawable/gravatar" />
 
     <TextView
         android:id="@+id/labels_card_reviewer_name"
         style="@style/CardText.CommitOwnerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="2dp"
+        android:layout_alignTop="@+id/reviewer_gravatar"
+        android:layout_toEndOf="@+id/reviewer_gravatar"
+        android:layout_toRightOf="@+id/reviewer_gravatar"
         android:singleLine="true"
-        tools:text="Reviewer's name here"/>
+        tools:text="Reviewer's name here" />
 
     <LinearLayout
         android:id="@+id/labels_card_code_review_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/labels_card_reviewer_name"
         android:layout_marginLeft="@dimen/card_subitem_indent"
+        android:layout_toEndOf="@id/reviewer_gravatar"
+        android:layout_toRightOf="@+id/reviewer_gravatar"
         android:orientation="horizontal"
         android:weightSum="1">
 
@@ -47,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
-            android:text="@string/patchset_labels_code_reviewer"/>
+            android:text="@string/patchset_labels_code_reviewer" />
 
         <TextView
             android:id="@+id/labels_card_code_review"
@@ -56,14 +72,17 @@
             android:layout_height="wrap_content"
             android:paddingRight="@dimen/standard_padding"
             android:singleLine="true"
-            tools:text="+2"/>
+            tools:text="+2" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/labels_card_verified_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/labels_card_code_review_layout"
         android:layout_marginLeft="@dimen/card_subitem_indent"
+        android:layout_toEndOf="@id/reviewer_gravatar"
+        android:layout_toRightOf="@+id/reviewer_gravatar"
         android:orientation="horizontal"
         android:weightSum="1">
 
@@ -73,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.00"
             android:singleLine="true"
-            android:text="@string/patchset_labels_verified_reviewer"/>
+            android:text="@string/patchset_labels_verified_reviewer" />
 
         <TextView
             android:id="@+id/labels_card_verified"
@@ -82,7 +101,7 @@
             android:layout_height="wrap_content"
             android:paddingRight="@dimen/standard_padding"
             android:singleLine="true"
-            tools:text="+1"/>
+            tools:text="+1" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

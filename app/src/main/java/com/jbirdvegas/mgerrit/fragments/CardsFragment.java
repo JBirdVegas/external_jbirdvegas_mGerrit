@@ -163,7 +163,7 @@ public abstract class CardsFragment extends Fragment
         mListView = (ExpandableStickyListHeadersListView) mCurrentFragment.findViewById(R.id.commit_cards);
         registerForContextMenu(mListView);
 
-        mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card, null, from, to, 0,
+        mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card_row, null, from, to, 0,
                 getQuery());
         mAdapter.setViewBinder(new CommitCardBinder(mParent, mRequestQueue));
 

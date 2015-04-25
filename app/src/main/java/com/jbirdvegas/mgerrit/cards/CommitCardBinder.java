@@ -20,7 +20,10 @@ package com.jbirdvegas.mgerrit.cards;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.Image;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -36,7 +39,7 @@ import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.TimeZone;
 
-public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
+public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBinder {
     private final RequestQueue mRequestQuery;
     private final Context mContext;
 
@@ -46,12 +49,18 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
 
     private final TimeZone mServerTimeZone;
     private final TimeZone mLocalTimeZone;
+    private final LayoutInflater mInflater;
 
     // Cursor indices
     private Integer userEmailIndex;
     private Integer userIdIndex;
     private Integer changeIdIndex;
     private Integer changeNumberIndex;
+    private Integer userNameIndex;
+    private Integer statusIndex;
+    private Integer starredIndex;
+    private Integer projectIndex;
+    private Integer subjectIndex;
 
     public CommitCardBinder(Context context, RequestQueue requestQueue) {
         this.mRequestQuery = requestQueue;
@@ -63,11 +72,74 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
 
         mServerTimeZone = PrefsFragment.getServerTimeZone(context);
         mLocalTimeZone = PrefsFragment.getLocalTimeZone(context);
+        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public boolean setViewValue(View view, final Cursor cursor, final int columnIndex) {
         // These indicies will not change regardless of the view
+        setupIndicies(cursor);
+
+        if (view.getId() == R.id.commit_card_commit_owner) {
+            bindOwnerDetails(view, cursor, columnIndex);
+        } else if (view.getId() == R.id.commit_card_committer_image) {
+            bindOwnerDetails(view, cursor, columnIndex);
+        } else if (view.getId() == R.id.commit_card_project_name) {
+            bindProject((TextView) view, cursor.getString(columnIndex));
+        } else if (view.getId() == R.id.commit_card_commit_status) {
+            bindStatus(view, cursor.getString(columnIndex));
+        } else if (view.getId() == R.id.commit_card_last_updated) {
+            String lastUpdated = cursor.getString(columnIndex);
+            TextView textView = (TextView) view;
+            textView.setText(prettyPrintDate(mContext, lastUpdated));
+        } else if (view.getId() == R.id.commit_card_starred) {
+            bindStarred((ImageView) view, cursor, cursor.getInt(columnIndex));
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public View setViewValue(Cursor cursor, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = mInflater.inflate(R.layout.commit_card, parent, false);
+        }
+        setupIndicies(cursor);
+
+        ViewHolder viewHolder = (ViewHolder) convertView.getTag();
+        if (convertView.getTag() == null) {
+            viewHolder = new ViewHolder(convertView);
+            convertView.setTag(viewHolder);
+        }
+
+        viewHolder.subject.setText(cursor.getString(subjectIndex));
+
+        bindOwnerDetails(viewHolder.owner, cursor, userNameIndex);
+        bindOwnerDetails(viewHolder.committerImage, cursor, userIdIndex);
+        bindStatus(viewHolder.status, cursor.getString(statusIndex));
+        bindProject(viewHolder.project, cursor.getString(projectIndex));
+        bindStarred(viewHolder.starred, cursor, cursor.getInt(starredIndex));
+
+        // We are viewing this change so it will be selected
+        CommitCard commitCard = (CommitCard) convertView;
+        commitCard.setChangeSelected(true);
+
+        return convertView;
+    }
+
+    /**
+     * PrettyPrint the Gerrit provided timestamp format into a more human readable format
+     */
+    @SuppressWarnings("SimpleDateFormatWithoutLocale")
+    private String prettyPrintDate(Context context, String date) {
+       return Tools.prettyPrintTime(context, date, mServerTimeZone, mLocalTimeZone);
+    }
+
+    private void setupIndicies(Cursor cursor) {
+        if (userNameIndex == null) {
+            userNameIndex = cursor.getColumnIndex(UserChanges.C_NAME);
+        }
         if (userEmailIndex == null) {
             userEmailIndex = cursor.getColumnIndex(UserChanges.C_EMAIL);
         }
@@ -80,7 +152,21 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
         if (changeNumberIndex == null) {
             changeNumberIndex = cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER);
         }
+        if (statusIndex == null) {
+            statusIndex = cursor.getColumnIndex(UserChanges.C_STATUS);
+        }
+        if (starredIndex == null) {
+            starredIndex = cursor.getColumnIndex(UserChanges.C_STARRED);
+        }
+        if (projectIndex == null) {
+            projectIndex = cursor.getColumnIndex(UserChanges.C_PROJECT);
+        }
+        if (subjectIndex == null) {
+            subjectIndex = cursor.getColumnIndex(UserChanges.C_SUBJECT);
+        }
+    }
 
+    private void bindOwnerDetails(View view, Cursor cursor, int columnIndex) {
         if (view.getId() == R.id.commit_card_commit_owner) {
             TextView owner = (TextView) view;
             owner.setText(cursor.getString(columnIndex));
@@ -103,61 +189,47 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
                     PrefsFragment.setTrackingUser(mContext, (Integer) v.getTag(R.id.user));
                 }
             });
-        } else if (view.getId() == R.id.commit_card_project_name) {
-            final TextView project = (TextView) view;
-            project.setText(cursor.getString(columnIndex));
-            project.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PrefsFragment.setCurrentProject(mContext, project.getText().toString());
-                }
-            });
-        } else if (view.getId() == R.id.commit_card_commit_status) {
-            String statusText = cursor.getString(columnIndex);
-            switch (statusText) {
-                case "MERGED":
-                    view.setBackgroundColor(mGreen);
-                    break;
-                case "ABANDONED":
-                    view.setBackgroundColor(mRed);
-                    break;
-                default:
-                    view.setBackgroundColor(mOrange);
-                    break;
-            }
-        } else if (view.getId() == R.id.commit_card_last_updated) {
-            String lastUpdated = cursor.getString(columnIndex);
-            TextView textView = (TextView) view;
-            textView.setText(prettyPrintDate(mContext, lastUpdated));
-        } else if (view.getId() == R.id.commit_card_starred) {
-            final ImageView star = (ImageView) view;
-            final int starred = cursor.getInt(columnIndex);
-
-            setStarIcon(star, starred == 1);
-            star.setTag(R.id.changeID, cursor.getString(changeIdIndex));
-            star.setTag(R.id.changeNumber, cursor.getInt(changeNumberIndex));
-
-            star.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String changeId = (String) star.getTag(R.id.changeID);
-                    int changeNumber = (int) star.getTag(R.id.changeNumber);
-                    onStarChange(changeId, changeNumber, starred != 1);
-                    setStarIcon(star, starred == 1);
-                }
-            });
-        } else {
-            return false;
         }
-        return true;
     }
 
-    /**
-     * PrettyPrint the Gerrit provided timestamp format into a more human readable format
-     */
-    @SuppressWarnings("SimpleDateFormatWithoutLocale")
-    private String prettyPrintDate(Context context, String date) {
-       return Tools.prettyPrintTime(context, date, mServerTimeZone, mLocalTimeZone);
+    private void bindStatus(View view, String statusText) {
+        switch (statusText) {
+            case "MERGED":
+                view.setBackgroundColor(mGreen);
+                break;
+            case "ABANDONED":
+                view.setBackgroundColor(mRed);
+                break;
+            default:
+                view.setBackgroundColor(mOrange);
+                break;
+        }
+    }
+
+    private void bindProject(final TextView view, String project) {
+        view.setText(project);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrefsFragment.setCurrentProject(mContext, view.getText().toString());
+            }
+        });
+    }
+
+    private void bindStarred(final ImageView view, Cursor cursor, final int starred) {
+        setStarIcon(view, starred == 1);
+        view.setTag(R.id.changeID, cursor.getString(changeIdIndex));
+        view.setTag(R.id.changeNumber, cursor.getInt(changeNumberIndex));
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String changeId = (String) view.getTag(R.id.changeID);
+                int changeNumber = (int) view.getTag(R.id.changeNumber);
+                onStarChange(changeId, changeNumber, starred != 1);
+                setStarIcon(view, starred == 1);
+            }
+        });
     }
 
     // When the cursor changes, these may not be valid
@@ -185,5 +257,23 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder {
         it.putExtra(GerritService.CHANGE_NUMBER, changeNumber);
         it.putExtra(GerritService.IS_STARRING, starred);
         mContext.startService(it);
+    }
+
+    private static class ViewHolder {
+        private final TextView subject;
+        private final TextView owner;
+        private final ImageView committerImage;
+        private final View status;
+        private final TextView project;
+        private final ImageView starred;
+
+        ViewHolder(View view) {
+            subject = (TextView) view.findViewById(R.id.commit_card_title);
+            owner = (TextView) view.findViewById(R.id.commit_card_commit_owner);
+            committerImage = (ImageView) view.findViewById(R.id.commit_card_committer_image);
+            status = view.findViewById(R.id.commit_card_commit_status);
+            project = (TextView) view.findViewById(R.id.commit_card_project_name);
+            starred = (ImageView) view.findViewById(R.id.commit_card_starred);
+        }
     }
 }

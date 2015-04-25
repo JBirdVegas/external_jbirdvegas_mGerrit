@@ -19,7 +19,10 @@ package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.Cursor;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.jbirdvegas.mgerrit.R;
@@ -38,6 +41,8 @@ public class CommitCard extends LinearLayout {
         isSelected = ta.getBoolean(R.styleable.CommitCard_isSelected, false);
         ta.recycle();
     }
+
+
 
     @Override
     public int[] onCreateDrawableState(int extraSpace) {

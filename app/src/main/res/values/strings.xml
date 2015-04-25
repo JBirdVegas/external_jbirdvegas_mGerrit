@@ -43,6 +43,8 @@
     <string name="commit_committer">Committer:</string>
     <string name="commit_author">Author:</string>
     <string name="commit_owner">Owner:</string>
+    <string name="commit_created">Created:</string>
+    <string name="commit_id">Change ID:</string>
     <string name="failed_to_parse_json_response">Failed to parse response from</string>
     <string name="show_exception">Show Exception</string>
     <string name="exit">Exit</string>

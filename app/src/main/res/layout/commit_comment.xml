@@ -1,47 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2015
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorCardBackground"
+    android:elevation="@dimen/z_offset_low"
     android:paddingLeft="@dimen/standard_padding"
     android:paddingRight="@dimen/standard_padding"
     android:paddingTop="@dimen/standard_padding">
 
-    <LinearLayout
-        android:id="@+id/comment_details"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/comment_gravatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="@dimen/standard_padding"
+        android:layout_marginRight="@dimen/standard_padding"
+        android:contentDescription="@string/author_gravatar"
+        android:src="@drawable/gravatar" />
+
+    <TextView
+        android:id="@+id/comment_author_name"
+        style="@style/CardText.Committer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_alignTop="@+id/comment_gravatar"
+        android:layout_toEndOf="@+id/comment_gravatar"
+        android:layout_toRightOf="@+id/comment_gravatar"
+        android:paddingRight="@dimen/standard_padding"
+        tools:text="John Smith" />
 
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/comment_gravatar"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/author_gravatar"
-            android:padding="@dimen/standard_padding" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/comment_author_name"
-                style="@style/CardText.Committer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="@dimen/standard_padding"
-                tools:text="John Smith" />
-
-            <TextView
-                android:id="@+id/comment_timestamp"
-                style="@style/CardText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="January 1 1970, 12:00" />
-        </LinearLayout>
-    </LinearLayout>
+    <TextView
+        android:id="@+id/comment_timestamp"
+        style="@style/CardText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/comment_message"
+        android:layout_toEndOf="@+id/comment_gravatar"
+        android:layout_toRightOf="@+id/comment_gravatar"
+        tools:text="January 1 1970, 12:00" />
 
     <TextView
         android:id="@+id/comment_message"
@@ -49,7 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/comment_details"
+        android:layout_below="@+id/comment_gravatar"
         android:autoLink="web"
         android:padding="@dimen/standard_padding"
         android:textSize="@dimen/text_size_medium"

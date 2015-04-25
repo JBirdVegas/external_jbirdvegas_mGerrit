@@ -89,11 +89,12 @@ public class PatchSetViewerFragment extends Fragment
     public static final String CHANGE_NO = "changeNo";
     public static final String STATUS = "queryStatus";
 
-    public static final int LOADER_PROPERTIES = 0;
-    public static final int LOADER_MESSAGE = 1;
-    public static final int LOADER_FILES = 2;
-    public static final int LOADER_REVIEWERS = 3;
-    public static final int LOADER_COMMENTS = 4;
+    public static final int LOADER_COMMIT = 1;
+    public static final int LOADER_PROPERTIES = 2;
+    public static final int LOADER_MESSAGE = 3;
+    public static final int LOADER_FILES = 4;
+    public static final int LOADER_REVIEWERS = 5;
+    public static final int LOADER_COMMENTS = 6;
 
     private EventBus mEventBus;
 
@@ -184,6 +185,9 @@ public class PatchSetViewerFragment extends Fragment
             }
         });
 
+        // Remember to expand the groups which don't have a header otherwise they will not be shown
+        mListView.expandGroup(0);
+
         mUrl = new ChangeEndpoints();
 
         Button retryButton = (Button) currentFragment.findViewById(R.id.btn_retry);
@@ -234,7 +238,7 @@ public class PatchSetViewerFragment extends Fragment
         Bundle args = new Bundle();
         args.putString(CHANGE_ID, changeID);
 
-        for (int i = LOADER_PROPERTIES; i <= LOADER_COMMENTS; i++) {
+        for (int i = LOADER_COMMIT; i <= LOADER_COMMENTS; i++) {
             getLoaderManager().restartLoader(i, args, this);
         }
     }
@@ -405,8 +409,10 @@ public class PatchSetViewerFragment extends Fragment
         String changeID = args.getString(PatchSetViewerFragment.CHANGE_ID);
 
         switch (id) {
-            case LOADER_PROPERTIES:
+            case LOADER_COMMIT:
                 return UserChanges.getCommitProperties(mContext, changeID);
+            case LOADER_PROPERTIES:
+                return Changes.getCommitProperties(mContext, changeID);
             case LOADER_MESSAGE:
                 return Revisions.getCommitMessage(mContext, changeID);
             case LOADER_FILES:
@@ -425,6 +431,9 @@ public class PatchSetViewerFragment extends Fragment
         CommitDetailsAdapter.Cards cardType = null;
 
         switch (cursorLoader.getId()) {
+            case LOADER_COMMIT:
+                cardType = CommitDetailsAdapter.Cards.COMMIT;
+                break;
             case LOADER_PROPERTIES:
                 cardType = CommitDetailsAdapter.Cards.PROPERTIES;
                 break;
