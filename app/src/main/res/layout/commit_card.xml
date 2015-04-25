@@ -69,7 +69,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/commit_card_committer_image"
-            android:paddingBottom="8dip"
+            android:paddingBottom="@dimen/standard_padding"
+            android:paddingRight="@dimen/standard_padding"
             android:textSize="@dimen/text_size_large"
             tools:text="Tweak commit card layout" />
 

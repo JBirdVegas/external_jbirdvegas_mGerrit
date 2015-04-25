@@ -75,6 +75,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    // ViewBinder - For including in commit list
     @Override
     public boolean setViewValue(View view, final Cursor cursor, final int columnIndex) {
         // These indicies will not change regardless of the view
@@ -91,7 +92,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         } else if (view.getId() == R.id.commit_card_last_updated) {
             String lastUpdated = cursor.getString(columnIndex);
             TextView textView = (TextView) view;
-            textView.setText(prettyPrintDate(mContext, lastUpdated));
+            textView.setText(Tools.prettyPrintTime(mContext, lastUpdated, mServerTimeZone, mLocalTimeZone));
         } else if (view.getId() == R.id.commit_card_starred) {
             bindStarred((ImageView) view, cursor, cursor.getInt(columnIndex));
         } else {
@@ -100,6 +101,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         return true;
     }
 
+    // CardBinder - For including in change details list
     @Override
     public View setViewValue(Cursor cursor, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -126,14 +128,6 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         commitCard.setChangeSelected(true);
 
         return convertView;
-    }
-
-    /**
-     * PrettyPrint the Gerrit provided timestamp format into a more human readable format
-     */
-    @SuppressWarnings("SimpleDateFormatWithoutLocale")
-    private String prettyPrintDate(Context context, String date) {
-       return Tools.prettyPrintTime(context, date, mServerTimeZone, mLocalTimeZone);
     }
 
     private void setupIndicies(Cursor cursor) {
@@ -232,12 +226,20 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         });
     }
 
-    // When the cursor changes, these may not be valid
+    /**
+     * To be called when the cursor changes or is invalidated.
+     */
     public void onCursorChanged() {
+        // When the cursor changes, these may not be valid
         userEmailIndex = null;
         userIdIndex = null;
         changeIdIndex = null;
         changeNumberIndex = null;
+        userNameIndex = null;
+        statusIndex = null;
+        starredIndex = null;
+        projectIndex = null;
+        subjectIndex = null;
     }
 
     private void setStarIcon(ImageView view, boolean starred) {

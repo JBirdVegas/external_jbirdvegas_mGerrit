@@ -71,15 +71,18 @@ public class PatchSetPropertiesCard implements CardBinder {
         }
 
         setIndicies(cursor);
+        viewHolder.changeId.setText(cursor.getString(changeid_index));
 
-        String lastUpdated = cursor.getString(updated_index);
-        viewHolder.updated.setText(Tools.prettyPrintDateTime(mContext, lastUpdated,
+        String strTime = cursor.getString(updated_index);
+        viewHolder.updated.setText(Tools.prettyPrintDateTime(mContext, strTime,
                 PrefsFragment.getServerTimeZone(mContext),
                 PrefsFragment.getLocalTimeZone(mContext)));
 
+        strTime = cursor.getString(created_index);
+        viewHolder.created.setText(Tools.prettyPrintDateTime(mContext, strTime,
+                PrefsFragment.getServerTimeZone(mContext),
+                PrefsFragment.getLocalTimeZone(mContext)));
 
-        viewHolder.changeId.setText(cursor.getString(changeid_index));
-        viewHolder.created.setText(cursor.getString(created_index));
         viewHolder.branch.setText(cursor.getString(branch_index));
 
         String topic = cursor.getString(topic_index);
