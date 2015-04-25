@@ -40,15 +40,8 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import org.jetbrains.annotations.NotNull;
 
 public class PatchSetPropertiesCard implements CardBinder {
-    private final RequestQueue mRequestQuery;
     private final Context mContext;
-    private final FragmentActivity mActivity;
     private final LayoutInflater mInflater;
-
-    // Colors
-    private final int mOrange;
-    private final int mGreen;
-    private final int mRed;
 
     private Integer changeid_index;
     private Integer changenum_index;
@@ -56,19 +49,12 @@ public class PatchSetPropertiesCard implements CardBinder {
     private Integer subject_index;
     private Integer topic_index;
     private Integer updated_index;
-    private Integer status_index;
     private Integer created_index;
 
 
     public PatchSetPropertiesCard(Context context, RequestQueue requestQueue) {
-        this.mRequestQuery = requestQueue;
         this.mContext = context;
-        this.mActivity = (FragmentActivity) mContext;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        this.mOrange = context.getResources().getColor(android.R.color.holo_orange_light);
-        this.mGreen = context.getResources().getColor(R.color.text_green);
-        this.mRed = context.getResources().getColor(R.color.text_red);
     }
 
     @Override
@@ -106,19 +92,6 @@ public class PatchSetPropertiesCard implements CardBinder {
             viewHolder.topicText.setVisibility(View.GONE);
         }
 
-        String statusText = cursor.getString(status_index);
-        switch (statusText) {
-            case "MERGED":
-                viewHolder.status.setBackgroundColor(mGreen);
-                break;
-            case "ABANDONED":
-                viewHolder.status.setBackgroundColor(mRed);
-                break;
-            default:
-                viewHolder.status.setBackgroundColor(mOrange);
-                break;
-        }
-
         return convertView;
     }
 
@@ -143,9 +116,6 @@ public class PatchSetPropertiesCard implements CardBinder {
         if (updated_index == null) {
             updated_index = cursor.getColumnIndex(UserChanges.C_UPDATED);
         }
-        if (status_index == null) {
-            status_index = cursor.getColumnIndex(UserChanges.C_STATUS);
-        }
         if (created_index == null) {
             created_index = cursor.getColumnIndex(UserChanges.C_CREATED);
         }
@@ -158,7 +128,6 @@ public class PatchSetPropertiesCard implements CardBinder {
         private final TextView topic;
         private final TextView topicText;
         private final TextView updated;
-        private final View status;
         private final TextView created;
         private final TextView changeId;
 
@@ -168,7 +137,6 @@ public class PatchSetPropertiesCard implements CardBinder {
             topic = (TextView) view.findViewById(R.id.prop_card_topic);
             topicText = (TextView) view.findViewById(R.id.commit_topic_text);
             updated = (TextView) view.findViewById(R.id.prop_card_last_update);
-            status = view.findViewById(R.id.prop_card_status);
             created = (TextView) view.findViewById(R.id.prop_card_created);
         }
     }

@@ -17,97 +17,81 @@
   ~  limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorCardBackground"
     android:elevation="@dimen/z_offset_low"
-    android:orientation="horizontal">
+    android:padding="@dimen/standard_padding">
 
-    <View
-        android:id="@+id/prop_card_status"
-        android:layout_width="@dimen/card_stroke_width"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:paddingRight="@dimen/commit_card_stroke_padding"
-        tools:background="@android:color/holo_orange_light" />
+    <TextView
+        android:id="@+id/prop_card_change_id_text"
+        style="@style/CardText.CommitOwnerText"
+        android:text="@string/commit_id" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/standard_padding"
-        android:paddingTop="@dimen/standard_padding">
+    <TextView
+        android:id="@+id/prop_card_change_id"
+        style="@style/CardText.CommitOwnerDetails"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/prop_card_change_id_text"
+        android:layout_toRightOf="@+id/prop_card_change_id_text"
+        tools:text="aaaaaaaaaaaa" />
 
-        <TextView
-            android:id="@+id/prop_card_change_id_text"
-            style="@style/CardText.CommitOwnerText"
-            android:text="@string/commit_id" />
+    <TextView
+        android:id="@+id/prop_card_created_text"
+        style="@style/CardText.CommitOwnerText"
+        android:layout_below="@id/prop_card_change_id"
+        android:text="@string/commit_created" />
 
-        <TextView
-            android:id="@+id/prop_card_change_id"
-            style="@style/CardText.CommitOwnerDetails"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/prop_card_change_id_text"
-            android:layout_toRightOf="@+id/prop_card_change_id_text"
-            tools:text="aaaaaaaaaaaa" />
+    <TextView
+        android:id="@+id/prop_card_created"
+        style="@style/CardText.CommitOwnerDetails"
+        android:layout_below="@id/prop_card_change_id"
+        android:layout_toEndOf="@+id/prop_card_change_id_text"
+        android:layout_toRightOf="@+id/prop_card_change_id_text"
+        tools:text="January 1 1970, 12:00" />
 
-        <TextView
-            android:id="@+id/prop_card_created_text"
-            style="@style/CardText.CommitOwnerText"
-            android:layout_below="@id/prop_card_change_id"
-            android:text="@string/commit_created" />
+    <TextView
+        android:id="@+id/commit_last_update_text"
+        style="@style/CardText.CommitOwnerText"
+        android:layout_below="@id/prop_card_created_text"
+        android:text="@string/commit_updated" />
 
-        <TextView
-            android:id="@+id/prop_card_created"
-            style="@style/CardText.CommitOwnerDetails"
-            android:layout_below="@id/prop_card_change_id"
-            android:layout_toEndOf="@+id/prop_card_change_id_text"
-            android:layout_toRightOf="@+id/prop_card_change_id_text"
-            tools:text="January 1 1970, 12:00" />
+    <TextView
+        android:id="@+id/prop_card_last_update"
+        style="@style/CardText.CommitOwnerDetails"
+        android:layout_above="@+id/prop_card_branch"
+        android:layout_toEndOf="@+id/prop_card_change_id_text"
+        android:layout_toRightOf="@+id/prop_card_change_id_text" />
 
-        <TextView
-            android:id="@+id/commit_last_update_text"
-            style="@style/CardText.CommitOwnerText"
-            android:layout_below="@id/prop_card_created_text"
-            android:text="@string/commit_updated" />
+    <TextView
+        android:id="@+id/commit_branch_text"
+        style="@style/CardText.CommitOwnerText"
+        android:layout_below="@+id/commit_last_update_text"
+        android:text="@string/commit_branch" />
 
-        <TextView
-            android:id="@+id/prop_card_last_update"
-            style="@style/CardText.CommitOwnerDetails"
-            android:layout_above="@+id/prop_card_branch"
-            android:layout_toEndOf="@+id/prop_card_change_id_text"
-            android:layout_toRightOf="@+id/prop_card_change_id_text" />
+    <TextView
+        android:id="@+id/prop_card_branch"
+        style="@style/CardText.CommitOwnerDetails"
+        android:layout_below="@+id/commit_last_update_text"
+        android:layout_toEndOf="@+id/prop_card_change_id_text"
+        android:layout_toRightOf="@+id/prop_card_change_id_text" />
 
-        <TextView
-            android:id="@+id/commit_branch_text"
-            style="@style/CardText.CommitOwnerText"
-            android:layout_below="@+id/commit_last_update_text"
-            android:text="@string/commit_branch" />
+    <TextView
+        android:id="@+id/commit_topic_text"
+        style="@style/CardText.CommitOwnerText"
+        android:layout_below="@id/commit_branch_text"
+        android:text="@string/commit_topic"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/prop_card_branch"
-            style="@style/CardText.CommitOwnerDetails"
-            android:layout_below="@+id/commit_last_update_text"
-            android:layout_toEndOf="@+id/prop_card_change_id_text"
-            android:layout_toRightOf="@+id/prop_card_change_id_text" />
-
-        <TextView
-            android:id="@+id/commit_topic_text"
-            style="@style/CardText.CommitOwnerText"
-            android:layout_below="@id/commit_branch_text"
-            android:text="@string/commit_topic"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/prop_card_topic"
-            style="@style/CardText.CommitOwnerDetails"
-            android:layout_below="@+id/prop_card_branch"
-            android:layout_toEndOf="@+id/prop_card_change_id_text"
-            android:layout_toRightOf="@+id/prop_card_change_id_text"
-            android:visibility="gone"
-            tools:visibility="visible" />
-    </RelativeLayout>
-</LinearLayout>
+    <TextView
+        android:id="@+id/prop_card_topic"
+        style="@style/CardText.CommitOwnerDetails"
+        android:layout_below="@+id/prop_card_branch"
+        android:layout_toEndOf="@+id/prop_card_change_id_text"
+        android:layout_toRightOf="@+id/prop_card_change_id_text"
+        android:visibility="gone"
+        tools:visibility="visible" />
+</RelativeLayout>

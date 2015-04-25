@@ -34,6 +34,7 @@ import com.jbirdvegas.mgerrit.activities.DiffViewer;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.database.FileChanges;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.objects.FileInfo;
 
 public class PatchSetChangesCard implements CardBinder {
@@ -146,58 +147,6 @@ public class PatchSetChangesCard implements CardBinder {
         return convertView;
     }
 
-    // launches internal diff viewer
-    public static void launchDiffViewer(Context context, Integer changeNumber,
-                                        Integer patchSetNumber, String filePath) {
-        Intent diffIntent = new Intent(context, DiffViewer.class);
-        diffIntent.putExtra(DiffViewer.CHANGE_NUMBER_TAG, changeNumber);
-        diffIntent.putExtra(DiffViewer.PATCH_SET_NUMBER_TAG, patchSetNumber);
-        diffIntent.putExtra(DiffViewer.FILE_PATH_TAG, filePath);
-        context.startActivity(diffIntent);
-    }
-
-    public static void launchDiffInBrowser(Context context, Integer changeNumber, Integer patchset,
-                                           String filePath) {
-        String base = "%s#/c/%d/%d/%s,unified";
-        Intent browserIntent = new Intent(
-                Intent.ACTION_VIEW, Uri.parse(String.format(base,
-                PrefsFragment.getCurrentGerrit(context),
-                changeNumber,
-                patchset, filePath)));
-        context.startActivity(browserIntent);
-    }
-
-    public static void launchDiffOptionDialog(final Context context, final Integer changeNumber,
-                                              final Integer patchset,
-                                        final String filePath) {
-        View checkBoxView = View.inflate(context, R.layout.diff_option_checkbox, null);
-        final CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.checkbox);
-
-        AlertDialog.Builder ad = new AlertDialog.Builder(context)
-                .setTitle(R.string.choose_diff_view)
-                .setView(checkBoxView)
-                .setPositiveButton(R.string.context_menu_view_diff_viewer, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (checkBox.isChecked()) {
-                            PrefsFragment.setDiffDefault(context, PrefsFragment.DiffModes.INTERNAL);
-                        }
-                        launchDiffViewer(context, changeNumber, patchset, filePath);
-                    }
-                })
-                .setNegativeButton(
-                        R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                if (checkBox.isChecked()) {
-                                    PrefsFragment.setDiffDefault(context, PrefsFragment.DiffModes.EXTERNAL);
-                                }
-                                launchDiffInBrowser(context, changeNumber, patchset, filePath);
-                            }
-                        });
-        ad.create().show();
-    }
-
     public static boolean onViewClicked(Context context, View view) {
         if (view == null) return false;
 
@@ -209,17 +158,17 @@ public class PatchSetChangesCard implements CardBinder {
 
         // If the server does not support diffs then do not show the dialog
         if (!Config.isDiffSupported(context)) {
-            PatchSetChangesCard.launchDiffInBrowser(context, changeNumber, patchset, filePath);
+            Tools.launchDiffInBrowser(context, changeNumber, patchset, filePath);
             return true;
         }
 
         PrefsFragment.DiffModes mode = PrefsFragment.getDiffDefault(context);
         if (mode == PrefsFragment.DiffModes.INTERNAL) {
-            PatchSetChangesCard.launchDiffViewer(context, changeNumber, patchset, filePath);
+            Tools.launchDiffViewer(context, changeNumber, patchset, filePath);
         } else if (mode == PrefsFragment.DiffModes.EXTERNAL) {
-            PatchSetChangesCard.launchDiffInBrowser(context, changeNumber, patchset, filePath);
+            Tools.launchDiffInBrowser(context, changeNumber, patchset, filePath);
         } else {
-            PatchSetChangesCard.launchDiffOptionDialog(context, changeNumber, patchset, filePath);
+            Tools.launchDiffOptionDialog(context, changeNumber, patchset, filePath);
         }
 
         return true;
