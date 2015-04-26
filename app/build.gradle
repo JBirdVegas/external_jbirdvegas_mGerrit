@@ -344,6 +344,7 @@ task push << {
         grgit.push(tags: true)
     } finally {
         grgit.branch.remove(names: [branchName], force: true)
+        grgit.push()
     }
 }
 
