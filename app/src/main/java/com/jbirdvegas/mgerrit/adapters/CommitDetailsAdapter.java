@@ -13,6 +13,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.cards.CardBinder;
+import com.jbirdvegas.mgerrit.cards.CommitCard;
+import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetCommentsCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetMessageCard;
@@ -55,7 +57,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
     private FilesCAB mContextualAB;
 
     // Cards supported:
-    public enum Cards { PROPERTIES, COMMIT_MSG, CHANGED_FILES, REVIEWERS, COMMENTS }
+    public enum Cards { COMMIT, PROPERTIES, COMMIT_MSG, CHANGED_FILES, REVIEWERS, COMMENTS }
     private static final int _cards_count = Cards.values().length;
 
     // Stores the type of card at position
@@ -102,6 +104,13 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
     @Nullable
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        String text = headerContents.get(groupPosition);
+        if (text == null) {
+            // If the text is null, render a blank header. These groups need to be set as expanded as the
+            // Expand/Collapse button is not rendered either.
+            return mInflator.inflate(R.layout.empty_row, parent, false);
+        }
+
         if (convertView == null) {
             convertView = mInflator.inflate(R.layout.card_header, parent, false);
         }
@@ -111,11 +120,18 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
             viewHolder = new GroupViewHolder(convertView);
             convertView.setTag(viewHolder);
         }
-        String text = headerContents.get(groupPosition);
-        // Allow an empty header text
-        if (text != null) {
-            viewHolder.headerText.setText(text);
+
+        // convertView may be a recycled empty row
+        if (viewHolder.headerText == null) {
+            convertView = mInflator.inflate(R.layout.card_header, parent, false);
+            viewHolder = (GroupViewHolder) convertView.getTag();
+            if (viewHolder == null) {
+                viewHolder = new GroupViewHolder(convertView);
+                convertView.setTag(viewHolder);
+            }
         }
+
+        viewHolder.headerText.setText(text);
         return convertView;
     }
 
@@ -179,6 +195,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
      *  Properties card, Message card, Changed files card, Code reviewers card, Comments Card
      */
     public void setup() {
+        headerContents.add(null); // No header for first card
         headerContents.add(mContext.getString(R.string.header_properties));
         headerContents.add(mContext.getString(R.string.header_commit_message));
         headerContents.add(mContext.getString(R.string.header_changed_files));
@@ -187,8 +204,10 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
 
         RequestQueue rq = Volley.newRequestQueue(mContext);
 
+        childGroupDetails.add(new ChildGroupDetails(Cards.COMMIT,
+                new CommitCardBinder(mContext, rq)));
         childGroupDetails.add(new ChildGroupDetails(Cards.PROPERTIES,
-                        new PatchSetPropertiesCard(mContext, rq)));
+                new PatchSetPropertiesCard(mContext, rq)));
         childGroupDetails.add(new ChildGroupDetails(Cards.COMMIT_MSG,
                 new PatchSetMessageCard(mContext)));
         childGroupDetails.add(new ChildGroupDetails(Cards.CHANGED_FILES,

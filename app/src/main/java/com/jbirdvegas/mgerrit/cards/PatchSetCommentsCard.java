@@ -24,15 +24,13 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.caches.BitmapLruCache;
 import com.jbirdvegas.mgerrit.database.UserMessage;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
@@ -100,9 +98,8 @@ public class PatchSetCommentsCard implements CardBinder {
                 cursor.getString(message_index)));
 
         // set gravatar icon for commenter
-        viewHolder.gravatar.setImageUrl(GravatarHelper.getGravatarUrl(
-                cursor.getString(authorEmail_index)),
-                new ImageLoader(mRequestQuery, new BitmapLruCache(mContext)));
+        GravatarHelper.populateProfilePicture(viewHolder.gravatar, cursor.getString(authorEmail_index),
+                mRequestQuery);
 
         return convertView;
     }
@@ -135,13 +132,13 @@ public class PatchSetCommentsCard implements CardBinder {
     private static class ViewHolder {
         TextView authorTextView;
         TextView commentMessage;
-        NetworkImageView gravatar;
+        ImageView gravatar;
         TextView timestamp;
 
         private ViewHolder(View view) {
             authorTextView = (TextView) view.findViewById(R.id.comment_author_name);
             commentMessage = (TextView) view.findViewById(R.id.comment_message);
-            gravatar = (NetworkImageView) view.findViewById(R.id.comment_gravatar);
+            gravatar = (ImageView) view.findViewById(R.id.comment_gravatar);
             timestamp = (TextView) view.findViewById(R.id.comment_timestamp);
         }
     }

@@ -17,6 +17,7 @@ package com.jbirdvegas.mgerrit.activities;
  *  limitations under the License.
  */
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -29,11 +30,13 @@ import android.support.v4.view.ViewPager;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.PatchSetAdapter;
+import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment;
@@ -158,12 +161,20 @@ public class PatchSetViewerActivity extends FragmentActivity
                 return true;
             case R.id.menu_details_browser:
                 if (mChangeNumber == null) return false;
-                String webAddress = Tools.getWebAddress(this, mChangeNumber);
-                if (webAddress != null) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webAddress));
-                    startActivity(browserIntent);
+
+                // If the server does not support diffs then do not show the dialog
+                if (!Config.isDiffSupported(this)) {
+                    Tools.launchDiffInBrowser(this, mChangeNumber, null, null);
+                    return true;
+                }
+
+                PrefsFragment.DiffModes mode = PrefsFragment.getDiffDefault(this);
+                if (mode == PrefsFragment.DiffModes.INTERNAL) {
+                    Tools.launchDiffViewer(this, mChangeNumber, null, null);
+                } else if (mode == PrefsFragment.DiffModes.EXTERNAL) {
+                    Tools.launchDiffInBrowser(this, mChangeNumber, null, null);
                 } else {
-                    Toast.makeText(this, R.string.failed_to_find_url, Toast.LENGTH_SHORT).show();
+                    Tools.launchDiffOptionDialog(this, mChangeNumber, null, null);
                 }
                 return true;
         }

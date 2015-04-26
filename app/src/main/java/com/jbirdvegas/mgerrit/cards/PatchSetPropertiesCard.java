@@ -40,15 +40,8 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import org.jetbrains.annotations.NotNull;
 
 public class PatchSetPropertiesCard implements CardBinder {
-    private final RequestQueue mRequestQuery;
     private final Context mContext;
-    private final FragmentActivity mActivity;
     private final LayoutInflater mInflater;
-
-    // Colors
-    private final int mOrange;
-    private final int mGreen;
-    private final int mRed;
 
     private Integer changeid_index;
     private Integer changenum_index;
@@ -56,21 +49,12 @@ public class PatchSetPropertiesCard implements CardBinder {
     private Integer subject_index;
     private Integer topic_index;
     private Integer updated_index;
-    private Integer authorId_index;
-    private Integer authorEmail_index;
-    private Integer authorName_index;
-    private Integer status_index;
+    private Integer created_index;
 
 
     public PatchSetPropertiesCard(Context context, RequestQueue requestQueue) {
-        this.mRequestQuery = requestQueue;
         this.mContext = context;
-        this.mActivity = (FragmentActivity) mContext;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        this.mOrange = context.getResources().getColor(android.R.color.holo_orange_light);
-        this.mGreen = context.getResources().getColor(R.color.text_green);
-        this.mRed = context.getResources().getColor(R.color.text_red);
     }
 
     @Override
@@ -87,124 +71,33 @@ public class PatchSetPropertiesCard implements CardBinder {
         }
 
         setIndicies(cursor);
+        viewHolder.changeId.setText(cursor.getString(changeid_index));
 
-        String lastUpdated = cursor.getString(updated_index);
-        viewHolder.updated.setText(Tools.prettyPrintDateTime(mContext, lastUpdated,
+        String strTime = cursor.getString(updated_index);
+        viewHolder.updated.setText(Tools.prettyPrintDateTime(mContext, strTime,
                 PrefsFragment.getServerTimeZone(mContext),
                 PrefsFragment.getLocalTimeZone(mContext)));
 
+        strTime = cursor.getString(created_index);
+        viewHolder.created.setText(Tools.prettyPrintDateTime(mContext, strTime,
+                PrefsFragment.getServerTimeZone(mContext),
+                PrefsFragment.getLocalTimeZone(mContext)));
 
-        viewHolder.subject.setText(cursor.getString(subject_index));
         viewHolder.branch.setText(cursor.getString(branch_index));
-
-        setupUserDetails(viewHolder.author,
-                cursor.getInt(authorId_index),
-                cursor.getString(authorEmail_index),
-                cursor.getString(authorName_index));
 
         String topic = cursor.getString(topic_index);
         if (topic != null && !topic.isEmpty()) {
             viewHolder.topic.setText(topic);
-            viewHolder.topicContainer.setVisibility(View.VISIBLE);
+            viewHolder.topic.setVisibility(View.VISIBLE);
+            viewHolder.topicText.setVisibility(View.VISIBLE);
         } else {
-            viewHolder.topicContainer.setVisibility(View.GONE);
-        }
-
-        setClicksToActionViews(cursor, viewHolder.shareBtn, viewHolder.browserBtn);
-
-        String statusText = cursor.getString(status_index);
-        switch (statusText) {
-            case "MERGED":
-                viewHolder.status.setBackgroundColor(mGreen);
-                break;
-            case "ABANDONED":
-                viewHolder.status.setBackgroundColor(mRed);
-                break;
-            default:
-                viewHolder.status.setBackgroundColor(mOrange);
-                break;
+            viewHolder.topic.setVisibility(View.GONE);
+            viewHolder.topicText.setVisibility(View.GONE);
         }
 
         return convertView;
     }
 
-   private void setClicksToActionViews(Cursor cursor, ImageView share, ImageView browser) {
-
-        String webAddress = getWebAddress(cursor.getString(changenum_index));
-
-        share.setTag(R.id.webAddress, webAddress);
-        share.setTag(R.id.changeID, cursor.getString(changeid_index));
-        browser.setTag(R.id.webAddress, webAddress);
-
-        share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String changeId = (String) view.getTag(R.id.changeID);
-                String webAddress = (String) view.getTag(R.id.webAddress);
-
-                Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                intent.putExtra(Intent.EXTRA_SUBJECT,
-                        String.format(view.getContext().getString(R.string.commit_shared_from_mgerrit),
-                                changeId));
-                intent.putExtra(Intent.EXTRA_TEXT, webAddress + " #mGerrit");
-                view.getContext().startActivity(intent);
-            }
-        });
-        browser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String webAddress = (String) view.getTag(R.id.webAddress);
-
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(webAddress));
-                view.getContext().startActivity(browserIntent);
-            }
-        });
-    }
-
-    private void setupUserDetails(final TextView view,
-                                  final int id, final String email, final String name) {
-        view.setTag(id);
-
-        // attach owner's gravatar
-        GravatarHelper.attachGravatarToTextView(view, email, mRequestQuery);
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setTrackingUser((Integer) view.getTag());
-            }
-        });
-
-        setImageCaption(view, R.string.commit_owner, name);
-    }
-
-    private void setImageCaption(TextView textView, int resID, String authorName) {
-        String title = mContext.getResources().getString(resID);
-        if (title == null || authorName == null) return;
-
-        SpannableString text = new SpannableString(title + "\n" + authorName);
-        text.setSpan(new TextAppearanceSpan(mContext, R.style.CardText_CommitOwnerText),
-                0, title.length(), 0);
-
-        int end = title.length()+1;
-        text.setSpan(new TextAppearanceSpan(mContext, R.style.CardText_CommitOwnerDetails),
-                end, end+authorName.length(), 0);
-
-        textView.setText(text, TextView.BufferType.SPANNABLE);
-    }
-
-    private void setTrackingUser(Integer user) {
-        PrefsFragment.setTrackingUser(mContext, user);
-        if (!PrefsFragment.isTabletMode(mContext)) mActivity.finish();
-    }
-
-    private String getWebAddress(String changeNum) {
-        // Web address: Gerrit instance + commit number
-        return PrefsFragment.getCurrentGerrit(mContext) + changeNum;
-    }
 
     private void setIndicies(@NotNull Cursor cursor) {
         // These indices will not change regardless of the view
@@ -223,47 +116,31 @@ public class PatchSetPropertiesCard implements CardBinder {
         if (topic_index == null) {
             topic_index = cursor.getColumnIndex(UserChanges.C_TOPIC);
         }
-        if (authorId_index == null) {
-            authorId_index = cursor.getColumnIndex(UserChanges.C_USER_ID);
-        }
-        if (authorEmail_index == null) {
-            authorEmail_index = cursor.getColumnIndex(UserChanges.C_EMAIL);
-        }
-        if (authorName_index == null) {
-            authorName_index = cursor.getColumnIndex(UserChanges.C_NAME);
-        }
         if (updated_index == null) {
             updated_index = cursor.getColumnIndex(UserChanges.C_UPDATED);
         }
-        if (status_index == null) {
-            status_index = cursor.getColumnIndex(UserChanges.C_STATUS);
+        if (created_index == null) {
+            created_index = cursor.getColumnIndex(UserChanges.C_CREATED);
         }
+
     }
 
 
     private static class ViewHolder {
-        private final TextView subject;
-        private final TextView author;
         private final TextView branch;
-        private final View topicContainer;
         private final TextView topic;
+        private final TextView topicText;
         private final TextView updated;
-        private final View status;
-
-        private final ImageView shareBtn;
-        private final ImageView browserBtn;
+        private final TextView created;
+        private final TextView changeId;
 
         ViewHolder(View view) {
-            subject = (TextView) view.findViewById(R.id.prop_card_subject);
-            author = (TextView) view.findViewById(R.id.prop_card_author);
+            changeId = (TextView) view.findViewById(R.id.prop_card_change_id);
             branch = (TextView) view.findViewById(R.id.prop_card_branch);
-            topicContainer = view.findViewById(R.id.prop_card_topic_container);
             topic = (TextView) view.findViewById(R.id.prop_card_topic);
+            topicText = (TextView) view.findViewById(R.id.commit_topic_text);
             updated = (TextView) view.findViewById(R.id.prop_card_last_update);
-            status = view.findViewById(R.id.prop_card_status);
-
-            shareBtn = (ImageView) view.findViewById(R.id.properties_card_share_info);
-            browserBtn = (ImageView) view.findViewById(R.id.properties_card_view_in_browser);
+            created = (TextView) view.findViewById(R.id.prop_card_created);
         }
     }
 }

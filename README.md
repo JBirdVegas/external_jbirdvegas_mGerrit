@@ -79,6 +79,9 @@ Changes for BRANCH. This is the short name shown in the web interface without th
 `#'NUMBER'`; `no:'NUMBER'`
 Changes with commit number 'NUMBER'. This is the legacy commit number and is shown as the title of the change details screen and also uniquely identifies a change in the Gerrit web interface
 
+`is:starred`
+Changes you have starred. You do not need to be signed in to view starred changes. This is new in mGerrit v2.111.066.
+
 `age:'OP''AGE'`
     Amount of time that has expired since the change was last updated with a review comment or new patch set. Unlike the Gerrit web interface, this supports both specifying absolute and relative times.
 

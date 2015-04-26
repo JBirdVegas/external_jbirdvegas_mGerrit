@@ -20,7 +20,22 @@ import android.view.ViewGroup;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
+/**
+ * Interface for including card in the change details list.
+ */
 public interface CardBinder {
 
+    /**
+     * Binds the next row of the cursor column to the specified container view.
+     * @param cursor The cursor to get the data from
+     * @param convertView The old view to reuse, if possible. You should check that this view is
+     *                    non-null and of an appropriate type before using. If it is not possible
+     *                    to convert this view to display the correct data, this method can create
+     *                    a new view. It is not guaranteed that the convertView will have been
+     *                    previously created.
+     * @param parent The parent that this view will eventually be attached to
+     * @return The view where the data was bound
+     */
     public View setViewValue(Cursor cursor, View convertView, ViewGroup parent);
 }

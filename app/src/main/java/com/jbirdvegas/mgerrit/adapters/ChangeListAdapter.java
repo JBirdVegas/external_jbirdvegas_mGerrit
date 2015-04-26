@@ -18,9 +18,15 @@ package com.jbirdvegas.mgerrit.adapters;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.util.Pair;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.SimpleCursorAdapter;
 
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
@@ -44,7 +50,8 @@ import java.util.TimeZone;
 
 import de.greenrobot.event.EventBus;
 
-public class ChangeListAdapter extends SimpleCursorAdapter implements Categorizable {
+public class ChangeListAdapter extends SimpleCursorAdapter implements Categorizable,
+        PopupMenu.OnMenuItemClickListener {
 
     Context mContext;
 
@@ -54,6 +61,9 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
 
     private String selectedChangeId;
     private View selectedChangeView;
+
+    // When a popup menu is expanded, this is set to the view where all the associated data is bound
+    private View mPopupMenuTagHolder;
 
     private final Locale mLocale;
     private final TimeZone mServerTimeZone, mLocalTimeZone;
@@ -93,6 +103,14 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
             CommitCard commitCard = (CommitCard) view.findViewById(R.id.commit_card_wrapper);
             commitCard.setChangeSelected(false);
         }
+
+        ImageView settings = (ImageView) view.findViewById(R.id.commit_card_settings);
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopup(v);
+            }
+        });
 
         view.setTag(R.id.changeID, tagHolder.changeid);
         view.setTag(R.id.changeNumber, tagHolder.changeNumber);
@@ -213,6 +231,52 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
         // Convert to date
         DateTime date = Tools.parseDate(c.getString(index), mServerTimeZone, mLocalTimeZone);
         return date.getMillis();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        View targetView = mPopupMenuTagHolder;
+        String webAddress = (String) mPopupMenuTagHolder.getTag(R.id.webAddress);
+        switch (item.getItemId()) {
+            case R.id.menu_change_details:
+                itemClickListener(targetView);
+                return true;
+            case R.id.menu_change_browser:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webAddress));
+                mContext.startActivity(browserIntent);
+                return true;
+            case R.id.menu_change_track_user:
+                int user = (int) mPopupMenuTagHolder.getTag(R.id.user);
+                PrefsFragment.setTrackingUser(mContext, user);
+                return true;
+            case R.id.menu_change_track_project:
+                String project = (String) mPopupMenuTagHolder.getTag(R.id.project);
+                PrefsFragment.setCurrentProject(mContext, project);
+                return true;
+            case R.id.menu_change_share:
+                String changeid = (String) mPopupMenuTagHolder.getTag(R.id.changeID);
+                Intent intent = Tools.createShareIntent(mContext, changeid, webAddress);
+                mContext.startActivity(intent);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public void showPopup(View view) {
+        PopupMenu popup = new PopupMenu(mContext, view);
+        popup.setOnMenuItemClickListener(this);
+        popup.inflate(R.menu.change_list_menu);
+
+        // Set the title of the user tracking menu item
+        MenuItem userMenuItem = popup.getMenu().findItem(R.id.menu_change_track_user);
+        View row = ((View) view.getParent());
+        String title = String.format(mContext.getResources().getString(R.string.context_menu_track_user),
+                (String) row.getTag(R.id.userName));
+        userMenuItem.setTitle(title);
+        mPopupMenuTagHolder = row;
+
+        popup.show();
     }
 
     private Integer getDateColumnIndex(Cursor cursor) {

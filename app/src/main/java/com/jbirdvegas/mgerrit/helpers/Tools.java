@@ -17,19 +17,25 @@ package com.jbirdvegas.mgerrit.helpers;
  *  limitations under the License.
  */
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.jbirdvegas.mgerrit.SigninActivity;
+import com.jbirdvegas.mgerrit.activities.DiffViewer;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
@@ -317,5 +323,64 @@ public class Tools {
 
         // The directory is now empty so delete it
         return dir.delete();
+    }
+
+    // launches internal diff viewer
+    public static void launchDiffViewer(Context context, Integer changeNumber,
+                                        Integer patchSetNumber, String filePath) {
+        Intent diffIntent = new Intent(context, DiffViewer.class);
+        diffIntent.putExtra(DiffViewer.CHANGE_NUMBER_TAG, changeNumber);
+        diffIntent.putExtra(DiffViewer.PATCH_SET_NUMBER_TAG, patchSetNumber);
+        diffIntent.putExtra(DiffViewer.FILE_PATH_TAG, filePath);
+        context.startActivity(diffIntent);
+    }
+
+    public static void launchDiffInBrowser(Context context, Integer changeNumber, Integer patchset,
+                                           String filePath) {
+        Intent browserIntent;
+        if (patchset == null || filePath == null) {
+            Tools.getWebAddress(context, changeNumber);
+            browserIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(Tools.getWebAddress(context, changeNumber)));
+        } else {
+            String base =  "%s#/c/%d/%d/%s,unified";
+            browserIntent = new Intent(
+                    Intent.ACTION_VIEW, Uri.parse(String.format(base,
+                    PrefsFragment.getCurrentGerrit(context),
+                    changeNumber)));
+        }
+
+        context.startActivity(browserIntent);
+    }
+
+    public static void launchDiffOptionDialog(final Context context, final Integer changeNumber,
+                                              final Integer patchset,
+                                              final String filePath) {
+        View checkBoxView = View.inflate(context, R.layout.diff_option_checkbox, null);
+        final CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.checkbox);
+
+        AlertDialog.Builder ad = new AlertDialog.Builder(context)
+                .setTitle(R.string.choose_diff_view)
+                .setView(checkBoxView)
+                .setPositiveButton(R.string.context_menu_view_diff_viewer, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (checkBox.isChecked()) {
+                            PrefsFragment.setDiffDefault(context, PrefsFragment.DiffModes.INTERNAL);
+                        }
+                        launchDiffViewer(context, changeNumber, patchset, filePath);
+                    }
+                })
+                .setNegativeButton(
+                        R.string.context_menu_diff_view_in_browser, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (checkBox.isChecked()) {
+                                    PrefsFragment.setDiffDefault(context, PrefsFragment.DiffModes.EXTERNAL);
+                                }
+                                launchDiffInBrowser(context, changeNumber, patchset, filePath);
+                            }
+                        });
+        ad.create().show();
     }
 }

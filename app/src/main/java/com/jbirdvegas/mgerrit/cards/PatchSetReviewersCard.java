@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -72,6 +73,7 @@ public class PatchSetReviewersCard implements CardBinder {
 
         TextView reviewer = viewHolder.reviewer;
         reviewer.setTag(cursor.getInt(mReviewerId_index));
+        reviewer.setText(cursor.getString(mReviewerName_index));
         viewHolder.reviewer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,9 +82,8 @@ public class PatchSetReviewersCard implements CardBinder {
             }
         });
 
-        GravatarHelper.attachGravatarToTextView(reviewer,
-                cursor.getString(mReviewerEmail_index), mRequestQueue);
-        reviewer.setText(cursor.getString(mReviewerName_index));
+        GravatarHelper.populateProfilePicture(viewHolder.gravatar, cursor.getString(mReviewerEmail_index),
+                mRequestQueue);
 
         setColoredApproval(cursor.getInt(mCodeReview_index), viewHolder.codeReview,
                 viewHolder.codeReviewLayout);
@@ -142,6 +143,7 @@ public class PatchSetReviewersCard implements CardBinder {
         TextView codeReview;
         ViewGroup verifiedLayout;
         TextView verified;
+        ImageView gravatar;
 
         public ViewHolder(View view) {
             reviewer = (TextView) view.findViewById(R.id.labels_card_reviewer_name);
@@ -149,6 +151,7 @@ public class PatchSetReviewersCard implements CardBinder {
             codeReview = (TextView) view.findViewById(R.id.labels_card_code_review);
             verifiedLayout = (ViewGroup) view.findViewById(R.id.labels_card_verified_layout);
             verified = (TextView) view.findViewById(R.id.labels_card_verified);
+            gravatar = (ImageView) view.findViewById(R.id.reviewer_gravatar);
         }
     }
 }

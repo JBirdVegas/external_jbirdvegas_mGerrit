@@ -51,6 +51,7 @@
         <item name="starredIcon">@drawable/ic_action_starred</item>
         <item name="unstarredIcon">@drawable/ic_action_unstarred</item>
         <item name="borderlessButtonBackground">@style/BorderlessBackground</item>
+        <item name="overflowIcon">@drawable/horiz_overflow</item>
     </style>
 
     <style name="Theme.Dark" parent="android:style/Theme.Holo">
@@ -86,5 +87,6 @@
         <item name="starredIcon">@drawable/ic_action_starred_dark</item>
         <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
         <item name="borderlessButtonBackground">@style/BorderlessBackground.Dark</item>
+        <item name="overflowIcon">@drawable/horiz_overflow_dark</item>
     </style>
 </resources>

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <!--
   ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
-  ~  Author: Jon Stanford (JBirdVegas), 2015
+  ~  Author: Evan Conway (P4R4N01D), 2015
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -16,108 +17,96 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.jbirdvegas.mgerrit.cards.CommitCard xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/commit_card_wrapper"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:descendantFocusability="blocksDescendants">
+    android:background="?attr/clickableCardBackground"
+    android:elevation="@dimen/z_offset_medium"
+    android:orientation="horizontal"
+    tools:showIn="@layout/commit_card_row">
 
-    <TextView
-        android:id="@+id/commit_card_last_updated"
-        style="@style/CardText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/standard_padding"
-        tools:text="12:00 am"/>
+    <View
+        android:id="@+id/commit_card_commit_status"
+        android:layout_width="@dimen/card_stroke_width"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:paddingRight="@dimen/commit_card_stroke_padding"
+        tools:background="@color/text_green" />
 
-    <com.jbirdvegas.mgerrit.cards.CommitCard
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/clickableCardBackground"
-        android:elevation="@dimen/z_offset_medium"
-        android:orientation="horizontal"
-        android:id="@+id/commit_card_wrapper">
+        android:paddingBottom="@dimen/standard_padding">
 
-        <View
-            android:id="@+id/commit_card_commit_status"
-            android:layout_width="@dimen/card_stroke_width"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:paddingRight="@dimen/commit_card_stroke_padding"
-            tools:background="@color/text_green"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/commit_card_committer_image"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="@dimen/standard_padding"
+            android:src="@drawable/gravatar" />
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/commit_card_commit_owner"
+            style="@style/CardText.Committer"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/commit_card_committer_image"
+            android:layout_marginLeft="@dimen/standard_padding"
+            android:gravity="center"
+            tools:text="John Smith" />
+
+        <TextView
+            android:id="@+id/commit_card_title"
+            style="?attr/cardTitleStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/commit_card_committer_image"
+            android:paddingBottom="@dimen/standard_padding"
+            android:paddingRight="@dimen/standard_padding"
+            android:textSize="@dimen/text_size_large"
+            tools:text="Tweak commit card layout" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/standard_padding">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/commit_card_committer_image"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginRight="15dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="@dimen/standard_padding"
-                android:src="@drawable/gravatar" />
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/commit_card_title"
+            android:layout_toEndOf="@id/commit_card_committer_image"
+            android:layout_toRightOf="@id/commit_card_committer_image"
+            android:orientation="horizontal"
+            android:weightSum="1">
 
             <TextView
-                android:id="@+id/commit_card_commit_owner"
-                style="@style/CardText.Committer"
-                android:layout_width="64dp"
+                android:id="@+id/commit_card_project_name"
+                style="@style/CardText"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/commit_card_committer_image"
-                android:layout_marginLeft="@dimen/standard_padding"
-                android:gravity="center"
-                android:layout_alignParentBottom="true"
-                tools:text="John Smith"/>
+                android:layout_marginTop="6dp"
+                android:layout_weight="1"
+                android:textSize="@dimen/text_size_small"
+                tools:text="AOKP/external_jbirdvegas_mGerrit" />
 
-            <TextView
-                android:id="@+id/commit_card_title"
-                style="?attr/cardTitleStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/commit_card_committer_image"
-                android:paddingBottom="8dip"
-                tools:text="Tweak commit card layout"
-                android:textSize="@dimen/text_size_large"/>
+            <ImageButton
+                android:id="@+id/commit_card_starred"
+                style="?attr/borderlessButtonBackground"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="-8dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="-2dp"
+                android:contentDescription="@string/commit_card_star_change"
+                android:padding="0dp"
+                android:src="?attr/unstarredIcon" />
+        </LinearLayout>
+    </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/commit_card_title"
-                android:orientation="horizontal"
-                android:layout_toEndOf="@id/commit_card_committer_image"
-                android:layout_toRightOf="@id/commit_card_committer_image"
-                android:layout_alignParentBottom="true"
-                android:weightSum="1">
-                <TextView
-                    android:id="@+id/commit_card_project_name"
-                    style="@style/CardText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_small"
-                    tools:text="AOKP/external_jbirdvegas_mGerrit"
-                    android:layout_weight="1"
-                    android:layout_marginTop="6dp" />
-
-                <ImageButton
-                    android:id="@+id/commit_card_starred"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:src="?attr/unstarredIcon"
-                    android:contentDescription="@string/commit_card_star_change"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="-8dp"
-                    android:padding="0dp"
-                    style="?attr/borderlessButtonBackground"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="-2dp" />
-            </LinearLayout>
-        </RelativeLayout>
-
-    </com.jbirdvegas.mgerrit.cards.CommitCard>
-</LinearLayout>
+</com.jbirdvegas.mgerrit.cards.CommitCard>

@@ -75,11 +75,11 @@ public class FilesCAB implements ActionMode.Callback {
 
         switch (item.getItemId()) {
             case R.id.menu_diff_internal:
-                PatchSetChangesCard.launchDiffViewer(mContext, holder.changeNumber,
+                Tools.launchDiffViewer(mContext, holder.changeNumber,
                         holder.patchset, holder.filePath);
                 break;
             case R.id.menu_diff_external:
-                PatchSetChangesCard.launchDiffInBrowser(mContext, holder.changeNumber,
+                Tools.launchDiffInBrowser(mContext, holder.changeNumber,
                         holder.patchset, holder.filePath);
                 break;
             default:

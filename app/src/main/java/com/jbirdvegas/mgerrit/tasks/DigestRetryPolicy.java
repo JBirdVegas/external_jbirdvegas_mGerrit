@@ -44,7 +44,6 @@ import java.util.Map;
  */
 class DigestRetryPolicy extends DefaultRetryPolicy {
 
-    public static final int HTTP_UNAUTHORIZED = 401;
     private final Request mRequest;
     private int MAX_RETRY_COUNT = 1;
     private Map<String, String> mChallengeHeaders;
