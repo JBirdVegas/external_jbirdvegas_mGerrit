@@ -86,7 +86,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         } else if (view.getId() == R.id.commit_card_committer_image) {
             bindOwnerDetails(view, cursor, columnIndex);
         } else if (view.getId() == R.id.commit_card_project_name) {
-            bindProject((TextView) view, cursor.getString(columnIndex));
+            ((TextView)view).setText(cursor.getString(columnIndex));
         } else if (view.getId() == R.id.commit_card_commit_status) {
             bindStatus(view, cursor.getString(columnIndex));
         } else if (view.getId() == R.id.commit_card_last_updated) {

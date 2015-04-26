@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.PopupMenu;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -161,8 +162,6 @@ public abstract class CardsFragment extends Fragment
                 UserChanges.C_STARRED };
 
         mListView = (ExpandableStickyListHeadersListView) mCurrentFragment.findViewById(R.id.commit_cards);
-        registerForContextMenu(mListView);
-
         mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card_row, null, from, to, 0,
                 getQuery());
         mAdapter.setViewBinder(new CommitCardBinder(mParent, mRequestQueue));
@@ -193,7 +192,7 @@ public abstract class CardsFragment extends Fragment
         mHeaderAdapterWrapper = new HeaderAdapterDecorator(mEndlessAdapter, mHeaderAdapter);
         mListView.setAdapter(mHeaderAdapterWrapper);
         mListView.setDrawingListUnderStickyHeader(false);
-        mListView.getWrappedList().setDividerHeight(16);
+        mListView.getWrappedList().setDividerHeight(32);
 
         sChangesLimit = mParent.getResources().getInteger(R.integer.changes_limit);
 
@@ -324,55 +323,11 @@ public abstract class CardsFragment extends Fragment
         if (mNeedsForceUpdate) loadNewerChanges();
     }
 
-    private void setMenuItemTitle(MenuItem menuItem, String formatString, String parameters) {
-        String title = String.format(formatString, parameters);
-        menuItem.setTitle(title);
-    }
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = mParent.getMenuInflater();
         inflater.inflate(R.menu.change_list_menu, menu);
-
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        View targetView = info.targetView;
-
-        // Set the title of the user tracking menu item
-        MenuItem userMenuItem = menu.findItem(R.id.menu_change_track_user);
-        setMenuItemTitle(userMenuItem, getResources().getString(R.string.context_menu_track_user),
-                (String) targetView.getTag(R.id.userName));
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        View targetView = info.targetView;
-        String webAddress = (String) targetView.getTag(R.id.webAddress);
-        switch (item.getItemId()) {
-            case R.id.menu_change_details:
-                mListView.getWrappedList().performItemClick(targetView, info.position, info.id);
-                return true;
-            case R.id.menu_change_browser:
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webAddress));
-                mParent.startActivity(browserIntent);
-                return true;
-            case R.id.menu_change_track_user:
-                int user = (int) targetView.getTag(R.id.user);
-                PrefsFragment.setTrackingUser(mParent, user);
-                return true;
-            case R.id.menu_change_track_project:
-                String project = (String) targetView.getTag(R.id.project);
-                PrefsFragment.setCurrentProject(mParent, project);
-                return true;
-            case R.id.menu_change_share:
-                String changeid = (String) targetView.getTag(R.id.changeID);
-                Intent intent = Tools.createShareIntent(mParent, changeid, webAddress);
-                mParent.startActivity(intent);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
     }
 
     /**

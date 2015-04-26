@@ -16,7 +16,7 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -30,7 +30,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/standard_padding"
-        tools:text="12:00 am"/>
+        tools:text="12:00 am"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
-    <include layout="@layout/commit_card" />
-</LinearLayout>
+    <ImageButton
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:src="?attr/overflowIcon"
+        style="?attr/borderlessButtonBackground"
+        android:contentDescription="More options"
+        android:id="@+id/commit_card_settings"
+        android:paddingRight="24dp"
+        android:paddingTop="2dp"
+        android:paddingLeft="24dp"
+        android:layout_alignBottom="@+id/commit_card_last_updated"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <include layout="@layout/commit_card"
+        android:layout_below="@id/commit_card_last_updated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>
