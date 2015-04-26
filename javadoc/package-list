@@ -1,0 +1,15 @@
+com.jbirdvegas.mgerrit
+com.jbirdvegas.mgerrit.activities
+com.jbirdvegas.mgerrit.adapters
+com.jbirdvegas.mgerrit.caches
+com.jbirdvegas.mgerrit.cards
+com.jbirdvegas.mgerrit.database
+com.jbirdvegas.mgerrit.fragments
+com.jbirdvegas.mgerrit.helpers
+com.jbirdvegas.mgerrit.listeners
+com.jbirdvegas.mgerrit.message
+com.jbirdvegas.mgerrit.objects
+com.jbirdvegas.mgerrit.requestbuilders
+com.jbirdvegas.mgerrit.search
+com.jbirdvegas.mgerrit.tasks
+com.jbirdvegas.mgerrit.views
