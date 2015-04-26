@@ -11,6 +11,7 @@ buildscript {
     }
 }
 
+
 import org.ajoberstar.grgit.Branch
 import org.ajoberstar.grgit.Credentials
 import org.ajoberstar.grgit.Grgit
@@ -47,9 +48,14 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:1.2.2'
 }
 /**
- * Holds the complete formatted (incremented in specified) android:versionCode
+ * Holds the complete formatted (incremented in specified) {@code android:versionCode}
  */
-def versionHolder
+def projectVersionCode
+
+/**
+ * Holds the complete formatted (incremented if specified) {@code android:versionName}
+ */
+def projectVersionName
 
 /* These can be null, if private.creds is empty or does not exists
  be sure to check before accessing */
@@ -152,13 +158,19 @@ android {
     if (versionPropsFile.canRead()) {
         versionProps.load(new FileInputStream(versionPropsFile))
         String full = versionProps['version'].toString()
-        versionHolder = full
+        projectVersionName = full
         if (project.hasProperty('incrementVersion') && incrementVersion) {
+            // find version parts
             String[] parts = full.split('\\.')
             println("Original version: " + parts.toString())
+
+            // increment last version part
             parts[parts.length - 1] = parts[parts.length - 1].toInteger() + 1
-            versionProps.put('version', StringUtils.join(Arrays.asList(parts), '.'))
+            // set new incremented projectVersionName
+            projectVersionName = StringUtils.join(Arrays.asList(parts), '.')
             println("Incremented version: " + parts.toString())
+
+            // Build projectVersionCode from parts
             StringBuilder builder = new StringBuilder()
             for (int i = 0; i < parts.length; i++) {
                 if (i == 0) {
@@ -167,11 +179,11 @@ android {
                     builder.append(String.format("%03d", parts[i].toInteger()))
                 }
             }
-            versionHolder = builder.toString()
+            projectVersionCode = builder.toString().toInteger()
         }
         defaultConfig {
-            versionCode versionHolder.replaceAll("\\.", "").toInteger()
-            versionName versionHolder
+            versionName projectVersionName
+            versionCode projectVersionCode
             minSdkVersion 14
             targetSdkVersion 22
             println("versionCode: $versionCode versionName: $versionName")
@@ -267,7 +279,11 @@ task commitFiles << {
     // write the updated properties to file
     FileOutputStream outStream = null;
     try {
-        versionProps.store(new FileOutputStream(versionPropsFile), "mGerrit release version")
+        // update version properties
+        versionProps.put('version', projectVersionName)
+        // Persist. Since bot will always increment before release using the
+        // version xxx.xxx.000 is impossible. Note this quirk in the version file
+        versionProps.store(new FileOutputStream(versionPropsFile), "mGerrit build bot will increment this version")
     } finally {
         if (outStream != null) {
             outStream.close()
@@ -279,8 +295,8 @@ task commitFiles << {
         grgit.add(patterns: ['.'])
         println "Grgit file staging: " + grgit.status()
         // Commit the updated version.properties
-        grgit.commit(message: "Release: update version to: ${versionHolder}", amend: false)
-        String message = "Release of v${versionHolder}, ${new Date()}"
+        grgit.commit(message: "Release: update version to: ${projectVersionName}", amend: false)
+        String message = "Release of v${projectVersionName}, ${new Date()}"
 
         // Check if the version tag already exists.  If it does, don't fail.
         // Just don't push the new tag
@@ -289,13 +305,13 @@ task commitFiles << {
         List<Tag> tags = grgit.tag.list();
         boolean tagExists = false;
         for (Tag tag : tags) {
-            if (tag.name.contains("v${versionHolder}")) {
+            if (tag.name.contains("v${projectVersionName}")) {
                 tagExists = true;
             }
         }
         if (!tagExists) {
             // Create tag for version
-            grgit.tag.add(name: "v${versionHolder}", message: message)
+            grgit.tag.add(name: "v${projectVersionName}", message: message)
         }
     } else {
         throw new GradleException("FATAL: Missing ${versionPropsFile.absolutePath}")
