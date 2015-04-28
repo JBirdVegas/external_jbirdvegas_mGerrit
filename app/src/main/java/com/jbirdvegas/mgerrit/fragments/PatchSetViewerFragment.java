@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -35,8 +36,8 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 
 import com.google.analytics.tracking.android.EasyTracker;
-import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
 import com.jbirdvegas.mgerrit.adapters.CommitDetailsAdapter;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
 import com.jbirdvegas.mgerrit.database.Changes;
@@ -52,13 +53,11 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
-import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
 import com.jbirdvegas.mgerrit.objects.FilesCAB;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
 import com.jbirdvegas.mgerrit.search.ChangeSearch;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
-
-import org.jetbrains.annotations.Nullable;
 
 import de.greenrobot.event.EventBus;
 
@@ -283,7 +282,7 @@ public class PatchSetViewerFragment extends Fragment
     /**
      * Set the change id to load details for and load the change
      *
-     * @param changeID A valid change id
+     * @param changeId A valid change id
      */
     public void loadChange(String changeId) {
         // If we have already loaded this change there is nothing to do

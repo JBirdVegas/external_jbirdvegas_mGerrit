@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
@@ -32,7 +33,6 @@ import android.widget.TextView;
 import com.jbirdvegas.mgerrit.R;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 
@@ -73,7 +73,7 @@ public class DiffTextView extends TextView {
      * @param line A line from a diff comparison
      * @return A CharacterStyle containing a color in which to highlight the text
      */
-    public CharacterStyle setColor(@NotNull String line) {
+    public CharacterStyle setColor(@NonNull String line) {
         if (line.startsWith("+++")) return new ForegroundColorSpan(mNewHeader_color);
         else if (line.startsWith("---")) return new ForegroundColorSpan(mOrigHeader_color);
         else if (line.startsWith("+") && !line.startsWith("+++")) return new ForegroundColorSpan(mLineAdded_color);
@@ -142,7 +142,7 @@ public class DiffTextView extends TextView {
                         charCounter + startWhitespace - 1, end, 0);
             }
 // test line with trailing whitespaces ->
-// Here are 3 tabs ->	-	-	<- this line ends with four whitespaces ->    
+// Here are 3 tabs ->	-	-	<- this line ends with four whitespaces ->
             charCounter += string.length();
         }
     }

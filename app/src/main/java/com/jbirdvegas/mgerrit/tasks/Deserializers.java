@@ -17,6 +17,8 @@ package com.jbirdvegas.mgerrit.tasks;
  *  limitations under the License.
  */
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -30,8 +32,6 @@ import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Projects;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 import com.jbirdvegas.mgerrit.objects.ReviewerList;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public final class Deserializers {
     };
 
     // Register all of the custom deserializers here
-    public static void addDeserializers(@NotNull GsonBuilder gsonBuilder) {
+    public static void addDeserializers(@NonNull GsonBuilder gsonBuilder) {
         gsonBuilder.registerTypeAdapter(Projects.class, new Projects());
         gsonBuilder.registerTypeAdapter(Reviewer.class, d_reviewer);
         gsonBuilder.registerTypeAdapter(ReviewerList.class, d_reviewers);

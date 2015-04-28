@@ -19,8 +19,8 @@ package com.jbirdvegas.mgerrit.helpers;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +59,7 @@ public class DBParams {
                 .build();
     }
 
-    public static Integer getConflictParameter(@NotNull Uri uri) {
+    public static Integer getConflictParameter(@NonNull Uri uri) {
         String conflictAlgorithm = uri.getQueryParameter(TAG_CONFLICT);
         if (conflictAlgorithm == null) return null;
         else if (conflictAlgorithm.equals("REPLACE")) {

@@ -19,16 +19,15 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 
 import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
-
-import org.jetbrains.annotations.Nullable;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 
 import java.util.List;
 

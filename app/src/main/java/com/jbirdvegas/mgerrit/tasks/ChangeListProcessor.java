@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import com.jbirdvegas.mgerrit.R;
@@ -29,13 +30,11 @@ import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.MoreChanges;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
-import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
+import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.tasks.GerritService.Direction;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -135,7 +134,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
         }
     }
 
-    private JSONCommit findCommit(JSONCommit[] commits, @NotNull String changeID) {
+    private JSONCommit findCommit(JSONCommit[] commits, @NonNull String changeID) {
         for (JSONCommit commit : commits) {
             if (changeID.equals(commit.getChangeId()))
                 return commit;
@@ -143,7 +142,7 @@ class ChangeListProcessor extends SyncProcessor<JSONCommit[]> {
         return null;
     }
 
-    private boolean areFetchingChangesForStatus(@NotNull String status) {
+    private boolean areFetchingChangesForStatus(@NonNull String status) {
         Class<? extends SyncProcessor> clazz = ChangeListProcessor.class;
         HashMap<RequestBuilder, SyncProcessor> processors = GerritService.getRunningProcessors();
 

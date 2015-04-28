@@ -18,14 +18,13 @@ package com.jbirdvegas.mgerrit.message;
  */
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 
-import org.jetbrains.annotations.NotNull;
-
 public class StartingRequest extends GerritMessage {
 
-    public StartingRequest(@NotNull Intent intent, String url, String status) {
+    public StartingRequest(@NonNull Intent intent, String url, String status) {
         super(intent, url, status);
     }
 }

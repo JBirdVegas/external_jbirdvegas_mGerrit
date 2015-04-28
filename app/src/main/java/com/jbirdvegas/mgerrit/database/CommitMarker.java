@@ -23,10 +23,10 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
-import org.jetbrains.annotations.Nullable;
 
 public class CommitMarker extends DatabaseTable {
     // Table name

@@ -23,9 +23,11 @@ package com.jbirdvegas.mgerrit.objects;
 public interface Categorizable {
 
     /**
-     * Returns the category text for the list item at a given position which can be used
+     * Category name used for displaying list headers
+     * @param position index of item in list
+     * @return the category text for the list item at a given position which can be used
      *  for displaying list headers
-     **/
+     */
     public String categoryName(int position);
 
     public long categoryId(int position);
