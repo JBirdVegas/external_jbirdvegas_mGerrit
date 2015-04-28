@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.0'
+        classpath 'com.android.tools.build:gradle:1.1.3'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
         classpath 'org.ajoberstar:gradle-git:1.1.0'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
@@ -29,10 +29,15 @@ repositories {
 }
 
 dependencies {
-    compile files('libs/android-support-v4.jar')
+    // TODO: Remove jar... or at least replace with versioned jar
+    // This jar is v2 of the google analytics services.
     compile files('libs/libGoogleAnalyticsServices.jar')
-    compile files('libs/annotations.jar')
-
+    // Intellij annotations. Specifically Contract
+    compile 'org.jetbrains:annotations:13.0'
+    // All other annotations come from android support
+    compile 'com.android.support:support-annotations:22.1.1'
+    // Use support from repository
+    compile 'com.android.support:support-v4:22.1.1'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.mcxiaoke.volley:library:1.0.12'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
@@ -232,7 +237,9 @@ task javadoc(type: Javadoc) {
     destinationDir = file("../javadoc/")
     failOnError false
     options {
+        links "http://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/"
         links "http://docs.oracle.com/javase/7/docs/api/"
+        links "http://docs.oracle.com/javaee/7/api/"
         linksOffline "http://d.android.com/reference", "${android.sdkDirectory}/docs/reference"
     }
     exclude '**/BuildConfig.java'

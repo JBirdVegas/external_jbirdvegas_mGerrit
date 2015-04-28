@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +28,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.UserReviewers;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
-
-import org.jetbrains.annotations.NotNull;
 
 public class PatchSetReviewersCard implements CardBinder {
     private static final boolean DEBUG = true;
@@ -117,7 +116,7 @@ public class PatchSetReviewersCard implements CardBinder {
         if (!PrefsFragment.isTabletMode(mContext)) mActivity.finish();
     }
 
-    private void setIndicies(@NotNull Cursor cursor) {
+    private void setIndicies(@NonNull Cursor cursor) {
         // These indices will not change regardless of the view
         if (mReviewerId_index == null) {
             mReviewerId_index = cursor.getColumnIndex(UserReviewers.C_REVIEWER_ID);

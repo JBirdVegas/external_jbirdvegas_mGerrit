@@ -21,14 +21,13 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
 import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -69,7 +68,7 @@ public class GerritService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(@NotNull Intent intent) {
+    protected void onHandleIntent(@NonNull Intent intent) {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(this);
         }

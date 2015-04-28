@@ -20,17 +20,19 @@ package com.jbirdvegas.mgerrit.helpers;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.jbirdvegas.mgerrit.R;
+
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 public class GravatarHelper {
     private static final String TAG = GravatarHelper.class.getSimpleName();
@@ -47,8 +49,8 @@ public class GravatarHelper {
      * @param email The user's email to fetch the Gravatar for
      * @param requestQueue A request queue instance to use
      */
-    public static void populateProfilePicture(@NotNull final ImageView imageView, String email,
-                                              @NotNull RequestQueue requestQueue) {
+    public static void populateProfilePicture(@NonNull final ImageView imageView, String email,
+                                              @NonNull RequestQueue requestQueue) {
         String url = getGravatarUrl(email);
         imageView.setVisibility(View.VISIBLE);
 

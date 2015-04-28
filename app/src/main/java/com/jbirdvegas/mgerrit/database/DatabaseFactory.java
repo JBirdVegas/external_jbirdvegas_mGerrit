@@ -27,12 +27,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
-import org.jetbrains.annotations.NotNull;
 
 import org.jetbrains.annotations.Contract;
 
@@ -143,7 +143,7 @@ public class DatabaseFactory extends ContentProvider {
     /** This should be called when the Gerrit source changes to modify all database references to
      *  use the new database source.
      */
-    public static void changeGerrit(@NotNull Context context, String newGerrit) {
+    public static void changeGerrit(@NonNull Context context, String newGerrit) {
         Log.d("DatabaseFactory", "Switching Gerrit instance to: " + newGerrit);
 
         /* Currently all the members of this class are static so it is only relevant
@@ -163,7 +163,7 @@ public class DatabaseFactory extends ContentProvider {
         DatabaseFactory.getDatabase(context, newGerrit);
     }
 
-    public static void getDatabase(@NotNull Context context, @NotNull String gerrit) {
+    public static void getDatabase(@NonNull Context context, @NonNull String gerrit) {
         String dbName = DBHelper.getDatabaseName(gerrit);
         DatabaseFactory.dbHelper = new DBHelper(context, dbName);
         // Ensure the database is open and we have a reference to it before
@@ -278,7 +278,7 @@ public class DatabaseFactory extends ContentProvider {
     }
 
     @Override  @Contract("null -> fail")
-    public int bulkInsert(Uri uri, @NotNull ContentValues[] values) {
+    public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
         String table = getUriTable(uri);
 
         Integer conflictAlgorithm = DBParams.getConflictParameter(uri);

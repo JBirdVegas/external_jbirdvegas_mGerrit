@@ -1,6 +1,7 @@
 package com.jbirdvegas.mgerrit.helpers;
 
 import android.util.Log;
+
 import org.jetbrains.annotations.Contract;
 
 import java.io.UnsupportedEncodingException;

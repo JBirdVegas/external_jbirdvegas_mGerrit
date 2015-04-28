@@ -2,10 +2,9 @@ package com.jbirdvegas.mgerrit.requestbuilders;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
 import java.net.URISyntaxException;

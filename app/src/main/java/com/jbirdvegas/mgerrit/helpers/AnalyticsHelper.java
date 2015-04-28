@@ -22,6 +22,7 @@ import android.content.Context;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 
+
 public class AnalyticsHelper {
     public static final String GA_PERFORMANCE = "performance";
     public static final String GA_TIME_TO_LOAD = "time_to_load";

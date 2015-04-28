@@ -18,8 +18,7 @@ package com.jbirdvegas.mgerrit.objects;
  */
 
 import android.content.Intent;
-
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public abstract class GerritMessage {
 
@@ -27,7 +26,7 @@ public abstract class GerritMessage {
     private final Intent mIntent;
     private final String mStatus;
 
-    public GerritMessage(@NotNull Intent intent, String url, String status) {
+    public GerritMessage(@NonNull Intent intent, String url, String status) {
         this.mIntent = intent;
         this.mUrl = url;
         this.mStatus = status;
