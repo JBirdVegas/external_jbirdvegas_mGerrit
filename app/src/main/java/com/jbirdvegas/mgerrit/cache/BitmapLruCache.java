@@ -1,16 +1,18 @@
 package com.jbirdvegas.mgerrit.caches;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.jetbrains.annotations.Contract;
+
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.os.Build;
-import com.android.volley.toolbox.ImageLoader;
-import org.jetbrains.annotations.Contract;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import com.android.volley.toolbox.ImageLoader;
 
 /**
  * Class from example: http://weakapp0320.blogspot.com/2013/05/imageloader-with-volley-example.html

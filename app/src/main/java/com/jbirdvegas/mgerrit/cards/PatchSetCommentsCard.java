@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -34,8 +35,6 @@ import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.EmoticonSupportHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
-
-import org.jetbrains.annotations.NotNull;
 
 public class PatchSetCommentsCard implements CardBinder {
 
@@ -109,7 +108,7 @@ public class PatchSetCommentsCard implements CardBinder {
         if (!PrefsFragment.isTabletMode(mContext)) mActivity.finish();
     }
 
-    private void setIndicies(@NotNull Cursor cursor) {
+    private void setIndicies(@NonNull Cursor cursor) {
         // These indices will not change regardless of the view
         if (message_index == null) {
             message_index = cursor.getColumnIndex(UserMessage.C_MESSAGE);

@@ -17,11 +17,10 @@ package com.jbirdvegas.mgerrit.activities;
  *  limitations under the License.
  */
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
@@ -30,9 +29,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ShareActionProvider;
-import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.PatchSetAdapter;
@@ -44,8 +41,6 @@ import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 

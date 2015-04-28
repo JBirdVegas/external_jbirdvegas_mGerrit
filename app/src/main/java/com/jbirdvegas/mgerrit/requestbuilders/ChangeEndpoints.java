@@ -19,14 +19,13 @@ package com.jbirdvegas.mgerrit.requestbuilders;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

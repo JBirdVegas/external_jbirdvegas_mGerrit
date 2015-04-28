@@ -19,13 +19,13 @@ package com.jbirdvegas.mgerrit.search;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -128,7 +128,7 @@ public abstract class SearchKeyword implements Parcelable {
      * @param param Arguments for the token - will not be processed
      * @return A search keyword matching name:param
      */
-    private static SearchKeyword buildToken(@NotNull String name, String param) {
+    private static SearchKeyword buildToken(@NonNull String name, String param) {
 
         for (Entry<String, Class<? extends SearchKeyword>> entry : _KEYWORDS.entrySet()) {
             if (name.equalsIgnoreCase(entry.getKey())) {
@@ -149,7 +149,7 @@ public abstract class SearchKeyword implements Parcelable {
     }
 
     @Nullable
-    private static SearchKeyword buildToken(@NotNull String tokenStr) {
+    private static SearchKeyword buildToken(@NonNull String tokenStr) {
         SearchKeyword keyword = null;
         String[] s = tokenStr.split(":", 2);
         if (s.length == 2) {
@@ -274,7 +274,7 @@ public abstract class SearchKeyword implements Parcelable {
      * @return A new set of search keywords, retaining only the oldest AgeSearch keyword
      */
     public static Set<SearchKeyword> retainOldest(final Set<SearchKeyword> tokens,
-                                                  @NotNull AgeSearch keyword) {
+                                                  @NonNull AgeSearch keyword) {
         List<AgeSearch> ageSearches = new ArrayList<>();
         List<SearchKeyword> otherSearches = new ArrayList<>();
 

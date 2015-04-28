@@ -78,7 +78,6 @@ public class TheApplication extends Application
         if (key.equals(PrefsFragment.GERRIT_URL_KEY)) onGerritChanged(PrefsFragment.getCurrentGerrit(this));
         if (key.equals(PrefsFragment.APP_THEME)) {
             this.setTheme(PrefsFragment.getCurrentThemeID(this));
-            return;
         }
     }
 

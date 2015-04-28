@@ -21,27 +21,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Pair;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.SimpleCursorAdapter;
 
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.objects.Categorizable;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -88,7 +87,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
     }
 
     @Override
-    public void bindView(@NotNull View view, Context context, @NotNull final Cursor cursor) {
+    public void bindView(@NonNull View view, Context context, @NonNull final Cursor cursor) {
 
         setIndicies(cursor);
 
@@ -188,7 +187,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
         commitCard.setChangeSelected(true);
     }
 
-    private void setIndicies(@NotNull Cursor cursor) {
+    private void setIndicies(@NonNull Cursor cursor) {
         // These indices will not change regardless of the view
         if (mUserId_index == null) {
             mUserId_index = cursor.getColumnIndex(UserChanges.C_USER_ID);

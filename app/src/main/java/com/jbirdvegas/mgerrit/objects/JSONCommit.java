@@ -18,16 +18,15 @@ package com.jbirdvegas.mgerrit.objects;
  */
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.tasks.Deserializers;
 
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import java.util.List;
