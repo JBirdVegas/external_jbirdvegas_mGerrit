@@ -157,6 +157,9 @@ android {
     lintOptions {
         abortOnError false
     }
+    dexOptions {
+        preDexLibraries = false
+    }
     packagingOptions {
         exclude 'plugin.properties'
     }
