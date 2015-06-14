@@ -6,12 +6,19 @@ import android.content.Intent;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
+import com.jbirdvegas.mgerrit.message.StartingRequest;
 import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.requestbuilders.ConfigEndpoints;
+import com.urswolfer.gerrit.client.rest.GerritAuthData;
+import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
+
+import org.apache.http.HttpStatus;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,34 +87,20 @@ public class VersionProcessor extends SyncProcessor<String> {
     @Override
     protected void fetchData(RequestQueue queue) {
         final String url = mUrl.toString();
+
         Response.Listener<String> listener = getListener(url);
 
-        Authenticateable<String> request = new TextRequest(url,
-                listener, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                boolean success = true;
-                if (volleyError == null || volleyError.networkResponse == null) {
-                    success = false;
-                // Authentication handling here and in StringRequest in case the Gerrit url requires authentication
-                } else if (volleyError.networkResponse.statusCode == 401) {
-                    Tools.launchSignin(mContext);
-                    // We still want to post the exception
-                    success = false;
-                } else if (volleyError.networkResponse.statusCode == 404) {
-                    // Pretend we got a response
-                    getListener(url).onResponse(Config.VERSION_DEFAULT);
-                } else {
-                    success = false;
-                }
-                if (!success) {
-                    GerritMessage ev = new ErrorDuringConnection(mIntent, url, null, volleyError);
-                    // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
-                    EventQueue.getInstance().enqueue(ev, true);
-                }
-            }
-        });
+        GerritApi gerritApi = getGerritApiInstance(mUrl.isAuthenticating());
+        try {
+            String version = gerritApi.config().server().getVersion();
+            if ("<2.8".equals(version)) version = Config.VERSION_DEFAULT;
+            listener.onResponse(version);
+        } catch (RestApiException e) {
+            listener.onResponse(Config.VERSION_DEFAULT);
 
-        this.fetchData(mUrl, request, queue);
+            GerritMessage ev = new ErrorDuringConnection(mIntent, url, null, e);
+            // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
+            EventQueue.getInstance().enqueue(ev, true);
+        }
     }
 }

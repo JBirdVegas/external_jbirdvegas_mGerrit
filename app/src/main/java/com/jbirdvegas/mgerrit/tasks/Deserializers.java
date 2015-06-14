@@ -126,7 +126,6 @@ public final class Deserializers {
 
     // Register all of the custom deserializers here
     public static void addDeserializers(@NotNull GsonBuilder gsonBuilder) {
-        gsonBuilder.registerTypeAdapter(Projects.class, new Projects());
         gsonBuilder.registerTypeAdapter(Reviewer.class, d_reviewer);
         gsonBuilder.registerTypeAdapter(ReviewerList.class, d_reviewers);
         gsonBuilder.registerTypeAdapter(JSONCommit.class, d_commit);

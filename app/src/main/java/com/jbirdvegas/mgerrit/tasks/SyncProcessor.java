@@ -25,17 +25,21 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jbirdvegas.mgerrit.database.Users;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
-import com.jbirdvegas.mgerrit.objects.AccountInfo;
+import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
+import com.urswolfer.gerrit.client.rest.GerritAuthData;
+import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
 
 import de.greenrobot.event.EventBus;
 
@@ -175,6 +179,32 @@ abstract class SyncProcessor<T> {
         queue.add(request);
     }
 
+    protected GerritApi getGerritApiInstance(boolean isAuthenticating) {
+        GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
+        GerritAuthData.Basic authData;
+        String username = null, password = null;
+
+        if (isAuthenticating) {
+            username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
+            password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
+            if (username == null || password == null) {
+                UserAccountInfo ai = Users.getUser(mContext, null);
+                if (ai != null) {
+                    username = ai.username;
+                    password = ai.password;
+                }
+            }
+        }
+
+        if (username != null && password != null) {
+            authData = new GerritAuthData.Basic(PrefsFragment.getCurrentGerrit(mContext), username, password);
+        } else {
+            authData = new GerritAuthData.Basic(PrefsFragment.getCurrentGerrit(mContext));
+        }
+
+        return gerritRestApiFactory.create(authData);
+    }
+
 
     protected boolean isInSyncInterval(long syncInterval, long lastSync) {
         if (lastSync == 0) return false; // Always sync if this is the first time
@@ -209,7 +239,7 @@ abstract class SyncProcessor<T> {
             String username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
             String password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
             if (username == null || password == null) {
-                AccountInfo ai = Users.getUser(mContext, null);
+                UserAccountInfo ai = Users.getUser(mContext, null);
                 if (ai != null) {
                     username = ai.username;
                     password = ai.password;
@@ -235,7 +265,7 @@ abstract class SyncProcessor<T> {
             String username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
             String password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
             if (username == null || password == null) {
-                AccountInfo ai = Users.getUser(mContext, null);
+                UserAccountInfo ai = Users.getUser(mContext, null);
                 if (ai != null) {
                     requestBuilder.setAuthenticating(true);
                     mIntent.putExtra(GerritService.HTTP_USERNAME, ai.username);

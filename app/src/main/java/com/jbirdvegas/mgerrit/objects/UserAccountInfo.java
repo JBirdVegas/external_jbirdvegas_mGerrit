@@ -17,22 +17,24 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
-public class AccountInfo {
-    public Integer _account_id;
-    public String name;
-    public String email;
-    public String username;
+import com.google.gerrit.extensions.common.AccountInfo;
+
+public class UserAccountInfo extends AccountInfo {
     public String password;
 
-    public AccountInfo(Integer id) {
-        this._account_id = id;
+    public UserAccountInfo(AccountInfo ai) {
+        this(ai._accountId, ai.name, ai.email, ai.username, null);
     }
 
-    public AccountInfo(int id, String email, String name, String username, String password) {
-        this._account_id = id;
+    public UserAccountInfo(int id, String email, String name, String username, String password) {
+        super(id);
         this.email = email;
         this.name = name;
         this.username = username;
         this.password = password;
+    }
+
+    public int getAccountId() {
+        return _accountId;
     }
 }

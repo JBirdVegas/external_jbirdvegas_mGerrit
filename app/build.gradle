@@ -26,6 +26,7 @@ apply plugin: 'checkstyle'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -46,6 +47,11 @@ dependencies {
         exclude module: 'support-v4'
     }
     compile 'de.hdodenhof:circleimageview:1.2.2'
+
+    compile('com.urswolfer.gerrit.client.rest:gerrit-rest-java-client:0.8.6-android') {
+        exclude module: 'httpclient'
+
+    }
 }
 /**
  * Holds the complete formatted (incremented in specified) {@code android:versionCode}

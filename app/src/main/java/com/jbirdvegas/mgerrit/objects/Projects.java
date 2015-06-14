@@ -17,6 +17,7 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
+import com.google.gerrit.extensions.common.ProjectInfo;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -28,35 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Projects implements JsonDeserializer<Projects> {
+public class Projects extends ArrayList<ProjectInfo> {
 
-    private List<Project> projects;
-
-    public Projects() {
-        projects = new ArrayList<>();
-    }
-
-    @Override
-    public Projects deserialize(JsonElement jsonElement, Type type,
-                               JsonDeserializationContext deserializationContext)
-            throws JsonParseException {
-
-        JsonObject json = jsonElement.getAsJsonObject();
-        for (Map.Entry<String, JsonElement> project : json.entrySet()) {
-            String path = project.getKey();
-            JsonObject details = project.getValue().getAsJsonObject();
-            String id = details.get("id").getAsString();
-            projects.add(new Project(path, id));
-        }
-
-        return this;
-    }
-
-    public List<Project> getAsList() {
-        return projects;
-    }
-
-    public int getProjectCount() {
-        return projects.size();
+    public Projects(List<ProjectInfo> projects) {
+        new ArrayList<>(projects);
     }
 }

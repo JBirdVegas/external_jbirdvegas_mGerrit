@@ -21,15 +21,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Users;
+import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
+import com.jbirdvegas.mgerrit.objects.EventQueue;
+import com.jbirdvegas.mgerrit.objects.GerritMessage;
+import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
-import com.jbirdvegas.mgerrit.objects.AccountInfo;
-
 
 import de.greenrobot.event.EventBus;
 
-public class AccountProcessor extends SyncProcessor<AccountInfo> {
+public class AccountProcessor extends SyncProcessor<UserAccountInfo> {
 
     private final Intent mIntent;
     private final String mUrl;
@@ -41,7 +47,7 @@ public class AccountProcessor extends SyncProcessor<AccountInfo> {
     }
 
     @Override
-    int insert(AccountInfo data) {
+    int insert(UserAccountInfo data) {
         // Password is not returned in the response, but we can get it from the original intent
         data.password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
         Users.setUserDetails(mContext, data);
@@ -56,12 +62,27 @@ public class AccountProcessor extends SyncProcessor<AccountInfo> {
     }
 
     @Override
-    Class<AccountInfo> getType() {
-        return AccountInfo.class;
+    Class<UserAccountInfo> getType() {
+        return UserAccountInfo.class;
     }
 
     @Override
-    int count(AccountInfo version) {
+    int count(UserAccountInfo version) {
         return 1;
+    }
+
+    @Override
+    protected void fetchData(RequestQueue queue) {
+        Response.Listener<UserAccountInfo> listener = getListener(mUrl);
+
+        GerritApi gerritApi = getGerritApiInstance(true);
+        try {
+            UserAccountInfo self = new UserAccountInfo(gerritApi.accounts().self().get());
+            listener.onResponse(self);
+        } catch (RestApiException e) {
+            GerritMessage ev = new ErrorDuringConnection(mIntent, mUrl, null, e);
+            // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
+            EventQueue.getInstance().enqueue(ev, true);
+        }
     }
 }

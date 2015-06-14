@@ -26,8 +26,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Pair;
 
+import com.google.gerrit.extensions.common.ProjectInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.Project;
+import com.jbirdvegas.mgerrit.objects.Projects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,14 +83,14 @@ public class ProjectsTable extends DatabaseTable {
     }
 
     /** Insert the list of projects into the database **/
-    public static int insertProjects(Context context, List<Project> projects) {
+    public static int insertProjects(Context context, Projects projects) {
 
         List<ContentValues> projectValues = new ArrayList<>();
 
-        for (Project project : projects) {
+        for (ProjectInfo project : projects) {
             ContentValues projectRow = new ContentValues(2);
 
-            String path = project.getPath();
+            String path = project.name;
             projectRow.put(C_PATH, path);
             Pair<String, String> proj = splitPath(path);
             projectRow.put(C_ROOT, proj.first);

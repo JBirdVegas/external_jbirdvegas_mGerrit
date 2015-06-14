@@ -21,32 +21,40 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.common.ProjectInfo;
+import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.database.SyncTime;
+import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
+import com.jbirdvegas.mgerrit.objects.EventQueue;
+import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.Project;
 import com.jbirdvegas.mgerrit.requestbuilders.ProjectEndpoints;
 import com.jbirdvegas.mgerrit.objects.Projects;
 import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 class ProjectListProcessor extends SyncProcessor<Projects> {
 
     private final RequestBuilder mUrl;
+    private final Intent mIntent;
 
     ProjectListProcessor(Context context, Intent intent) {
         super(context, intent);
         mUrl = ProjectEndpoints.get();
+        mIntent = intent;
     }
 
     @Override
     int insert(Projects projects) {
-        List<Project> projectList = projects.getAsList();
-        Collections.sort(projectList);
-        return ProjectsTable.insertProjects(getContext(), projectList);
+        return ProjectsTable.insertProjects(getContext(), projects);
     }
 
     @Override
@@ -74,12 +82,23 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
 
     @Override
     int count(Projects projects) {
-        if (projects != null) return projects.getProjectCount();
+        if (projects != null) return projects.size();
         else return 0;
     }
 
     @Override
     protected void fetchData(RequestQueue queue) {
-        fetchData(mUrl, queue);
+        Response.Listener<Projects> listener = getListener(mUrl.toString());
+
+        GerritApi gerritApi = getGerritApiInstance(true);
+        try {
+            List<ProjectInfo> pl = gerritApi.projects().list().get();
+            Projects projects = new Projects(pl);
+            listener.onResponse(projects);
+        } catch (RestApiException e) {
+            GerritMessage ev = new ErrorDuringConnection(mIntent, mUrl.toString(), null, e);
+            // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
+            EventQueue.getInstance().enqueue(ev, true);
+        }
     }
 }
