@@ -28,7 +28,6 @@ import android.util.Pair;
 
 import com.google.gerrit.extensions.common.ProjectInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
-import com.jbirdvegas.mgerrit.objects.Project;
 import com.jbirdvegas.mgerrit.objects.Projects;
 
 import java.util.ArrayList;

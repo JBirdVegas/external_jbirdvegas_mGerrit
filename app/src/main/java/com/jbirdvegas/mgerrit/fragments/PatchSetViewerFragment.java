@@ -231,6 +231,10 @@ public class PatchSetViewerFragment extends Fragment
          * so this will not be able to get the files changed or the full commit message
          * in prior Gerrit versions.
          */
+        Bundle b = new Bundle();
+        b.putParcelable(GerritService.URL_KEY, mUrl);
+        b.putString(GerritService.CHANGE_ID, mSelectedChange);
+        b.putInt(GerritService.CHANGE_NUMBER, mChangeNumber);
         GerritService.sendRequest(mParent, dataType, mUrl);
     }
 

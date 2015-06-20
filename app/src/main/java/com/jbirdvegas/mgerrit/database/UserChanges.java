@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.CursorLoader;
 
+import com.google.gerrit.extensions.common.ChangeInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
@@ -175,24 +176,24 @@ public class UserChanges extends DatabaseTable {
      *               Only data visible to the change list will be updated.
      * @return Whether any rows were updated
      */
-    public static boolean updateChange(Context context, JSONCommit commit) {
-        if (commit == null || commit.getChangeId() == null) return false;
+    public static boolean updateChange(Context context, ChangeInfo commit) {
+        if (commit == null || commit.changeId == null) return false;
 
         ContentValues values = new ContentValues(9);
-        if (commit.getSubject() != null){
-            values.put(C_SUBJECT, commit.getSubject());
-        } if (commit.getLastUpdatedDate() != null){
-            values.put(C_UPDATED, trimDate(commit.getLastUpdatedDate()));
-        } if (commit.getOwnerObject() != null) {
-            values.put(C_OWNER, commit.getOwnerObject().getAccountId());
-        } if (commit.getStatus() != null) {
-            values.put(C_STATUS, commit.getStatus().toString());
+        if (commit.subject != null){
+            values.put(C_SUBJECT, commit.subject);
+        } if (commit.updated != null){
+            values.put(C_UPDATED, trimDate(commit.updated.toString()));
+        } if (commit.owner != null) {
+            values.put(C_OWNER, commit.owner._accountId);
+        } if (commit.status != null) {
+            values.put(C_STATUS, commit.status.name());
         }
         // The topic could have been cleared
-        values.put(C_TOPIC, commit.getTopic());
+        values.put(C_TOPIC, commit.topic);
 
         return context.getContentResolver().update(Changes.CONTENT_URI, values,
-                C_CHANGE_ID + " = ?", new String[] { commit.getChangeId() }) > 0;
+                C_CHANGE_ID + " = ?", new String[] { commit.changeId }) > 0;
     }
 
     /**
