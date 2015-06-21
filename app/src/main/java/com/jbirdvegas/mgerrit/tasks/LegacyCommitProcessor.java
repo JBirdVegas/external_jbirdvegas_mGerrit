@@ -32,7 +32,7 @@ class LegacyCommitProcessor extends SyncProcessor<JSONCommit[]> {
 
     @Override
     int insert(JSONCommit[] commits) {
-        if (commits.length > 0) return CommitProcessor.doInsert(getContext(), commits[0]);
+        //if (commits.length > 0) return CommitProcessor.doInsert(getContext(), commits[0]);
         return 0;
     }
 

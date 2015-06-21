@@ -194,8 +194,7 @@ public class PatchSetViewerFragment extends Fragment
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (sIsLegacyVersion) sendRequest(GerritService.DataType.LegacyCommitDetails);
-                else sendRequest(GerritService.DataType.Commit);
+                sendRequest(GerritService.DataType.Commit);
             }
         });
 
@@ -235,7 +234,7 @@ public class PatchSetViewerFragment extends Fragment
         b.putParcelable(GerritService.URL_KEY, mUrl);
         b.putString(GerritService.CHANGE_ID, mSelectedChange);
         b.putInt(GerritService.CHANGE_NUMBER, mChangeNumber);
-        GerritService.sendRequest(mParent, dataType, mUrl);
+        GerritService.sendRequest(mParent, dataType, b);
     }
 
     private void restartLoaders(String changeID) {
@@ -287,7 +286,7 @@ public class PatchSetViewerFragment extends Fragment
     /**
      * Set the change id to load details for and load the change
      *
-     * @param changeID A valid change id
+     * @param changeId A valid change id
      */
     public void loadChange(String changeId) {
         // If we have already loaded this change there is nothing to do
@@ -298,8 +297,7 @@ public class PatchSetViewerFragment extends Fragment
             mUrl.setChangeNumber(mChangeNumber);
             mUrl.requestChangeDetail(true, sIsLegacyVersion);
 
-            if (sIsLegacyVersion) sendRequest(GerritService.DataType.LegacyCommitDetails);
-            else sendRequest(GerritService.DataType.CommitDetails);
+            sendRequest(GerritService.DataType.CommitDetails);
 
             restartLoaders(changeId);
         }

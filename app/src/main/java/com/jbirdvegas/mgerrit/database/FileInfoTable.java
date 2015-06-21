@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
+import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,17 +112,17 @@ public class FileInfoTable extends DatabaseTable {
     }
 
     public static int insertChangedFiles(Context context, String changeid, int patchset,
-                                         Map<String, com.google.gerrit.extensions.common.FileInfo> diff) {
+                                         List<ChangedFileInfo> files) {
 
         List<ContentValues> values = new ArrayList<>();
 
-        for (com.google.gerrit.extensions.common.FileInfo file : diff) {
+        for (ChangedFileInfo file : files) {
             if (file == null) {
                 continue;
             }
             ContentValues row = new ContentValues(6);
             row.put(C_CHANGE_ID, changeid);
-            row.put(C_FILE_NAME, file._path);
+            row.put(C_FILE_NAME, file.path);
 
             String oldPath = file.oldPath;
             if (oldPath != null && !oldPath.isEmpty()) row.put(C_OLDPATH, oldPath);

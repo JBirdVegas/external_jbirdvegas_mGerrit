@@ -23,23 +23,26 @@ import android.content.Intent;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
-import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
-import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
+import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.urswolfer.gerrit.client.rest.http.HttpStatusException;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
@@ -77,9 +80,10 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
     @Nullable
     protected static Reviewer[] reviewersToArray(ChangeInfo commit) {
-        List<Reviewer> rs = commit.getReviewers();
+        /*List<Reviewer> rs = commit.getReviewers();
         if (rs == null) return null;
-        return rs.toArray(new Reviewer[rs.size()]);
+        return rs.toArray(new Reviewer[rs.size()]);*/
+        return null;
     }
 
     protected static int doInsert(Context context, ChangeInfo commit) {
@@ -87,8 +91,8 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
         String changeid = commit.changeId;
 
-        Reviewer[] reviewers = reviewersToArray(commit);
-        Reviewers.insertReviewers(context, changeid, reviewers);
+        //Reviewer[] reviewers = reviewersToArray(commit);
+        //Reviewers.insertReviewers(context, changeid, reviewers);
         Revisions.insertRevision(context, changeid, commit.revisions.get(commit.currentRevision));
         MessageInfo.insertMessages(context, changeid, commit.messages);
 
@@ -104,7 +108,7 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
         GerritApi gerritApi = getGerritApiInstance(true);
         
         try {
-            ChangeInfo info = gerritApi.changes().id(mChangeId).get();
+            ChangeInfo info = gerritApi.changes().id(mChangeId).get(queryOptions());
             listener.onResponse(info);
         } catch (RestApiException e) {
             if (((HttpStatusException) e).getStatusCode() == 502) {
@@ -116,5 +120,15 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
             GerritMessage ev = new ErrorDuringConnection(mIntent, mUrl, null, e);
             EventQueue.getInstance().enqueue(ev, true);
         }
+    }
+
+    private EnumSet<ListChangesOption> queryOptions() {
+        EnumSet options = EnumSet.noneOf(ListChangesOption.class);
+        options.add(ListChangesOption.CURRENT_REVISION);
+        options.add(ListChangesOption.CURRENT_COMMIT);
+        options.add(ListChangesOption.CURRENT_FILES);
+        options.add(ListChangesOption.DETAILED_ACCOUNTS);
+        options.add(ListChangesOption.MESSAGES);
+        return options;
     }
 }

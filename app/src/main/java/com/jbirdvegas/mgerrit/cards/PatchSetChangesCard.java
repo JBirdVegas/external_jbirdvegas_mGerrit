@@ -17,25 +17,19 @@ package com.jbirdvegas.mgerrit.cards;
  *  limitations under the License.
  */
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
-import com.jbirdvegas.mgerrit.activities.DiffViewer;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.database.FileChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
-import com.jbirdvegas.mgerrit.objects.FileInfo;
+import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 
 public class PatchSetChangesCard implements CardBinder {
     private final Context mContext;
@@ -87,10 +81,10 @@ public class PatchSetChangesCard implements CardBinder {
         // we always have a path
         viewHolder.path.setText(cursor.getString(mFileName_index));
 
-        FileInfo.Status status = FileInfo.Status.getValue(cursor.getString(mStatus_index));
-        if (status == FileInfo.Status.ADDED) {
+        ChangedFileInfo.Status status = ChangedFileInfo.Status.getValue(cursor.getString(mStatus_index));
+        if (status == ChangedFileInfo.Status.ADDED) {
             viewHolder.path.setTextColor(mGreen);
-        } else if (status == FileInfo.Status.DELETED) {
+        } else if (status == ChangedFileInfo.Status.DELETED) {
             viewHolder.path.setTextColor(mRed);
         } else {
             // Need to determine from the current theme what the default color is and set it back

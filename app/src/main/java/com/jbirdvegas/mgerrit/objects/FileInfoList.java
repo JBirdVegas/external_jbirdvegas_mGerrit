@@ -37,31 +37,24 @@ public class FileInfoList {
 
     // This list of changed files
     @SerializedName(CommitInfo.KEY_CHANGED_FILES)
-    List<FileInfo> mList;
+    List<ChangedFileInfo> mList;
 
-    private FileInfoList(List<FileInfo> fileList) {
+    private FileInfoList(List<ChangedFileInfo> fileList) {
         this.mList = fileList;
     }
 
-    public List<FileInfo> getFiles() {
+    public List<ChangedFileInfo> getFiles() {
         return mList;
     }
 
     public static FileInfoList deserialize(JsonObject object) {
-        List<FileInfo> newList = new ArrayList<>();
+        List<ChangedFileInfo> newList = new ArrayList<>();
         Set<Map.Entry<String, JsonElement>> entries = object.entrySet();
         for (Map.Entry<String, JsonElement> entry : entries) {
-            newList.add(FileInfo.deserialise(entry.getValue().getAsJsonObject(), entry.getKey()));
+            newList.add(ChangedFileInfo.deserialise(entry.getValue().getAsJsonObject(), entry.getKey()));
 
         }
         return new FileInfoList(newList);
-    }
-
-    public static FileInfoList setDraftNotice(Context context) {
-        String draftNotice = context.getString(R.string.current_revision_is_draft_message);
-        List<FileInfo> list = new ArrayList<>();
-        list.add(new FileInfo(draftNotice));
-        return new FileInfoList(list);
     }
 
     @Override

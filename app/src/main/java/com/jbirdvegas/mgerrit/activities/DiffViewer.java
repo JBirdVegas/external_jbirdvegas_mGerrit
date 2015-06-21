@@ -40,7 +40,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.FileAdapter;
 import com.jbirdvegas.mgerrit.database.FileChanges;
 import com.jbirdvegas.mgerrit.helpers.Tools;
-import com.jbirdvegas.mgerrit.objects.FileInfo;
+import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 import com.jbirdvegas.mgerrit.tasks.ZipImageRequest;
 import com.jbirdvegas.mgerrit.tasks.ZipRequest;
 import com.jbirdvegas.mgerrit.views.DiffTextView;
@@ -62,7 +62,7 @@ public class DiffViewer extends FragmentActivity
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             mFilePath = mAdapter.getPathAtPosition(position);
             String statusString = (String) view.getTag(R.id.status);
-            FileInfo.Status status = FileInfo.Status.getValue(statusString);
+            ChangedFileInfo.Status status = ChangedFileInfo.Status.getValue(statusString);
             switchViews(DiffType.Loading);
 
             if (Tools.isImage(mFilePath)) {
@@ -143,10 +143,10 @@ public class DiffViewer extends FragmentActivity
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
-    private void makeImageRequest(final String filePath, final FileInfo.Status fileStatus) {
+    private void makeImageRequest(final String filePath, final ChangedFileInfo.Status fileStatus) {
         if (filePath == null) return;
         try {
-            boolean wasDeleted = (fileStatus == FileInfo.Status.DELETED);
+            boolean wasDeleted = (fileStatus == ChangedFileInfo.Status.DELETED);
             ZipImageRequest imageRequest = new ZipImageRequest(this, mChangeNumber, mPatchsetNumber,
                     filePath, wasDeleted, new Response.Listener<Bitmap>() {
                 @Override

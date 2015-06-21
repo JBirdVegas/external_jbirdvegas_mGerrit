@@ -40,7 +40,7 @@ import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.objects.FileInfo;
+import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -167,13 +167,13 @@ public class Tools {
 
     public static void colorPath(Resources r, TextView view,
                                  String statusText, boolean usingLightTheme) {
-        FileInfo.Status status = FileInfo.Status.getValue(statusText);
+        ChangedFileInfo.Status status = ChangedFileInfo.Status.getValue(statusText);
         int green = r.getColor(R.color.text_green);
         int red = r.getColor(R.color.text_red);
 
-        if (status == FileInfo.Status.ADDED) {
+        if (status == ChangedFileInfo.Status.ADDED) {
             view.setTextColor(green);
-        } else if (status == FileInfo.Status.DELETED) {
+        } else if (status == ChangedFileInfo.Status.DELETED) {
             view.setTextColor(red);
         } else {
             // Need to determine from the current theme what the default color is and set it back

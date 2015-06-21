@@ -17,32 +17,24 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
+import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.annotations.SerializedName;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 
-public class FileInfo {
+public class ChangedFileInfo extends FileInfo {
 
-    private String path;
+    public String path;
 
-    @SerializedName("old_path")
-    private String oldPath;
 
-    @SerializedName(JSONCommit.KEY_INSERTED)
-    private int inserted = -1;
-
-    @SerializedName(JSONCommit.KEY_DELETED)
-    private int deleted = -1;
-
-    @SerializedName(JSONCommit.KEY_STATUS)
-    private Status status;
-
-    @SerializedName("binary")
-    private boolean isBinary = false;
-
-    @SerializedName("isImage")
-    private boolean isImage = false;
+    public ChangedFileInfo(String filePath, FileInfo info) {
+        path = filePath;
+        oldPath = info.oldPath;
+        linesInserted = info.linesInserted;
+        linesDeleted = info.linesDeleted;
+        status = info.status;
+        binary = info.binary;
+    }
 
     // File status
     public enum Status {
@@ -74,44 +66,13 @@ public class FileInfo {
         };
     }
 
-    public FileInfo(String draft) {
-        path = draft;
+    public boolean isImage() {
+        return (binary && Tools.isImage(path));
     }
 
-    public String getPath() {
-        return this.path;
-    }
-
-    public String getOldPath() { return oldPath; }
-
-    public int getInserted() {
-        return this.inserted;
-    }
-
-    public int getDeleted() {
-        return this.deleted;
-    }
-
-    public Status getStatus() { return status; }
-
-    public void setStatus(Status status) { this.status = status; }
-
-    public boolean isBinary() { return isBinary; }
-
-    public boolean isImage() { return isImage; }
-
-    public static FileInfo deserialise(JsonObject object, String _path) {
-        FileInfo file = new Gson().fromJson(object, FileInfo.class);
+    public static ChangedFileInfo deserialise(JsonObject object, String _path) {
+        ChangedFileInfo file = new Gson().fromJson(object, ChangedFileInfo.class);
         file.path = _path;
-
-        // Set the status
-        String statusValue = "";
-        if (object.has(JSONCommit.KEY_STATUS)) {
-            statusValue = object.get(JSONCommit.KEY_STATUS).getAsString();
-        }
-        file.status = Status.getValue(statusValue);
-
-        file.isImage = (file.isBinary() && Tools.isImage(file.path));
         return file;
     }
 
@@ -120,11 +81,10 @@ public class FileInfo {
         return "FileInfo{" +
                 "path='" + path + '\'' +
                 ", oldPath='" + oldPath + '\'' +
-                ", inserted=" + inserted +
-                ", deleted=" + deleted +
+                ", inserted=" + linesInserted +
+                ", deleted=" + linesDeleted +
                 ", status=" + status +
-                ", isBinary=" + isBinary +
-                ", isImage=" + isImage +
+                ", isBinary=" + binary +
                 '}';
     }
 }

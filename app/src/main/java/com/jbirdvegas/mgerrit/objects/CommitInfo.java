@@ -130,7 +130,7 @@ public class CommitInfo {
 
     public boolean isIsDraft() { return mIsDraft; }
 
-    public List<FileInfo> getChangedFiles() { return mFileInfos.getFiles(); }
+    public List<ChangedFileInfo> getChangedFiles() { return mFileInfos.getFiles(); }
     public void setChangedFiles(FileInfoList fileInfos) { this.mFileInfos = fileInfos; }
 
     @Override

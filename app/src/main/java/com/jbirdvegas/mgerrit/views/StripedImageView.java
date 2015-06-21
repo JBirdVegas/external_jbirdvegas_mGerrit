@@ -27,7 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.objects.FileInfo;
+import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 
 public class StripedImageView extends LinearLayout {
 
@@ -58,11 +58,11 @@ public class StripedImageView extends LinearLayout {
         mImageView = (ImageView) findViewById(R.id.striped_image);
     }
 
-    public void setStripe(FileInfo.Status fileStatus) {
-        if (fileStatus == FileInfo.Status.ADDED) {
+    public void setStripe(ChangedFileInfo.Status fileStatus) {
+        if (fileStatus == ChangedFileInfo.Status.ADDED) {
             mLeftStripe.setBackgroundColor(mAddedStripe_color);
             mRightStripe.setBackgroundColor(mAddedStripe_color);
-        } else if (fileStatus == FileInfo.Status.DELETED) {
+        } else if (fileStatus == ChangedFileInfo.Status.DELETED) {
             mLeftStripe.setBackgroundColor(mDeletedStripe_color);
             mRightStripe.setBackgroundColor(mDeletedStripe_color);
         } else {

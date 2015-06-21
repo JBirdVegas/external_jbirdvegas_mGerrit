@@ -53,7 +53,7 @@ public class GerritService extends IntentService {
     public static final String CHANGE_ID = "change_id";
     public static final String CHANGE_NUMBER = "change_no";
 
-    public static enum DataType { Project, Commit, CommitDetails, GetVersion, LegacyCommitDetails, Account, Star }
+    public static enum DataType { Project, Commit, CommitDetails, GetVersion, Account, Star }
 
     private static RequestQueue mRequestQueue;
 
@@ -87,8 +87,6 @@ public class GerritService extends IntentService {
             processor = new ChangeListProcessor(this, intent, mCurrentUrl);
         } else if (dataType == DataType.CommitDetails) {
             processor = new CommitProcessor(this, intent, mCurrentUrl);
-        } else if (dataType == DataType.LegacyCommitDetails) {
-            processor = new LegacyCommitProcessor(this, intent, mCurrentUrl);
         } else if (dataType == DataType.GetVersion) {
             processor = new VersionProcessor(this, intent);
         } else if (dataType == DataType.Account) {

@@ -7,9 +7,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 
+import com.google.gerrit.extensions.common.FileInfo;
 import com.google.gerrit.extensions.common.GitPerson;
 import com.google.gerrit.extensions.common.RevisionInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
+import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 /*
  * Copyright (C) 2014 Android Open Kang Project (AOKP)
@@ -133,8 +138,12 @@ public class Revisions extends DatabaseTable {
         Uri uri = DBParams.insertWithReplace(CONTENT_URI);
         context.getContentResolver().insert(uri, row);
 
+        ArrayList files = new ArrayList(patchSet.files.size());
+        for (Map.Entry<String, FileInfo> entry : patchSet.files.entrySet()) {
+            files.add(new ChangedFileInfo(entry.getKey(), entry.getValue()));
+        }
+
         // Insert the changed files into the FileInfoTable
-        FileInfoTable.insertChangedFiles(context, changeId, ps,
-                patchSet.files);
+        FileInfoTable.insertChangedFiles(context, changeId, ps, files);
     }
 }
