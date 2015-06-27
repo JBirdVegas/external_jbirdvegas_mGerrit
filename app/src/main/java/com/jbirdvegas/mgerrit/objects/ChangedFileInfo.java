@@ -26,40 +26,41 @@ public class ChangedFileInfo extends FileInfo {
 
     public String path;
 
-
+    // Need to do a lot of null checking here as the Gerrit API likes returning nulls
     public ChangedFileInfo(String filePath, FileInfo info) {
         path = filePath;
         oldPath = info.oldPath;
-        linesInserted = info.linesInserted;
-        linesDeleted = info.linesDeleted;
-        status = info.status;
-        binary = info.binary;
+        linesInserted = (info.linesInserted == null) ? 0 : info.linesInserted;
+        linesDeleted = (info.linesDeleted == null) ? 0 : info.linesDeleted;
+        status = (info.status == null) ? 'M' : info.status;
+        binary = (info.binary == null) ? false : info.binary;
     }
 
     // File status
     public enum Status {
-        ADDED ("A"),
-        DELETED("D"),
-        RENAMED("R"),
-        COPIED("C"),
-        REWRITTEN("W"),
-        MODIFIED("M");
+        ADDED ('A'),
+        DELETED('D'),
+        RENAMED('R'),
+        COPIED('C'),
+        REWRITTEN('W'),
+        MODIFIED('M');
 
-        private final String statusCode;
+        private final Character statusCode;
 
-        Status(String statusCode) {
+        Status(char statusCode) {
             this.statusCode = statusCode;
         }
 
-        public String getStatusCode() {
+        public Character getStatusCode() {
             return statusCode;
         }
 
         public static Status getValue(final String value) {
             if (value == null) return MODIFIED;
+            Character status = value.charAt(0);
             for (Status s : values()) {
-                if (value.equalsIgnoreCase(s.getStatusCode())) return s;
-                else if (value.equalsIgnoreCase(s.name())) return s;
+                if (status.equals(s.getStatusCode())) return s;
+                else if (status.equals(s.name())) return s;
             }
 
             return MODIFIED;

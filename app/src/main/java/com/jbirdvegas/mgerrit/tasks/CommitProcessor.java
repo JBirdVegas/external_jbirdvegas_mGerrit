@@ -92,7 +92,7 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
         String changeid = commit.changeId;
 
         //Reviewer[] reviewers = reviewersToArray(commit);
-        //Reviewers.insertReviewers(context, changeid, reviewers);
+        //Reviewers.insertReviewers(context, changeid, commit.removableReviewers);
         Revisions.insertRevision(context, changeid, commit.revisions.get(commit.currentRevision));
         MessageInfo.insertMessages(context, changeid, commit.messages);
 
