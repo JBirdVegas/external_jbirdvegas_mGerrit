@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyLog;
 import com.jbirdvegas.mgerrit.helpers.Tools;

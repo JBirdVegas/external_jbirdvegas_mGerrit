@@ -23,17 +23,13 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class GerritMessage {
 
-    public final String mUrl;
     private final Intent mIntent;
     private final String mStatus;
 
-    public GerritMessage(@NotNull Intent intent, String url, String status) {
+    public GerritMessage(@NotNull Intent intent, String status) {
         this.mIntent = intent;
-        this.mUrl = url;
         this.mStatus = status;
     }
-
-    public String getUrl() { return mUrl; }
 
     public Intent getIntent() {
         return mIntent;

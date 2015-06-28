@@ -194,7 +194,7 @@ public class PatchSetViewerFragment extends Fragment
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequest(GerritService.DataType.Commit);
+                sendRequest(GerritService.DataType.CommitDetails);
             }
         });
 

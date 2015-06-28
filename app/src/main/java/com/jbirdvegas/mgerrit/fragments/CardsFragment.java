@@ -279,10 +279,15 @@ public abstract class CardsFragment extends Fragment
         }
         url.addSearchKeywords(keywords);
 
+        ArrayList<SearchKeyword> keywordsArray = new ArrayList<>();
+        keywordsArray.addAll(keywords);
+
         Intent it = new Intent(mParent, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
+        it.putParcelableArrayListExtra(GerritService.CHANGE_KEYWORDS, keywordsArray);
         it.putExtra(GerritService.URL_KEY, url);
         it.putExtra(GerritService.CHANGES_LIST_DIRECTION, direction);
+        it.putExtra(GerritService.CHANGE_STATUS, getQuery());
         mParent.startService(it);
     }
 

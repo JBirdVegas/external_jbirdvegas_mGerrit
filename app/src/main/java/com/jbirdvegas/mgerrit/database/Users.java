@@ -26,11 +26,12 @@ import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
 
+import com.google.gerrit.extensions.common.AccountInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Users extends DatabaseTable {
@@ -93,30 +94,30 @@ public class Users extends DatabaseTable {
     }
 
     /** Insert the list of users into the database **/
-    public static int insertUsers(Context context, CommitterObject[] users) {
+    public static int insertUsers(Context context, Collection<AccountInfo> users) {
 
         List<ContentValues> values = new ArrayList<>();
 
         UserAccountInfo self = getUser(context, null);
 
-        for (CommitterObject user : users) {
+        for (AccountInfo user : users) {
             ContentValues row = new ContentValues();
             if (user == null) {
                 continue;
-            } else if (self != null && user.getAccountId() == self.getAccountId()) {
+            } else if (self != null && user._accountId == self.getAccountId()) {
                 // If we find ourself in this list, add in the username and password otherwise the
                 // user will be signed out.
                 row.put(C_USENRAME, self.username);
                 row.put(C_PASSWORD, self.password);
             }
 
-            row.put(C_ACCOUNT_ID, user.getAccountId());
-            row.put(C_EMAIL, user.getEmail());
-            String name = user.getName();
+            row.put(C_ACCOUNT_ID, user._accountId);
+            row.put(C_EMAIL, user.email);
+            String name = user.name;
             if (name != null && name.length() > 0) {
                 row.put(C_NAME, name);
             } else {
-                Log.w(TABLE, String.format("User with account id %d has no name.", user.getAccountId()));
+                Log.w(TABLE, String.format("User with account id %d has no name.", user._accountId));
                 row.put(C_NAME, "Unknown");
             }
             values.add(row);

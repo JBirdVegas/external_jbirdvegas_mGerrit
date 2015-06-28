@@ -17,15 +17,11 @@ package com.jbirdvegas.mgerrit.tasks;
  *  limitations under the License.
  */
 
-import android.support.annotation.NonNull;
-
-import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 /**
  * A standard Volley StringRequest with authentication logic.

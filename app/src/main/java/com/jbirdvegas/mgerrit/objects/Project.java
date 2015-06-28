@@ -17,19 +17,19 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
+import com.google.gerrit.extensions.common.ProjectInfo;
 import com.google.gson.annotations.SerializedName;
 
-public final class Project implements Comparable<Project> {
+public final class Project extends ProjectInfo implements Comparable<Project>  {
 
-    @SerializedName(JSONCommit.KEY_PROJECT)
+    public static final String KEY_PROJECT = "project";
+
+    @SerializedName(KEY_PROJECT)
     private final String mPath;
-
-    @SerializedName(JSONCommit.KEY_ID)
-    private final String mId;
 
     public Project(String path, String id) {
         this.mPath = path;
-        this.mId = id;
+        this.id = id;
     }
 
     public String getPath() {
@@ -46,7 +46,7 @@ public final class Project implements Comparable<Project> {
         int i = mPath.compareTo(project.getPath());
         if (i != 0) return i;
 
-        i = mId.compareTo(project.mId);
+        i = this.id.compareTo(project.id);
         return i;
     }
 }

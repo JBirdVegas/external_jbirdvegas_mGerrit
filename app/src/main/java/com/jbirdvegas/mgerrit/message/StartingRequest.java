@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class StartingRequest extends GerritMessage {
 
-    public StartingRequest(@NotNull Intent intent, String url, String status) {
-        super(intent, url, status);
+    public StartingRequest(@NotNull Intent intent, String status) {
+        super(intent, status);
     }
 }

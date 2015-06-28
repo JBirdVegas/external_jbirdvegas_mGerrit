@@ -43,6 +43,8 @@ public class GerritService extends IntentService {
       * we have already */
     public enum Direction { Newer, Older }
     public static final String CHANGES_LIST_DIRECTION = "direction";
+    public static final String CHANGE_STATUS = "status";
+    public static final String CHANGE_KEYWORDS = "keywords";
 
     // AccountProcessor
     public static final String HTTP_USERNAME = "username";
@@ -53,13 +55,16 @@ public class GerritService extends IntentService {
     public static final String CHANGE_ID = "change_id";
     public static final String CHANGE_NUMBER = "change_no";
 
-    public static enum DataType { Project, Commit, CommitDetails, GetVersion, Account, Star }
+    public enum DataType { Project, Commit, CommitDetails, GetVersion, Account, Star }
 
     private static RequestQueue mRequestQueue;
 
     private RequestBuilder mCurrentUrl;
 
     // A list of the currently running sync processors
+    // TODO: Don't assign syncprocessors to URL instances
+    //  We should use some token system where a given query is assigned a token which we can use
+    //  to cancel it
     private static HashMap<RequestBuilder, SyncProcessor> sRunningTasks;
 
     // This is required for the service to be started
@@ -102,7 +107,7 @@ public class GerritService extends IntentService {
         boolean needsSync = processor.isSyncRequired(this);
         if (needsSync) {
             sRunningTasks.put(mCurrentUrl, processor);
-            processor.fetchData(mRequestQueue);
+            processor.fetchData();
         }
     }
 
@@ -114,12 +119,6 @@ public class GerritService extends IntentService {
         it.putExtra(GerritService.DATA_TYPE_KEY, dataType);
         it.putExtras(bundle);
         context.startService(it);
-    }
-
-    public static void sendRequest(Context context, DataType dataType, RequestBuilder url) {
-        Bundle b = new Bundle();
-        b.putParcelable(GerritService.URL_KEY, url);
-        GerritService.sendRequest(context, dataType, b);
     }
 
     private static boolean isProcessorRunning(SyncProcessor processor) {

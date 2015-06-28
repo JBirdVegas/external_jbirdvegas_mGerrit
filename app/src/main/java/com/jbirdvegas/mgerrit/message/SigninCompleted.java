@@ -26,8 +26,8 @@ public class SigninCompleted extends GerritMessage {
     private final String mUsername;
     private final String mPassword;
 
-    public SigninCompleted(Intent intent, String url, String username, String password) {
-        super(intent, url, "success");
+    public SigninCompleted(Intent intent, String username, String password) {
+        super(intent, "success");
         this.mUsername = username;
         this.mPassword = password;
     }

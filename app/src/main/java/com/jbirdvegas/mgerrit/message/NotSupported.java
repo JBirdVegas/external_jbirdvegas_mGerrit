@@ -26,8 +26,8 @@ public class NotSupported extends GerritMessage {
     private final Intent mIntent;
     private final String mMessage;
 
-    public NotSupported(Intent intent, String url, String msg) {
-        super(intent, url, null);
+    public NotSupported(Intent intent, String msg) {
+        super(intent, null);
         mIntent = intent;
         mMessage = msg;
     }

@@ -1,11 +1,8 @@
 package com.jbirdvegas.mgerrit.objects;
 
-import android.content.Context;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
-import com.jbirdvegas.mgerrit.R;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -28,7 +28,6 @@ import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Contains information about a file in a patch set (mRevision)

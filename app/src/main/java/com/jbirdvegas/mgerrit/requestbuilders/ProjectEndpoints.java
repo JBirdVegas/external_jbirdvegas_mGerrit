@@ -34,8 +34,7 @@ public class ProjectEndpoints extends RequestBuilder implements Parcelable {
     }
 
     public static ProjectEndpoints get() {
-        ProjectEndpoints ae = new ProjectEndpoints("?d");
-        return ae;
+        return new ProjectEndpoints("?d");
     }
 
     @Override

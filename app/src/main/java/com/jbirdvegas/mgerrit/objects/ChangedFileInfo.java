@@ -64,7 +64,7 @@ public class ChangedFileInfo extends FileInfo {
             }
 
             return MODIFIED;
-        };
+        }
     }
 
     public boolean isImage() {

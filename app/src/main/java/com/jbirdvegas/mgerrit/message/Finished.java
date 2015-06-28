@@ -24,8 +24,8 @@ public class Finished extends GerritMessage {
 
     private final int mItems;
 
-    public Finished(Intent intent, String url, String status, int items) {
-        super(intent, url, status);
+    public Finished(Intent intent, String status, int items) {
+        super(intent, status);
         this.mItems = items;
     }
 

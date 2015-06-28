@@ -21,15 +21,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Users;
-import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
-import com.jbirdvegas.mgerrit.objects.EventQueue;
-import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
 
@@ -52,7 +48,7 @@ public class AccountProcessor extends SyncProcessor<UserAccountInfo> {
         data.password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
         Users.setUserDetails(mContext, data);
         Log.d(this.getClass().getName(), "You have successfully signed in: " + data.name + "(" + data.email + ")");
-        EventBus.getDefault().post(new SigninCompleted(mIntent, mUrl, data.username, data.password));
+        EventBus.getDefault().post(new SigninCompleted(mIntent, data.username, data.password));
         return 1;
     }
 
@@ -72,17 +68,17 @@ public class AccountProcessor extends SyncProcessor<UserAccountInfo> {
     }
 
     @Override
-    protected void fetchData(RequestQueue queue) {
-        Response.Listener<UserAccountInfo> listener = getListener(mUrl);
+    UserAccountInfo getData(GerritApi gerritApi) throws RestApiException {
+        return new UserAccountInfo(gerritApi.accounts().self().get());
+    }
 
+    @Override
+    protected void fetchData() {
         GerritApi gerritApi = getGerritApiInstance(true);
         try {
-            UserAccountInfo self = new UserAccountInfo(gerritApi.accounts().self().get());
-            listener.onResponse(self);
+            onResponse(getData(gerritApi));
         } catch (RestApiException e) {
-            GerritMessage ev = new ErrorDuringConnection(mIntent, mUrl, null, e);
-            // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
-            EventQueue.getInstance().enqueue(ev, true);
+            handleException(e);
         }
     }
 }

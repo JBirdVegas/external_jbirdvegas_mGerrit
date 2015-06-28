@@ -36,6 +36,8 @@ public class CommitInfo {
     private String mChangeId;
 
     private static final String KEY_COMMIT = "commit";
+    public static final String KEY_SUBJECT = "subject";
+
     /**The commit ID of the current patch set of this change.
      * Don't set the @SerialisedName as there is a name conflict here */
     private String mCommit;
@@ -52,7 +54,7 @@ public class CommitInfo {
     @SerializedName(CommitInfo.KEY_MESSAGE)
     private String mMessage;
 
-    @SerializedName(JSONCommit.KEY_SUBJECT)
+    @SerializedName(KEY_SUBJECT)
     private String mSubject;
 
     @SerializedName("_number")

@@ -42,7 +42,11 @@ import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
 import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
 import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
+import com.jbirdvegas.mgerrit.search.IsSearch;
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
+
+import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 
@@ -201,9 +205,13 @@ public class SigninActivity extends FragmentActivity
         // Get the starred changes
         RequestBuilder starredUrl = ChangeEndpoints.starred().setLimit(this.getResources().getInteger(R.integer.changes_limit));
         Intent it = new Intent(this, GerritService.class);
+        ArrayList<SearchKeyword> keywords = new ArrayList<>();
+        keywords.add(new IsSearch("starred"));
+
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
         it.putExtra(GerritService.URL_KEY, starredUrl);
         it.putExtra(GerritService.CHANGES_LIST_DIRECTION, GerritService.Direction.Older);
+        it.putParcelableArrayListExtra(GerritService.CHANGE_KEYWORDS, keywords);
         addUsernamePasswordToIntent(it, username, password);
         startService(it);
 

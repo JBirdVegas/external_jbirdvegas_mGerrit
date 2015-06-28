@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 public class CommitComment {
     private static final String KEY_REVISION_NUMBER = "_revision_number";
+    public static final String KEY_DATE = "date";
 
     @SerializedName(CommitComment.KEY_REVISION_NUMBER)
     private int mRevisionNumber;
@@ -31,7 +32,7 @@ public class CommitComment {
     @SerializedName(CommitInfo.KEY_MESSAGE)
     private String mMessage;
 
-    @SerializedName(JSONCommit.KEY_DATE)
+    @SerializedName(KEY_DATE)
     private String mDate;
 
     @SerializedName(CommitInfo.KEY_AUTHOR)

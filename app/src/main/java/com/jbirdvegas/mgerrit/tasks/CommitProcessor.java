@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.client.ListChangesOption;
@@ -29,20 +28,12 @@ import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.helpers.Tools;
-import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
-import com.jbirdvegas.mgerrit.objects.EventQueue;
-import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
 import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
-import com.urswolfer.gerrit.client.rest.http.HttpStatusException;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
 
 class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
@@ -55,7 +46,6 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
         mIntent = intent;
         mUrl = url.toString();
         mChangeId = intent.getStringExtra(GerritService.CHANGE_ID);
-        //attemptAuthenticatedRequest(url);
     }
 
     @Override
@@ -76,6 +66,11 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
     @Override
     int count(ChangeInfo data) {
         return data == null ? 0 : 1;
+    }
+
+    @Override
+    ChangeInfo getData(GerritApi gerritApi) throws RestApiException {
+        return gerritApi.changes().id(mChangeId).get(queryOptions());
     }
 
     @Nullable
@@ -99,27 +94,6 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
         UserChanges.updateChange(context, commit);
 
         return 1;
-    }
-
-    @Override
-    protected void fetchData(RequestQueue queue) {
-        Response.Listener<ChangeInfo> listener = getListener(mUrl);
-
-        GerritApi gerritApi = getGerritApiInstance(true);
-        
-        try {
-            ChangeInfo info = gerritApi.changes().id(mChangeId).get(queryOptions());
-            listener.onResponse(info);
-        } catch (RestApiException e) {
-            if (((HttpStatusException) e).getStatusCode() == 502) {
-                Tools.launchSignin(mContext);
-            }
-
-            // We still want to post the exception
-            // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
-            GerritMessage ev = new ErrorDuringConnection(mIntent, mUrl, null, e);
-            EventQueue.getInstance().enqueue(ev, true);
-        }
     }
 
     private EnumSet<ListChangesOption> queryOptions() {

@@ -24,6 +24,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.google.gerrit.extensions.common.ChangeInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import org.jetbrains.annotations.Nullable;
@@ -105,12 +106,12 @@ public class CommitMarker extends DatabaseTable {
      * Records a commit with its last updated time and sortkey for resuming
      *  the query later.
      */
-    public static void markCommit(Context context, JSONCommit commit) {
+    public static void markCommit(Context context, ChangeInfo commit) {
         ContentValues contentValues = new ContentValues(3);
-        contentValues.put(C_CHANGE_ID, commit.getChangeId());
-        contentValues.put(C_UPDATED, trimDate(commit.getLastUpdatedDate()));
-        contentValues.put(C_SORTKEY, commit.getSortKey());
-        contentValues.put(C_STATUS, commit.getStatus().toString());
+        contentValues.put(C_CHANGE_ID, commit.changeId);
+        contentValues.put(C_UPDATED, trimDate(commit.updated.toString()));
+        contentValues.put(C_SORTKEY, commit._sortkey);
+        contentValues.put(C_STATUS, commit.status.name());
         Uri uri = DBParams.insertWithReplace(CONTENT_URI);
         context.getContentResolver().insert(uri, contentValues);
     }

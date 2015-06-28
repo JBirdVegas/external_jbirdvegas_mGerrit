@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.common.ProjectInfo;
@@ -29,16 +28,10 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.database.SyncTime;
-import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
-import com.jbirdvegas.mgerrit.objects.EventQueue;
-import com.jbirdvegas.mgerrit.objects.GerritMessage;
-import com.jbirdvegas.mgerrit.objects.Project;
 import com.jbirdvegas.mgerrit.requestbuilders.ProjectEndpoints;
 import com.jbirdvegas.mgerrit.objects.Projects;
 import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 class ProjectListProcessor extends SyncProcessor<Projects> {
@@ -87,18 +80,9 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     }
 
     @Override
-    protected void fetchData(RequestQueue queue) {
-        Response.Listener<Projects> listener = getListener(mUrl.toString());
-
-        GerritApi gerritApi = getGerritApiInstance(true);
-        try {
-            List<ProjectInfo> pl = gerritApi.projects().list().get();
-            Projects projects = new Projects(pl);
-            listener.onResponse(projects);
-        } catch (RestApiException e) {
-            GerritMessage ev = new ErrorDuringConnection(mIntent, mUrl.toString(), null, e);
-            // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
-            EventQueue.getInstance().enqueue(ev, true);
-        }
+    protected Projects getData(GerritApi gerritApi)
+            throws RestApiException {
+        List<ProjectInfo> pl = gerritApi.projects().list().get();
+        return new Projects(pl);
     }
 }
