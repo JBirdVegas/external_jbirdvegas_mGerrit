@@ -28,7 +28,8 @@ import java.util.List;
 public class ChangeList extends ArrayList<ChangeInfo> implements Parcelable {
 
     public ChangeList(List<ChangeInfo> changes) {
-        new ArrayList<>(changes);
+        clear();
+        addAll(changes);
     }
 
     protected ChangeList(Parcel in) {

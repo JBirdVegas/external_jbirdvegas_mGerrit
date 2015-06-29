@@ -23,11 +23,16 @@ import android.content.UriMatcher;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.google.gerrit.extensions.common.AccountInfo;
+import com.google.gerrit.extensions.common.ApprovalInfo;
+import com.google.gerrit.extensions.common.LabelInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
-import com.jbirdvegas.mgerrit.objects.Reviewer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class Reviewers extends DatabaseTable {
     // Table name
@@ -78,44 +83,40 @@ public class Reviewers extends DatabaseTable {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE + "/#", ITEM_ID);
     }
 
-    /** Insert the list of users into the database **/
-    public static int insertReviewers(Context context, String changeid, Reviewer[] reviewers) {
-
+    /** Insert the list of reviewers with their labels into the database **/
+    public static int insertReviewers(Context context, String changeid, Map<String, LabelInfo> labels) {
+        Uri uri = DBParams.insertWithIgnore(CONTENT_URI);
         List<ContentValues> values = new ArrayList<>();
+        // Labels we can store in the database
+        String[] permittedLabels = new String[] {"Code-Review", "Verified"};
 
-        // Make sure all the rows are inserted first
-        for (Reviewer reviewer : reviewers) {
-            if (reviewer == null) {
-                continue;
+        for (String label : permittedLabels) {
+            LabelInfo labelInfo = labels.get(label);
+            // We may not have any users who have given it this label or the server may not use this label
+            if (labelInfo != null && labelInfo.all != null) {
+                values.addAll(insertLabels(context, changeid, labelInfo.all, label));
             }
+        }
+
+        ContentValues valuesArray[] = new ContentValues[values.size()];
+        return context.getContentResolver().bulkInsert(uri, values.toArray(valuesArray));
+    }
+
+    // Helper to get the list of users with a given label for insertion
+    private static List<ContentValues> insertLabels(Context context, String changeId,
+                                                    List<ApprovalInfo> approvers, String label)
+    {
+        List<ContentValues> values = new ArrayList<>();
+        // Update each row with the verified/code-review status
+        for (ApprovalInfo approver : approvers) {
             ContentValues row = new ContentValues();
-            row.put(C_USER, reviewer.getCommiterObject().getAccountId());
-            row.put(C_CHANGE_ID, changeid);
+            row.put(C_USER, approver._accountId);
+            row.put(C_CHANGE_ID, changeId);
+
+            if ("Code-Review".equals(label)) row.put(C_CODE_REVIEW, approver.value);
+            else row.put(C_VERIFIED, approver.value);
             values.add(row);
         }
-
-        Uri uri = DBParams.insertWithIgnore(CONTENT_URI);
-        ContentValues valuesArray[] = new ContentValues[values.size()];
-        int retval = context.getContentResolver().bulkInsert(uri, values.toArray(valuesArray));
-
-        // Update each row with the verified/code-review status
-        for (Reviewer reviewer : reviewers) {
-            if (reviewer == null) {
-                continue;
-            }
-            ContentValues row = new ContentValues();
-
-            Reviewer.Label label = reviewer.getLabel();
-            if (label == Reviewer.Label.CodeReview) row.put(C_CODE_REVIEW, reviewer.getValue());
-            else row.put(C_VERIFIED, reviewer.getValue());
-
-            int user = reviewer.getCommiterObject().getAccountId();
-
-            context.getContentResolver().update(CONTENT_URI, row,
-                    C_USER + " =  ? AND " + C_CHANGE_ID + " = ?",
-                    new String[] { String.valueOf(user), changeid });
-        }
-
-        return retval;
+        return values;
     }
 }

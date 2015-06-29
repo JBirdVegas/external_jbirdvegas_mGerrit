@@ -26,6 +26,7 @@ import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
+import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.Reviewer;
@@ -73,21 +74,12 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
         return gerritApi.changes().id(mChangeId).get(queryOptions());
     }
 
-    @Nullable
-    protected static Reviewer[] reviewersToArray(ChangeInfo commit) {
-        /*List<Reviewer> rs = commit.getReviewers();
-        if (rs == null) return null;
-        return rs.toArray(new Reviewer[rs.size()]);*/
-        return null;
-    }
-
     protected static int doInsert(Context context, ChangeInfo commit) {
         if (commit == null) return 0;
 
         String changeid = commit.changeId;
 
-        //Reviewer[] reviewers = reviewersToArray(commit);
-        //Reviewers.insertReviewers(context, changeid, commit.removableReviewers);
+        Reviewers.insertReviewers(context, changeid, commit.labels);
         Revisions.insertRevision(context, changeid, commit.revisions.get(commit.currentRevision));
         MessageInfo.insertMessages(context, changeid, commit.messages);
 
@@ -103,6 +95,7 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
         options.add(ListChangesOption.CURRENT_FILES);
         options.add(ListChangesOption.DETAILED_ACCOUNTS);
         options.add(ListChangesOption.MESSAGES);
+        options.add(ListChangesOption.DETAILED_LABELS);
         return options;
     }
 }

@@ -147,8 +147,8 @@ public class UserChanges extends DatabaseTable {
             row.put(C_CHANGE_ID, commit.changeId);
             row.put(C_SUBJECT, commit.subject);
             row.put(C_COMMIT_NUMBER, commit._number);
-            row.put(C_CREATED, trimDate(commit.created.toString()));
-            row.put(C_UPDATED, trimDate(commit.updated.toString()));
+            row.put(C_CREATED, commit.created.toString());
+            row.put(C_UPDATED, commit.updated.toString());
             row.put(C_OWNER, commit.owner._accountId);
             row.put(C_PROJECT, commit.project);
             row.put(C_STATUS, commit.status.name());
@@ -214,11 +214,6 @@ public class UserChanges extends DatabaseTable {
             bindArgs.add("%" + subject + "%");
         }
         return findCommits(context, status, builder, bindArgs);
-    }
-
-    // Removes the extraneous 0s off the milliseconds in server timestamps
-    private static String trimDate(String date) {
-        return date.substring(0, date.length() - 6);
     }
 
     /**

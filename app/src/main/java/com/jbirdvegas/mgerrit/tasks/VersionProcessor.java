@@ -9,6 +9,7 @@ import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.requestbuilders.ConfigEndpoints;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /*
  * Copyright (C) 2014 Android Open Kang Project (AOKP)

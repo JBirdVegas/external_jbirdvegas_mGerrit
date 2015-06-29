@@ -177,7 +177,8 @@ abstract class SyncProcessor<T> {
     }
 
     protected void handleRestApiException(RestApiException e) {
-        if (((HttpStatusException) e).getStatusCode() == 502) {
+        int code = ((HttpStatusException) e).getStatusCode();
+        if (code == 401 || code == 403) {
             Tools.launchSignin(mContext);
         }
         handleException(e);

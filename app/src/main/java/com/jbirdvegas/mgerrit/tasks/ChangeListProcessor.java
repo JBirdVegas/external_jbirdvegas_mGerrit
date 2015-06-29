@@ -108,15 +108,13 @@ class ChangeListProcessor extends SyncProcessor<ChangeList> {
     void doPostProcess(ChangeList data) {
         boolean moreChanges = false;
 
-        if (mDirection == Direction.Older) {
-            if (data.size() > 0) {
-                moreChanges = data.get(data.size() - 1)._moreChanges;
-            }
-        } else {
-            if (data.size() > 0) {
-                moreChanges = data.get(0)._moreChanges;
-            }
+        if (data.size() > 0) {
+            ChangeInfo fc = data.get(0);
+            if (fc._moreChanges == null) moreChanges = data.get(data.size() - 1)._moreChanges;
+            else moreChanges = fc._moreChanges;
+        }
 
+        if (mDirection == Direction.Newer) {
             SyncTime.setValue(mContext, SyncTime.CHANGES_LIST_SYNC_TIME,
                     System.currentTimeMillis(), mStatus);
 
@@ -149,7 +147,9 @@ class ChangeListProcessor extends SyncProcessor<ChangeList> {
         } catch (UnsupportedEncodingException e) {
             handleException(e);
         }
-        info = info.withQuery(builder.toString());
+
+        String query = builder.toString();
+        if (query.length() > 0) info = info.withQuery(builder.toString());
 
         return new ChangeList(info.get());
     }
