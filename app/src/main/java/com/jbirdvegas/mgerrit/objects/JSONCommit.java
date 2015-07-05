@@ -29,10 +29,6 @@ public class JSONCommit extends ChangeInfo {
     public static final String KEY_STATUS_MERGED = "merged";
     public static final String KEY_STATUS_ABANDONED = "abandoned";
     public static final String KEY_STATUS = "status";
-    public static final String KEY_ID = "id";
-
-    // internal
-    public static final String KEY_REVISIONS = "revisions";
 
     public enum Status {
         NEW {

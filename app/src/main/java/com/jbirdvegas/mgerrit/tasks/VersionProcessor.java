@@ -6,7 +6,6 @@ import android.content.Intent;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Config;
-import com.jbirdvegas.mgerrit.requestbuilders.ConfigEndpoints;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,11 +49,6 @@ public class VersionProcessor extends SyncProcessor<String> {
     boolean isSyncRequired(Context context) {
         // Look up the database to see if we have previously saved the version
         return Config.getValue(context, Config.KEY_VERSION) == null;
-    }
-
-    @Override
-    Class<String> getType() {
-        return String.class;
     }
 
     @Override

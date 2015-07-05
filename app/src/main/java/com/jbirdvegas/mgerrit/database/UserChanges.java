@@ -28,7 +28,6 @@ import android.support.v4.content.CursorLoader;
 import com.google.gerrit.extensions.common.AccountInfo;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
-import com.jbirdvegas.mgerrit.objects.ChangeList;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.ArrayList;
@@ -136,7 +135,7 @@ public class UserChanges extends DatabaseTable {
     }
 
     /** Insert the list of commits into the database **/
-    public static int insertCommits(Context context, ChangeList commits) {
+    public static int insertCommits(Context context, List<ChangeInfo> commits) {
 
         List<ContentValues> values = new ArrayList<>();
         Set<AccountInfo> committers = new HashSet<>();

@@ -33,7 +33,6 @@ import java.util.Map;
  *  limitations under the License.
  *
  *  Contains information about a mRevision.
- *   This table corresponds largely to the CommitInfo object
  */
 public class Revisions extends DatabaseTable {
 

@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -30,12 +29,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.PopupMenu;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -43,7 +40,6 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
-import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
@@ -79,8 +75,6 @@ public abstract class CardsFragment extends Fragment
 
     private static int sChangesLimit = 0;
     protected String TAG = "CardsFragment";
-
-    private ChangeEndpoints mUrl;
 
     private FragmentActivity mParent;
 
@@ -196,11 +190,6 @@ public abstract class CardsFragment extends Fragment
 
         sChangesLimit = mParent.getResources().getInteger(R.integer.changes_limit);
 
-        mUrl = new ChangeEndpoints();
-        // Need the account id of the owner here to maintain FK db constraint
-        mUrl.setRequestDetailedAccounts(true);
-        mUrl.setStatus(getQuery());
-
         mSearchView = (GerritSearchView) mParent.findViewById(R.id.search);
 
         mEventBus = EventBus.getDefault();
@@ -271,13 +260,9 @@ public abstract class CardsFragment extends Fragment
             SyncTime.clear(mParent);
         }
 
-        ChangeEndpoints url = new ChangeEndpoints(mUrl);
-        if (sChangesLimit > 0) url.setLimit(sChangesLimit);
-
         if (keywords == null || keywords.isEmpty()) {
             keywords = mSearchView.getLastQuery();
         }
-        url.addSearchKeywords(keywords);
 
         ArrayList<SearchKeyword> keywordsArray = new ArrayList<>();
         keywordsArray.addAll(keywords);
@@ -285,7 +270,6 @@ public abstract class CardsFragment extends Fragment
         Intent it = new Intent(mParent, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
         it.putParcelableArrayListExtra(GerritService.CHANGE_KEYWORDS, keywordsArray);
-        it.putExtra(GerritService.URL_KEY, url);
         it.putExtra(GerritService.CHANGES_LIST_DIRECTION, direction);
         it.putExtra(GerritService.CHANGE_STATUS, getQuery());
         mParent.startService(it);

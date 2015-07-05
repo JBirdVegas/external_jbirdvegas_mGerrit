@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Pair;
 
-import com.android.volley.Response;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.Changes.QueryRequest;
 import com.google.gerrit.extensions.client.ListChangesOption;
@@ -35,28 +34,30 @@ import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.MoreChanges;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.objects.ChangeList;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
-import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService.Direction;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-class ChangeListProcessor extends SyncProcessor<ChangeList> {
+class ChangeListProcessor extends SyncProcessor<List<ChangeInfo>> {
 
     GerritService.Direction mDirection;
     private final String mStatus;
     private final List<SearchKeyword> mSearchKeywords;
     private String mSortKey = null;
 
-    ChangeListProcessor(Context context, Intent intent, RequestBuilder url) {
-        super(context, intent, url);
+    /**
+     * Standard constructor to create a SyncProcessor
+     *
+     * @param context Context for network access
+     * @param intent  The original intent to GerritService that started initiated
+     */
+    ChangeListProcessor(Context context, @NotNull Intent intent) {
+        super(context, intent);
 
         Direction direction = (Direction) intent.getSerializableExtra(GerritService.CHANGES_LIST_DIRECTION);
         if (direction != null) mDirection = direction;
@@ -76,7 +77,7 @@ class ChangeListProcessor extends SyncProcessor<ChangeList> {
     }
 
     @Override
-    int insert(ChangeList commits) {
+    int insert(List<ChangeInfo> commits) {
         if (commits.size() > 0) {
             return UserChanges.insertCommits(getContext(), commits);
         }
@@ -84,10 +85,17 @@ class ChangeListProcessor extends SyncProcessor<ChangeList> {
     }
 
     @Override
+    protected boolean doesProcessorConflict(@NotNull SyncProcessor processor) {
+        if (!this.getClass().equals(processor.getClass())) return false;
+        if (!mStatus.equals(processor.getStatus())) return false;
+        // We are already fetching changes for this status
+        return true;
+    }
+
+    @Override
     boolean isSyncRequired(Context context) {
-        // Are we already fetching changes for this status?
+        // Note that we have already checked if we are already fetching changes for this status
         if (mStatus == null) return true; // If we have not specified a status we are doing a query on all past changes
-        else if (areFetchingChangesForStatus(mStatus)) return false;
         else if (mDirection == Direction.Older) return true;
 
         long syncInterval = context.getResources().getInteger(R.integer.changes_sync_interval);
@@ -100,12 +108,7 @@ class ChangeListProcessor extends SyncProcessor<ChangeList> {
     }
 
     @Override
-    Class<ChangeList> getType() {
-        return ChangeList.class;
-    }
-
-    @Override
-    void doPostProcess(ChangeList data) {
+    void doPostProcess(List<ChangeInfo> data) {
         boolean moreChanges = false;
 
         if (data.size() > 0) {
@@ -134,9 +137,9 @@ class ChangeListProcessor extends SyncProcessor<ChangeList> {
     }
 
     @Override
-    protected ChangeList getData(GerritApi gerritApi)
+    protected List<ChangeInfo> getData(GerritApi gerritApi)
             throws RestApiException {
-        QueryRequest info = gerritApi.changes().query(getQuery())
+        QueryRequest info = gerritApi.changes().query()
                 .withLimit(mContext.getResources().getInteger(R.integer.changes_limit))
                 .withOption(ListChangesOption.DETAILED_ACCOUNTS);
         if (mSortKey != null) info = info.withSortkey(mSortKey);
@@ -148,13 +151,14 @@ class ChangeListProcessor extends SyncProcessor<ChangeList> {
             handleException(e);
         }
 
-        String query = builder.toString();
+        if (builder.length() > 0) builder = builder.append('+');
+        String query = builder.append(getQuery()).toString();
         if (query.length() > 0) info = info.withQuery(builder.toString());
 
-        return new ChangeList(info.get());
+        return info.get();
     }
 
-    private ChangeInfo findCommit(ChangeList commits, @NotNull String changeID) {
+    private ChangeInfo findCommit(List<ChangeInfo> commits, @NotNull String changeID) {
         for (ChangeInfo commit : commits) {
             if (changeID.equals(commit.changeId))
                 return commit;
@@ -162,19 +166,8 @@ class ChangeListProcessor extends SyncProcessor<ChangeList> {
         return null;
     }
 
-    private boolean areFetchingChangesForStatus(@NotNull String status) {
-        Class<? extends SyncProcessor> clazz = ChangeListProcessor.class;
-        HashMap<RequestBuilder, SyncProcessor> processors = GerritService.getRunningProcessors();
-
-        for (Map.Entry<RequestBuilder, SyncProcessor> entry : processors.entrySet()) {
-            if (entry.getValue().getClass().equals(clazz) && status.equals(entry.getKey().getQuery()))
-                return true;
-        }
-        return false;
-    }
-
     @Override
-    int count(ChangeList data) {
+    int count(List<ChangeInfo> data) {
         if (data != null) return data.size();
         else return 0;
     }

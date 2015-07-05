@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.volley.Response;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.accounts.AccountApi;
 import com.google.gerrit.extensions.restapi.RestApiException;
@@ -32,19 +31,18 @@ import com.jbirdvegas.mgerrit.message.NotSupported;
 import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
-import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
+
+import org.jetbrains.annotations.NotNull;
 
 public class StarProcessor extends SyncProcessor<String> {
 
     private final Intent mIntent;
-    private final AccountEndpoints mUrl;
     private boolean mIsStarring;
     private String mChangeId;
 
-    StarProcessor(Context context, Intent intent, AccountEndpoints url) {
-        super(context, intent, url);
+    StarProcessor(Context context, Intent intent) {
+        super(context, intent);
         mIntent = intent;
-        mUrl = url;
         mIsStarring = mIntent.getBooleanExtra(GerritService.IS_STARRING, true);
         mChangeId = mIntent.getStringExtra(GerritService.CHANGE_ID);
     }
@@ -59,21 +57,16 @@ public class StarProcessor extends SyncProcessor<String> {
     @Override
     boolean isSyncRequired(Context context) {
         ServerVersion version = Config.getServerVersion(context);
-        if (version.isFeatureSupported(ServerVersion.VERSION_STAR)) {
+        if (version != null && version.isFeatureSupported(ServerVersion.VERSION_STAR)) {
             return true;
         } else {
             String gerrit = PrefsFragment.getCurrentGerritName(context);
             String msg = String.format(context.getString(R.string.star_change_not_supported), gerrit, ServerVersion.VERSION_STAR);
-            GerritMessage ev = new NotSupported(mIntent, msg);
+            GerritMessage ev = new NotSupported(mIntent, getQueueId(), msg);
             EventQueue.getInstance().enqueue(ev, false);
             return false;
         }
 
-    }
-
-    @Override
-    Class<String> getType() {
-        return String.class;
     }
 
     @Override
@@ -87,5 +80,13 @@ public class StarProcessor extends SyncProcessor<String> {
         if (mIsStarring) self.starChange(mChangeId);
         else gerritApi.accounts().self().unstarChange(mChangeId);
         return "204";
+    }
+
+    @Override
+    protected boolean doesProcessorConflict(@NotNull SyncProcessor processor) {
+        if (!this.getClass().equals(processor.getClass())) return false;
+        // Don't star the same changeid
+        String changeId = processor.getIntent().getStringExtra(GerritService.CHANGE_ID);
+        return mChangeId.equals(changeId);
     }
 }

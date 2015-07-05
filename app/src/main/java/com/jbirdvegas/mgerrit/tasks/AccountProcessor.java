@@ -21,25 +21,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.android.volley.Response;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
-import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
 
 import de.greenrobot.event.EventBus;
 
 public class AccountProcessor extends SyncProcessor<UserAccountInfo> {
 
     private final Intent mIntent;
-    private final String mUrl;
 
-    AccountProcessor(Context context, Intent intent, AccountEndpoints url) {
-        super(context, intent, url);
+    AccountProcessor(Context context, Intent intent) {
+        super(context, intent);
         mIntent = intent;
-        mUrl = url.toString();
     }
 
     @Override
@@ -48,18 +44,13 @@ public class AccountProcessor extends SyncProcessor<UserAccountInfo> {
         data.password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
         Users.setUserDetails(mContext, data);
         Log.d(this.getClass().getName(), "You have successfully signed in: " + data.name + "(" + data.email + ")");
-        EventBus.getDefault().post(new SigninCompleted(mIntent, data.username, data.password));
+        EventBus.getDefault().post(new SigninCompleted(mIntent, getQueueId(), data.username, data.password));
         return 1;
     }
 
     @Override
     boolean isSyncRequired(Context context) {
         return true;
-    }
-
-    @Override
-    Class<UserAccountInfo> getType() {
-        return UserAccountInfo.class;
     }
 
     @Override

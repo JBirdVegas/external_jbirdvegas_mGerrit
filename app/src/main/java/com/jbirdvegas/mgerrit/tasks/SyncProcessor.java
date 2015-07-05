@@ -32,11 +32,11 @@ import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
-import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
 import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
 import com.urswolfer.gerrit.client.rest.http.HttpStatusException;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import de.greenrobot.event.EventBus;
@@ -49,33 +49,18 @@ import de.greenrobot.event.EventBus;
 abstract class SyncProcessor<T> {
     protected final Context mContext;
     private final EventBus mEventBus;
-    private RequestBuilder mCurrentUrl;
     private ResponseHandler mResponseHandler;
     private final Intent mIntent;
-
-    /**
-     * Alternate constructor where the url is not dynamic and can be determined from the
-     *  current Gerrit instance.
-     *
-     *  Note: subclasses using this constructor MUST override fetchData or setUrl
-     * @param context Context for network access
-     * @param intent The original intent to GerritService that started initiated
-     *               this SyncProcessor.
-     */
-    SyncProcessor(Context context, Intent intent) {
-        this(context, intent, null);
-    }
+    private Integer mQueueId;
 
     /**
      * Standard constructor to create a SyncProcessor
      * @param context Context for network access
      * @param intent The original intent to GerritService that started initiated
      *               this SyncProcessor.
-     * @param url The Gerrit URL from which to retrieve the data from
      */
-    SyncProcessor(Context context, Intent intent, RequestBuilder url) {
+    SyncProcessor(Context context, @NotNull Intent intent) {
         this.mContext = context;
-        this.mCurrentUrl = url;
         this.mIntent = intent;
         this.mEventBus = EventBus.getDefault();
     }
@@ -97,6 +82,7 @@ abstract class SyncProcessor<T> {
         return mIntent.getStringExtra(GerritService.CHANGE_STATUS);
     }
 
+    @NotNull
     public Intent getIntent() { return mIntent; }
 
     /**
@@ -109,11 +95,6 @@ abstract class SyncProcessor<T> {
      * @return Whether it is necessary to contact the server
      */
     abstract boolean isSyncRequired(Context context);
-
-    /**
-     * @return T.class (the class of T). This is used for Volley Gson requests
-     */
-    abstract Class<T> getType();
 
     /**
      * Do some additional work after the data has been processed.
@@ -129,7 +110,6 @@ abstract class SyncProcessor<T> {
      */
     abstract int count(T data);
 
-
     /**
      *
      * @param gerritApi An instance of the Gerrit Rest API library with the host and
@@ -139,10 +119,21 @@ abstract class SyncProcessor<T> {
      */
     abstract T getData(GerritApi gerritApi) throws RestApiException;
 
+
+    /**
+     * Whether the given processor is likely to load the same data as this one.
+     *  The default processor assumes multiple classes will load the same data
+     * @param processor A new sync processor
+     * @return True if this processor should not be added to the run queue
+     */
+    protected boolean doesProcessorConflict(@NotNull SyncProcessor processor) {
+        return this.getClass().equals(processor.getClass());
+    }
+
     protected void fetchData() {
         GerritApi gerritApi = getGerritApiInstance(true);
         try {
-            mEventBus.post(new StartingRequest(mIntent, getStatus()));
+            mEventBus.post(new StartingRequest(mIntent, mQueueId));
             onResponse(getData(gerritApi));
         } catch (RestApiException e) {
             handleRestApiException(e);
@@ -177,9 +168,11 @@ abstract class SyncProcessor<T> {
     }
 
     protected void handleRestApiException(RestApiException e) {
-        int code = ((HttpStatusException) e).getStatusCode();
-        if (code == 401 || code == 403) {
-            Tools.launchSignin(mContext);
+        if (HttpStatusException.class.isInstance(e)) {
+            int code = ((HttpStatusException) e).getStatusCode();
+            if (code == 401 || code == 403) {
+                Tools.launchSignin(mContext);
+            }
         }
         handleException(e);
     }
@@ -187,7 +180,7 @@ abstract class SyncProcessor<T> {
     protected void handleException(Exception e) {
         // We still want to post the exception
         // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
-        GerritMessage ev = new ErrorDuringConnection(mIntent, null, e);
+        GerritMessage ev = new ErrorDuringConnection(mIntent, mQueueId, e);
         EventQueue.getInstance().enqueue(ev, true);
     }
 
@@ -210,6 +203,17 @@ abstract class SyncProcessor<T> {
         mResponseHandler.start();
     }
 
+    protected boolean setQueueId(int queueId) {
+        if (mQueueId != null) return false;
+        this.mQueueId = queueId;
+        return true;
+    }
+
+    public Integer getQueueId() {
+        return mQueueId;
+    }
+
+
     class ResponseHandler extends Thread {
         private final T mData;
 
@@ -225,10 +229,10 @@ abstract class SyncProcessor<T> {
                 numItems = insert(mData);
             }
 
-            EventBus.getDefault().post(new Finished(mIntent, getStatus(), numItems));
+            EventBus.getDefault().post(new Finished(mIntent, mQueueId, numItems));
             if (mData != null) doPostProcess(mData);
 
-            GerritService.finishedRequest(mCurrentUrl);
+            GerritService.finishedRequest(mQueueId);
             // This thread has finished so the parent activity should no longer need it
             mResponseHandler = null;
         }

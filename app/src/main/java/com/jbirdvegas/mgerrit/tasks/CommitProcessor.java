@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.volley.Response;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
@@ -29,23 +28,17 @@ import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.objects.Reviewer;
-import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
 class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
-    private final Intent mIntent;
-    private final String mUrl;
     private final String mChangeId;
 
-    CommitProcessor(Context context, Intent intent, RequestBuilder url) {
-        super(context, intent, url);
-        mIntent = intent;
-        mUrl = url.toString();
+    CommitProcessor(Context context, Intent intent) {
+        super(context, intent);
         mChangeId = intent.getStringExtra(GerritService.CHANGE_ID);
     }
 
@@ -60,11 +53,6 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
     }
 
     @Override
-    Class<ChangeInfo> getType() {
-        return ChangeInfo.class;
-    }
-
-    @Override
     int count(ChangeInfo data) {
         return data == null ? 0 : 1;
     }
@@ -72,6 +60,14 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
     @Override
     ChangeInfo getData(GerritApi gerritApi) throws RestApiException {
         return gerritApi.changes().id(mChangeId).get(queryOptions());
+    }
+
+    @Override
+    protected boolean doesProcessorConflict(@NotNull SyncProcessor processor) {
+        if (!this.getClass().equals(processor.getClass())) return false;
+        // Don't fetch the same changeid
+        String changeId = processor.getIntent().getStringExtra(GerritService.CHANGE_ID);
+        return mChangeId.equals(changeId);
     }
 
     protected static int doInsert(Context context, ChangeInfo commit) {
@@ -93,6 +89,7 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
         options.add(ListChangesOption.CURRENT_REVISION);
         options.add(ListChangesOption.CURRENT_COMMIT);
         options.add(ListChangesOption.CURRENT_FILES);
+        // Need the account id of the owner here to maintain FK db constraint
         options.add(ListChangesOption.DETAILED_ACCOUNTS);
         options.add(ListChangesOption.MESSAGES);
         options.add(ListChangesOption.DETAILED_LABELS);

@@ -28,7 +28,6 @@ import android.util.Pair;
 
 import com.google.gerrit.extensions.common.ProjectInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
-import com.jbirdvegas.mgerrit.objects.Projects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +81,7 @@ public class ProjectsTable extends DatabaseTable {
     }
 
     /** Insert the list of projects into the database **/
-    public static int insertProjects(Context context, Projects projects) {
+    public static int insertProjects(Context context, List<ProjectInfo> projects) {
 
         List<ContentValues> projectValues = new ArrayList<>();
 

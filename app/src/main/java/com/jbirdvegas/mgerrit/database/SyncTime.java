@@ -24,6 +24,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.jbirdvegas.mgerrit.helpers.DBParams;
+
 public class SyncTime extends DatabaseTable {
     // Table name
     public static final String TABLE = "_Times";
@@ -82,11 +84,12 @@ public class SyncTime extends DatabaseTable {
     }
 
     public static void setValue(Context context, String key, long value, String query) {
+        Uri uri = DBParams.insertOrUpdate(CONTENT_URI);
         ContentValues contentValues = new ContentValues(3);
         contentValues.put(C_KEY, key);
         contentValues.put(C_QUERY, query);
         contentValues.put(C_VALUE, value);
-        context.getContentResolver().insert(CONTENT_URI, contentValues);
+        context.getContentResolver().insert(uri, contentValues);
     }
 
     /**

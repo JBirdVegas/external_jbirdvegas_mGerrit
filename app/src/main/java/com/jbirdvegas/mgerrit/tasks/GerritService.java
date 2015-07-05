@@ -22,21 +22,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
-import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
-import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
+import android.util.SparseArray;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
 
 public class GerritService extends IntentService {
 
     public static final String TAG = "GerritService";
 
-    public static final String URL_KEY = "Url";
     public static final String DATA_TYPE_KEY = "Type";
 
     /* These are for the change list - whether we are fetching newer or older changes than what
@@ -57,57 +50,53 @@ public class GerritService extends IntentService {
 
     public enum DataType { Project, Commit, CommitDetails, GetVersion, Account, Star }
 
-    private static RequestQueue mRequestQueue;
-
-    private RequestBuilder mCurrentUrl;
-
     // A list of the currently running sync processors
-    // TODO: Don't assign syncprocessors to URL instances
     //  We should use some token system where a given query is assigned a token which we can use
     //  to cancel it
-    private static HashMap<RequestBuilder, SyncProcessor> sRunningTasks;
+    private static SparseArray<SyncProcessor> sRunningTasks;
+    private static int sQueueId = 0;
 
     // This is required for the service to be started
     public GerritService() {
         super(TAG);
-        sRunningTasks = new HashMap<>();
+        sRunningTasks = new SparseArray<>();
     }
 
     @Override
     protected void onHandleIntent(@NotNull Intent intent) {
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(this);
-        }
-
-        mCurrentUrl = intent.getParcelableExtra(URL_KEY);
         SyncProcessor processor;
-
-        if (sRunningTasks.containsKey(mCurrentUrl)) return;
 
         // Determine which SyncProcessor to use here
         DataType dataType = (DataType) intent.getSerializableExtra(DATA_TYPE_KEY);
         if (dataType == DataType.Project) {
             processor = new ProjectListProcessor(this, intent);
         } else if (dataType == DataType.Commit) {
-            processor = new ChangeListProcessor(this, intent, mCurrentUrl);
+            processor = new ChangeListProcessor(this, intent);
         } else if (dataType == DataType.CommitDetails) {
-            processor = new CommitProcessor(this, intent, mCurrentUrl);
+            processor = new CommitProcessor(this, intent);
         } else if (dataType == DataType.GetVersion) {
             processor = new VersionProcessor(this, intent);
         } else if (dataType == DataType.Account) {
-            processor = new AccountProcessor(this, intent, (AccountEndpoints) mCurrentUrl);
+            processor = new AccountProcessor(this, intent);
         } else if (dataType == DataType.Star) {
-            processor = new StarProcessor(this, intent, (AccountEndpoints) mCurrentUrl);
+            processor = new StarProcessor(this, intent);
         } else {
             Log.w(TAG, "Don't know how to handle synchronization of type " + DATA_TYPE_KEY);
             return;
         }
 
-        // Call the SyncProcessor to fetch the data if necessary
-        boolean needsSync = processor.isSyncRequired(this);
-        if (needsSync) {
-            sRunningTasks.put(mCurrentUrl, processor);
-            processor.fetchData();
+        // We may already be running this type of sync processor so check if it is allowed
+        //  to be added to the list of running sync processors
+        if (allowNewInstance(processor)) {
+            // Call the SyncProcessor to fetch the data if necessary
+            boolean needsSync = processor.isSyncRequired(this);
+            if (needsSync) {
+                int queueId = sQueueId;
+                sQueueId += 1;
+                sRunningTasks.put(queueId, processor);
+                processor.setQueueId(queueId);
+                processor.fetchData();
+            }
         }
     }
 
@@ -121,19 +110,15 @@ public class GerritService extends IntentService {
         context.startService(it);
     }
 
-    private static boolean isProcessorRunning(SyncProcessor processor) {
-        Class<? extends SyncProcessor> clazz = processor.getClass();
-        for (SyncProcessor next : sRunningTasks.values()) {
-            if (next.getClass().equals(clazz)) return true;
+    protected boolean allowNewInstance(SyncProcessor processor) {
+        for (int i = 0; i < sRunningTasks.size(); i++) {
+            SyncProcessor next = sRunningTasks.valueAt(i);
+            if (processor.doesProcessorConflict(next)) return false;
         }
-        return false;
+        return true;
     }
 
-    protected static HashMap<RequestBuilder, SyncProcessor> getRunningProcessors() {
-        return sRunningTasks;
-    }
-
-    protected static void finishedRequest(RequestBuilder url) {
-        sRunningTasks.remove(url);
+    protected static void finishedRequest(int queueId) {
+        sRunningTasks.remove(queueId);
     }
 }

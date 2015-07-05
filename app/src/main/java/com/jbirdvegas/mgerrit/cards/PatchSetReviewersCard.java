@@ -31,12 +31,11 @@ import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.UserReviewers;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
-import com.jbirdvegas.mgerrit.objects.Reviewer;
 
 import org.jetbrains.annotations.NotNull;
 
 public class PatchSetReviewersCard implements CardBinder {
-    private static final boolean DEBUG = true;
+    public static final String NO_SCORE = "No score";
 
     private final RequestQueue mRequestQueue;
     private final Context mContext;
@@ -108,7 +107,7 @@ public class PatchSetReviewersCard implements CardBinder {
         } else if (container != null) {
             container.setVisibility(View.GONE);
         } else {
-            approval.setText(Reviewer.NO_SCORE);
+            approval.setText(NO_SCORE);
         }
     }
 

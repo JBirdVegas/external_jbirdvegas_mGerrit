@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.volley.Response;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.common.ProjectInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
@@ -28,32 +27,25 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.database.SyncTime;
-import com.jbirdvegas.mgerrit.requestbuilders.ProjectEndpoints;
-import com.jbirdvegas.mgerrit.objects.Projects;
-import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
-class ProjectListProcessor extends SyncProcessor<Projects> {
-
-    private final RequestBuilder mUrl;
-    private final Intent mIntent;
+class ProjectListProcessor extends SyncProcessor<List<ProjectInfo>> {
 
     ProjectListProcessor(Context context, Intent intent) {
         super(context, intent);
-        mUrl = ProjectEndpoints.get();
-        mIntent = intent;
     }
 
     @Override
-    int insert(Projects projects) {
+    int insert(List<ProjectInfo> projects) {
         return ProjectsTable.insertProjects(getContext(), projects);
     }
 
     @Override
     boolean isSyncRequired(Context context) {
         long syncInterval = context.getResources().getInteger(R.integer.projects_sync_interval);
-        long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, mUrl.toString());
+        long lastSync = SyncTime.getValueForQuery(context, SyncTime.PROJECTS_LIST_SYNC_TIME, null);
         boolean sync = isInSyncInterval(syncInterval, lastSync);
         // If lastSync was within the sync interval then it was recently synced and we don't need to again
         if (!sync) return true;
@@ -63,26 +55,20 @@ class ProjectListProcessor extends SyncProcessor<Projects> {
     }
 
     @Override
-    Class<Projects> getType() {
-        return Projects.class;
-    }
-
-    @Override
-    void doPostProcess(Projects data) {
+    void doPostProcess(List<ProjectInfo> data) {
         SyncTime.setValue(mContext, SyncTime.PROJECTS_LIST_SYNC_TIME,
-                System.currentTimeMillis(), mUrl.toString());
+                System.currentTimeMillis(), null);
     }
 
     @Override
-    int count(Projects projects) {
+    int count(List<ProjectInfo> projects) {
         if (projects != null) return projects.size();
         else return 0;
     }
 
     @Override
-    protected Projects getData(GerritApi gerritApi)
+    protected List<ProjectInfo> getData(GerritApi gerritApi)
             throws RestApiException {
-        List<ProjectInfo> pl = gerritApi.projects().list().get();
-        return new Projects(pl);
+        return gerritApi.projects().list().get();
     }
 }

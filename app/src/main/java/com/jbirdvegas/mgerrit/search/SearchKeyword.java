@@ -356,6 +356,7 @@ public abstract class SearchKeyword implements Parcelable {
         }
     }
 
+    @NotNull
     public static StringBuilder asQuery(Context context, List<SearchKeyword> keywords)
             throws UnsupportedEncodingException {
         StringBuilder builder = new StringBuilder();

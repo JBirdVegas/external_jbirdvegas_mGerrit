@@ -23,17 +23,11 @@ import com.jbirdvegas.mgerrit.objects.GerritMessage;
 // Event: A request was attempted which this Gerrit instance does not support
 public class NotSupported extends GerritMessage {
 
-    private final Intent mIntent;
     private final String mMessage;
 
-    public NotSupported(Intent intent, String msg) {
-        super(intent, null);
-        mIntent = intent;
+    public NotSupported(Intent intent, int queueId, String msg) {
+        super(intent, queueId);
         mMessage = msg;
-    }
-
-    public Intent getIntent() {
-        return mIntent;
     }
 
     public String getMessage() {

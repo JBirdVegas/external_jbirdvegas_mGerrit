@@ -23,7 +23,6 @@ import android.content.UriMatcher;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-import com.google.gerrit.extensions.common.AccountInfo;
 import com.google.gerrit.extensions.common.ApprovalInfo;
 import com.google.gerrit.extensions.common.LabelInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;

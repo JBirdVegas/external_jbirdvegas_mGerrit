@@ -19,23 +19,33 @@ package com.jbirdvegas.mgerrit.objects;
 
 import android.content.Intent;
 
+import com.jbirdvegas.mgerrit.tasks.GerritService;
+
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class GerritMessage {
 
     private final Intent mIntent;
-    private final String mStatus;
+    private final int mQueueId;
 
-    public GerritMessage(@NotNull Intent intent, String status) {
+    public GerritMessage(@NotNull Intent intent, int queueId) {
         this.mIntent = intent;
-        this.mStatus = status;
+        this.mQueueId = queueId;
     }
 
     public Intent getIntent() {
         return mIntent;
     }
 
+    // Helper to get which change status this message refers to (may be null).
+    // For compatibility/migration purposes
+    @Nullable
     public String getStatus() {
-        return mStatus;
+        return mIntent.getStringExtra(GerritService.CHANGE_STATUS);
+    }
+
+    public int getQueueId() {
+        return mQueueId;
     }
 }

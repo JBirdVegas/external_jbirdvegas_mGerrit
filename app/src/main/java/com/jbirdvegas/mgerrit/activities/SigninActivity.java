@@ -39,9 +39,6 @@ import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.EventQueue;
-import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
-import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
-import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
 import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
@@ -136,11 +133,8 @@ public class SigninActivity extends FragmentActivity
 
     public void onSignin(View view) {
         btnSignIn.setProgress(1);
-
-        AccountEndpoints url = AccountEndpoints.self();
         Intent it = new Intent(this, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Account);
-        it.putExtra(GerritService.URL_KEY, url);
         addUsernamePasswordToIntent(it, null, null);
         startService(it);
     }
@@ -203,13 +197,11 @@ public class SigninActivity extends FragmentActivity
         } while (error != null);
 
         // Get the starred changes
-        RequestBuilder starredUrl = ChangeEndpoints.starred().setLimit(this.getResources().getInteger(R.integer.changes_limit));
         Intent it = new Intent(this, GerritService.class);
         ArrayList<SearchKeyword> keywords = new ArrayList<>();
         keywords.add(new IsSearch("starred"));
 
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Commit);
-        it.putExtra(GerritService.URL_KEY, starredUrl);
         it.putExtra(GerritService.CHANGES_LIST_DIRECTION, GerritService.Direction.Older);
         it.putParcelableArrayListExtra(GerritService.CHANGE_KEYWORDS, keywords);
         addUsernamePasswordToIntent(it, username, password);

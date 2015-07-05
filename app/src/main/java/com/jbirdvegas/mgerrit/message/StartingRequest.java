@@ -25,7 +25,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class StartingRequest extends GerritMessage {
 
-    public StartingRequest(@NotNull Intent intent, String status) {
-        super(intent, status);
+    private final int mQueueId;
+
+    public StartingRequest(@NotNull Intent intent, int queueId) {
+        super(intent, queueId);
+        this.mQueueId = queueId;
+    }
+
+    public int getQueueId() {
+        return mQueueId;
     }
 }

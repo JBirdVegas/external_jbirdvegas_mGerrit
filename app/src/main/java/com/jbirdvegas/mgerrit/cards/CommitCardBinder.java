@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.cards;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +28,11 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
-import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.TimeZone;
@@ -251,10 +249,8 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
     }
 
     private void onStarChange(String changeId, int changeNumber, boolean starred) {
-        AccountEndpoints url = AccountEndpoints.starChange(changeId);
         Intent it = new Intent(mContext, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Star);
-        it.putExtra(GerritService.URL_KEY, url);
         it.putExtra(GerritService.CHANGE_ID, changeId);
         it.putExtra(GerritService.CHANGE_NUMBER, changeNumber);
         it.putExtra(GerritService.IS_STARRING, starred);

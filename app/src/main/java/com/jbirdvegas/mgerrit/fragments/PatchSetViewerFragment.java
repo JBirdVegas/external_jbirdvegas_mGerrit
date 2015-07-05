@@ -35,8 +35,8 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 
 import com.google.analytics.tracking.android.EasyTracker;
-import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
 import com.jbirdvegas.mgerrit.adapters.CommitDetailsAdapter;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
 import com.jbirdvegas.mgerrit.database.Changes;
@@ -52,10 +52,8 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
-import com.jbirdvegas.mgerrit.requestbuilders.ChangeEndpoints;
 import com.jbirdvegas.mgerrit.objects.FilesCAB;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
-import com.jbirdvegas.mgerrit.search.ChangeSearch;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import org.jetbrains.annotations.Nullable;
@@ -75,7 +73,6 @@ public class PatchSetViewerFragment extends Fragment
     private Activity mParent;
     private Context mContext;
 
-    private ChangeEndpoints mUrl;
     private String mSelectedChange;
     private String mStatus;
     private int mChangeNumber;
@@ -188,8 +185,6 @@ public class PatchSetViewerFragment extends Fragment
         // Remember to expand the groups which don't have a header otherwise they will not be shown
         mListView.expandGroup(0);
 
-        mUrl = new ChangeEndpoints();
-
         Button retryButton = (Button) currentFragment.findViewById(R.id.btn_retry);
         retryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,7 +226,6 @@ public class PatchSetViewerFragment extends Fragment
          * in prior Gerrit versions.
          */
         Bundle b = new Bundle();
-        b.putParcelable(GerritService.URL_KEY, mUrl);
         b.putString(GerritService.CHANGE_ID, mSelectedChange);
         b.putInt(GerritService.CHANGE_NUMBER, mChangeNumber);
         GerritService.sendRequest(mParent, dataType, b);
@@ -292,11 +286,6 @@ public class PatchSetViewerFragment extends Fragment
         // If we have already loaded this change there is nothing to do
         if (!changeId.equals(this.mSelectedChange)) {
             this.mSelectedChange = changeId;
-
-            mUrl.addSearchKeyword(new ChangeSearch(mSelectedChange));
-            mUrl.setChangeNumber(mChangeNumber);
-            mUrl.requestChangeDetail(true, sIsLegacyVersion);
-
             sendRequest(GerritService.DataType.CommitDetails);
 
             restartLoaders(changeId);
