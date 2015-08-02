@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.accounts.AccountApi;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.R;
@@ -31,6 +30,7 @@ import com.jbirdvegas.mgerrit.message.NotSupported;
 import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
+import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -75,7 +75,7 @@ public class StarProcessor extends SyncProcessor<String> {
     }
 
     @Override
-    protected String getData(GerritApi gerritApi) throws RestApiException {
+    protected String getData(GerritRestApi gerritApi) throws RestApiException {
         AccountApi self = gerritApi.accounts().self();
         if (mIsStarring) self.starChange(mChangeId);
         else gerritApi.accounts().self().unstarChange(mChangeId);

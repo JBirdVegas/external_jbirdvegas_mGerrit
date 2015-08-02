@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Pair;
 
-import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.api.changes.Changes.QueryRequest;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
@@ -37,6 +36,7 @@ import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService.Direction;
+import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -113,7 +113,11 @@ class ChangeListProcessor extends SyncProcessor<List<ChangeInfo>> {
 
         if (data.size() > 0) {
             ChangeInfo fc = data.get(0);
-            if (fc._moreChanges == null) moreChanges = data.get(data.size() - 1)._moreChanges;
+            if (fc._moreChanges == null) {
+                Boolean mc = data.get(data.size() - 1)._moreChanges;
+                // _moreChanges may be null and null cannot be assigned to a (primative) boolean
+                moreChanges = !(mc == null || !mc);
+            }
             else moreChanges = fc._moreChanges;
         }
 
@@ -137,7 +141,7 @@ class ChangeListProcessor extends SyncProcessor<List<ChangeInfo>> {
     }
 
     @Override
-    protected List<ChangeInfo> getData(GerritApi gerritApi)
+    protected List<ChangeInfo> getData(GerritRestApi gerritApi)
             throws RestApiException {
         QueryRequest info = gerritApi.changes().query()
                 .withLimit(mContext.getResources().getInteger(R.integer.changes_limit))

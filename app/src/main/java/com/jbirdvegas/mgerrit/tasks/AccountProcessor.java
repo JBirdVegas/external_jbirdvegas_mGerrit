@@ -26,6 +26,7 @@ import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
+import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
 import de.greenrobot.event.EventBus;
 
@@ -59,13 +60,13 @@ public class AccountProcessor extends SyncProcessor<UserAccountInfo> {
     }
 
     @Override
-    UserAccountInfo getData(GerritApi gerritApi) throws RestApiException {
+    UserAccountInfo getData(GerritRestApi gerritApi) throws RestApiException {
         return new UserAccountInfo(gerritApi.accounts().self().get());
     }
 
     @Override
     protected void fetchData() {
-        GerritApi gerritApi = getGerritApiInstance(true);
+        GerritRestApi gerritApi = getGerritApiInstance(true);
         try {
             onResponse(getData(gerritApi));
         } catch (RestApiException e) {

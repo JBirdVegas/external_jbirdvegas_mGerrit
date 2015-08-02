@@ -33,6 +33,7 @@ import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 import com.urswolfer.gerrit.client.rest.GerritAuthData;
+import com.urswolfer.gerrit.client.rest.GerritRestApi;
 import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
 import com.urswolfer.gerrit.client.rest.http.HttpStatusException;
 
@@ -117,7 +118,7 @@ abstract class SyncProcessor<T> {
      * @return The data to be queried for the given request
      * @throws RestApiException If something goes wrong
      */
-    abstract T getData(GerritApi gerritApi) throws RestApiException;
+    abstract T getData(GerritRestApi gerritApi) throws RestApiException;
 
 
     /**
@@ -131,7 +132,7 @@ abstract class SyncProcessor<T> {
     }
 
     protected void fetchData() {
-        GerritApi gerritApi = getGerritApiInstance(true);
+        GerritRestApi gerritApi = getGerritApiInstance(true);
         try {
             mEventBus.post(new StartingRequest(mIntent, mQueueId));
             onResponse(getData(gerritApi));
@@ -140,7 +141,7 @@ abstract class SyncProcessor<T> {
         }
     }
 
-    protected GerritApi getGerritApiInstance(boolean isAuthenticating) {
+    protected GerritRestApi getGerritApiInstance(boolean isAuthenticating) {
         GerritRestApiFactory gerritRestApiFactory = new GerritRestApiFactory();
         GerritAuthData.Basic authData;
         String username = null, password = null;

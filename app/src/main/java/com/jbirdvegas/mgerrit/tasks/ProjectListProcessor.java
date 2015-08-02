@@ -20,15 +20,14 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.common.ProjectInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.DatabaseTable;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.database.SyncTime;
+import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
-import java.util.ArrayList;
 import java.util.List;
 
 class ProjectListProcessor extends SyncProcessor<List<ProjectInfo>> {
@@ -67,7 +66,7 @@ class ProjectListProcessor extends SyncProcessor<List<ProjectInfo>> {
     }
 
     @Override
-    protected List<ProjectInfo> getData(GerritApi gerritApi)
+    protected List<ProjectInfo> getData(GerritRestApi gerritApi)
             throws RestApiException {
         return gerritApi.projects().list().get();
     }

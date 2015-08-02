@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Config;
+import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,7 +59,7 @@ public class VersionProcessor extends SyncProcessor<String> {
     }
 
     @Override
-    String getData(GerritApi gerritApi) throws RestApiException {
+    String getData(GerritRestApi gerritApi) throws RestApiException {
         String version = gerritApi.config().server().getVersion();
         if ("<2.8".equals(version)) version = Config.VERSION_DEFAULT;
         return version;
@@ -66,7 +67,7 @@ public class VersionProcessor extends SyncProcessor<String> {
 
     @Override
     protected void fetchData() {
-        GerritApi gerritApi = getGerritApiInstance(true);
+        GerritRestApi gerritApi = getGerritApiInstance(true);
         try {
             onResponse(getData(gerritApi));
         } catch (RestApiException e) {

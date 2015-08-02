@@ -48,7 +48,12 @@ public class GerritService extends IntentService {
     public static final String CHANGE_ID = "change_id";
     public static final String CHANGE_NUMBER = "change_no";
 
-    public enum DataType { Project, Commit, CommitDetails, GetVersion, Account, Star }
+    // DiffProcessor & ImageProcessor
+    public static final String PATCHSET_NUMBER = "ps_no";
+    public static final String FILE_PATH = "file_path";
+    public static final String FILE_STATUS = "file_status";
+
+    public enum DataType { Project, Commit, CommitDetails, GetVersion, Account, Star, Diff, Image }
 
     // A list of the currently running sync processors
     //  We should use some token system where a given query is assigned a token which we can use
@@ -80,6 +85,10 @@ public class GerritService extends IntentService {
             processor = new AccountProcessor(this, intent);
         } else if (dataType == DataType.Star) {
             processor = new StarProcessor(this, intent);
+        } else if (dataType == DataType.Diff) {
+            processor = new TextDiffProcessor(this, intent);
+        } else if (dataType == DataType.Image) {
+                processor = new ImageProcessor(this, intent);
         } else {
             Log.w(TAG, "Don't know how to handle synchronization of type " + DATA_TYPE_KEY);
             return;

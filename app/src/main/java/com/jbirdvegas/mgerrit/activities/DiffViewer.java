@@ -31,24 +31,23 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.ViewFlipper;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.FileAdapter;
 import com.jbirdvegas.mgerrit.database.FileChanges;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.message.ChangeDiffLoaded;
+import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
+import com.jbirdvegas.mgerrit.message.ImageLoaded;
 import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
-import com.jbirdvegas.mgerrit.tasks.ZipImageRequest;
-import com.jbirdvegas.mgerrit.tasks.ZipRequest;
+import com.jbirdvegas.mgerrit.tasks.GerritService;
 import com.jbirdvegas.mgerrit.views.DiffTextView;
 import com.jbirdvegas.mgerrit.views.LoadingView;
 import com.jbirdvegas.mgerrit.views.StripedImageView;
 
-import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
+
+import de.greenrobot.event.EventBus;
 
 public class DiffViewer extends FragmentActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -67,11 +66,10 @@ public class DiffViewer extends FragmentActivity
 
             if (Tools.isImage(mFilePath)) {
                 mLoadingView.loadingDiffImage();
-                makeImageRequest(mFilePath, status);
             } else {
                 mLoadingView.loadingDiffText();
-                loadDiff(mFilePath);
             }
+            makeRequest(mFilePath, status);
 
             int previousPosition = mAdapter.getPreviousPosition(position);
             mBtnPrevious.setVisibility(previousPosition >= 0 ? View.VISIBLE : View.INVISIBLE);
@@ -98,8 +96,7 @@ public class DiffViewer extends FragmentActivity
     public static final String PATCH_SET_NUMBER_TAG = "patchSetNumber";
     public static final String FILE_PATH_TAG = "file";
 
-    private static RequestQueue requestQueue;
-    private ZipRequest request;
+    private EventBus mEventBus;
 
     private enum DiffType { Loading, Text, Image }
 
@@ -141,43 +138,42 @@ public class DiffViewer extends FragmentActivity
         mSpinner.setAdapter(mAdapter);
         mSpinner.setOnItemSelectedListener(mSelectedListener);
         getSupportLoaderManager().initLoader(0, null, this);
+
+        mEventBus = EventBus.getDefault();
     }
 
-    private void makeImageRequest(final String filePath, final ChangedFileInfo.Status fileStatus) {
-        if (filePath == null) return;
-        try {
-            boolean wasDeleted = (fileStatus == ChangedFileInfo.Status.DELETED);
-            ZipImageRequest imageRequest = new ZipImageRequest(this, mChangeNumber, mPatchsetNumber,
-                    filePath, wasDeleted, new Response.Listener<Bitmap>() {
-                @Override
-                public void onResponse(Bitmap bitmap) {
-                    if (bitmap == null) {
-                        mDiffTextView.setText(R.string.failed_to_decode_image);
-                        switchViews(DiffType.Text);
-                        return;
-                    }
-                    if (!filePath.equals(mFilePath)) {
-                        // Loaded the wrong image, don't display it
-                        return;
-                    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mEventBus.register(this);
+    }
 
-                    StripedImageView imageView = (StripedImageView) findViewById(R.id.diff_image);
-                    imageView.setVisibility(View.VISIBLE);
-                    imageView.setImageBitmap(bitmap);
-                    imageView.setStripe(fileStatus);
-                    switchViews(DiffType.Image);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    mDiffTextView.setText(R.string.failed_to_load_image);
-                    switchViews(DiffType.Text);
-                }
-            });
-            Volley.newRequestQueue(this).add(imageRequest);
-        } catch (UnsupportedEncodingException ignored) {
-            mDiffTextView.setText(R.string.failed_to_load_image);
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mEventBus.unregister(this);
+    }
+
+    private void makeRequest(final String filePath, final ChangedFileInfo.Status fileStatus) {
+        if (filePath == null) return;
+        mFilePath = filePath;
+
+        Intent it = new Intent(this, GerritService.class);
+
+        if (Tools.isImage(mFilePath)) {
+            it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Image);
+        } else {
+            it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Diff);
         }
+
+        it.putExtra(GerritService.CHANGE_NUMBER, mChangeNumber);
+        it.putExtra(GerritService.PATCHSET_NUMBER, mPatchsetNumber);
+        it.putExtra(GerritService.FILE_PATH, filePath);
+
+        if (fileStatus != null) {
+            it.putExtra(GerritService.FILE_STATUS, fileStatus);
+        }
+        startService(it);
     }
 
     private void setTextView(String result) {
@@ -204,34 +200,6 @@ public class DiffViewer extends FragmentActivity
         }
         // rebuild text; required to respect the \n
         mDiffTextView.setDiffText(builder.toString());
-    }
-
-    private void loadDiff(String fileName) {
-        mFilePath = fileName;
-
-        /* The whole diff may be too large to cache in memory or expired
-         *  so we will launch another request for it, even if we have
-         *  previously loaded a diff for this change
-         */
-        request = new ZipRequest(this, mChangeNumber,
-                mPatchsetNumber, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                if (s != null) setTextView(s);
-                else mDiffTextView.setText(getString(R.string.failed_to_get_diff));
-                switchViews(DiffType.Text);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                mDiffTextView.setText(R.string.failed_to_get_diff);
-                switchViews(DiffType.Text);
-            }
-        }
-        );
-
-        if (requestQueue == null) requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(request);
     }
 
     // Set the title of this activity
@@ -265,7 +233,7 @@ public class DiffViewer extends FragmentActivity
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
         if (cursor != null && cursor.isAfterLast()) {
-            if (request != null) request.cancel();
+            //if (request != null) request.cancel(); TODO: What was this doing?
             mDiffTextView.setText(getString(R.string.diff_no_files));
         }
 
@@ -277,5 +245,43 @@ public class DiffViewer extends FragmentActivity
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mAdapter.swapCursor(null);
+    }
+
+    public void onEventMainThread(ChangeDiffLoaded ev) {
+        // TODO: Check if this is the event we requested.
+        String diff = ev.getDiff();
+        if (diff != null) setTextView(diff);
+        else mDiffTextView.setText(getString(R.string.failed_to_get_diff));
+        switchViews(DiffType.Text);
+    }
+
+    public void onEventMainThread(ImageLoaded ev) {
+        Bitmap bitmap = ev.getImage();
+        String filePath = ev.getFilePath();
+        ChangedFileInfo.Status fileStatus = ev.getFileStatus();
+
+        if (bitmap == null) {
+            mDiffTextView.setText(R.string.failed_to_decode_image);
+            switchViews(DiffType.Text);
+            return;
+        }
+
+        // Only display the image if this was the one we requested
+        if (filePath.equals(mFilePath)) {
+            StripedImageView imageView = (StripedImageView) findViewById(R.id.diff_image);
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageBitmap(bitmap);
+            imageView.setStripe(fileStatus);
+            switchViews(DiffType.Image);
+        }
+    }
+
+    public void onEventMainThread(ErrorDuringConnection ev) {
+        if (Tools.isImage(mFilePath)) {
+            mDiffTextView.setText(R.string.failed_to_load_image);
+        } else {
+            mDiffTextView.setText(R.string.failed_to_get_diff);
+        }
+        switchViews(DiffType.Text);
     }
 }
