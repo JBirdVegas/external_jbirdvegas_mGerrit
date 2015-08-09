@@ -62,11 +62,15 @@ public class TextDiffProcessor extends SyncProcessor<String> {
 
     @Override
     String getData(GerritRestApi gerritApi) throws RestApiException {
-        String psNumber = mPatchsetNumber < 1 ? "current" : String.valueOf(mPatchsetNumber);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         String baseString, decodedContent = null;
-        BinaryResult binaryResult = gerritApi.changes().id(mChangeNumber).revision(mPatchsetNumber).patch();
+        BinaryResult binaryResult;
+        if (mPatchsetNumber < 1) {
+            binaryResult = gerritApi.changes().id(mChangeNumber).revision("current").patch();
+        } else {
+            binaryResult = gerritApi.changes().id(mChangeNumber).revision(mPatchsetNumber).patch();
+        }
 
         try {
             baseString = binaryResult.asString();

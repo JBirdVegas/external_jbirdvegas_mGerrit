@@ -298,11 +298,11 @@ public class Tools {
             browserIntent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(Tools.getWebAddress(context, changeNumber)));
         } else {
-            String base =  "%s#/c/%d/%d/%s,unified";
+            String base =  "%s#/c/%d/%s,unified";
             browserIntent = new Intent(
                     Intent.ACTION_VIEW, Uri.parse(String.format(base,
                     PrefsFragment.getCurrentGerrit(context),
-                    changeNumber)));
+                    changeNumber, patchset, filePath)));
         }
 
         context.startActivity(browserIntent);
