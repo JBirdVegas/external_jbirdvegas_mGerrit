@@ -34,6 +34,7 @@
         <item>TEAM Gummy</item>
         <item>SlimRoms</item>
         <item>Wikimedia</item>
+        <item>OpenStack</item>
     </string-array>
     <string-array name="gerrit_webaddresses" translatable="false">
         <item>http://gerrit.aicp-rom.com/</item>
@@ -52,6 +53,7 @@
         <item>http://review.gummyrom.com/</item>
         <item>https://gerrit.slimroms.net</item>
         <item>https://gerrit.wikimedia.org/r/</item>
+        <item>https://review.openstack.org/</item>
     </string-array>
     <string-array name="status_entries" translatable="false">
         <item>@string/reviewable</item>
