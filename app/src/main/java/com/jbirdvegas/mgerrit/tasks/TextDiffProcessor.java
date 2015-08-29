@@ -74,10 +74,7 @@ public class TextDiffProcessor extends SyncProcessor<String> {
 
         try {
             baseString = binaryResult.asString();
-
-            if (baseString != null) {
-                decodedContent = new String(Base64.decode(baseString, Base64.NO_PADDING));
-            }
+            if (baseString != null) decodedContent = decodeBase64(baseString);
 
         } catch (IOException | IllegalArgumentException ex) {
             handleException(ex);
@@ -89,5 +86,32 @@ public class TextDiffProcessor extends SyncProcessor<String> {
         }
 
         return decodedContent;
+    }
+
+    /**
+     * Android appears to be strict with padding the string according to the Base64 standard.
+     * While using the URL_SAFE parameter does not throw an error, it will result in a corrupted string
+     * when '+' or '/' characters are included (which could be the case).
+     *
+     * @see http://stackoverflow.com/questions/2941995/python-ignore-incorrect-padding-error-when-base64-decoding
+     * @see https://code.google.com/p/gerrit/issues/detail?id=3312
+     *
+     * @param base64 The string to decode
+     * @return A new string that has been decoded from base64
+     */
+    private String decodeBase64(String base64) throws IOException,  IllegalArgumentException {
+        int missingPadding = 4 - base64.length() % 4;
+        switch (missingPadding) {
+            case 1:
+                base64 += '=';
+                break;
+            case 2:
+                base64 += "==";
+                break;
+            case 3:
+                base64 += "A==";
+                break;
+        }
+        return new String(Base64.decode(base64, Base64.NO_PADDING));
     }
 }
