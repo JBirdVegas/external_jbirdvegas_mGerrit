@@ -20,17 +20,14 @@ import com.jbirdvegas.mgerrit.objects.GerritMessage;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-// Event: A request was attempted which this Gerrit instance does not support
-public class NotSupported extends GerritMessage {
+public class ChangeDiffLoaded extends GerritMessage {
 
-    private final String mMessage;
+    private final String mChangeDiff;
 
-    public NotSupported(Intent intent, int queueId, String msg) {
+    public ChangeDiffLoaded(Intent intent, int queueId, String changeDiff) {
         super(intent, queueId);
-        mMessage = msg;
+        this.mChangeDiff = changeDiff;
     }
 
-    public String getMessage() {
-        return mMessage;
-    }
+    public String getDiff() { return mChangeDiff; }
 }

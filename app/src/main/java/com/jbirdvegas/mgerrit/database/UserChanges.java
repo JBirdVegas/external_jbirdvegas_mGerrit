@@ -25,8 +25,9 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.CursorLoader;
 
+import com.google.gerrit.extensions.common.AccountInfo;
+import com.google.gerrit.extensions.common.ChangeInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 import java.util.ArrayList;
@@ -134,33 +135,33 @@ public class UserChanges extends DatabaseTable {
     }
 
     /** Insert the list of commits into the database **/
-    public static int insertCommits(Context context, List<JSONCommit> commits) {
+    public static int insertCommits(Context context, List<ChangeInfo> commits) {
 
         List<ContentValues> values = new ArrayList<>();
-        Set<CommitterObject> committers = new HashSet<>();
+        Set<AccountInfo> committers = new HashSet<>();
 
-        for (JSONCommit commit : commits) {
+        for (ChangeInfo commit : commits) {
             ContentValues row = new ContentValues(9);
 
-            row.put(C_CHANGE_ID, commit.getChangeId());
-            row.put(C_SUBJECT, commit.getSubject());
-            row.put(C_COMMIT_NUMBER, commit.getCommitNumber());
-            row.put(C_CREATED, trimDate(commit.getCreatedDate()));
-            row.put(C_UPDATED, trimDate(commit.getLastUpdatedDate()));
-            row.put(C_OWNER, commit.getOwnerObject().getAccountId());
-            row.put(C_PROJECT, commit.getProject());
-            row.put(C_STATUS, commit.getStatus().toString());
-            row.put(C_TOPIC, commit.getTopic());
-            row.put(C_BRANCH, commit.getBranch());
-            row.put(C_STARRED, commit.isStarred());
+            row.put(C_CHANGE_ID, commit.changeId);
+            row.put(C_SUBJECT, commit.subject);
+            row.put(C_COMMIT_NUMBER, commit._number);
+            row.put(C_CREATED, commit.created.toString());
+            row.put(C_UPDATED, commit.updated.toString());
+            row.put(C_OWNER, commit.owner._accountId);
+            row.put(C_PROJECT, commit.project);
+            row.put(C_STATUS, commit.status.name());
+            row.put(C_TOPIC, commit.topic);
+            row.put(C_BRANCH, commit.branch);
+            row.put(C_STARRED, commit.starred);
             values.add(row);
 
-            committers.add(commit.getOwnerObject());
+            committers.add(commit.owner);
         }
 
         // Insert the list of users into the database as well.
-        CommitterObject usersArray[] = new CommitterObject[committers.size()];
-        Users.insertUsers(context, committers.toArray(usersArray));
+        AccountInfo usersArray[] = new AccountInfo[committers.size()];
+        Users.insertUsers(context, committers);
 
         // Now insert the commits
         Uri uri = DBParams.insertWithReplace(Changes.CONTENT_URI);
@@ -175,24 +176,24 @@ public class UserChanges extends DatabaseTable {
      *               Only data visible to the change list will be updated.
      * @return Whether any rows were updated
      */
-    public static boolean updateChange(Context context, JSONCommit commit) {
-        if (commit == null || commit.getChangeId() == null) return false;
+    public static boolean updateChange(Context context, ChangeInfo commit) {
+        if (commit == null || commit.changeId == null) return false;
 
         ContentValues values = new ContentValues(9);
-        if (commit.getSubject() != null){
-            values.put(C_SUBJECT, commit.getSubject());
-        } if (commit.getLastUpdatedDate() != null){
-            values.put(C_UPDATED, trimDate(commit.getLastUpdatedDate()));
-        } if (commit.getOwnerObject() != null) {
-            values.put(C_OWNER, commit.getOwnerObject().getAccountId());
-        } if (commit.getStatus() != null) {
-            values.put(C_STATUS, commit.getStatus().toString());
+        if (commit.subject != null){
+            values.put(C_SUBJECT, commit.subject);
+        } if (commit.updated != null){
+            values.put(C_UPDATED, commit.updated.toString());
+        } if (commit.owner != null) {
+            values.put(C_OWNER, commit.owner._accountId);
+        } if (commit.status != null) {
+            values.put(C_STATUS, commit.status.name());
         }
         // The topic could have been cleared
-        values.put(C_TOPIC, commit.getTopic());
+        values.put(C_TOPIC, commit.topic);
 
         return context.getContentResolver().update(Changes.CONTENT_URI, values,
-                C_CHANGE_ID + " = ?", new String[] { commit.getChangeId() }) > 0;
+                C_CHANGE_ID + " = ?", new String[] { commit.changeId }) > 0;
     }
 
     /**
@@ -208,15 +209,10 @@ public class UserChanges extends DatabaseTable {
         List<String> bindArgs = new ArrayList<>();
 
         if (subject != null) {
-            builder.append(" AND ").append(C_PROJECT).append(" LIKE ?");
+            builder.append(" AND ").append(C_SUBJECT).append(" LIKE ?");
             bindArgs.add("%" + subject + "%");
         }
         return findCommits(context, status, builder, bindArgs);
-    }
-
-    // Removes the extraneous 0s off the milliseconds in server timestamps
-    private static String trimDate(String date) {
-        return date.substring(0, date.length() - 6);
     }
 
     /**

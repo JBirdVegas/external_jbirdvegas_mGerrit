@@ -1,8 +1,11 @@
 package com.jbirdvegas.mgerrit.message;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 
+import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
+import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 /*
  * Copyright (C) 2015 Android Open Kang Project (AOKP)
@@ -20,17 +23,22 @@ import com.jbirdvegas.mgerrit.objects.GerritMessage;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-// Event: A request was attempted which this Gerrit instance does not support
-public class NotSupported extends GerritMessage {
+public class ImageLoaded extends GerritMessage {
 
-    private final String mMessage;
+    private final Bitmap mBitmap;
 
-    public NotSupported(Intent intent, int queueId, String msg) {
+    public ImageLoaded(Intent intent, int queueId, Bitmap image) {
         super(intent, queueId);
-        mMessage = msg;
+        this.mBitmap = image;
     }
 
-    public String getMessage() {
-        return mMessage;
+    public Bitmap getImage() { return mBitmap; }
+
+    public String getFilePath() {
+        return getIntent().getStringExtra(GerritService.FILE_PATH);
+    }
+
+    public ChangedFileInfo.Status getFileStatus() {
+        return (ChangedFileInfo.Status) getIntent().getSerializableExtra(GerritService.FILE_STATUS);
     }
 }

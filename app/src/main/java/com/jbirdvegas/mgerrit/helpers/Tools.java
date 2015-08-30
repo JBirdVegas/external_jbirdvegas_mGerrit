@@ -31,16 +31,14 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.android.volley.Cache;
-import com.android.volley.NetworkResponse;
-import com.android.volley.toolbox.HttpHeaderParser;
+
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.SigninActivity;
 import com.jbirdvegas.mgerrit.activities.DiffViewer;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
-import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.objects.FileInfo;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -52,7 +50,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 import de.greenrobot.event.EventBus;
@@ -167,13 +164,13 @@ public class Tools {
 
     public static void colorPath(Resources r, TextView view,
                                  String statusText, boolean usingLightTheme) {
-        FileInfo.Status status = FileInfo.Status.getValue(statusText);
+        ChangedFileInfo.Status status = ChangedFileInfo.Status.getValue(statusText);
         int green = r.getColor(R.color.text_green);
         int red = r.getColor(R.color.text_red);
 
-        if (status == FileInfo.Status.ADDED) {
+        if (status == ChangedFileInfo.Status.ADDED) {
             view.setTextColor(green);
-        } else if (status == FileInfo.Status.DELETED) {
+        } else if (status == ChangedFileInfo.Status.DELETED) {
             view.setTextColor(red);
         } else {
             // Need to determine from the current theme what the default color is and set it back
@@ -222,50 +219,8 @@ public class Tools {
 
     public static boolean isImage(String filePath) {
         String fileExtention = getFileExtention(filePath);
-        return fileExtention.equals("png") || fileExtention.equals("jpg");
-    }
-
-    public static String getRevisionUrl(Context context, Integer changeNumber, Integer patchSetNumber) {
-        String ps;
-        if (patchSetNumber == null || patchSetNumber < 1) ps = "current";
-        else ps = String.valueOf(patchSetNumber);
-        return String.format("%schanges/%d/revisions/%s/patch?zip",
-                PrefsFragment.getCurrentGerrit(context),
-                changeNumber, ps);
-    }
-
-    /**
-     * Extracts a {@link com.android.volley.Cache.Entry} from a {@link com.android.volley.NetworkResponse}.
-     * Cache-control headers are ignored.
-     * @param response The network response to parse headers from
-     * @return a cache entry for the given response, or null if the response is not cacheable.
-     * @link http://stackoverflow.com/questions/16781244/android-volley-jsonobjectrequest-caching
-     */
-    public static Cache.Entry parseIgnoreCacheHeaders(NetworkResponse response,
-                                                      long cacheRefreshTime,
-                                                      long cacheExpiresTime) {
-        long now = System.currentTimeMillis();
-
-        Map<String, String> headers = response.headers;
-        long serverDate = 0;
-        String headerValue;
-
-        headerValue = headers.get("Date");
-        if (headerValue != null) {
-            serverDate = HttpHeaderParser.parseDateAsEpoch(headerValue);
-        }
-
-        final long softExpire = now + cacheRefreshTime;
-        final long ttl = now + cacheExpiresTime;
-
-        Cache.Entry entry = new Cache.Entry();
-        entry.data = response.data;
-        entry.etag = null; // Not worried about etag
-        entry.softTtl = softExpire;
-        entry.ttl = ttl;
-        entry.serverDate = serverDate;
-        entry.responseHeaders = headers;
-        return entry;
+        fileExtention = fileExtention.toLowerCase(Locale.US);
+        return fileExtention.equals("png") || fileExtention.equals("jpg") || fileExtention.equals("jpeg");
     }
 
     public static DateTime parseDate(String dateStr, TimeZone serverTimeZone, TimeZone localTimeZone) {
@@ -343,11 +298,11 @@ public class Tools {
             browserIntent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(Tools.getWebAddress(context, changeNumber)));
         } else {
-            String base =  "%s#/c/%d/%d/%s,unified";
+            String base =  "%s#/c/%d/%s,unified";
             browserIntent = new Intent(
                     Intent.ACTION_VIEW, Uri.parse(String.format(base,
                     PrefsFragment.getCurrentGerrit(context),
-                    changeNumber)));
+                    changeNumber, patchset, filePath)));
         }
 
         context.startActivity(browserIntent);

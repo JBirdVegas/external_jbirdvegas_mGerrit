@@ -1,7 +1,7 @@
 package com.jbirdvegas.mgerrit.objects;
 
 /*
- * Copyright (C) 2014 Android Open Kang Project (AOKP)
+ * Copyright (C) 2015 Android Open Kang Project (AOKP)
  *  Author: Evan Conway (P4R4N01D), 2015
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,17 +16,13 @@ package com.jbirdvegas.mgerrit.objects;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-/**
- * Created by Evan on 31/12/2014.
- */
 public interface Categorizable {
 
     /**
      * Returns the category text for the list item at a given position which can be used
      *  for displaying list headers
      **/
-    public String categoryName(int position);
+    String categoryName(int position);
 
-    public long categoryId(int position);
+    long categoryId(int position);
 }

@@ -23,11 +23,12 @@ import android.content.UriMatcher;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.google.gerrit.extensions.common.AccountInfo;
+import com.google.gerrit.extensions.common.ChangeMessageInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
-import com.jbirdvegas.mgerrit.objects.CommitComment;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MessageInfo extends DatabaseTable {
@@ -97,30 +98,30 @@ public class MessageInfo extends DatabaseTable {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE + "/#", ITEM_ID);
     }
 
-    public static int insertMessages(Context context, String changeid, List<CommitComment> comments) {
+    public static int insertMessages(Context context, String changeid, Collection<ChangeMessageInfo> comments) {
 
         List<ContentValues> values = new ArrayList<>();
 
-        for (CommitComment comment : comments) {
+        for (ChangeMessageInfo comment : comments) {
             if (comment == null) {
                 continue;
             }
             ContentValues row = new ContentValues(6);
             row.put(C_CHANGE_ID, changeid);
-            row.put(C_MESSAGE_ID, comment.getId());
+            row.put(C_MESSAGE_ID, comment.id);
 
-            CommitterObject author = comment.getAuthorObject();
+            AccountInfo author = comment.author;
             if (author != null) {
-                row.put(C_AUTHOR, author.getAccountId());
+                row.put(C_AUTHOR, author._accountId);
             } else {
                 /* We may not get an author object for automatic comments by Gerrit,
                  *  so put an ID of 0 instead, which we can later determine to be the server
                  */
                 row.put(C_AUTHOR, 0);
             }
-            row.put(C_TIMESTAMP, comment.getDate());
-            row.put(C_MESSAGE, comment.getMessage());
-            row.put(C_REVISION_NUMBER, comment.getRevisionNumber());
+            row.put(C_TIMESTAMP, comment.date.toString());
+            row.put(C_MESSAGE, comment.message);
+            row.put(C_REVISION_NUMBER, comment._revisionNumber);
             values.add(row);
         }
 

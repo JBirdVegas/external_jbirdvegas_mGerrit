@@ -40,7 +40,6 @@ public class ServerVersion implements Comparator<ServerVersion> {
     }
 
     /**
-     * @param currentVersion The current version of the server
      * @param baseVersion The version which added the feature where support is being tested
      * @return Whether the currentVersion supports the feature added in baseVersion. I.e.
      *  currentVersion >= baseVersion

@@ -21,32 +21,31 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.google.gerrit.extensions.api.GerritApi;
+import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
-import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
-import com.jbirdvegas.mgerrit.objects.AccountInfo;
-
+import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
+import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
 import de.greenrobot.event.EventBus;
 
-public class AccountProcessor extends SyncProcessor<AccountInfo> {
+public class AccountProcessor extends SyncProcessor<UserAccountInfo> {
 
     private final Intent mIntent;
-    private final String mUrl;
 
-    AccountProcessor(Context context, Intent intent, AccountEndpoints url) {
-        super(context, intent, url);
+    AccountProcessor(Context context, Intent intent) {
+        super(context, intent);
         mIntent = intent;
-        mUrl = url.toString();
     }
 
     @Override
-    int insert(AccountInfo data) {
+    int insert(UserAccountInfo data) {
         // Password is not returned in the response, but we can get it from the original intent
         data.password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
         Users.setUserDetails(mContext, data);
         Log.d(this.getClass().getName(), "You have successfully signed in: " + data.name + "(" + data.email + ")");
-        EventBus.getDefault().post(new SigninCompleted(mIntent, mUrl, data.username, data.password));
+        EventBus.getDefault().post(new SigninCompleted(mIntent, getQueueId(), data.username, data.password));
         return 1;
     }
 
@@ -56,12 +55,22 @@ public class AccountProcessor extends SyncProcessor<AccountInfo> {
     }
 
     @Override
-    Class<AccountInfo> getType() {
-        return AccountInfo.class;
+    int count(UserAccountInfo version) {
+        return 1;
     }
 
     @Override
-    int count(AccountInfo version) {
-        return 1;
+    UserAccountInfo getData(GerritRestApi gerritApi) throws RestApiException {
+        return new UserAccountInfo(gerritApi.accounts().self().get());
+    }
+
+    @Override
+    protected void fetchData() {
+        GerritRestApi gerritApi = getGerritApiInstance(true);
+        try {
+            onResponse(getData(gerritApi));
+        } catch (RestApiException e) {
+            handleException(e);
+        }
     }
 }

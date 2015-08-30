@@ -24,7 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 import com.jbirdvegas.mgerrit.helpers.DBParams;
-import com.jbirdvegas.mgerrit.objects.FileInfo;
+import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,27 +110,27 @@ public class FileInfoTable extends DatabaseTable {
         _urim.addURI(DatabaseFactory.AUTHORITY, TABLE + "/#", ITEM_ID);
     }
 
-    public static int insertChangedFiles(Context context, String changeid, String patchset,
-                                         List<FileInfo> diff) {
+    public static int insertChangedFiles(Context context, String changeid, int patchset,
+                                         List<ChangedFileInfo> files) {
 
         List<ContentValues> values = new ArrayList<>();
 
-        for (FileInfo file : diff) {
+        for (ChangedFileInfo file : files) {
             if (file == null) {
                 continue;
             }
             ContentValues row = new ContentValues(6);
             row.put(C_CHANGE_ID, changeid);
-            row.put(C_FILE_NAME, file.getPath());
+            row.put(C_FILE_NAME, file.path);
 
-            String oldPath = file.getOldPath();
+            String oldPath = file.oldPath;
             if (oldPath != null && !oldPath.isEmpty()) row.put(C_OLDPATH, oldPath);
 
             row.put(C_PATCH_SET_NUMBER, patchset);
-            row.put(C_LINES_INSERTED, file.getInserted());
-            row.put(C_LINES_DELETED, file.getDeleted());
-            row.put(C_STATUS, String.valueOf(file.getStatus()));
-            row.put(C_ISBINARY, file.isBinary());
+            row.put(C_LINES_INSERTED, file.linesInserted);
+            row.put(C_LINES_DELETED, file.linesDeleted);
+            row.put(C_STATUS, String.valueOf(file.status));
+            row.put(C_ISBINARY, file.binary);
             row.put(C_ISIMAGE, file.isImage());
             values.add(row);
         }

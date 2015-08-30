@@ -25,12 +25,9 @@ import android.support.v4.view.ViewPager;
 public class MyTabListener implements ActionBar.TabListener
 {
     private ViewPager mViewPager;
-    private Context mContext;
 
-    public MyTabListener(ViewPager viewPager, Context context)
-    {
+    public MyTabListener(ViewPager viewPager, Context context) {
         this.mViewPager = viewPager;
-        this.mContext = context;
     }
 
     @Override

@@ -20,27 +20,30 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
+import com.google.gerrit.extensions.client.ListChangesOption;
+import com.google.gerrit.extensions.common.ChangeInfo;
+import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.UserChanges;
-import com.jbirdvegas.mgerrit.requestbuilders.RequestBuilder;
-import com.jbirdvegas.mgerrit.objects.JSONCommit;
-import com.jbirdvegas.mgerrit.objects.Reviewer;
+import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.EnumSet;
 
-class CommitProcessor extends SyncProcessor<JSONCommit> {
+class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
-    CommitProcessor(Context context, Intent intent, RequestBuilder url) {
-        super(context, intent, url);
-        attemptAuthenticatedRequest(url);
+    private final String mChangeId;
+
+    CommitProcessor(Context context, Intent intent) {
+        super(context, intent);
+        mChangeId = intent.getStringExtra(GerritService.CHANGE_ID);
     }
 
     @Override
-    int insert(JSONCommit commit) {
+    int insert(ChangeInfo commit) {
         return doInsert(getContext(), commit);
     }
 
@@ -50,34 +53,46 @@ class CommitProcessor extends SyncProcessor<JSONCommit> {
     }
 
     @Override
-    Class<JSONCommit> getType() {
-        return JSONCommit.class;
-    }
-
-    @Override
-    int count(JSONCommit data) {
+    int count(ChangeInfo data) {
         return data == null ? 0 : 1;
     }
 
-    @Nullable
-    protected static Reviewer[] reviewersToArray(JSONCommit commit) {
-        List<Reviewer> rs = commit.getReviewers();
-        if (rs == null) return null;
-        return rs.toArray(new Reviewer[rs.size()]);
+    @Override
+    ChangeInfo getData(GerritRestApi gerritApi) throws RestApiException {
+        return gerritApi.changes().id(mChangeId).get(queryOptions());
     }
 
-    protected static int doInsert(Context context, JSONCommit commit) {
+    @Override
+    protected boolean doesProcessorConflict(@NotNull SyncProcessor processor) {
+        if (!this.getClass().equals(processor.getClass())) return false;
+        // Don't fetch the same changeid
+        String changeId = processor.getIntent().getStringExtra(GerritService.CHANGE_ID);
+        return mChangeId.equals(changeId);
+    }
+
+    protected static int doInsert(Context context, ChangeInfo commit) {
         if (commit == null) return 0;
 
-        String changeid = commit.getChangeId();
+        String changeid = commit.changeId;
 
-        Reviewer[] reviewers = reviewersToArray(commit);
-        Reviewers.insertReviewers(context, changeid, reviewers);
-        Revisions.insertRevision(context, commit.getPatchSet());
-        MessageInfo.insertMessages(context, changeid, commit.getMessagesList());
+        Reviewers.insertReviewers(context, changeid, commit.labels);
+        Revisions.insertRevision(context, changeid, commit.revisions.get(commit.currentRevision));
+        MessageInfo.insertMessages(context, changeid, commit.messages);
 
         UserChanges.updateChange(context, commit);
 
         return 1;
+    }
+
+    private EnumSet<ListChangesOption> queryOptions() {
+        EnumSet options = EnumSet.noneOf(ListChangesOption.class);
+        options.add(ListChangesOption.CURRENT_REVISION);
+        options.add(ListChangesOption.CURRENT_COMMIT);
+        options.add(ListChangesOption.CURRENT_FILES);
+        // Need the account id of the owner here to maintain FK db constraint
+        options.add(ListChangesOption.DETAILED_ACCOUNTS);
+        options.add(ListChangesOption.MESSAGES);
+        options.add(ListChangesOption.DETAILED_LABELS);
+        return options;
     }
 }

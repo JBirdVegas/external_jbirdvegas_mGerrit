@@ -186,7 +186,7 @@ public class ProjectsList extends Activity
 
     private void setSwipeRefreshLayout() {
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
-        mSwipeLayout.setColorScheme(R.color.text_orange, R.color.text_green, R.color.text_red,
+        mSwipeLayout.setColorSchemeResources(R.color.text_orange, R.color.text_green, R.color.text_red,
                 android.R.color.transparent);
         mSwipeLayout.setOnRefreshListener(mRefreshListener);
         mSwipeLayout.setEnabled(false);

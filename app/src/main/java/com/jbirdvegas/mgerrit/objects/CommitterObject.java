@@ -17,6 +17,7 @@ package com.jbirdvegas.mgerrit.objects;
  *  limitations under the License.
  */
 
+import com.google.gerrit.extensions.common.GitPerson;
 import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONException;
@@ -27,13 +28,17 @@ import org.json.JSONObject;
  *  and GitPerson info objects into one. As a result, some of these fields will
  *  be null.
  */
-public class CommitterObject {
+public class CommitterObject extends GitPerson {
     private static final String OWNER = "owner";
 
-    @SerializedName(JSONCommit.KEY_NAME)
+    public static final String KEY_ACCOUNT_ID = "_account_id";
+    public static final String KEY_EMAIL = "email";
+    public static final String KEY_NAME = "name";
+
+    @SerializedName(KEY_NAME)
     private final String mName;
 
-    @SerializedName(JSONCommit.KEY_EMAIL)
+    @SerializedName(KEY_EMAIL)
     private final String mEmail;
 
     @SerializedName("date")
@@ -42,7 +47,7 @@ public class CommitterObject {
     @SerializedName("tz")
     private final String mTimezone;
 
-    @SerializedName(JSONCommit.KEY_ACCOUNT_ID)
+    @SerializedName(KEY_ACCOUNT_ID)
     private final int mAccountId;
     // used when object is passed while looking for author specific
     // commits mState=[owner/author/committer/reviewer];
@@ -88,9 +93,9 @@ public class CommitterObject {
     public static CommitterObject getInstance(JSONObject jsonObject)
             throws JSONException {
         return new CommitterObject(
-                jsonObject.getString(JSONCommit.KEY_NAME),
-                jsonObject.getString(JSONCommit.KEY_EMAIL),
-                jsonObject.getInt(JSONCommit.KEY_ACCOUNT_ID));
+                jsonObject.getString(KEY_NAME),
+                jsonObject.getString(KEY_EMAIL),
+                jsonObject.getInt(KEY_ACCOUNT_ID));
     }
 
     public String getName() {
@@ -99,15 +104,6 @@ public class CommitterObject {
 
     public String getEmail() {
         return mEmail;
-    }
-
-    public CommitterObject setState(String state) {
-        this.mState = state;
-        return this;
-    }
-
-    public String getState() {
-        return mState;
     }
 
     public int getAccountId() {

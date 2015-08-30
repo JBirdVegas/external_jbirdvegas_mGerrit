@@ -7,9 +7,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 
+import com.google.gerrit.extensions.common.FileInfo;
+import com.google.gerrit.extensions.common.GitPerson;
+import com.google.gerrit.extensions.common.RevisionInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
-import com.jbirdvegas.mgerrit.objects.CommitInfo;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
+import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 /*
  * Copyright (C) 2014 Android Open Kang Project (AOKP)
@@ -28,7 +33,6 @@ import com.jbirdvegas.mgerrit.objects.CommitterObject;
  *  limitations under the License.
  *
  *  Contains information about a mRevision.
- *   This table corresponds largely to the CommitInfo object
  */
 public class Revisions extends DatabaseTable {
 
@@ -109,32 +113,36 @@ public class Revisions extends DatabaseTable {
                 C_CHANGE_ID + " = ?", new String[] { changeid }, null);
     }
 
-    public static void insertRevision(Context context, CommitInfo patchSet) {
+    public static void insertRevision(Context context, String changeId, RevisionInfo patchSet) {
         if (patchSet == null) {
             return; // We cannot do anything if we don't have any information
         }
 
-        String ps = patchSet.getPatchSetNumber();
+        int ps = patchSet._number;
         ContentValues row = new ContentValues(9);
 
-        row.put(C_CHANGE_ID, patchSet.getChangeId());
+        row.put(C_CHANGE_ID, changeId);
         row.put(C_PATCH_SET_NUMBER, ps);
-        row.put(C_COMMIT, patchSet.getCommit());
-        CommitterObject author = patchSet.getAuthorObject();
+        row.put(C_COMMIT, patchSet.commit.commit);
+        GitPerson author = patchSet.commit.author;
         if (author != null) {
-            row.put(C_AUTHOR, author.getEmail());
+            row.put(C_AUTHOR, author.email);
         }
-        CommitterObject committer = patchSet.getCommitterObject();
+        GitPerson committer = patchSet.commit.committer;
         if (committer != null) {
-            row.put(C_COMMITTER, committer.getEmail());
+            row.put(C_COMMITTER, committer.email);
         }
-        row.put(C_MESSAGE, patchSet.getMessage());
+        row.put(C_MESSAGE, patchSet.commit.message);
 
         Uri uri = DBParams.insertWithReplace(CONTENT_URI);
         context.getContentResolver().insert(uri, row);
 
+        ArrayList files = new ArrayList(patchSet.files.size());
+        for (Map.Entry<String, FileInfo> entry : patchSet.files.entrySet()) {
+            files.add(new ChangedFileInfo(entry.getKey(), entry.getValue()));
+        }
+
         // Insert the changed files into the FileInfoTable
-        FileInfoTable.insertChangedFiles(context, patchSet.getChangeId(), ps,
-                patchSet.getChangedFiles());
+        FileInfoTable.insertChangedFiles(context, changeId, ps, files);
     }
 }

@@ -3,8 +3,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.0'
-        classpath 'com.jakewharton.hugo:hugo-plugin:1.1.0'
+        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'org.ajoberstar:gradle-git:1.1.0'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
         classpath 'org.apache.commons:commons-lang3:3.4'
@@ -34,7 +34,7 @@ dependencies {
     compile files('libs/annotations.jar')
 
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.mcxiaoke.volley:library:1.0.12'
+    compile 'com.mcxiaoke.volley:library:1.0.18'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
     compile 'com.nineoldandroids:library:2.4.0'
@@ -46,6 +46,16 @@ dependencies {
         exclude module: 'support-v4'
     }
     compile 'de.hdodenhof:circleimageview:1.2.2'
+
+/*  TODO: Enable this when the Android variant of the Gerrit Rest Java Client is officially released
+       The corresponding jar can then be removed
+    compile('com.urswolfer.gerrit.client.rest:gerrit-rest-java-client:0.8.6-android') {
+        exclude module: 'httpclient'
+    }*/
+    compile files('libs/gerrit-rest-java-client-0.8.6-android.jar')
+    // These are dependencies of the gerrit-rest-java-client library above
+    compile 'com.google.guava:guava:18.0'
+    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
 }
 /**
  * Holds the complete formatted (incremented in specified) {@code android:versionCode}

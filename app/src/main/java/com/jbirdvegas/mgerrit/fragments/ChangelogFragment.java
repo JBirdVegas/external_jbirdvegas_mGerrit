@@ -113,22 +113,7 @@ public class ChangelogFragment extends Fragment {
 
     private void findDates() {
         // use Volley to get our packages list
-        Log.d(TAG, "Calling: " + mQuery);
-
-        /*mRequestQueue.add(
-                new JsonObjectRequest(
-                        Request.Method.GET,
-                        mQuery,
-                        null,
-                        new gooImResponseListener(),
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError volleyError) {
-                                Log.e(TAG, "Failed to get recent upload dates from goo.im!", volleyError);
-                                mParent.setProgressBarIndeterminateVisibility(false);
-                            }
-                        }));
-        mRequestQueue.start();*/
+        Log.d(TAG, "Depricated ChangelogFragment.findDates called!");
     }
 
     private void setupList(List<GooFileObject> gooFilesList) {

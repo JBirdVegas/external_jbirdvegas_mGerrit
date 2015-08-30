@@ -20,63 +20,53 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request.Method;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.google.gerrit.extensions.api.accounts.AccountApi;
+import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
-import com.jbirdvegas.mgerrit.helpers.Tools;
-import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.NotSupported;
 import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
-import com.jbirdvegas.mgerrit.requestbuilders.AccountEndpoints;
+import com.urswolfer.gerrit.client.rest.GerritRestApi;
+
+import org.jetbrains.annotations.NotNull;
 
 public class StarProcessor extends SyncProcessor<String> {
 
     private final Intent mIntent;
-    private final AccountEndpoints mUrl;
     private boolean mIsStarring;
-    private Authenticateable<String> request;
+    private String mChangeId;
 
-    StarProcessor(Context context, Intent intent, AccountEndpoints url) {
-        super(context, intent, url);
+    StarProcessor(Context context, Intent intent) {
+        super(context, intent);
         mIntent = intent;
-        mUrl = url;
         mIsStarring = mIntent.getBooleanExtra(GerritService.IS_STARRING, true);
+        mChangeId = mIntent.getStringExtra(GerritService.CHANGE_ID);
     }
 
     @Override
     int insert(String responseCode) {
-        String changeId = mIntent.getStringExtra(GerritService.CHANGE_ID);
         int changeNumber = mIntent.getIntExtra(GerritService.CHANGE_NUMBER, 0);
-        Changes.starChange(mContext, changeId, changeNumber, mIsStarring);
+        Changes.starChange(mContext, mChangeId, changeNumber, mIsStarring);
         return 1;
     }
 
     @Override
     boolean isSyncRequired(Context context) {
         ServerVersion version = Config.getServerVersion(context);
-        if (version.isFeatureSupported(ServerVersion.VERSION_STAR)) {
+        if (version != null && version.isFeatureSupported(ServerVersion.VERSION_STAR)) {
             return true;
         } else {
             String gerrit = PrefsFragment.getCurrentGerritName(context);
             String msg = String.format(context.getString(R.string.star_change_not_supported), gerrit, ServerVersion.VERSION_STAR);
-            GerritMessage ev = new NotSupported(mIntent, mUrl.toString(), msg);
+            GerritMessage ev = new NotSupported(mIntent, getQueueId(), msg);
             EventQueue.getInstance().enqueue(ev, false);
             return false;
         }
 
-    }
-
-    @Override
-    Class<String> getType() {
-        return String.class;
     }
 
     @Override
@@ -85,24 +75,18 @@ public class StarProcessor extends SyncProcessor<String> {
     }
 
     @Override
-    protected void fetchData(RequestQueue queue) {
-        final String url = mUrl.toString();
+    protected String getData(GerritRestApi gerritApi) throws RestApiException {
+        AccountApi self = gerritApi.accounts().self();
+        if (mIsStarring) self.starChange(mChangeId);
+        else gerritApi.accounts().self().unstarChange(mChangeId);
+        return "204";
+    }
 
-        request = new TextRequest(
-                mIsStarring ? Method.PUT : Method.DELETE, url,
-                getListener(url), new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (error instanceof AuthFailureError) {
-                    Tools.launchSignin(mContext);
-                }
-                // We still want to post the exception
-                // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
-                GerritMessage ev = new ErrorDuringConnection(mIntent, url, null, error);
-                EventQueue.getInstance().enqueue(ev, true);
-            }
-        });
-
-        this.fetchData(mUrl, request, queue);
+    @Override
+    protected boolean doesProcessorConflict(@NotNull SyncProcessor processor) {
+        if (!this.getClass().equals(processor.getClass())) return false;
+        // Don't star the same changeid
+        String changeId = processor.getIntent().getStringExtra(GerritService.CHANGE_ID);
+        return mChangeId.equals(changeId);
     }
 }

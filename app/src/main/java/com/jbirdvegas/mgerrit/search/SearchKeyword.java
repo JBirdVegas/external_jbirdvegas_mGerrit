@@ -17,17 +17,21 @@ package com.jbirdvegas.mgerrit.search;
  *  limitations under the License.
  */
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -350,6 +354,27 @@ public abstract class SearchKeyword implements Parcelable {
             currentToken.append(query.substring(i + 1, index));
             return index;
         }
+    }
+
+    @NotNull
+    public static StringBuilder asQuery(Context context, List<SearchKeyword> keywords)
+            throws UnsupportedEncodingException {
+        StringBuilder builder = new StringBuilder();
+        ServerVersion version = Config.getServerVersion(context);
+        boolean addSeperator = false;
+        if (keywords != null && !keywords.isEmpty()) {
+            for (SearchKeyword keyword : keywords) {
+                String operator =  URLEncoder.encode(keyword.getGerritQuery(version), "UTF-8");
+                if (operator != null && !operator.isEmpty()) {
+                    if (addSeperator) {
+                        builder.append('+');
+                    }
+                    builder.append(operator);
+                    addSeperator = true;
+                }
+            }
+        }
+        return builder;
     }
 
     /* Whether this query can return more than one result */

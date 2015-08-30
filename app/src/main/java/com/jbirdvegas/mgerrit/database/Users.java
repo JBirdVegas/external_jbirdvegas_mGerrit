@@ -25,13 +25,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
-import android.util.Pair;
 
+import com.google.gerrit.extensions.common.AccountInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
-import com.jbirdvegas.mgerrit.objects.AccountInfo;
-import com.jbirdvegas.mgerrit.objects.CommitterObject;
+import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Users extends DatabaseTable {
@@ -94,30 +94,30 @@ public class Users extends DatabaseTable {
     }
 
     /** Insert the list of users into the database **/
-    public static int insertUsers(Context context, CommitterObject[] users) {
+    public static int insertUsers(Context context, Collection<AccountInfo> users) {
 
         List<ContentValues> values = new ArrayList<>();
 
-        AccountInfo self = getUser(context, null);
+        UserAccountInfo self = getUser(context, null);
 
-        for (CommitterObject user : users) {
+        for (AccountInfo user : users) {
             ContentValues row = new ContentValues();
             if (user == null) {
                 continue;
-            } else if (self != null && user.getAccountId() == self._account_id) {
+            } else if (self != null && user._accountId == self.getAccountId()) {
                 // If we find ourself in this list, add in the username and password otherwise the
                 // user will be signed out.
                 row.put(C_USENRAME, self.username);
                 row.put(C_PASSWORD, self.password);
             }
 
-            row.put(C_ACCOUNT_ID, user.getAccountId());
-            row.put(C_EMAIL, user.getEmail());
-            String name = user.getName();
+            row.put(C_ACCOUNT_ID, user._accountId);
+            row.put(C_EMAIL, user.email);
+            String name = user.name;
             if (name != null && name.length() > 0) {
                 row.put(C_NAME, name);
             } else {
-                Log.w(TABLE, String.format("User with account id %d has no name.", user.getAccountId()));
+                Log.w(TABLE, String.format("User with account id %d has no name.", user._accountId));
                 row.put(C_NAME, "Unknown");
             }
             values.add(row);
@@ -131,13 +131,13 @@ public class Users extends DatabaseTable {
 
     public static Uri insertUser(Context context, int id, String name, String email) {
         ContentValues userValues = new ContentValues();
-        AccountInfo self = getUser(context, null);
+        UserAccountInfo self = getUser(context, null);
 
         userValues.put(C_ACCOUNT_ID, id);
         userValues.put(C_EMAIL, email);
         userValues.put(C_NAME, name);
 
-        if (self != null && id == self._account_id) {
+        if (self != null && id == self.getAccountId()) {
             // If we find ourself in this list, add in the username and password otherwise the
             // user will be signed out.
             userValues.put(C_USENRAME, self.username);
@@ -182,10 +182,10 @@ public class Users extends DatabaseTable {
      * @param userid A user id
      * @return A cursor object containing at most one row
      */
-    public static AccountInfo getUser(Context context, Integer userid) {
+    public static UserAccountInfo getUser(Context context, Integer userid) {
         Uri uri = DBParams.fetchOneRow(CONTENT_URI);
         Cursor c;
-        AccountInfo ai = null;
+        UserAccountInfo ai = null;
 
         if (userid == null || userid < 0) {
             // If the user id is null then we will treat this as a call to get self
@@ -199,7 +199,7 @@ public class Users extends DatabaseTable {
                     null);
         }
         if (c.moveToFirst()) {
-            ai = new AccountInfo(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4));
+            ai = new UserAccountInfo(c.getInt(0), c.getString(1), c.getString(2), c.getString(3), c.getString(4));
         }
         c.close();
         return ai;
@@ -211,9 +211,9 @@ public class Users extends DatabaseTable {
                 C_USENRAME + " IS NOT NULL AND " + C_PASSWORD + " IS NOT NULL", null, null);
     }
 
-    public static void setUserDetails(Context context, AccountInfo info) {
+    public static void setUserDetails(Context context, UserAccountInfo info) {
         ContentValues userValues = new ContentValues(5);
-        userValues.put(C_ACCOUNT_ID, info._account_id);
+        userValues.put(C_ACCOUNT_ID, info.getAccountId());
         userValues.put(C_EMAIL, info.email);
         userValues.put(C_NAME, info.name);
         userValues.put(C_USENRAME, info.username);

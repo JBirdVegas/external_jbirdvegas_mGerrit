@@ -29,5 +29,5 @@
 
     <!-- Maximum number of changes to fetch at once.
         Set this to a negative number to not specify a limit -->
-    <integer name="changes_limit">100</integer>
+    <integer name="changes_limit">50</integer>
 </resources>
