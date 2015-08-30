@@ -26,7 +26,6 @@ apply plugin: 'checkstyle'
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {
@@ -48,10 +47,15 @@ dependencies {
     }
     compile 'de.hdodenhof:circleimageview:1.2.2'
 
+/*  TODO: Enable this when the Android variant of the Gerrit Rest Java Client is officially released
+       The corresponding jar can then be removed
     compile('com.urswolfer.gerrit.client.rest:gerrit-rest-java-client:0.8.6-android') {
         exclude module: 'httpclient'
-
-    }
+    }*/
+    compile files('libs/gerrit-rest-java-client-0.8.6-android.jar')
+    // These are dependencies of the gerrit-rest-java-client library above
+    compile 'com.google.guava:guava:18.0'
+    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
 }
 /**
  * Holds the complete formatted (incremented in specified) {@code android:versionCode}
