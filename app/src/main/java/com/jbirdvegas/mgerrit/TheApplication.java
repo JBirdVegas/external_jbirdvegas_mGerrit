@@ -43,7 +43,7 @@ public class TheApplication extends Application
         // Don't spam logs with no subscriber event messages as some are used only on tablet devices
         EventBus.builder().logNoSubscriberMessages(false).sendNoSubscriberEvent(false).installDefaultEventBus();
 
-        requestServerVersion();
+        requestServerVersion(false);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TheApplication extends Application
 
         EventBus.getDefault().post(new GerritChanged(newGerrit));
 
-        requestServerVersion();
+        requestServerVersion(false);
     }
 
     @Override
@@ -81,9 +81,10 @@ public class TheApplication extends Application
     /**
      * Starts a request to check the server version
      */
-    private void requestServerVersion() {
+    public void requestServerVersion(boolean force) {
         Intent it = new Intent(this, GerritService.class);
         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.GetVersion);
+        it.putExtra(GerritService.FORCE_UPDATE, force);
         startService(it);
     }
 }

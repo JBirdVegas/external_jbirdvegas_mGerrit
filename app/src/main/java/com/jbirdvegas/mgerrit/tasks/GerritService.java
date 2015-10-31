@@ -53,6 +53,9 @@ public class GerritService extends IntentService {
     public static final String FILE_PATH = "file_path";
     public static final String FILE_STATUS = "file_status";
 
+    // Bypass the sync required logic and force a sync
+    public static final String FORCE_UPDATE = "force";
+
     public enum DataType { Project, Commit, CommitDetails, GetVersion, Account, Star, Diff, Image }
 
     // A list of the currently running sync processors
@@ -94,12 +97,14 @@ public class GerritService extends IntentService {
             return;
         }
 
+        boolean force = intent.getBooleanExtra(FORCE_UPDATE, false);
+
         // We may already be running this type of sync processor so check if it is allowed
         //  to be added to the list of running sync processors
         if (allowNewInstance(processor)) {
             // Call the SyncProcessor to fetch the data if necessary
             boolean needsSync = processor.isSyncRequired(this);
-            if (needsSync) {
+            if (needsSync || force) {
                 int queueId = sQueueId;
                 sQueueId += 1;
                 sRunningTasks.put(queueId, processor);

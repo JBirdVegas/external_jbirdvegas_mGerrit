@@ -39,6 +39,7 @@ import com.google.analytics.tracking.android.Logger;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.google.analytics.tracking.android.Tracker;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.TheApplication;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.fragments.ChangeListFragment;
 import com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment;
@@ -215,6 +216,9 @@ public class GerritControllerActivity extends FragmentActivity {
      */
     public void refreshTabs() {
         mChangeList.refreshTabs();
+
+        // Hack this in to fix problem when Gerrits are updated and we don't update the version again
+        ((TheApplication) getApplication()).requestServerVersion(true);
     }
 
     @Override

@@ -17,7 +17,7 @@
 ~  limitations under the License.
 -->
 
-<!-- Place application-specific constatnts here -->
+<!-- Place application-specific constants here -->
 <resources>
     <!-- Interval between project list synchronizations (in milliseconds)
         Sync at most once every 24 hours -->
