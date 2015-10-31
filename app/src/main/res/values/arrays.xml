@@ -51,7 +51,7 @@
         <item>http://review.pac-rom.com/</item>
         <item>https://gerrit.paranoidandroid.co/</item>
         <item>http://review.gummyrom.com/</item>
-        <item>https://gerrit.slimroms.net</item>
+        <item>https://review.slimroms.org</item>
         <item>https://gerrit.wikimedia.org/r/</item>
         <item>https://review.openstack.org/</item>
     </string-array>
