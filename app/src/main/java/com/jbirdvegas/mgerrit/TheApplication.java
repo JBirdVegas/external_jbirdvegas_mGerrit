@@ -1,9 +1,11 @@
 package com.jbirdvegas.mgerrit;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDex;
 
 import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
@@ -76,6 +78,12 @@ public class TheApplication extends Application
         if (key.equals(PrefsFragment.APP_THEME)) {
             this.setTheme(PrefsFragment.getCurrentThemeID(this));
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     /**

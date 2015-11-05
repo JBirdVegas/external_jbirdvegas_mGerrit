@@ -24,6 +24,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,7 +39,7 @@ import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
 import java.util.HashSet;
 
-public class AOKPChangelog extends FragmentActivity implements ChangelogActivity {
+public class AOKPChangelog extends AppCompatActivity implements ChangelogActivity {
 
     private String mQuery = "https://goo.im/json2&path=/devs/aokp/" + Build.DEVICE + "/nightly";
 

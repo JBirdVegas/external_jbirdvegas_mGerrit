@@ -16,28 +16,39 @@
   -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="ActionBar" parent="android:Widget.Holo.ActionBar">
+    <style name="ActionBar" parent="Widget.AppCompat.Light.ActionBar">
         <item name="android:indeterminateProgressStyle">@style/IndeterminateProgress</item>
     </style>
 
-    <style name="ActionBar.Light">
+    <style name="NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+ <!--   <style name="ActionBar.Light">
         <item name="android:background">@drawable/ab_transparent</item>
     </style>
 
     <style name="ActionBar.Dark">
         <item name="android:background">@drawable/ab_transparent_dark</item>
-    </style>
+    </style>-->
 
-    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+    <style name="NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="NoActionBar.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark" />
+
+    <style name="NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="NoActionBar.PopupOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark" />
+
+    <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_action_overflow</item>
     </style>
 
-    <style name="OverFlow.Dark" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+    <style name="OverFlow.Dark" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_action_overflow_dark</item>
     </style>
 
     <!-- Resize the action bar activity indicator to match the other action items -->
-    <style name="IndeterminateProgress" parent="@android:style/Widget.Holo.ProgressBar.Small">
+    <style name="IndeterminateProgress" parent="Widget.AppCompat.ProgressBar">
         <item name="android:minWidth">32dp</item>
         <item name="android:minHeight">32dp</item>
         <item name="android:width">48dp</item>
@@ -185,7 +196,7 @@
     <style name="SigninFailure" parent="CardText.Deleted.Dark" />
     <style name="SigninFailure.Light" parent="CardText.Deleted.Light" />
 
-    <style name="BorderlessBackground" parent="android:Widget.Holo.Light.Button.Borderless.Small"/>
-    <style name="BorderlessBackground.Dark" parent="android:Widget.Holo.Button.Borderless.Small"/>
+    <style name="BorderlessBackground" parent="Widget.AppCompat.Button.Borderless"/>
+    <style name="BorderlessBackground.Dark" parent="Widget.AppCompat.Button.Borderless"/>
 
 </resources>

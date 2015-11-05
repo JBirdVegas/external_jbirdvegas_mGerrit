@@ -21,6 +21,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,7 +57,7 @@ import java.util.Set;
  *   (android.app.DialogFragment) to be invoked from the Preferences
  *   as there is no PreferenceFragment class in the support library.
  */
-public class GerritSwitcher extends FragmentActivity {
+public class GerritSwitcher extends AppCompatActivity {
 
     public static final String TAG = "GerritSwitcher";
 

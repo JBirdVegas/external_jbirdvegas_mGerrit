@@ -27,6 +27,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +61,7 @@ import hugo.weaving.DebugLog;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment}.
  */
-public class PatchSetViewerActivity extends FragmentActivity
+public class PatchSetViewerActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private ShareActionProvider mShareActionProvider;

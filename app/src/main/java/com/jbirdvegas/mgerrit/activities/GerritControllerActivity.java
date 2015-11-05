@@ -26,11 +26,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -53,7 +59,7 @@ import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
 import de.greenrobot.event.EventBus;
 
-public class GerritControllerActivity extends FragmentActivity {
+public class GerritControllerActivity extends AppCompatActivity {
 
     private static final String GERRIT_INSTANCE = "gerrit";
     private String mGerritWebsite;
@@ -69,6 +75,8 @@ public class GerritControllerActivity extends FragmentActivity {
 
     private int mTheme;
     private GerritSearchView mSearchView;
+    private DrawerLayout mDrawer;
+    private ListView mDrawerList;
 
     @Override
     protected void onStart() {
@@ -141,6 +149,25 @@ public class GerritControllerActivity extends FragmentActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (GerritSearchView) findViewById(R.id.search);
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        initNavigationDrawer();
+    }
+
+    /**
+     * Initialises the left navigation mDrawer and sets an adapter for the content
+     */
+    private void initNavigationDrawer() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+
+        setSupportActionBar(toolbar);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        //mDrawerList = (ListView) findViewById(R.id.lv_left_drawer);
+        // mDrawerList.setOnItemClickListener(this);
     }
 
     @Override

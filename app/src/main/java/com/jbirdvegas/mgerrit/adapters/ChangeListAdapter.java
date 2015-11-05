@@ -24,7 +24,6 @@ import android.net.Uri;
 import android.util.Pair;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.SimpleCursorAdapter;

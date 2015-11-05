@@ -17,11 +17,10 @@
   -->
 
 <resources>
-    <style name="Theme.Light" parent="android:style/Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/ActionBar.Light</item>
-        <item name="android:actionModeBackground">@drawable/ab_transparent</item>
+    <style name="Theme.Light" parent="Theme.AppCompat.Light">
         <item name="android:textColorPrimary">@color/actionbar_text</item>
-        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
+        <item name="appBarTheme">@style/NoActionBar.AppBarOverlay</item>
+        <item name="toolbarTheme">@style/NoActionBar.PopupOverlay.Dark</item>
         <item name="gerritIcon">@drawable/ic_menu_source</item>
         <item name="projectsIcon">@drawable/ic_menu_project</item>
         <item name="refreshIcon">@drawable/ic_action_refresh</item>
@@ -54,10 +53,10 @@
         <item name="overflowIcon">@drawable/horiz_overflow</item>
     </style>
 
-    <style name="Theme.Dark" parent="android:style/Theme.Holo">
-        <item name="android:actionBarStyle">@style/ActionBar.Dark</item>
+    <style name="Theme.Dark" parent="Theme.AppCompat">
         <item name="android:textColorPrimary">@color/actionbar_text_dark</item>
-        <item name="android:actionOverflowButtonStyle">@style/OverFlow.Dark</item>
+        <item name="appBarTheme">@style/NoActionBar.AppBarOverlay</item>
+        <item name="toolbarTheme">@style/NoActionBar.PopupOverlay.Dark</item>
         <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
         <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
         <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
