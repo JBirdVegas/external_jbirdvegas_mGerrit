@@ -24,11 +24,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -36,7 +32,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -55,7 +50,11 @@ import com.jbirdvegas.mgerrit.helpers.ROMHelper;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.NotSupported;
+import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import de.greenrobot.event.EventBus;
 
@@ -75,8 +74,7 @@ public class GerritControllerActivity extends AppCompatActivity {
 
     private int mTheme;
     private GerritSearchView mSearchView;
-    private DrawerLayout mDrawer;
-    private ListView mDrawerList;
+    private Drawer mDrawer;
 
     @Override
     protected void onStart() {
@@ -127,7 +125,7 @@ public class GerritControllerActivity extends AppCompatActivity {
         AnalyticsHelper.sendAnalyticsEvent(this, AnalyticsHelper.GA_APP_OPEN,
                 AnalyticsHelper.GA_THEME_SET_ON_OPEN, PrefsFragment.getCurrentTheme(this), null);
 
-        setContentView(R.layout.main);
+        setContentView(R.layout.partial_app_bar);
 
         FragmentManager fm = getSupportFragmentManager();
         if (findViewById(R.id.change_detail_fragment) != null) {
@@ -158,16 +156,18 @@ public class GerritControllerActivity extends AppCompatActivity {
      */
     private void initNavigationDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-
         setSupportActionBar(toolbar);
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawer.setDrawerListener(toggle);
-        toggle.syncState();
 
-        //mDrawerList = (ListView) findViewById(R.id.lv_left_drawer);
-        // mDrawerList.setOnItemClickListener(this);
+        mDrawer = new DrawerBuilder().withActivity(this).withToolbar(toolbar)
+                .withCloseOnClick(true).inflateMenu(R.menu.main_drawer)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        boolean result = onMenuItemSelected(drawerItem.getIdentifier());
+                        mDrawer.closeDrawer();
+                        return result;
+                    }
+                }).build();
     }
 
     @Override
@@ -186,9 +186,12 @@ public class GerritControllerActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        return onMenuItemSelected(item.getItemId()) || super.onOptionsItemSelected(item);
+    }
 
+    private boolean onMenuItemSelected(int itemId) {
         Intent intent;
-        switch (item.getItemId()) {
+        switch (itemId) {
             case R.id.menu_save:
                 intent = new Intent(this, PrefsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -221,8 +224,15 @@ public class GerritControllerActivity extends AppCompatActivity {
             case R.id.menu_search:
                 // Toggle the visibility of the searchview
                 mSearchView.toggleVisibility();
+            case R.id.menu_changes:
+                // Clear the search query
+                mSearchView.setVisibility(View.GONE);
+                return true;
+            case R.id.menu_starred:
+                mSearchView.replaceKeyword(new IsSearch("starred"), true);
+                return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return false;
         }
     }
 

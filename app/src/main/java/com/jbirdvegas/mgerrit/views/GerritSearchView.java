@@ -232,7 +232,7 @@ public class GerritSearchView extends SearchView
         return newSet;
     }
 
-    private void replaceKeyword(SearchKeyword keyword, boolean submit) {
+    public void replaceKeyword(SearchKeyword keyword, boolean submit) {
         String currentQuery = getQuery().toString();
         String query = SearchKeyword.replaceKeyword(currentQuery, keyword);
         if (!query.equals(currentQuery)) this.setQuery(query, submit);

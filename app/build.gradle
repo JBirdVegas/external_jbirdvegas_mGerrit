@@ -61,6 +61,11 @@ dependencies {
 
     // We have too many methods including the appcompat library
     compile 'com.android.support:multidex:1.0.0'
+
+    compile('com.mikepenz:materialdrawer:4.4.6@aar') {
+        transitive = true
+        exclude module: 'appcompat-v7'
+    }
 }
 /**
  * Holds the complete formatted (incremented in specified) {@code android:versionCode}

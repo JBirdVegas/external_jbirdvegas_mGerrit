@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/menu_gerrit_instance" android:id="@+id/menu_heading" android:checkable="false">
+        <menu>
+            <item android:id="@+id/menu_changes" android:icon="?attr/viewIcon" android:title="View Changes" />
+            <item android:id="@+id/menu_starred" android:icon="?attr/starredIcon" android:title="Starred Changes" />
+            <item android:id="@+id/menu_projects" android:title="Projects" />
+        </menu>
+    </item>
+
+</menu>
