@@ -26,6 +26,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -74,8 +75,6 @@ public class ProjectsList extends BaseDrawerActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.projects_list);
-
-        setupActionBar();
 
         initNavigationDrawer();
 
@@ -131,11 +130,12 @@ public class ProjectsList extends BaseDrawerActivity
     }
 
     @Override
-    protected void setupActionBar() {
-        super.setupActionBar();
+    protected Toolbar setupActionBar() {
+        Toolbar toolbar = super.setupActionBar();
         // Action bar Up affordance
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(R.string.menu_projects);
+        return toolbar;
     }
 
     private void loadAdapter(){

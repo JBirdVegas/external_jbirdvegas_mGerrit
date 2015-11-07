@@ -77,8 +77,7 @@ public class BaseDrawerActivity extends AppCompatActivity
      * Initialises the left navigation mDrawer and sets an adapter for the content
      */
     protected void initNavigationDrawer() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
+        Toolbar toolbar = setupActionBar();
 
         mRequestQuery = Volley.newRequestQueue(this);
 
@@ -139,9 +138,10 @@ public class BaseDrawerActivity extends AppCompatActivity
         addGerritsToDrawer();
     }
 
-    protected void setupActionBar() {
+    protected Toolbar setupActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+        return toolbar;
     }
 
     protected Drawer getDrawer() {

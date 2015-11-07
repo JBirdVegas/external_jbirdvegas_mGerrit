@@ -22,10 +22,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -50,7 +49,7 @@ import java.util.regex.Pattern;
 
 import de.greenrobot.event.EventBus;
 
-public class DiffViewer extends AppCompatActivity
+public class DiffViewer extends BaseDrawerActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private String mLineSplit = System.getProperty("line.separator");
@@ -102,6 +101,8 @@ public class DiffViewer extends AppCompatActivity
     private enum DiffType { Loading, Text, Image }
 
 
+    public static int LOADER_DIFF = 14;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.setTheme(PrefsFragment.getCurrentThemeID(this));
@@ -109,15 +110,13 @@ public class DiffViewer extends AppCompatActivity
 
         setContentView(R.layout.diff_viewer);
 
-        // Action bar Up affordance
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
         Intent intent = getIntent();
         mChangeNumber = getIntent().getIntExtra(CHANGE_NUMBER_TAG, 0);
         if (mChangeNumber == 0) {
             throw new IllegalArgumentException("Cannot load diff without a change number");
         }
 
+        initNavigationDrawer();
         setChangeTitle(mChangeNumber);
 
         mFilePath = intent.getStringExtra(FILE_PATH_TAG);
@@ -138,7 +137,7 @@ public class DiffViewer extends AppCompatActivity
         mAdapter = new FileAdapter(this, null);
         mSpinner.setAdapter(mAdapter);
         mSpinner.setOnItemSelectedListener(mSelectedListener);
-        getSupportLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().initLoader(LOADER_DIFF, null, this);
 
         mEventBus = EventBus.getDefault();
     }
@@ -227,25 +226,36 @@ public class DiffViewer extends AppCompatActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return FileChanges.getDiffableFiles(this, mChangeNumber);
+        if (i == LOADER_DIFF) {
+            return FileChanges.getDiffableFiles(this, mChangeNumber);
+        } else {
+            return super.onCreateLoader(i, bundle);
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        mAdapter.swapCursor(cursor);
-        if (cursor != null && cursor.isAfterLast()) {
-            //if (request != null) request.cancel(); TODO: What was this doing?
-            mDiffTextView.setText(getString(R.string.diff_no_files));
+        if (cursorLoader.getId() == LOADER_DIFF) {
+            mAdapter.swapCursor(cursor);
+            if (cursor != null && cursor.isAfterLast()) {
+                //if (request != null) request.cancel(); TODO: What was this doing?
+                mDiffTextView.setText(getString(R.string.diff_no_files));
+            }
+
+            int pos = mAdapter.getPositionOfFile(mFilePath);
+            if (pos >= 0) mSpinner.setSelection(pos);
+        } else {
+            super.onLoadFinished(cursorLoader, cursor);
         }
-
-        int pos = mAdapter.getPositionOfFile(mFilePath);
-        if (pos >= 0) mSpinner.setSelection(pos);
-
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        mAdapter.swapCursor(null);
+        if (cursorLoader.getId() == LOADER_DIFF) {
+            mAdapter.swapCursor(null);
+        } else {
+            super.onLoaderReset(cursorLoader);
+        }
     }
 
     public void onEventMainThread(ChangeDiffLoaded ev) {
