@@ -19,11 +19,11 @@ package com.jbirdvegas.mgerrit.database;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.v4.content.CursorLoader;
 import android.util.Pair;
 
 import com.google.gerrit.extensions.common.ProjectInfo;

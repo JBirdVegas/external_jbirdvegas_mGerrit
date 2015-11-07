@@ -1,8 +1,7 @@
-package com.jbirdvegas.mgerrit.activities;
-
 /*
- * Copyright (C) 2013 Android Open Kang Project (AOKP)
- *  Author: Jon Stanford (JBirdVegas), 2013
+ *
+ * Copyright (C) 2015 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (p4r4n01d), 2015
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +14,10 @@ package com.jbirdvegas.mgerrit.activities;
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
+
+package com.jbirdvegas.mgerrit.activities;
 
 import android.app.AlertDialog.Builder;
 import android.app.SearchManager;
@@ -25,8 +27,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,18 +52,13 @@ import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.NotSupported;
 import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import de.greenrobot.event.EventBus;
 
-public class GerritControllerActivity extends AppCompatActivity {
+public class GerritControllerActivity extends BaseDrawerActivity {
 
     private static final String GERRIT_INSTANCE = "gerrit";
     private String mGerritWebsite;
-
-    private Menu mMenu;
 
     // Indicates if we are running this in tablet mode.
     private boolean mTwoPane = false;
@@ -74,7 +69,6 @@ public class GerritControllerActivity extends AppCompatActivity {
 
     private int mTheme;
     private GerritSearchView mSearchView;
-    private Drawer mDrawer;
 
     @Override
     protected void onStart() {
@@ -125,7 +119,7 @@ public class GerritControllerActivity extends AppCompatActivity {
         AnalyticsHelper.sendAnalyticsEvent(this, AnalyticsHelper.GA_APP_OPEN,
                 AnalyticsHelper.GA_THEME_SET_ON_OPEN, PrefsFragment.getCurrentTheme(this), null);
 
-        setContentView(R.layout.partial_app_bar);
+        setContentView(R.layout.main);
 
         FragmentManager fm = getSupportFragmentManager();
         if (findViewById(R.id.change_detail_fragment) != null) {
@@ -139,48 +133,27 @@ public class GerritControllerActivity extends AppCompatActivity {
 
         mChangeList = (ChangeListFragment) fm.findFragmentById(R.id.change_list_fragment);
 
+        // Need to initialise this before we get the name of the current Gerrit
+        initNavigationDrawer();
+
         mGerritWebsite = PrefsFragment.getCurrentGerrit(this);
         String gerritName = PrefsFragment.getCurrentGerritName(this);
-        if (gerritName != null) setTitle(gerritName);
+        if (gerritName != null) {
+            setTitle(gerritName);
+            getGerritDrawerItem().withName(gerritName);
+        }
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (GerritSearchView) findViewById(R.id.search);
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-
-        initNavigationDrawer();
-    }
-
-    /**
-     * Initialises the left navigation mDrawer and sets an adapter for the content
-     */
-    private void initNavigationDrawer() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
-
-        mDrawer = new DrawerBuilder().withActivity(this).withToolbar(toolbar)
-                .withCloseOnClick(true).inflateMenu(R.menu.main_drawer)
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        boolean result = onMenuItemSelected(drawerItem.getIdentifier());
-                        mDrawer.closeDrawer();
-                        return result;
-                    }
-                }).build();
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        hideChangelogOption(PrefsFragment.getCurrentGerrit(this));
-        return super.onPrepareOptionsMenu(menu);
+        setSearchView(mSearchView);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.gerrit_instances_menu, menu);
-        this.mMenu = menu;
         return true;
     }
 
@@ -215,12 +188,6 @@ public class GerritControllerActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
                 return true;
-            case R.id.menu_changelog:
-                // TODO: Send the current search query along too.
-                Intent changelog = new Intent(this, AOKPChangelog.class);
-                changelog.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(changelog);
-                return true;
             case R.id.menu_search:
                 // Toggle the visibility of the searchview
                 mSearchView.toggleVisibility();
@@ -242,8 +209,10 @@ public class GerritControllerActivity extends AppCompatActivity {
                 getString(R.string.using_gerrit_toast) + ' ' + newGerrit,
                 Toast.LENGTH_LONG).show();
         String gerritName = PrefsFragment.getCurrentGerritName(this);
-        if (gerritName != null) setTitle(gerritName);
-        hideChangelogOption(newGerrit);
+        if (gerritName != null) {
+            setTitle(gerritName);
+            getGerritDrawerItem().withName(gerritName);
+        }
         refreshTabs();
     }
 
@@ -272,14 +241,6 @@ public class GerritControllerActivity extends AppCompatActivity {
             mTheme = themeId;
             setTheme(themeId);
             this.recreate();
-        }
-    }
-
-    // Hide the AOKP Changelog menu option when AOKP's Gerrit is not selected
-    private void hideChangelogOption(String gerrit) {
-        MenuItem changelog = mMenu.findItem(R.id.menu_changelog);
-        if (changelog != null) {
-            changelog.setVisible(gerrit.contains("aokp"));
         }
     }
 

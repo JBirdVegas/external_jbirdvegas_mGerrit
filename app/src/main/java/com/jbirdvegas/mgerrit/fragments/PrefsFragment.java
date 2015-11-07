@@ -178,9 +178,18 @@ public class PrefsFragment extends PreferenceFragment implements Preference.OnPr
      * @return url of preferred gerrit instance
      */
     public static String getCurrentGerrit(Context context) {
-        String[] gerrits = context.getResources().getStringArray(R.array.gerrit_webaddresses);
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(GERRIT_URL_KEY, gerrits[0]);
+        String currentGerrit = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(GERRIT_URL_KEY, null);
+
+        if (currentGerrit == null) {
+            /* If we don't have a current Gerrit set, pick one as the default. This should then be
+             * saved so we can view it later in the navigation drawer when the Gerrit changes. */
+            String[] gerrit_urls = context.getResources().getStringArray(R.array.gerrit_webaddresses);
+            String[] gerrits = context.getResources().getStringArray(R.array.gerrit_names);
+            GerritTeamsHelper.saveTeam(gerrits[0], gerrit_urls[0]);
+            currentGerrit = gerrit_urls[0];
+        }
+        return currentGerrit;
     }
 
     public static void setCurrentGerrit(Context context, String gerritUrl, String gerritName) {

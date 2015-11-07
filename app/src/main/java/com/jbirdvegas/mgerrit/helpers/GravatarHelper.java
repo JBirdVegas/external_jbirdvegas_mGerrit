@@ -91,7 +91,7 @@ public class GravatarHelper {
          * return builder.toString();*/
     }
 
-    private static ImageRequest imageVolleyRequest(final ImageView imageView, String url,
+    public static ImageRequest imageVolleyRequest(final ImageView imageView, String url,
                                                    RequestQueue requestQueue) {
         ImageRequest imageRequest = new ImageRequest(url, new Response.Listener<Bitmap>() {
             @Override

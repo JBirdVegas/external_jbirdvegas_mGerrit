@@ -108,7 +108,7 @@
     <string name="moar_info">More detailed information on this change</string>
     <string name="commit_shared_from_mgerrit" formatted="false">Commit %s shared from mGerrit!</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[Found %d commits in %d seconds]]></string>
-    <string name="menu_projects">View by project</string>
+    <string name="menu_projects">Projects list</string>
     <string name="aokp_changelog">AOKP Changelog</string>
     <string name="download_update">Download</string>
     <string name="please_select_update_for_range">Please select file to view changelog</string>
@@ -207,4 +207,5 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="gettir_signin_logout">logout</string>
 </resources>

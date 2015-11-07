@@ -1,8 +1,7 @@
-package com.jbirdvegas.mgerrit.activities;
-
 /*
- * Copyright (C) 2013 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (p4r4n01d), 2013
+ *
+ * Copyright (C) 2015 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (p4r4n01d), 2015
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,32 +14,33 @@ package com.jbirdvegas.mgerrit.activities;
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
 
-import android.app.Activity;
+package com.jbirdvegas.mgerrit.activities;
+
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 
-public class PrefsActivity extends Activity
+public class PrefsActivity extends AppCompatActivity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setTheme(PrefsFragment.getCurrentThemeID(this));
+        setContentView(R.layout.activity_single_pane);
 
-        // Action bar Up affordance
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        setTitle(R.string.menu_preferences);
+        setupActionBar();
 
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new PrefsFragment())
+                .replace(R.id.content_frame, new PrefsFragment())
                 .commit();
     }
 
@@ -53,5 +53,13 @@ public class PrefsActivity extends Activity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+        // Action bar Up affordance
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle(R.string.menu_preferences);
     }
 }

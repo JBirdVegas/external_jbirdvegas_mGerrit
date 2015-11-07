@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -73,10 +74,9 @@ public class GerritSwitcher extends AppCompatActivity {
 
         setTheme(PrefsFragment.getCurrentThemeID(this));
 
-        // Action bar Up affordance
-        getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.gerrit_switcher);
-        setTitle(R.string.choose_gerrit_instance_condensed);
+
+        setupActionBar();
 
         mListView = (ListView) findViewById(R.id.lv_gerrit_switcher);
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -90,6 +90,14 @@ public class GerritSwitcher extends AppCompatActivity {
 
         mAdapter = new TeamListAdapter(this, gerritData);
         mListView.setAdapter(mAdapter);
+    }
+
+    private void setupActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+        // Action bar Up affordance
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle(R.string.choose_gerrit_instance_condensed);
     }
 
     @Override

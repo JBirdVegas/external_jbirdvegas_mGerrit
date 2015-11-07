@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2014 Android Open Kang Project (AOKP)
-  ~  Author: Evan Conway (P4R4N01D), 2014
+  ~
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (p4r4n01d), 2015
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -14,13 +15,16 @@
   ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
+  ~
   -->
 
 <resources>
-    <style name="Theme.Light" parent="Theme.AppCompat.Light">
+    <style name="Theme.Light" parent="MaterialDrawerTheme.Light">
         <item name="android:textColorPrimary">@color/actionbar_text</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="appBarTheme">@style/NoActionBar.AppBarOverlay</item>
         <item name="toolbarTheme">@style/NoActionBar.PopupOverlay.Dark</item>
+
         <item name="gerritIcon">@drawable/ic_menu_source</item>
         <item name="projectsIcon">@drawable/ic_menu_project</item>
         <item name="refreshIcon">@drawable/ic_action_refresh</item>
@@ -51,12 +55,17 @@
         <item name="unstarredIcon">@drawable/ic_action_unstarred</item>
         <item name="borderlessButtonBackground">@style/BorderlessBackground</item>
         <item name="overflowIcon">@drawable/horiz_overflow</item>
+
+        <item name="colorPrimary">@color/card_background</item>
+        <item name="material_drawer_background">@color/card_background</item>
     </style>
 
     <style name="Theme.Dark" parent="Theme.AppCompat">
         <item name="android:textColorPrimary">@color/actionbar_text_dark</item>
-        <item name="appBarTheme">@style/NoActionBar.AppBarOverlay</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow.Dark</item>
+        <item name="appBarTheme">@style/NoActionBar.AppBarOverlay.Dark</item>
         <item name="toolbarTheme">@style/NoActionBar.PopupOverlay.Dark</item>
+
         <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
         <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
         <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
@@ -87,5 +96,8 @@
         <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
         <item name="borderlessButtonBackground">@style/BorderlessBackground.Dark</item>
         <item name="overflowIcon">@drawable/horiz_overflow_dark</item>
+
+        <item name="colorAccent">@color/material_drawer_accent</item>
+        <item name="colorPrimary">@color/card_background_dark</item>
     </style>
 </resources>
