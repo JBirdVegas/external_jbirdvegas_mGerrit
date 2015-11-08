@@ -8,6 +8,7 @@ buildscript {
         classpath 'org.ajoberstar:gradle-git:1.1.0'
         classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
         classpath 'org.apache.commons:commons-lang3:3.4'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.2.1'
     }
 }
 
@@ -23,9 +24,15 @@ apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'hugo'
 apply plugin: 'checkstyle'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 repositories {
     mavenCentral()
+}
+
+dexcount {
+    printAsTree = true
+    orderByMethodCount = true
 }
 
 dependencies {
@@ -35,7 +42,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:design:22.+'
 
-    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.google.code.gson:gson:2.4'
     compile 'com.mcxiaoke.volley:library:1.0.18'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'

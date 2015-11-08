@@ -24,4 +24,5 @@
     android:id="@+id/tool_bar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    app:popupTheme="?attr/toolbarTheme" />
+    app:popupTheme="?attr/toolbarTheme"
+    android:theme="?attr/appBarTheme"/>
