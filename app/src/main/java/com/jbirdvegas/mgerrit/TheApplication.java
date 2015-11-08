@@ -67,7 +67,7 @@ public class TheApplication extends Application
         PrefsFragment.setCurrentProject(this, null);
         PrefsFragment.clearTrackingUser(this);
 
-        EventBus.getDefault().post(new GerritChanged(newGerrit));
+        EventBus.getDefault().postSticky(new GerritChanged(newGerrit));
 
         requestServerVersion(false);
     }

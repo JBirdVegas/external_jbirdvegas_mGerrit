@@ -234,7 +234,10 @@ public class PatchSetViewerActivity extends BaseDrawerActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        if (cursorLoader.getId() != LOADER_CHANGES) super.onLoadFinished(cursorLoader, cursor);
+        if (cursorLoader.getId() != LOADER_CHANGES) {
+            super.onLoadFinished(cursorLoader, cursor);
+            return;
+        }
 
         /* Weird behaviour: This method gets called multiple times. Once after
          *  initialising this activity and starting the loader, then again later without

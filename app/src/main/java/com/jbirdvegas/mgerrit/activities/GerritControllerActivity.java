@@ -131,7 +131,12 @@ public class GerritControllerActivity extends BaseDrawerActivity {
         }
         PrefsFragment.setTabletMode(this, mTwoPane);
 
-        mChangeList = (ChangeListFragment) fm.findFragmentById(R.id.change_list_fragment);
+        mChangeList = new ChangeListFragment();
+
+        // Display the fragment as the main content.
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.change_list_fragment, mChangeList)
+                .commit();
 
         // Need to initialise this before we get the name of the current Gerrit
         initNavigationDrawer();
@@ -140,7 +145,6 @@ public class GerritControllerActivity extends BaseDrawerActivity {
         String gerritName = PrefsFragment.getCurrentGerritName(this);
         if (gerritName != null) {
             setTitle(gerritName);
-            getGerritDrawerItem().withName(gerritName);
         }
 
         // Get the SearchView and set the searchable configuration
@@ -211,7 +215,6 @@ public class GerritControllerActivity extends BaseDrawerActivity {
         String gerritName = PrefsFragment.getCurrentGerritName(this);
         if (gerritName != null) {
             setTitle(gerritName);
-            getGerritDrawerItem().withName(gerritName);
         }
         refreshTabs();
     }
@@ -276,6 +279,7 @@ public class GerritControllerActivity extends BaseDrawerActivity {
 
     public void onEventMainThread(GerritChanged ev) {
         onGerritChanged(ev.getNewGerritUrl());
+        super.onGerritChanged(ev);
     }
 
     /**

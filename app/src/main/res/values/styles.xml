@@ -44,7 +44,7 @@
 
     <style name="OverFlow.Dark" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_action_overflow_dark</item>
-        <item name="android:background">@color/card_background</item>
+        <item name="android:background">@color/card_background_dark</item>
     </style>
 
     <!-- Resize the action bar activity indicator to match the other action items -->

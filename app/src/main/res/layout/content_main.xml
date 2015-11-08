@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
-  ~  Author: Jon Stanford (JBirdVegas), 2013
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2015
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -31,12 +31,11 @@
         style="?attr/android:actionBarStyle"
         android:visibility="gone"/>
 
-    <fragment
+    <FrameLayout
         android:id="@+id/change_list_fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:name="com.jbirdvegas.mgerrit.fragments.ChangeListFragment"
         tools:layout="@layout/change_list"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
 </LinearLayout>

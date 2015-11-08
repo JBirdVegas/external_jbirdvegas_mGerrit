@@ -1,7 +1,6 @@
 /*
- *
  * Copyright (C) 2015 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (p4r4n01d), 2015
+ *  Author: Evan Conway (P4R4N01D), 2015
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,7 +13,6 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *
  */
 
 package com.jbirdvegas.mgerrit.activities;
@@ -40,6 +38,7 @@ import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
+import com.jbirdvegas.mgerrit.message.GerritChanged;
 import com.jbirdvegas.mgerrit.objects.GerritDetails;
 import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
@@ -47,6 +46,7 @@ import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
@@ -59,6 +59,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.greenrobot.event.EventBus;
+
 /*
  * Extends the base activity with the main navigation drawer
  */
@@ -68,10 +70,25 @@ public class BaseDrawerActivity extends AppCompatActivity
     public static int DRAWER_PROFILE_LOADER = 10;
 
     private Drawer mDrawer;
-    private PrimaryDrawerItem mGerritDrawerItem;
     private GerritSearchView mSearchView;
     private AccountHeader mProfileHeader;
     private RequestQueue mRequestQuery;
+    private ArrayList<GerritDetails> mGerrits = new ArrayList<>();
+
+
+    private AbstractDrawerImageLoader mDrawerImageLoader = new AbstractDrawerImageLoader() {
+        @Override
+        public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+            ImageRequest imageRequest = GravatarHelper.imageVolleyRequest(imageView, uri.toString(), mRequestQuery);
+            imageView.setTag(R.id.imageRequest, imageRequest);
+        }
+
+        @Override
+        public void cancel(ImageView imageView) {
+            ImageRequest imageRequest = (ImageRequest) imageView.getTag(R.id.imageRequest);
+            if (imageRequest != null) imageRequest.cancel();
+        }
+    };
 
     /**
      * Initialises the left navigation mDrawer and sets an adapter for the content
@@ -81,19 +98,7 @@ public class BaseDrawerActivity extends AppCompatActivity
 
         mRequestQuery = Volley.newRequestQueue(this);
 
-        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
-            @Override
-            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-                ImageRequest imageRequest = GravatarHelper.imageVolleyRequest(imageView, uri.toString(), mRequestQuery);
-                imageView.setTag(R.id.imageRequest, imageRequest);
-            }
-
-            @Override
-            public void cancel(ImageView imageView) {
-                ImageRequest imageRequest = (ImageRequest) imageView.getTag(R.id.imageRequest);
-                if (imageRequest != null) imageRequest.cancel();
-            }
-        });
+        DrawerImageLoader.init(mDrawerImageLoader);
 
         mProfileHeader = new AccountHeaderBuilder()
                 .withActivity(this)
@@ -130,9 +135,6 @@ public class BaseDrawerActivity extends AppCompatActivity
                     }
                 }).build();
 
-        mGerritDrawerItem = (PrimaryDrawerItem) mDrawer.getDrawerItem(R.id.menu_heading)
-                .withSelectable(false);
-
         getSupportLoaderManager().initLoader(DRAWER_PROFILE_LOADER, null, this);
 
         addGerritsToDrawer();
@@ -146,10 +148,6 @@ public class BaseDrawerActivity extends AppCompatActivity
 
     protected Drawer getDrawer() {
         return mDrawer;
-    }
-
-    protected PrimaryDrawerItem getGerritDrawerItem() {
-        return mGerritDrawerItem;
     }
 
     protected void setSearchView(GerritSearchView searchView) {
@@ -167,6 +165,7 @@ public class BaseDrawerActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> accountInfoLoader, Cursor info) {
+        mProfileHeader.clear();
         if (info.moveToFirst()) {
             String name = info.getString(info.getColumnIndex(Users.C_NAME));
             String email = info.getString(info.getColumnIndex(Users.C_EMAIL));
@@ -196,17 +195,23 @@ public class BaseDrawerActivity extends AppCompatActivity
 
         int min = Math.min(teams.size(), urls.size());
         for (int i = 0; i < min; i++) {
-            if (!currentGerrit.equals(urls.get(i))) {
-                gerrits.add(new GerritDetails(teams.get(i), urls.get(i)));
-            }
+            gerrits.add(new GerritDetails(teams.get(i), urls.get(i)));
         }
         ArrayList<GerritDetails> gerritData = new ArrayList<>(gerrits);
         Collections.sort(gerritData);
 
+        // Add a divider if we have not added any Gerrit instances to the drawer yet
+        if (gerritData.size() > 0 && mGerrits.size() == 0) {
+            mDrawer.addItem(new DividerDrawerItem());
+        }
+
         for (GerritDetails gerrit : gerritData) {
-            PrimaryDrawerItem item = new PrimaryDrawerItem().withName(gerrit.getGerritName())
-                    .withTag(gerrit);
-            mDrawer.addItem(item);
+            if (!mGerrits.contains(gerrit)) {
+                PrimaryDrawerItem item = new PrimaryDrawerItem().withName(gerrit.getGerritName()).withTag(gerrit);
+                mDrawer.addItem(item);
+                mGerrits.add(gerrit);
+            }
+
         }
     }
 
@@ -240,5 +245,11 @@ public class BaseDrawerActivity extends AppCompatActivity
             default:
                 return false;
         }
+    }
+
+    public void onGerritChanged(GerritChanged ev) {
+        /* Don't need to restart the loader here as it will be triggered after selecting a new Gerrit
+         * as the switcher is a new activity */
+        addGerritsToDrawer();
     }
 }
