@@ -25,6 +25,7 @@ import java.util.List;
 public class IsSearch extends SearchKeyword {
 
     public static final String OP_NAME = "is";
+    public static final String OP_VALUE_STARRED = "starred";
 
     static {
         registerKeyword(OP_NAME, IsSearch.class);

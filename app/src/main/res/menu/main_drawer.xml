@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menu_changes" android:icon="?attr/viewIcon" android:title="View Changes" />
-    <item android:id="@+id/menu_starred" android:icon="?attr/starredIcon" android:title="Starred Changes" />
-    <item android:id="@+id/menu_projects" android:title="Projects" />
+    <item android:id="@+id/menu_changes" android:icon="?attr/viewIcon" android:title="@string/menu_view_changes" />
+    <item android:id="@+id/menu_starred" android:icon="?attr/starredIcon" android:title="@string/menu_starred_changes" />
+    <item android:id="@+id/menu_projects" android:icon="?attr/projectsIcon" android:title="@string/menu_projects" />
 </menu>

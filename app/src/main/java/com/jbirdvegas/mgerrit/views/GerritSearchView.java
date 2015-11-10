@@ -24,7 +24,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
@@ -244,6 +244,16 @@ public class GerritSearchView extends SearchView
      */
     public Set<SearchKeyword> getLastQuery() {
         return mCurrentKeywords;
+    }
+
+
+    /**
+     * Search for a given search keyword in the current list of tokens
+     * @param keyword The search keyword to search for (needle)
+     * @return Whether the keyword was found in the list or not
+     */
+    public boolean hasKeyword(SearchKeyword keyword) {
+        return SearchKeyword.findKeyword(mCurrentKeywords, keyword) != -1;
     }
 
     @Override

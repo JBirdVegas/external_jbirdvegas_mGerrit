@@ -23,7 +23,7 @@
         <item name="android:textColorPrimary">@color/actionbar_text</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
         <item name="appBarTheme">@style/NoActionBar.AppBarOverlay</item>
-        <item name="toolbarTheme">@style/NoActionBar.PopupOverlay.Dark</item>
+        <item name="toolbarTheme">@style/NoActionBar.PopupOverlay</item>
 
         <item name="gerritIcon">@drawable/ic_menu_source</item>
         <item name="projectsIcon">@drawable/ic_menu_project</item>

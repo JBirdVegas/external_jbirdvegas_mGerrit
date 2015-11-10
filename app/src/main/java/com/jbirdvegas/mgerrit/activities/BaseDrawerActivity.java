@@ -18,7 +18,10 @@
 package com.jbirdvegas.mgerrit.activities;
 
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +29,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -57,12 +61,13 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
-import de.greenrobot.event.EventBus;
-
 /*
- * Extends the base activity with the main navigation drawer
+ * Extends the base activity with the main navigation drawer.
+ * Activities requiring the navigation drawer can extend this class and call initNavigationDrawer.
+ * A toolbar must also be present in the activity's layout
  */
 public class BaseDrawerActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -92,8 +97,9 @@ public class BaseDrawerActivity extends AppCompatActivity
 
     /**
      * Initialises the left navigation mDrawer and sets an adapter for the content
+     * @param isParent
      */
-    protected void initNavigationDrawer() {
+    protected void initNavigationDrawer(boolean isParent) {
         Toolbar toolbar = setupActionBar();
 
         mRequestQuery = Volley.newRequestQueue(this);
@@ -116,7 +122,7 @@ public class BaseDrawerActivity extends AppCompatActivity
                 })
                 .build();
 
-        mDrawer = new DrawerBuilder().withActivity(this).withToolbar(toolbar)
+        DrawerBuilder drawerBuilder = new DrawerBuilder().withActivity(this)
                 .inflateMenu(R.menu.main_drawer)
                 .withAccountHeader(mProfileHeader)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -129,17 +135,36 @@ public class BaseDrawerActivity extends AppCompatActivity
                             PrefsFragment.setCurrentGerrit(BaseDrawerActivity.this,
                                     gerrit.getGerritUrl(), gerrit.getGerritName());
                         }
-
+                        setGerritSelected(PrefsFragment.getCurrentGerrit(BaseDrawerActivity.this));
                         mDrawer.closeDrawer();
                         return result;
                     }
-                }).build();
+                });
+
+        /* This condition should always be true, but just to make sure
+         * (and keep Android Studio happy) */
+        if (getSupportActionBar() != null) {
+            // If we are the parent we want to show the hamburger icon, else show the back icon
+            if (isParent) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                drawerBuilder.withToolbar(toolbar);
+            } else {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+        }
+
+        mDrawer = drawerBuilder.build();
 
         getSupportLoaderManager().initLoader(DRAWER_PROFILE_LOADER, null, this);
 
         addGerritsToDrawer();
     }
 
+    /**
+     * Sets the toolbar as the action bar. We cannot have a navigation drawer without
+     * an action bar
+     * @return The toolbar to be used as the action bar
+     */
     protected Toolbar setupActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
@@ -215,6 +240,35 @@ public class BaseDrawerActivity extends AppCompatActivity
         }
     }
 
+    protected void navigationSetSelectedById(int id) {
+        mDrawer.setSelection(id);
+    }
+
+    /**
+     * Mark a Gerrit in the list as selected. Note: This does not modify the drawer's
+     *  selection, it just makes the row stand out.
+     * @param gerritUrl The URL of the Gerrit to mark as selected.
+     */
+    private void setGerritSelected(String gerritUrl) {
+
+        // Get the themed next icon
+        final TypedValue typedvalueattr = new TypedValue();
+        getTheme().resolveAttribute(R.attr.nextIcon, typedvalueattr, true);
+
+        for (IDrawerItem item : mDrawer.getDrawerItems()) {
+            if (item.getTag() instanceof GerritDetails) {
+                GerritDetails gerrit = (GerritDetails) item.getTag();
+                if (gerrit.getGerritUrl().equals(gerritUrl)) {
+                    ((PrimaryDrawerItem) item).withIcon(typedvalueattr.resourceId);
+                } else {
+                    ((PrimaryDrawerItem) item).withIcon((Drawable) null);
+                    // Need to notify the adapter that we want to clear the icon for this item
+                    mDrawer.getAdapter().notifyItemChanged(mDrawer.getPosition(item));
+                }
+            }
+        }
+    }
+
     private boolean onMenuItemSelected(int itemId) {
         Intent intent;
         switch (itemId) {
@@ -237,7 +291,9 @@ public class BaseDrawerActivity extends AppCompatActivity
                 return true;
             case R.id.menu_changes:
                 // Clear the search query
-                mSearchView.setVisibility(View.GONE);
+                if (mSearchView != null){
+                    mSearchView.setVisibility(View.GONE);
+                }
                 return true;
             case R.id.menu_starred:
                 mSearchView.replaceKeyword(new IsSearch("starred"), true);
@@ -251,5 +307,6 @@ public class BaseDrawerActivity extends AppCompatActivity
         /* Don't need to restart the loader here as it will be triggered after selecting a new Gerrit
          * as the switcher is a new activity */
         addGerritsToDrawer();
+        setGerritSelected(ev.getNewGerritUrl());
     }
 }

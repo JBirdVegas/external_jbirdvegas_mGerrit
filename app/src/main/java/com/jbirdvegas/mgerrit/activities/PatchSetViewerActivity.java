@@ -85,7 +85,7 @@ public class PatchSetViewerActivity extends BaseDrawerActivity
 
         setContentView(R.layout.patchset_pager);
 
-        initNavigationDrawer();
+        initNavigationDrawer(false);
 
         mEventBus = EventBus.getDefault();
 

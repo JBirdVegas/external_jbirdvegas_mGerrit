@@ -76,7 +76,7 @@ public class ProjectsList extends BaseDrawerActivity
 
         setContentView(R.layout.projects_list);
 
-        initNavigationDrawer();
+        initNavigationDrawer(false);
 
         mProjectsListView = (ExpandableListView) findViewById(R.id.projects);
 

@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -139,7 +140,7 @@ public class GerritControllerActivity extends BaseDrawerActivity {
                 .commit();
 
         // Need to initialise this before we get the name of the current Gerrit
-        initNavigationDrawer();
+        initNavigationDrawer(true);
 
         mGerritWebsite = PrefsFragment.getCurrentGerrit(this);
         String gerritName = PrefsFragment.getCurrentGerritName(this);
@@ -244,6 +245,13 @@ public class GerritControllerActivity extends BaseDrawerActivity {
             mTheme = themeId;
             setTheme(themeId);
             this.recreate();
+        }
+
+        // If we are viewing this activity set the selected item to be either changes or starred changes
+        if (mSearchView != null && mSearchView.hasKeyword(new IsSearch(IsSearch.OP_VALUE_STARRED))) {
+            navigationSetSelectedById(R.id.menu_starred);
+        } else {
+            navigationSetSelectedById(R.id.menu_changes);
         }
     }
 

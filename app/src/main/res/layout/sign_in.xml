@@ -90,7 +90,7 @@
             android:layout_width="128dp"
             android:layout_height="60dp"
             android:id="@+id/btnLogout"
-            android:text="@string/gettir_signin_logout"
+            android:text="@string/gerrit_signin_logout"
             style="?attr/signinButtonStyle"
             android:onClick="onLogout"
             android:visibility="gone"/>

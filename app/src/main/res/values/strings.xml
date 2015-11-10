@@ -207,5 +207,7 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="gettir_signin_logout">logout</string>
+    <string name="gerrit_signin_logout">logout</string>
+    <string name="menu_view_changes">View Changes</string>
+    <string name="menu_starred_changes">Starred Changes</string>
 </resources>

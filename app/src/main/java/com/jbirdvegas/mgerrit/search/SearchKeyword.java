@@ -334,6 +334,21 @@ public abstract class SearchKeyword implements Parcelable {
         return -1;
     }
 
+    /**
+     * Find a given search keyword in a list of tokens
+     * @param tokens The list of tokens to search through (haystack)
+     * @param keyword The token to search for (needle)
+     * @return The position of the search keyword or -1 if it was not found
+     */
+    public static int findKeyword(Set<SearchKeyword> tokens, SearchKeyword keyword) {
+        int i = 0;
+        for (SearchKeyword sk : tokens) {
+            if (sk.equals(keyword)) return i;
+            i++;
+        }
+        return -1;
+    }
+
     protected static String extractOperator(String param) {
         String op = "=";
         for (String operator : operators) {
