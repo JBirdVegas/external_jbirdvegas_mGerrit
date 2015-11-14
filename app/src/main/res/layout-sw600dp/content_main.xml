@@ -42,21 +42,19 @@
         android:baselineAligned="false"
         android:orientation="horizontal">
 
-        <fragment
+        <FrameLayout
             android:id="@+id/change_list_fragment"
-            android:name="com.jbirdvegas.mgerrit.fragments.ChangeListFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            tools:layout="@layout/change_list" />
+            tools:layout="@layout/change_list"
+            android:layout_weight="1" />
 
-        <fragment
+        <FrameLayout
             android:id="@+id/change_detail_fragment"
-            android:name="com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            tools:layout="@layout/change_list"
             android:layout_weight="1"
-            tools:layout="@layout/commit_list"
             android:background="?attr/mainBackgroundColor"/>
 
     </LinearLayout>

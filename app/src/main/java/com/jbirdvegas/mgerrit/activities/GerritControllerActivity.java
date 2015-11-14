@@ -128,16 +128,16 @@ public class GerritControllerActivity extends BaseDrawerActivity {
             // large-screen layouts(res/values-sw600dp). If this view is present,
             // then the activity should be in two-pane mode.
             mTwoPane = true;
-            mChangeDetail = (PatchSetViewerFragment) fm.findFragmentById(R.id.change_detail_fragment);
+            mChangeDetail = new PatchSetViewerFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.change_detail_fragment, mChangeDetail).commit();
         }
         PrefsFragment.setTabletMode(this, mTwoPane);
 
-        mChangeList = new ChangeListFragment();
-
         // Display the fragment as the main content.
+        mChangeList = new ChangeListFragment();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.change_list_fragment, mChangeList)
-                .commit();
+                .replace(R.id.change_list_fragment, mChangeList).commit();
 
         // Need to initialise this before we get the name of the current Gerrit
         initNavigationDrawer(true);

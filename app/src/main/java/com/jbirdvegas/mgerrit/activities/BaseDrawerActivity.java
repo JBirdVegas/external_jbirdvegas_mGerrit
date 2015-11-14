@@ -18,10 +18,7 @@
 package com.jbirdvegas.mgerrit.activities;
 
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -61,7 +58,6 @@ import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /*
@@ -215,8 +211,6 @@ public class BaseDrawerActivity extends AppCompatActivity
         ArrayList<String> urls = new ArrayList<>(teamsHelper.getGerritUrlsList());
 
         Set<GerritDetails> gerrits = new HashSet<>();
-
-        String currentGerrit = PrefsFragment.getCurrentGerrit(this);
 
         int min = Math.min(teams.size(), urls.size());
         for (int i = 0; i < min; i++) {
