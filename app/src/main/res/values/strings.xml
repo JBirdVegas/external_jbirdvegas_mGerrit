@@ -64,7 +64,7 @@
     <string name="nine_old_androids_website" translatable="false">http://nineoldandroids.com/</string>
     <string name="listview_animations" translatable="false">ListViewAnimations</string>
     <string name="listview_animations_website" translatable="false">https://github.com/nhaarman/ListViewAnimations</string>
-    <string name="support_library" translatable="false">Support Library v4</string>
+    <string name="support_library" translatable="false">v7 AppCompat support library</string>
     <string name="support_library_website" translatable="false">http://developer.android.com/tools/support-library/index.html</string>
     <string name="gson_library" translatable="false">Gson</string>
     <string name="gson_library_website" translatable="false">http://code.google.com/p/google-gson/</string>
@@ -72,11 +72,20 @@
     <string name="jodatime_website" translatable="false">http://www.joda.org/joda-time</string>
     <string name="event_bus" translatable="false">EventBus</string>
     <string name="event_bus_website" translatable="false">http://greenrobot.github.io/EventBus/</string>
+    <string name="aosp_volley_title" translatable="false">Volley (AOSP)</string>
     <string name="aosp_volley_website" translatable="false">https://android.googlesource.com/platform/frameworks/volley/</string>
-    <string name="aosp_volley_title" translatable="false">AOSP\'s Volley</string>
     <string name="circle_image_view_title" translatable="false">CircleImageView</string>
     <string name="circle_image_view_website" translatable="false">https://github.com/hdodenhof/CircleImageView</string>
-
+    <string name="design_support_library" translatable="false">Design Support Library</string>
+    <string name="design_support_library_website" translatable="false">http://developer.android.com/tools/support-library/features.html#design</string>
+    <string name="sticky_list_headers" translatable="false">StickyListHeaders</string>
+    <string name="sticky_list_headers_website" translatable="false">https://github.com/emilsjolander/StickyListHeaders</string>
+    <string name="process_buttons" translatable="false">Android Process buttons</string>
+    <string name="process_buttons_website" translatable="false">https://github.com/dmytrodanylyk/android-process-button</string>
+    <string name="gerrit_rest_java_client" translatable="false">Gerrit REST Java Client (Android fork)</string>
+    <string name="gerrit_rest_java_client_website" translatable="false">https://github.com/uwolfer/gerrit-rest-java-client/tree/httpclient-android</string>
+    <string name="material_drawer" translatable="false">MaterialDrawer</string>
+    <string name="material_drawer_website" translatable="false">https://github.com/mikepenz/MaterialDrawer</string>
 
     <string name="explain_status_title">Explain statuses</string>
     <string name="explain_status_summary">Brief explanation of the Status tabs meanings</string>

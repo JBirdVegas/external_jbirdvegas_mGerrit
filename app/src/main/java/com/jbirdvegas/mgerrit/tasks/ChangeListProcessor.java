@@ -137,7 +137,9 @@ class ChangeListProcessor extends SyncProcessor<List<ChangeInfo>> {
                 }
             }
         }
-        MoreChanges.insert(mContext, mStatus, mDirection, moreChanges);
+        if (mStatus != null) {
+            MoreChanges.insert(mContext, mStatus, mDirection, moreChanges);
+        }
     }
 
     @Override

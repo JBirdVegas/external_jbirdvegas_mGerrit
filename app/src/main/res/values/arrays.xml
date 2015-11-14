@@ -42,16 +42,16 @@
         <item>https://android-review.googlesource.com/</item>
         <item>https://review.carbonrom.org/</item>
         <item>http://review.cyanogenmod.org/</item>
-        <item>http://gerrit.dirtyunicorns.com</item>
+        <item>http://gerrit.dirtyunicorns.com/</item>
         <item>https://gerrit-review.googlesource.com/</item>
-        <item>http://gerrit.liquidsmooth.net</item>
+        <item>http://gerrit.liquidsmooth.net/</item>
         <item>http://review.merkmod.com/</item>
         <item>http://gerrit.nameless-rom.org/</item>
         <item>https://gerrit.omnirom.org/</item>
         <item>http://review.pac-rom.com/</item>
         <item>https://gerrit.paranoidandroid.co/</item>
         <item>http://review.gummyrom.com/</item>
-        <item>https://review.slimroms.org</item>
+        <item>https://review.slimroms.org/</item>
         <item>https://gerrit.wikimedia.org/r/</item>
         <item>https://review.openstack.org/</item>
     </string-array>
@@ -74,23 +74,33 @@
         <item>@string/theme_dark_value</item>
     </string-array>
     <string-array name="library_titles" translatable="false">
+        <item>@string/process_buttons</item>
         <item>@string/circle_image_view_title</item>
+        <item>@string/design_support_library</item>
 		<item>@string/event_bus</item>
+        <item>@string/gerrit_rest_java_client</item>
         <item>@string/gson_library</item>
         <item>@string/jodatime</item>
         <item>@string/listview_animations</item>
+        <item>@string/material_drawer</item>
         <item>@string/nine_old_androids</item>
+        <item>@string/sticky_list_headers</item>
         <item>@string/support_library</item>
         <item>@string/aosp_volley_title</item>
     </string-array>
 
     <string-array name="library_websites" translatable="false">
+        <item>@string/process_buttons</item>
         <item>@string/circle_image_view_website</item>
+        <item>@string/design_support_library_website</item>
 		<item>@string/event_bus_website</item>
+        <item>@string/gerrit_rest_java_client_website</item>
         <item>@string/gson_library_website</item>
         <item>@string/jodatime_website</item>
         <item>@string/listview_animations_website</item>
+        <item>@string/material_drawer_website</item>
         <item>@string/nine_old_androids_website</item>
+        <item>@string/sticky_list_headers</item>
         <item>@string/support_library_website</item>
         <item>@string/aosp_volley_website</item>
     </string-array>
