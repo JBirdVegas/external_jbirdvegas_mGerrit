@@ -113,6 +113,8 @@ public class ProjectsList extends BaseDrawerActivity
 
         mEventBus = EventBus.getDefault();
 
+        navigationSetSelectedById(R.id.menu_projects);
+
         // Todo: We don't always need to query the server here
         startService();
     }

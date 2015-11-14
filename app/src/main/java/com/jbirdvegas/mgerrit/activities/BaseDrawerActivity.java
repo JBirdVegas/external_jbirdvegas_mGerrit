@@ -40,8 +40,10 @@ import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
+import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
 import com.jbirdvegas.mgerrit.objects.GerritDetails;
 import com.jbirdvegas.mgerrit.search.IsSearch;
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -253,9 +255,9 @@ public class BaseDrawerActivity extends AppCompatActivity
             if (item.getTag() instanceof GerritDetails) {
                 GerritDetails gerrit = (GerritDetails) item.getTag();
                 if (gerrit.getGerritUrl().equals(gerritUrl)) {
-                    ((PrimaryDrawerItem) item).withIcon(typedvalueattr.resourceId);
+                    ((PrimaryDrawerItem) item).withIcon(typedvalueattr.resourceId).withSelectable(false);
                 } else {
-                    ((PrimaryDrawerItem) item).withIcon((Drawable) null);
+                    ((PrimaryDrawerItem) item).withIcon((Drawable) null).withSelectable(true);
                     // Need to notify the adapter that we want to clear the icon for this item
                     mDrawer.getAdapter().notifyItemChanged(mDrawer.getPosition(item));
                 }
@@ -268,14 +270,12 @@ public class BaseDrawerActivity extends AppCompatActivity
         switch (itemId) {
             case R.id.menu_save:
                 intent = new Intent(this, PrefsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
                 return true;
             case R.id.menu_team_instance:
                 intent = new Intent(this, GerritSwitcher.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
                 return true;
             case R.id.menu_projects:
@@ -285,12 +285,17 @@ public class BaseDrawerActivity extends AppCompatActivity
                 return true;
             case R.id.menu_changes:
                 // Clear the search query
-                if (mSearchView != null){
-                    mSearchView.setVisibility(View.GONE);
+                if (!(this instanceof GerritControllerActivity)) {
+                    intent = new Intent(this, GerritControllerActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
                 }
                 return true;
             case R.id.menu_starred:
-                mSearchView.replaceKeyword(new IsSearch("starred"), true);
+                if (mSearchView != null) {
+                    mSearchView.replaceKeyword(new IsSearch("starred"), true);
+                }
                 return true;
             default:
                 return false;
@@ -302,5 +307,23 @@ public class BaseDrawerActivity extends AppCompatActivity
          * as the switcher is a new activity */
         addGerritsToDrawer();
         setGerritSelected(ev.getNewGerritUrl());
+    }
+
+    public void onSearchQueryChanged(SearchQueryChanged ev) {
+        if (ev == null) {
+            if (mSearchView.hasKeyword(new IsSearch(IsSearch.OP_VALUE_STARRED))) {
+                navigationSetSelectedById(R.id.menu_starred);
+            } else {
+                navigationSetSelectedById(R.id.menu_changes);
+            }
+        } else {
+            Set<SearchKeyword> tokens = ev.getTokens();
+            if (tokens != null && !tokens.isEmpty() &&
+                    SearchKeyword.findKeyword(tokens, new IsSearch(IsSearch.OP_VALUE_STARRED)) != -1) {
+                navigationSetSelectedById(R.id.menu_starred);
+            } else {
+                navigationSetSelectedById(R.id.menu_changes);
+            }
+        }
     }
 }
