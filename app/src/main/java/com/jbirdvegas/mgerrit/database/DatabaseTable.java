@@ -47,7 +47,7 @@ public abstract class DatabaseTable {
     //  public static final String CONTENT_ITEM_TYPE = DatabaseFactory.BASE_MIME_ITEM + TABLE;
 
     /**
-     * Executes an SQL script to instanciate its database table
+     * Executes an SQL script to instantiate its database table
      * @param TAG For logging purposes
      * @param db An open writable database instance
      */

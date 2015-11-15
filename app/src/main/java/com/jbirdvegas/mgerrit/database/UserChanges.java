@@ -39,7 +39,7 @@ import java.util.Set;
  * Virtual table combining both Users and Changes tables for join queries.
  * The content provider needs a URI to determine where to query which maps
  *  to a specific table. Since it does not make sense to favour one table
- *  over another when quering, a virtual/join table is used instead.
+ *  over another when querying, a virtual/join table is used instead.
  *
  *  Note: Insertion or removal is not supported on this table, only queries
  */
@@ -85,13 +85,13 @@ public class UserChanges extends DatabaseTable {
     public static final String C_USER_ID = Users.C_ACCOUNT_ID;
 
     /* The email address the user prefers to be contacted through.
-     *  Although this appears unique, users can change their prefered email which may change this */
+     *  Although this appears unique, users can change their preferred email which may change this */
     public static final String C_EMAIL = Users.C_EMAIL;
 
     // The full name of the user.
     public static final String C_NAME = Users.C_NAME;
 
-    // Virtual column set by the existance of this change in the StarredChanges table
+    // Virtual column set by the existence of this change in the StarredChanges table
     public static final String C_STARRED = Changes.C_IS_STARRED;
 
 

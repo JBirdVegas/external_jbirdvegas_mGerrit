@@ -1,4 +1,4 @@
-package com.jbirdvegas.mgerrit.caches;
+package com.jbirdvegas.mgerrit.cache;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;

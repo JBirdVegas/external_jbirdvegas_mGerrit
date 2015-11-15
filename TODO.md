@@ -5,7 +5,7 @@ mGerrit TODO List
 - Reset project if current project not listed in current Gerrit
 - Smarter refresh - ideal: deprecate manual refresh and refresh automatically
     - Compare change updated timestamps and change ids to determine when the rest of the data is old and does not need to be changed
-	- Only load the new stuff and don't reset all the cards views if not necesscary.
+	- Only load the new stuff and don't reset all the cards views if not necessary.
 - Do not default to one specific gerrit - open up the list of Gerrits to choose from. This applies only when there is no app data (e.g. mgerrit has just been installed)
 	- Could detect the current ROM and select that one by default
 - More feedback on which Gerrit is selected
@@ -15,14 +15,14 @@ mGerrit TODO List
 			2. Let user upload a custom identifying icon
 - Migrate Help dialog information into long-press hints. Could show hint when long pressing on a tab or on the card stripe. This needs more thought...
 - Add hook (intent filter?) that allows mgerrit to open from a Gerrit url
-    - Change preferences (either temporarily or permently) to the gerrit from the URL
+    - Change preferences (either temporarily or permanently) to the gerrit from the URL
     - When given a change link open that specific change
     - When given a Gerrit link just change the current Gerrit
 - Ability to track projects across different Gerrits
     - Example, I could be following CM's Gerrit and view mGerrit changes on AOKP's Gerrit
     - May want to put this in a new slide-out menu
-        - List all tracked projects under the the one heading (that is collapsable)
-- Seperate debug/release versioning
+        - List all tracked projects under the the one heading (that is collapsible)
+- Separate debug/release versioning
 - Layout optimisations using Android Hierarchy Viewer (debug version)
 - Check BroadcastReceivers across activities
 	- E.g. If a broadcast response is broadcast delivered while the ProjectsList activity is open for a change query, the broadcast should be
@@ -36,7 +36,7 @@ mGerrit TODO List
 - General searching:
 	- mimic Gerrit web interface queries
 	- Support searching for a specific commit heading (default). e.g. searching for "commit:[translation]" will show a heading for Commits and list all the commits with "[translation]" in the title.
-	- Where it is ambigious (e.g. search results from commits and committers) show results under section headings. These section headings should be collapsable.
+	- Where it is ambiguous (e.g. search results from commits and committers) show results under section headings. These section headings should be collapsible.
 - Right navigation filter draw
 	- Modular: users choose a supported filter type from a spinner and a layout is inflated corresponding to that filter type from where they can fill out the filter parameters.
 		- Main layouts will be either a text field or a spinner
@@ -80,7 +80,7 @@ mGerrit TODO List
 
 
 ### Optional/Lower priority
-- Colour each project in a sperate colour
+- Colour each project in a separate colour
 - Add tab for reviewed (verified)
     - May be useful for admins or others wishing to cherry pick changes that compile
     - Either revied in past PS or reviewed in current patch set - up to server classification

@@ -113,7 +113,7 @@ public class ChangelogFragment extends Fragment {
 
     private void findDates() {
         // use Volley to get our packages list
-        Log.d(TAG, "Depricated ChangelogFragment.findDates called!");
+        Log.d(TAG, "Deprecated ChangelogFragment.findDates called!");
     }
 
     private void setupList(List<GooFileObject> gooFilesList) {

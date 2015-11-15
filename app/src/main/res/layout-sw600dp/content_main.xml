@@ -55,7 +55,8 @@
             android:layout_height="match_parent"
             tools:layout="@layout/change_list"
             android:layout_weight="1"
-            android:background="?attr/mainBackgroundColor"/>
+            android:background="?attr/mainBackgroundColor"
+            tools:ignore="InconsistentLayout" />
 
     </LinearLayout>
 </RelativeLayout>

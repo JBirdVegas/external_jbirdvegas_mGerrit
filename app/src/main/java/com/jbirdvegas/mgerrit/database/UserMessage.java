@@ -28,7 +28,7 @@ import android.support.v4.content.CursorLoader;
  * Virtual table combining both Users and Changes tables for join queries.
  * The content provider needs a URI to determine where to query which maps
  *  to a specific table. Since it does not make sense to favour one table
- *  over another when quering, a virtual/join table is used instead.
+ *  over another when querying, a virtual/join table is used instead.
  *
  *  Note: Insertion or removal is not supported on this table, only queries
  */

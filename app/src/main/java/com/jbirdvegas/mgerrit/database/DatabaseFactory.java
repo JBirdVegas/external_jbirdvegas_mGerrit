@@ -131,7 +131,7 @@ public class DatabaseFactory extends ContentProvider {
                     try {
                         this.wait();
                     } catch (InterruptedException e) {
-                        // Interupted. Stop waiting and try one final time to close the database
+                        // Interrupted. Stop waiting and try one final time to close the database
                         break;
                     }
                 }

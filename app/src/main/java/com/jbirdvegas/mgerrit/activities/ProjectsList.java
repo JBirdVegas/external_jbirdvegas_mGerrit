@@ -58,7 +58,7 @@ public class ProjectsList extends BaseDrawerActivity
     private EventBus mEventBus;
     private String mQuery;
 
-    private static final String SEPERATOR = ProjectsTable.SEPERATOR;
+    private static final String SEPARATOR = ProjectsTable.SEPARATOR;
     private static final int LOADER_PROJECTS = 0;
 
     private SwipeRefreshLayout mSwipeLayout;
@@ -204,7 +204,7 @@ public class ProjectsList extends BaseDrawerActivity
     private void setProject(String root, String subproject) {
         String project;
         if (subproject.isEmpty()) project = root;
-        else project = root + SEPERATOR + subproject;
+        else project = root + SEPARATOR + subproject;
         PrefsFragment.setCurrentProject(getApplicationContext(), project);
         this.finish();
     }
@@ -254,13 +254,13 @@ public class ProjectsList extends BaseDrawerActivity
     /**
      * Split the query as if it was the name (or part) of a base project,
      *  a sub project or base project/sub project. Note that providing the
-     *  seperator in the query will change the results that are provided.
+     *  separator in the query will change the results that are provided.
      * @param query The (partial) name of a base project, sub project or both.
      * @return A pair comprised of a base project and sub project matching the query
      *  to search for
      */
     private Pair<String, String> splitQuery(String query) {
-        String p[] = query.split(SEPERATOR, 2);
+        String p[] = query.split(SEPARATOR, 2);
         if (p.length < 2) return new Pair<>(p[0], p[0]);
         else return new Pair<>(p[0], p[1]);
     }

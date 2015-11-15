@@ -67,7 +67,7 @@ import java.util.Set;
  * Activities requiring the navigation drawer can extend this class and call initNavigationDrawer.
  * A toolbar must also be present in the activity's layout
  */
-public class BaseDrawerActivity extends AppCompatActivity
+public abstract class BaseDrawerActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static int DRAWER_PROFILE_LOADER = 10;

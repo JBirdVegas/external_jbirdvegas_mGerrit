@@ -1,4 +1,4 @@
-package com.jbirdvegas.mgerrit;
+package com.jbirdvegas.mgerrit.activities;
 
 /*
  * Copyright (C) 2015 Android Open Kang Project (AOKP)

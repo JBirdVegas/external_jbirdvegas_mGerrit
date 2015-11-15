@@ -17,18 +17,19 @@
   ~  limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_cancel"
         android:icon="?attr/cancelIcon"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@android:string/cancel">
     </item>
 
     <item
         android:id="@+id/menu_ok"
         android:icon="?attr/acceptIcon"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@android:string/ok">
     </item>
 </menu>

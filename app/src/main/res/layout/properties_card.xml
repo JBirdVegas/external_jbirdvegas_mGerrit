@@ -36,7 +36,7 @@
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/prop_card_change_id_text"
         android:layout_toRightOf="@+id/prop_card_change_id_text"
-        tools:text="aaaaaaaaaaaa" />
+        tools:text="I8f1fc3966e3d22f094126c3589529827eb94ae9e" />
 
     <TextView
         android:id="@+id/prop_card_created_text"

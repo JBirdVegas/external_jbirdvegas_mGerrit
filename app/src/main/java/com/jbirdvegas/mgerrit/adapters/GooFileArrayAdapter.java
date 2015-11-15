@@ -35,14 +35,14 @@ public class GooFileArrayAdapter extends BaseAdapter {
     private final int mLayoutResourceId;
     private final List<GooFileObject> mGooFilesList;
     private final SimpleDateFormat mDateFormat;
-    private final LayoutInflater mInflator;
+    private final LayoutInflater mInflater;
 
     public GooFileArrayAdapter(Context context, int layoutResourceId, List<GooFileObject> objects) {
         this.mContext = context;
         this.mLayoutResourceId = layoutResourceId;
         this.mGooFilesList = objects;
         this.mDateFormat = new SimpleDateFormat("MM-dd-yyyy");
-        this.mInflator = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class GooFileArrayAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = mInflator.inflate(mLayoutResourceId, parent, false);
+            convertView = mInflater.inflate(mLayoutResourceId, parent, false);
         }
 
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();

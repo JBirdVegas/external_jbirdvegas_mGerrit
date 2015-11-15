@@ -38,14 +38,14 @@ import java.util.List;
 
 public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
 
-    private LayoutInflater mInflator;
+    private LayoutInflater mInflater;
     private String gerritName, gerritUrl = "https://";
 
     private List<GerritDetails> data;
 
     public TeamListAdapter(Context context, List<GerritDetails> objects) {
         super(context, R.layout.gerrit_row, objects);
-        mInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         data = objects;
     }
 
@@ -111,7 +111,7 @@ public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
         // Row specific handling
         if (getItemViewType(position) == 0) {
             if (convertView == null) {
-                convertView = mInflator.inflate(R.layout.gerrit_row, parent, false);
+                convertView = mInflater.inflate(R.layout.gerrit_row, parent, false);
             }
 
             viewHolder = (ViewHolder) convertView.getTag();
@@ -131,7 +131,7 @@ public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
 
         } else {
             if (convertView == null) {
-                convertView = mInflator.inflate(R.layout.add_team_row, parent, false);
+                convertView = mInflater.inflate(R.layout.add_team_row, parent, false);
             }
 
             viewHolder = (ViewHolder) convertView.getTag();

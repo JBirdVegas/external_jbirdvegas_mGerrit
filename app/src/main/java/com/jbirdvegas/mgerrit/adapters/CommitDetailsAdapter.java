@@ -13,7 +13,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.cards.CardBinder;
-import com.jbirdvegas.mgerrit.cards.CommitCard;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
 import com.jbirdvegas.mgerrit.cards.PatchSetCommentsCard;
@@ -50,7 +49,7 @@ import java.util.ArrayList;
  */
 public class CommitDetailsAdapter extends BaseExpandableListAdapter {
 
-    private final LayoutInflater mInflator;
+    private final LayoutInflater mInflater;
     private final Context mContext;
 
     // Contextual action bar handler instance so the adapter can close the CAB
@@ -68,7 +67,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
 
     public CommitDetailsAdapter(Context context) {
         mContext = context;
-        mInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         setup();
     }
 
@@ -108,11 +107,11 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
         if (text == null) {
             // If the text is null, render a blank header. These groups need to be set as expanded as the
             // Expand/Collapse button is not rendered either.
-            return mInflator.inflate(R.layout.empty_row, parent, false);
+            return mInflater.inflate(R.layout.empty_row, parent, false);
         }
 
         if (convertView == null) {
-            convertView = mInflator.inflate(R.layout.card_header, parent, false);
+            convertView = mInflater.inflate(R.layout.card_header, parent, false);
         }
 
         GroupViewHolder viewHolder = (GroupViewHolder) convertView.getTag();
@@ -123,7 +122,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
 
         // convertView may be a recycled empty row
         if (viewHolder.headerText == null) {
-            convertView = mInflator.inflate(R.layout.card_header, parent, false);
+            convertView = mInflater.inflate(R.layout.card_header, parent, false);
             viewHolder = (GroupViewHolder) convertView.getTag();
             if (viewHolder == null) {
                 viewHolder = new GroupViewHolder(convertView);

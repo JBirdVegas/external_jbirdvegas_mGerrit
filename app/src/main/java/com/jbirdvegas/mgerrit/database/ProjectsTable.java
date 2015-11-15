@@ -56,7 +56,7 @@ public class ProjectsTable extends DatabaseTable {
     // Sort by condition for querying results.
     public static final String SORT_BY = C_ROOT + " ASC, " + C_SUBPROJECT + " ASC";
 
-    public static final String SEPERATOR = "/";
+    public static final String SEPARATOR = "/";
 
     private static ProjectsTable mInstance = null;
 
@@ -156,7 +156,7 @@ public class ProjectsTable extends DatabaseTable {
 
     // Split a project's path (name) into its root and subproject
     private static Pair<String, String> splitPath(String projectPath) {
-        String p[] = projectPath.split(SEPERATOR, 2);
+        String p[] = projectPath.split(SEPARATOR, 2);
         if (p.length < 2) return new Pair<>(p[0], "");
         else return new Pair<>(p[0], p[1]);
     }

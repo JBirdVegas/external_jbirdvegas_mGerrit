@@ -115,7 +115,7 @@ class ChangeListProcessor extends SyncProcessor<List<ChangeInfo>> {
             ChangeInfo fc = data.get(0);
             if (fc._moreChanges == null) {
                 Boolean mc = data.get(data.size() - 1)._moreChanges;
-                // _moreChanges may be null and null cannot be assigned to a (primative) boolean
+                // _moreChanges may be null and null cannot be assigned to a (primitive) boolean
                 moreChanges = !(mc == null || !mc);
             }
             else moreChanges = fc._moreChanges;
