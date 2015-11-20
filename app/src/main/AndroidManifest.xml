@@ -73,7 +73,7 @@
         <activity android:name=".activities.GerritSwitcher"
                   android:parentActivityName=".activities.PrefsActivity"
                   android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".SigninActivity"
+        <activity android:name=".activities.SigninActivity"
             android:parentActivityName=".activities.GerritControllerActivity"/>
         <service android:name=".tasks.GerritService" />
         <provider

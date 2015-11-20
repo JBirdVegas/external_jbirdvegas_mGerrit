@@ -38,6 +38,8 @@ dexcount {
 dependencies {
     compile files('libs/libGoogleAnalyticsServices.jar')
     compile files('libs/annotations.jar')
+    compile files('libs/appcompat-v7.jar')
+    compile files('libs/design-22.2.jar')
 
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:design:22.+'

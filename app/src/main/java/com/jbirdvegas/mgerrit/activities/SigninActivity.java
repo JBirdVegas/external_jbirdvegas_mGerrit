@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;

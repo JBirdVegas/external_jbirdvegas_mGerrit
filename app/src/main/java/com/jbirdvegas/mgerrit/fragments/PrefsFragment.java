@@ -39,7 +39,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.SigninActivity;
+import com.jbirdvegas.mgerrit.activities.SigninActivity;
 import com.jbirdvegas.mgerrit.activities.GerritSwitcher;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;

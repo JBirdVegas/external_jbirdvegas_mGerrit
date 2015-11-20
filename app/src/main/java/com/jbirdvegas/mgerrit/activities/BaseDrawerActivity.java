@@ -34,7 +34,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.SigninActivity;
+import com.jbirdvegas.mgerrit.activities.SigninActivity;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
