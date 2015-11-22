@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
@@ -51,7 +50,7 @@ abstract class SyncProcessor<T> {
     protected final Context mContext;
     private final EventBus mEventBus;
     private ResponseHandler mResponseHandler;
-    private final Intent mIntent;
+    private final Intent intent;
     private Integer mQueueId = 1;
 
     /**
@@ -62,7 +61,7 @@ abstract class SyncProcessor<T> {
      */
     SyncProcessor(Context context, @NotNull Intent intent) {
         this.mContext = context;
-        this.mIntent = intent;
+        this.intent = intent;
         this.mEventBus = EventBus.getDefault();
     }
 
@@ -71,7 +70,7 @@ abstract class SyncProcessor<T> {
     // Helper method to extract the relevant query portion of the URL
     @Nullable
     public String getQuery() {
-        String status = mIntent.getStringExtra(GerritService.CHANGE_STATUS);
+        String status = intent.getStringExtra(GerritService.CHANGE_STATUS);
         if (status == null) return null;
         else {
             return JSONCommit.KEY_STATUS + ":" + status;
@@ -80,11 +79,11 @@ abstract class SyncProcessor<T> {
 
     // Helper method to return the change status
     protected String getStatus() {
-        return mIntent.getStringExtra(GerritService.CHANGE_STATUS);
+        return intent.getStringExtra(GerritService.CHANGE_STATUS);
     }
 
     @NotNull
-    public Intent getIntent() { return mIntent; }
+    public Intent getIntent() { return intent; }
 
     /**
      * Inserts data into the database
@@ -134,7 +133,7 @@ abstract class SyncProcessor<T> {
     protected void fetchData() {
         GerritRestApi gerritApi = getGerritApiInstance(true);
         try {
-            mEventBus.post(new StartingRequest(mIntent, mQueueId));
+            mEventBus.post(new StartingRequest(intent, mQueueId));
             onResponse(getData(gerritApi));
         } catch (RestApiException e) {
             handleRestApiException(e);
@@ -147,8 +146,8 @@ abstract class SyncProcessor<T> {
         String username = null, password = null;
 
         if (isAuthenticating) {
-            username = mIntent.getStringExtra(GerritService.HTTP_USERNAME);
-            password = mIntent.getStringExtra(GerritService.HTTP_PASSWORD);
+            username = intent.getStringExtra(GerritService.HTTP_USERNAME);
+            password = intent.getStringExtra(GerritService.HTTP_PASSWORD);
             if (username == null || password == null) {
                 UserAccountInfo ai = Users.getUser(mContext, null);
                 if (ai != null) {
@@ -181,7 +180,7 @@ abstract class SyncProcessor<T> {
     protected void handleException(Exception e) {
         // We still want to post the exception
         // Make sure the sign in activity (if started above) will receive the ErrorDuringConnection message by making it sticky
-        GerritMessage ev = new ErrorDuringConnection(mIntent, mQueueId, e);
+        GerritMessage ev = new ErrorDuringConnection(intent, mQueueId, e);
         EventQueue.getInstance().enqueue(ev, true);
     }
 
@@ -230,7 +229,7 @@ abstract class SyncProcessor<T> {
                 numItems = insert(mData);
             }
 
-            EventBus.getDefault().post(new Finished(mIntent, mQueueId, numItems));
+            EventBus.getDefault().post(new Finished(intent, mQueueId, numItems));
             if (mData != null) doPostProcess(mData);
 
             GerritService.finishedRequest(mQueueId);

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
-  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
-  ~  Author: Evan Conway (P4R4N01D), 2013
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2015
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -16,32 +15,35 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/patchset"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="1">
 
-    <include
-        layout="@layout/network_disconnected"
+    <ListView
+        android:layout_height="0dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_weight="0.1"
+        android:id="@+id/listView" />
 
-    <ExpandableListView
-        android:id="@+id/commit_cards"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <EditText
+        android:id="@+id/new_comment_message"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:childDivider="@android:color/transparent"
-        android:clipToPadding="false"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="@dimen/cards_list_divider_height"
-        android:paddingBottom="@dimen/cards_list_padding_vert"
-        android:paddingLeft="@dimen/cards_list_padding_horiz"
-        android:paddingRight="@dimen/cards_list_padding_horiz"
-        android:paddingTop="@dimen/cards_list_padding_vert" />
+        android:layout_weight="0.9"
+        android:background="?attr/colorCardBackground"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Add a comment"
+        android:inputType="textMultiLine"
+        android:padding="@dimen/standard_padding"/>
 
-    <include layout="@layout/partial_quick_comment" />
 
 </LinearLayout>

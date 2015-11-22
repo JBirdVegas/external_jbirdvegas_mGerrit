@@ -56,7 +56,11 @@ public class GerritService extends IntentService {
     // Bypass the sync required logic and force a sync
     public static final String FORCE_UPDATE = "force";
 
-    public enum DataType { Project, Commit, CommitDetails, GetVersion, Account, Star, Diff, Image }
+    // ReviewProcessor
+    public static final String REVIEW_MESSAGE = "message";
+    public static final String CHANGE_LABELS = "labels";
+
+    public enum DataType { Project, Commit, CommitDetails, GetVersion, Account, Star, Diff, Image, Comment }
 
     // A list of the currently running sync processors
     //  We should use some token system where a given query is assigned a token which we can use
@@ -92,6 +96,8 @@ public class GerritService extends IntentService {
             processor = new TextDiffProcessor(this, intent);
         } else if (dataType == DataType.Image) {
                 processor = new ImageProcessor(this, intent);
+        } else if (dataType == DataType.Comment) {
+            processor = new ReviewProcessor(this, intent);
         } else {
             Log.w(TAG, "Don't know how to handle synchronization of type " + DATA_TYPE_KEY);
             return;

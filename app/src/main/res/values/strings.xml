@@ -219,4 +219,5 @@
     <string name="gerrit_signin_logout">logout</string>
     <string name="menu_view_changes">View Changes</string>
     <string name="menu_starred_changes">Starred Changes</string>
+    <string name="menu_post_comment">Post comment</string>
 </resources>

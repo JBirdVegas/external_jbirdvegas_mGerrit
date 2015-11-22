@@ -44,7 +44,7 @@
         <item name="diffStyle">@style/Diff.Light</item>
         <item name="changeInsertedStyle">@style/CardText.Inserted.Light</item>
         <item name="changeDeletedStyle">@style/CardText.Deleted.Light</item>
-        <item name="backIcon">@drawable/ic_action_previous_item</item>
+        <item name="backIcon">@drawable/ic_nav_previous_item</item>
         <item name="nextIcon">@drawable/ic_action_next_item</item>
         <item name="backgroundTop">@drawable/border_top</item>
         <item name="acceptIcon">@drawable/ic_action_accept</item>
@@ -56,6 +56,8 @@
         <item name="unstarredIcon">@drawable/ic_action_unstarred</item>
         <item name="borderlessButtonBackground">@style/BorderlessBackground</item>
         <item name="overflowIcon">@drawable/horiz_overflow</item>
+        <item name="upIcon">@drawable/ic_nav_expand</item>
+        <item name="sendIcon">@drawable/ic_action_send</item>
 
         <item name="colorPrimary">@color/card_background</item>
         <item name="material_drawer_background">@color/card_background</item>
@@ -85,7 +87,7 @@
         <item name="diffStyle">@style/Diff.Dark</item>
         <item name="changeInsertedStyle">@style/CardText.Inserted.Dark</item>
         <item name="changeDeletedStyle">@style/CardText.Deleted.Dark</item>
-        <item name="backIcon">@drawable/ic_action_previous_item_dark</item>
+        <item name="backIcon">@drawable/ic_nav_previous_item_dark</item>
         <item name="nextIcon">@drawable/ic_action_next_item_dark</item>
         <item name="backgroundTop">@drawable/border_top_dark</item>
         <item name="acceptIcon">@drawable/ic_action_accept_dark</item>
@@ -97,6 +99,8 @@
         <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
         <item name="borderlessButtonBackground">@style/BorderlessBackground.Dark</item>
         <item name="overflowIcon">@drawable/horiz_overflow_dark</item>
+        <item name="upIcon">@drawable/ic_nav_expand_dark</item>
+        <item name="sendIcon">@drawable/ic_action_send_dark</item>
 
         <item name="colorAccent">@color/material_drawer_accent</item>
         <item name="colorPrimary">@color/card_background_dark</item>

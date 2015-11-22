@@ -39,13 +39,10 @@ import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.activities.BaseDrawerActivity;
-import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
-import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
-import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
-import com.jbirdvegas.mgerrit.search.IsSearch;
-import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
+import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
+import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.MoreChanges;
@@ -64,6 +61,7 @@ import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 import com.jbirdvegas.mgerrit.tasks.GerritService.Direction;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
+import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 
 import org.jetbrains.annotations.Nullable;
 

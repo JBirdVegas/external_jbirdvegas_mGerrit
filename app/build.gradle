@@ -28,6 +28,7 @@ apply plugin: 'com.getkeepsafe.dexcount'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dexcount {
@@ -38,8 +39,6 @@ dexcount {
 dependencies {
     compile files('libs/libGoogleAnalyticsServices.jar')
     compile files('libs/annotations.jar')
-    compile files('libs/appcompat-v7.jar')
-    compile files('libs/design-22.2.jar')
 
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:design:22.+'
@@ -70,6 +69,8 @@ dependencies {
 
     // We have too many methods including the appcompat library
     compile 'com.android.support:multidex:1.0.0'
+
+    compile 'com.anupcowkur:reservoir:2.1'
 
     compile('com.mikepenz:materialdrawer:4.4.6@aar') {
         transitive = true
@@ -189,6 +190,8 @@ android {
     }
     packagingOptions {
         exclude 'plugin.properties'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
     }
     if (versionPropsFile.canRead()) {
         versionProps.load(new FileInputStream(versionPropsFile))

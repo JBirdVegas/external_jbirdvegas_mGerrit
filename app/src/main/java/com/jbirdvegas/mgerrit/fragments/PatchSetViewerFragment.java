@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,9 +34,12 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.activities.CommentActivity;
 import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
 import com.jbirdvegas.mgerrit.adapters.CommitDetailsAdapter;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
@@ -69,15 +73,13 @@ import de.greenrobot.event.EventBus;
 public class PatchSetViewerFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private View disconnectedView;
+    private View mDisconnectedView;
     private Activity mParent;
     private Context mContext;
 
     private String mSelectedChange;
     private String mStatus;
     private int mChangeNumber;
-    // Whether the server supports the new change details endpoint (false if so)
-    private boolean sIsLegacyVersion;
 
     private CommitDetailsAdapter mAdapter;
     private FilesCAB mFilesCAB;
@@ -94,6 +96,7 @@ public class PatchSetViewerFragment extends Fragment
     public static final int LOADER_COMMENTS = 6;
 
     private EventBus mEventBus;
+    private TextView mCommentText;
 
 
     @Override
@@ -118,17 +121,49 @@ public class PatchSetViewerFragment extends Fragment
     private void init() {
         View currentFragment = this.getView();
 
-        ExpandableListView mListView = (ExpandableListView) currentFragment.findViewById(R.id.commit_cards);
-        disconnectedView = currentFragment.findViewById(R.id.disconnected_view);
+        initListview(currentFragment);
 
-        sIsLegacyVersion = !Config.isDiffSupported(mParent);
+        mDisconnectedView = currentFragment.findViewById(R.id.disconnected_view);
+        Button retryButton = (Button) currentFragment.findViewById(R.id.btn_retry);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendRequest(GerritService.DataType.CommitDetails, null);
+            }
+        });
+
+        initAddCommentToolbar(currentFragment);
+
+        if (getArguments() == null) {
+            /** This should be the default value of {@link ChangeListFragment.mSelectedStatus } */
+            setStatus(JSONCommit.Status.NEW.toString());
+            loadChange(true);
+        } else {
+            Bundle args = getArguments();
+            setStatus(args.getString(STATUS));
+            String changeid = args.getString(CHANGE_ID);
+            mChangeNumber = args.getInt(CHANGE_NO);
+
+            if (changeid != null && !changeid.isEmpty()) {
+                loadChange(changeid);
+            }
+        }
+
+        mEventBus = EventBus.getDefault();
+    }
+
+    private void initListview(View currentFragment) {
+        ExpandableListView mListView = (ExpandableListView) currentFragment.findViewById(R.id.commit_cards);
+
+        // Whether the server supports the new change details endpoint (false if so)
+        boolean isLegacyVersion = !Config.isDiffSupported(mParent);
 
         mAdapter = new CommitDetailsAdapter(mParent);
         mListView.setAdapter(mAdapter);
 
         // Child click listeners (relevant for the changes cards)
         mListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        mFilesCAB = new FilesCAB(mParent, !sIsLegacyVersion);
+        mFilesCAB = new FilesCAB(mParent, !isLegacyVersion);
         mAdapter.setContextualActionBar(mFilesCAB);
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -184,37 +219,39 @@ public class PatchSetViewerFragment extends Fragment
 
         // Remember to expand the groups which don't have a header otherwise they will not be shown
         mListView.expandGroup(0);
+    }
 
-        Button retryButton = (Button) currentFragment.findViewById(R.id.btn_retry);
-        retryButton.setOnClickListener(new View.OnClickListener() {
+    /**
+     * Setup the quick reply toolbar.
+     * @param currentFragment This fragment's view - this.getView()
+     */
+    private void initAddCommentToolbar(View currentFragment) {
+        mCommentText = (TextView) currentFragment.findViewById(R.id.new_comment_message);
+        ImageButton commentButton = (ImageButton) currentFragment.findViewById(R.id.btn_add_comment);
+        commentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequest(GerritService.DataType.CommitDetails);
+                addComment();
             }
         });
 
-        if (getArguments() == null) {
-            /** This should be the default value of {@link ChangeListFragment.mSelectedStatus } */
-            setStatus(JSONCommit.Status.NEW.toString());
-            loadChange(true);
-        } else {
-            Bundle args = getArguments();
-            setStatus(args.getString(STATUS));
-            String changeid = args.getString(CHANGE_ID);
-            mChangeNumber = args.getInt(CHANGE_NO);
-
-            if (changeid != null && !changeid.isEmpty()) {
-                loadChange(changeid);
+        ImageButton expandButton = (ImageButton) currentFragment.findViewById(R.id.btn_expand_comment);
+        expandButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(mParent, CommentActivity.class);
+                i.putExtra(CommentFragment.CHANGE_ID, mSelectedChange);
+                i.putExtra(CommentFragment.CHANGE_NO, mChangeNumber);
+                i.putExtra(CommentFragment.MESSAGE, mCommentText.getText());
+                mParent.startActivity(i);
             }
-        }
-
-        mEventBus = EventBus.getDefault();
+        });
     }
 
     /**
      * Start the updater to check for an update if necessary
      */
-    private void sendRequest(GerritService.DataType dataType) {
+    private void sendRequest(GerritService.DataType dataType, Bundle bundle) {
 
         // If we aren't connected, there's nothing to do here
         if (!switchViews()) return;
@@ -225,10 +262,12 @@ public class PatchSetViewerFragment extends Fragment
          * so this will not be able to get the files changed or the full commit message
          * in prior Gerrit versions.
          */
-        Bundle b = new Bundle();
-        b.putString(GerritService.CHANGE_ID, mSelectedChange);
-        b.putInt(GerritService.CHANGE_NUMBER, mChangeNumber);
-        GerritService.sendRequest(mParent, dataType, b);
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putString(GerritService.CHANGE_ID, mSelectedChange);
+        bundle.putInt(GerritService.CHANGE_NUMBER, mChangeNumber);
+        GerritService.sendRequest(mParent, dataType, bundle);
     }
 
     private void restartLoaders(String changeID) {
@@ -256,7 +295,6 @@ public class PatchSetViewerFragment extends Fragment
 
         Pair<String, Integer> change = SelectedChange.getSelectedChange(mContext, mStatus);
         String changeID;
-        int changeNumber;
 
         if (change == null || change.first.isEmpty()) {
             change = Changes.getMostRecentChange(mParent, mStatus);
@@ -286,7 +324,7 @@ public class PatchSetViewerFragment extends Fragment
         // If we have already loaded this change there is nothing to do
         if (!changeId.equals(this.mSelectedChange)) {
             this.mSelectedChange = changeId;
-            sendRequest(GerritService.DataType.CommitDetails);
+            sendRequest(GerritService.DataType.CommitDetails, null);
 
             restartLoaders(changeId);
         }
@@ -387,11 +425,18 @@ public class PatchSetViewerFragment extends Fragment
     private boolean switchViews() {
         boolean isconn = Tools.isConnected(mParent);
         if (isconn) {
-            disconnectedView.setVisibility(View.GONE);
+            mDisconnectedView.setVisibility(View.GONE);
         } else {
-            disconnectedView.setVisibility(View.VISIBLE);
+            mDisconnectedView.setVisibility(View.VISIBLE);
         }
         return isconn;
+    }
+
+    public void addComment() {
+        String message = mCommentText.getText().toString();
+        Bundle bundle = new Bundle();
+        bundle.putString(GerritService.REVIEW_MESSAGE, message);
+        sendRequest(GerritService.DataType.Comment, bundle);
     }
 
     @Override
