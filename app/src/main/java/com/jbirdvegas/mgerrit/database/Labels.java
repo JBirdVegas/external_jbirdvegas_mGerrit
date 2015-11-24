@@ -41,6 +41,7 @@ public class Labels extends DatabaseTable {
     public static final String C_VALUE = "value";
     public static final String C_DESCRIPTION = "desc";
     public static final String C_PERMITTED = "permitted";
+    public static final String C_IS_DEFAULT = "is_default";
 
     // Triple field composite primary key
     public static final String[] PRIMARY_KEY = { C_PROJECT, C_NAME, C_VALUE };
@@ -68,9 +69,10 @@ public class Labels extends DatabaseTable {
         db.execSQL("create table " + TABLE + " ("
                 + C_PROJECT + " text NOT NULL, "
                 + C_NAME + " text NOT NULL, "
-                + C_VALUE + " text NOT NULL, "
-                + C_DESCRIPTION + " text NOT NULL, "
+                + C_VALUE + " INTEGER NOT NULL, "
+                + C_DESCRIPTION + " text, "
                 + C_PERMITTED + " INTEGER NOT NULL DEFAULT 0, "
+                + C_IS_DEFAULT + " INTEGER NOT NULL DEFAULT 0, "
                 + "FOREIGN KEY (" + C_PERMITTED + ") REFERENCES "
                         + ProjectsTable.TABLE + "(" + ProjectsTable.C_PATH + "), "
                 + "PRIMARY KEY (" + C_PROJECT + ", " + C_NAME + ", " + C_VALUE + ") ON CONFLICT REPLACE)");
@@ -96,13 +98,22 @@ public class Labels extends DatabaseTable {
             Collection<String> permittedValues = permittedLabels.get(label);
 
             for (Map.Entry<String, String> entry : labelValues.entrySet()) {
-                boolean isPermitted = permittedValues.contains(entry.getKey());
+                boolean isPermitted = permittedValues != null && permittedValues.contains(entry.getKey());
 
                 row.put(C_PROJECT, project);
                 row.put(C_NAME, label);
-                row.put(C_VALUE, entry.getKey());
                 row.put(C_DESCRIPTION, entry.getValue());
                 row.put(C_PERMITTED, isPermitted);
+
+                try {
+                    int value = Integer.parseInt(entry.getKey().trim());
+                    row.put(C_VALUE, value);
+                    row.put(C_IS_DEFAULT, infoEntry.getValue().defaultValue == value);
+                } catch (NumberFormatException e) {
+                    // Label may not be an int - unlikely but we can still handle it
+                    row.put(C_VALUE, entry.getKey());
+                    row.put(C_IS_DEFAULT, false);
+                }
             }
 
             rows.add(row);
@@ -113,6 +124,5 @@ public class Labels extends DatabaseTable {
 
         ContentValues valuesArray[] = new ContentValues[rows.size()];
         return context.getContentResolver().bulkInsert(uri, rows.toArray(valuesArray));
-
     }
 }
