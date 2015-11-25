@@ -40,7 +40,6 @@ public class Labels extends DatabaseTable {
     public static final String C_NAME = "label";
     public static final String C_VALUE = "value";
     public static final String C_DESCRIPTION = "desc";
-    public static final String C_PERMITTED = "permitted";
     public static final String C_IS_DEFAULT = "is_default";
 
     // Triple field composite primary key
@@ -71,9 +70,8 @@ public class Labels extends DatabaseTable {
                 + C_NAME + " text NOT NULL, "
                 + C_VALUE + " INTEGER NOT NULL, "
                 + C_DESCRIPTION + " text, "
-                + C_PERMITTED + " INTEGER NOT NULL DEFAULT 0, "
                 + C_IS_DEFAULT + " INTEGER NOT NULL DEFAULT 0, "
-                + "FOREIGN KEY (" + C_PERMITTED + ") REFERENCES "
+                + "FOREIGN KEY (" + C_PROJECT + ") REFERENCES "
                         + ProjectsTable.TABLE + "(" + ProjectsTable.C_PATH + "), "
                 + "PRIMARY KEY (" + C_PROJECT + ", " + C_NAME + ", " + C_VALUE + ") ON CONFLICT REPLACE)");
     }
@@ -89,34 +87,30 @@ public class Labels extends DatabaseTable {
 
         List<ContentValues> rows = new ArrayList<>();
 
-        for (Map.Entry<String, LabelInfo> infoEntry : labels.entrySet()) {
-            ContentValues row = new ContentValues(5);
+        for (Map.Entry<String, Collection<String>> entry : permittedLabels.entrySet()) {
+            String label = entry.getKey();
+            Collection<String> permittedValues = entry.getValue();
 
-            String label = infoEntry.getKey();
-            Map<String, String> labelValues = infoEntry.getValue().values;
+            LabelInfo infoEntry = labels.get(label);
+            Map<String, String> labelValues = infoEntry.values;
 
-            Collection<String> permittedValues = permittedLabels.get(label);
-
-            for (Map.Entry<String, String> entry : labelValues.entrySet()) {
-                boolean isPermitted = permittedValues != null && permittedValues.contains(entry.getKey());
-
+            for (String value : permittedValues) {
+                ContentValues row = new ContentValues(5);
                 row.put(C_PROJECT, project);
                 row.put(C_NAME, label);
-                row.put(C_DESCRIPTION, entry.getValue());
-                row.put(C_PERMITTED, isPermitted);
+                if (labelValues != null) row.put(C_DESCRIPTION, labelValues.get(value));
 
                 try {
-                    int value = Integer.parseInt(entry.getKey().trim());
-                    row.put(C_VALUE, value);
-                    row.put(C_IS_DEFAULT, infoEntry.getValue().defaultValue == value);
+                    int i = Integer.parseInt(value.trim());
+                    row.put(C_VALUE, i);
+                    row.put(C_IS_DEFAULT, infoEntry.defaultValue == i);
                 } catch (NumberFormatException e) {
                     // Label may not be an int - unlikely but we can still handle it
-                    row.put(C_VALUE, entry.getKey());
+                    row.put(C_VALUE, value);
                     row.put(C_IS_DEFAULT, false);
                 }
+                rows.add(row);
             }
-
-            rows.add(row);
         }
 
         // We are only inserting PK columns so we should use the REPLACE resolution algorithm.
