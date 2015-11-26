@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.v4.content.CursorLoader;
 
 import com.google.gerrit.extensions.common.LabelInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
@@ -55,6 +56,7 @@ public class Labels extends DatabaseTable {
 
     // Sort by condition for querying results.
     public static final String SORT_BY = C_PROJECT + " DESC, " + C_NAME + " DESC";
+    private static final String[] PROJECTION = {C_PROJECT, C_NAME, C_VALUE, C_DESCRIPTION, C_IS_DEFAULT};
 
     private static Labels mInstance = null;
 
@@ -118,5 +120,12 @@ public class Labels extends DatabaseTable {
 
         ContentValues valuesArray[] = new ContentValues[rows.size()];
         return context.getContentResolver().bulkInsert(uri, rows.toArray(valuesArray));
+    }
+
+    public static CursorLoader getPermittedLabels(Context context, String project) {
+
+        return new CursorLoader(context, CONTENT_URI, PROJECTION,
+                Labels.TABLE + "." + C_PROJECT + " = ?",
+                new String[] { project }, SORT_BY);
     }
 }

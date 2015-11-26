@@ -17,16 +17,22 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="1">
 
-    <ListView
-        android:layout_height="0dp"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_weight="0.1"
-        android:id="@+id/listView" />
+        android:layout_height="0dp"
+        android:layout_weight="0.20">
+        <FrameLayout
+            android:id="@+id/review_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/item_label" />
+    </ScrollView>
 
     <View
         android:layout_width="match_parent"
@@ -37,7 +43,7 @@
         android:id="@+id/new_comment_message"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.9"
+        android:layout_weight="0.8"
         android:background="?attr/colorCardBackground"
         android:ems="10"
         android:gravity="start|top"

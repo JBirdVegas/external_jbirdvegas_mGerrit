@@ -241,7 +241,6 @@ public class PatchSetViewerFragment extends Fragment
             public void onClick(View v) {
                 Intent i = new Intent(mParent, CommentActivity.class);
                 i.putExtra(CommentFragment.CHANGE_ID, mSelectedChange);
-                i.putExtra(CommentFragment.CHANGE_NO, mChangeNumber);
                 i.putExtra(CommentFragment.MESSAGE, mCommentText.getText());
                 mParent.startActivity(i);
             }
