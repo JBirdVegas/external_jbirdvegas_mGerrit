@@ -1,8 +1,7 @@
-package com.jbirdvegas.mgerrit.activities;
-
 /*
- * Copyright (C) 2013 Android Open Kang Project (AOKP)
- *  Author: Jon Stanford (JBirdVegas), 2013
+ *
+ * Copyright (C) 2015 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (p4r4n01d), 2015
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +14,10 @@ package com.jbirdvegas.mgerrit.activities;
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
+
+package com.jbirdvegas.mgerrit.activities;
 
 import android.app.AlertDialog.Builder;
 import android.app.SearchManager;
@@ -24,7 +26,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,16 +50,15 @@ import com.jbirdvegas.mgerrit.helpers.ROMHelper;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.NotSupported;
+import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
 import de.greenrobot.event.EventBus;
 
-public class GerritControllerActivity extends FragmentActivity {
+public class GerritControllerActivity extends BaseDrawerActivity {
 
     private static final String GERRIT_INSTANCE = "gerrit";
     private String mGerritWebsite;
-
-    private Menu mMenu;
 
     // Indicates if we are running this in tablet mode.
     private boolean mTwoPane = false;
@@ -127,41 +127,48 @@ public class GerritControllerActivity extends FragmentActivity {
             // large-screen layouts(res/values-sw600dp). If this view is present,
             // then the activity should be in two-pane mode.
             mTwoPane = true;
-            mChangeDetail = (PatchSetViewerFragment) fm.findFragmentById(R.id.change_detail_fragment);
+            mChangeDetail = new PatchSetViewerFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.change_detail_fragment, mChangeDetail).commit();
         }
         PrefsFragment.setTabletMode(this, mTwoPane);
 
-        mChangeList = (ChangeListFragment) fm.findFragmentById(R.id.change_list_fragment);
+        // Display the fragment as the main content.
+        mChangeList = new ChangeListFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.change_list_fragment, mChangeList).commit();
+
+        // Need to initialise this before we get the name of the current Gerrit
+        initNavigationDrawer(true);
 
         mGerritWebsite = PrefsFragment.getCurrentGerrit(this);
         String gerritName = PrefsFragment.getCurrentGerritName(this);
-        if (gerritName != null) setTitle(gerritName);
+        if (gerritName != null) {
+            setTitle(gerritName);
+        }
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView = (GerritSearchView) findViewById(R.id.search);
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        hideChangelogOption(PrefsFragment.getCurrentGerrit(this));
-        return super.onPrepareOptionsMenu(menu);
+        setSearchView(mSearchView);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.gerrit_instances_menu, menu);
-        this.mMenu = menu;
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        return onMenuItemSelected(item.getItemId()) || super.onOptionsItemSelected(item);
+    }
 
+    private boolean onMenuItemSelected(int itemId) {
         Intent intent;
-        switch (item.getItemId()) {
+        switch (itemId) {
             case R.id.menu_save:
                 intent = new Intent(this, PrefsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -185,17 +192,11 @@ public class GerritControllerActivity extends FragmentActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
                 return true;
-            case R.id.menu_changelog:
-                // TODO: Send the current search query along too.
-                Intent changelog = new Intent(this, AOKPChangelog.class);
-                changelog.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(changelog);
-                return true;
             case R.id.menu_search:
                 // Toggle the visibility of the searchview
                 mSearchView.toggleVisibility();
             default:
-                return super.onOptionsItemSelected(item);
+                return false;
         }
     }
 
@@ -205,8 +206,9 @@ public class GerritControllerActivity extends FragmentActivity {
                 getString(R.string.using_gerrit_toast) + ' ' + newGerrit,
                 Toast.LENGTH_LONG).show();
         String gerritName = PrefsFragment.getCurrentGerritName(this);
-        if (gerritName != null) setTitle(gerritName);
-        hideChangelogOption(newGerrit);
+        if (gerritName != null) {
+            setTitle(gerritName);
+        }
         refreshTabs();
     }
 
@@ -236,14 +238,9 @@ public class GerritControllerActivity extends FragmentActivity {
             setTheme(themeId);
             this.recreate();
         }
-    }
 
-    // Hide the AOKP Changelog menu option when AOKP's Gerrit is not selected
-    private void hideChangelogOption(String gerrit) {
-        MenuItem changelog = mMenu.findItem(R.id.menu_changelog);
-        if (changelog != null) {
-            changelog.setVisible(gerrit.contains("aokp"));
-        }
+        // If we are viewing this activity set the selected item to be either changes or starred changes
+        onSearchQueryChanged(null);
     }
 
     public ChangeListFragment getChangeList() {
@@ -278,6 +275,7 @@ public class GerritControllerActivity extends FragmentActivity {
 
     public void onEventMainThread(GerritChanged ev) {
         onGerritChanged(ev.getNewGerritUrl());
+        super.onGerritChanged(ev);
     }
 
     /**

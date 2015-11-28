@@ -1,4 +1,4 @@
-package com.jbirdvegas.mgerrit;
+package com.jbirdvegas.mgerrit.activities;
 
 /*
  * Copyright (C) 2015 Android Open Kang Project (AOKP)
@@ -20,10 +20,11 @@ package com.jbirdvegas.mgerrit;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
@@ -47,7 +49,7 @@ import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 
-public class SigninActivity extends FragmentActivity
+public class SigninActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>
 {
     private String mCurrentGerritUrl;
@@ -66,17 +68,13 @@ public class SigninActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActive = true;
-
         setTheme(PrefsFragment.getCurrentThemeID(this));
+        setContentView(R.layout.sign_in);
 
-        // Action bar Up affordance
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
+        setupActionBar();
         mCurrentGerritUrl = PrefsFragment.getCurrentGerrit(this);
         String mCurrentGerritName = PrefsFragment.getCurrentGerritName(this);
-
         setTitle(String.format(getResources().getString(R.string.gerrit_signin_title), mCurrentGerritName));
-        setContentView(R.layout.sign_in);
 
         closeOnSuccess = getIntent().getBooleanExtra(CLOSE_ON_SUCCESSFUL_SIGNIN, false);
         // Currently, we only set closeOnSuccess when prompting authorization for a protected Gerrit
@@ -104,6 +102,13 @@ public class SigninActivity extends FragmentActivity
         btnSignIn.setMode(ActionProcessButton.Mode.ENDLESS);
 
         getSupportLoaderManager().initLoader(0, null, this);
+    }
+
+    private void setupActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+        // Action bar Up affordance
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

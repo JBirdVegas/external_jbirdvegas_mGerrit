@@ -52,7 +52,7 @@ abstract class SyncProcessor<T> {
     private final EventBus mEventBus;
     private ResponseHandler mResponseHandler;
     private final Intent mIntent;
-    private Integer mQueueId;
+    private Integer mQueueId = 1;
 
     /**
      * Standard constructor to create a SyncProcessor

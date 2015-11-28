@@ -17,6 +17,8 @@ package com.jbirdvegas.mgerrit.search;
  *  limitations under the License.
  */
 
+import android.support.annotation.NonNull;
+
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
@@ -343,7 +345,7 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
     }
 
     @Override
-    public int compareTo(AgeSearch rhs) {
+    public int compareTo(@NonNull AgeSearch rhs) {
         if (this.equals(rhs)) return 0;
         else if (mInstant != null && rhs.mInstant != null) {
             return mInstant.compareTo(rhs.mInstant);

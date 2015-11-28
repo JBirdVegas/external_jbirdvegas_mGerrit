@@ -17,16 +17,16 @@ package com.jbirdvegas.mgerrit.activities;
  *  limitations under the License.
  */
 
-import android.app.Activity;
-import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,7 +49,7 @@ import java.io.Serializable;
 
 import de.greenrobot.event.EventBus;
 
-public class ProjectsList extends Activity
+public class ProjectsList extends BaseDrawerActivity
     implements LoaderManager.LoaderCallbacks<Cursor>,
         SearchView.OnQueryTextListener
 {
@@ -58,7 +58,8 @@ public class ProjectsList extends Activity
     private EventBus mEventBus;
     private String mQuery;
 
-    private static final String SEPERATOR = ProjectsTable.SEPERATOR;
+    private static final String SEPARATOR = ProjectsTable.SEPARATOR;
+    private static final int LOADER_PROJECTS = 0;
 
     private SwipeRefreshLayout mSwipeLayout;
     private SwipeRefreshLayout.OnRefreshListener mRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
@@ -75,8 +76,7 @@ public class ProjectsList extends Activity
 
         setContentView(R.layout.projects_list);
 
-        // Action bar Up affordance
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        initNavigationDrawer(false);
 
         mProjectsListView = (ExpandableListView) findViewById(R.id.projects);
 
@@ -113,6 +113,8 @@ public class ProjectsList extends Activity
 
         mEventBus = EventBus.getDefault();
 
+        navigationSetSelectedById(R.id.menu_projects);
+
         // Todo: We don't always need to query the server here
         startService();
     }
@@ -123,15 +125,22 @@ public class ProjectsList extends Activity
         handleIntent(intent);
     }
 
-    private void handleIntent(Intent intent)
-    {
+    private void handleIntent(Intent intent) {
         // Searching is already handled when the query text changes.
         if (!Intent.ACTION_SEARCH.equals(intent.getAction()))
             loadAdapter();
     }
 
-    private void loadAdapter()
-    {
+    @Override
+    protected Toolbar setupActionBar() {
+        Toolbar toolbar = super.setupActionBar();
+        // Action bar Up affordance
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle(R.string.menu_projects);
+        return toolbar;
+    }
+
+    private void loadAdapter(){
         // Set the adapter for the list view
         mListAdapter = new ProjectsListAdapter(this,
                 new String[] { ProjectsTable.C_ROOT }, // Name for group layouts
@@ -140,7 +149,7 @@ public class ProjectsList extends Activity
                 new int[] { android.R.id.text1 });
         mProjectsListView.setAdapter(mListAdapter);
 
-        getLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().initLoader(LOADER_PROJECTS, null, this);
     }
 
     // Source: http://developer.android.com/guide/topics/search/search-dialog.html
@@ -195,7 +204,7 @@ public class ProjectsList extends Activity
     private void setProject(String root, String subproject) {
         String project;
         if (subproject.isEmpty()) project = root;
-        else project = root + SEPERATOR + subproject;
+        else project = root + SEPARATOR + subproject;
         PrefsFragment.setCurrentProject(getApplicationContext(), project);
         this.finish();
     }
@@ -215,31 +224,43 @@ public class ProjectsList extends Activity
     // Note: Using the platform Loader here (android.app.Loader)
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return ProjectsTable.getProjects(this, mQuery);
+        if (id == LOADER_PROJECTS) {
+            return ProjectsTable.getProjects(this, mQuery);
+        } else {
+            return super.onCreateLoader(id, args);
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mListAdapter.setSubprojectQuery(mQuery);
-        mListAdapter.changeCursor(cursor);
-        mSwipeLayout.setRefreshing(false);
+        if (loader.getId() == LOADER_PROJECTS) {
+            mListAdapter.setSubprojectQuery(mQuery);
+            mListAdapter.changeCursor(cursor);
+            mSwipeLayout.setRefreshing(false);
+        } else {
+            super.onLoadFinished(loader, cursor);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mListAdapter.changeCursor(null);
+        if (loader.getId() == LOADER_PROJECTS) {
+            mListAdapter.changeCursor(null);
+        } else {
+            super.onLoaderReset(loader);
+        }
     }
 
     /**
      * Split the query as if it was the name (or part) of a base project,
      *  a sub project or base project/sub project. Note that providing the
-     *  seperator in the query will change the results that are provided.
+     *  separator in the query will change the results that are provided.
      * @param query The (partial) name of a base project, sub project or both.
      * @return A pair comprised of a base project and sub project matching the query
      *  to search for
      */
     private Pair<String, String> splitQuery(String query) {
-        String p[] = query.split(SEPERATOR, 2);
+        String p[] = query.split(SEPARATOR, 2);
         if (p.length < 2) return new Pair<>(p[0], p[0]);
         else return new Pair<>(p[0], p[1]);
     }
@@ -247,7 +268,7 @@ public class ProjectsList extends Activity
     @Override
     public boolean onQueryTextChange(String query) {
         mQuery = query;
-        getLoaderManager().restartLoader(0, null, this);
+        getSupportLoaderManager().restartLoader(LOADER_PROJECTS, null, this);
         int sizeOfGroups = mListAdapter.getGroupCount();
         for (int i = 0; sizeOfGroups > i; i++) {
             mProjectsListView.expandGroup(i);

@@ -35,7 +35,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
  */
 public class HeaderAdapterWrapper extends BaseAdapter implements StickyListHeadersAdapter {
 
-    private LayoutInflater mInflator;
+    private LayoutInflater mInflater;
 
     /**
      * The child adapter that this wraps. Most of the work will be delegated to this adapter
@@ -47,14 +47,14 @@ public class HeaderAdapterWrapper extends BaseAdapter implements StickyListHeade
 
     /**
      * An adapter that wraps this adapter so we can notify it when either the child adapter's
-     *  data or this wraper's data changes.
+     *  data or this wrapper's data changes.
      */
     private BaseAdapter mParentAdapter;
 
 
     public HeaderAdapterWrapper(Context context, ChangeListAdapter wrapped) {
         this.wrapped = wrapped;
-        mInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public View getHeaderView(int position, View convertView, ViewGroup parent) {
@@ -62,7 +62,7 @@ public class HeaderAdapterWrapper extends BaseAdapter implements StickyListHeade
 
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mInflator.inflate(R.layout.date_card_header, parent, false);
+            convertView = mInflater.inflate(R.layout.date_card_header, parent, false);
             holder = new ViewHolder((TextView) convertView.findViewById(R.id.header));
             convertView.setTag(holder);
         } else {

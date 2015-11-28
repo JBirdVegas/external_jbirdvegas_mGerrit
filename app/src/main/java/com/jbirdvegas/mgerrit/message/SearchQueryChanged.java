@@ -62,6 +62,10 @@ public class SearchQueryChanged {
         return bundle;
     }
 
+    public Set<SearchKeyword> getTokens() {
+        return mTokens;
+    }
+
     /**
      * @return True if there was at most one result expected from this query
      */

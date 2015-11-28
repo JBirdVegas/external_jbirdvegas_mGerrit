@@ -232,7 +232,7 @@ public class GerritSearchView extends SearchView
         return newSet;
     }
 
-    private void replaceKeyword(SearchKeyword keyword, boolean submit) {
+    public void replaceKeyword(SearchKeyword keyword, boolean submit) {
         String currentQuery = getQuery().toString();
         String query = SearchKeyword.replaceKeyword(currentQuery, keyword);
         if (!query.equals(currentQuery)) this.setQuery(query, submit);
@@ -244,6 +244,16 @@ public class GerritSearchView extends SearchView
      */
     public Set<SearchKeyword> getLastQuery() {
         return mCurrentKeywords;
+    }
+
+
+    /**
+     * Search for a given search keyword in the current list of tokens
+     * @param keyword The search keyword to search for (needle)
+     * @return Whether the keyword was found in the list or not
+     */
+    public boolean hasKeyword(SearchKeyword keyword) {
+        return SearchKeyword.findKeyword(mCurrentKeywords, keyword) != -1;
     }
 
     @Override

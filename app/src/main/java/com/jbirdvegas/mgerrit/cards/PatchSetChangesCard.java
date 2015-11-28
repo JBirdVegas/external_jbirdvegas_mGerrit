@@ -76,7 +76,7 @@ public class PatchSetChangesCard implements CardBinder {
             convertView.setTag(viewHolder);
         }
 
-        setupCusorIndicies(cursor);
+        setupCursorIndices(cursor);
 
         // we always have a path
         viewHolder.path.setText(cursor.getString(mFileName_index));
@@ -169,7 +169,7 @@ public class PatchSetChangesCard implements CardBinder {
     }
 
 
-    private void setupCusorIndicies(Cursor cursor) {
+    private void setupCursorIndices(Cursor cursor) {
         if (cursor.getPosition() < 0) {
             cursor.moveToFirst();
         }

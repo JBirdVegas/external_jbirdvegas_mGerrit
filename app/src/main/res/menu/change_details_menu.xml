@@ -17,16 +17,17 @@
   ~  limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_details_share"
         android:actionProviderClass="android.widget.ShareActionProvider"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/share"/>
 
     <item
         android:id="@+id/menu_details_browser"
         android:icon="?attr/viewIcon"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/view_in_browser"/>
 </menu>

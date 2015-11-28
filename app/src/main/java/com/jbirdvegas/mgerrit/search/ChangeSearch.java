@@ -47,9 +47,4 @@ public class ChangeSearch extends SearchKeyword {
     public String getGerritQuery(ServerVersion serverVersion) {
         return toString();
     }
-
-    @Override
-    public boolean multipleResults() {
-        return super.multipleResults();
-    }
 }

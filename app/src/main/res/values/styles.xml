@@ -1,6 +1,7 @@
 <!--
-  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
-  ~  Author: Jon Stanford (JBirdVegas), 2013
+  ~
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (p4r4n01d), 2015
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -13,31 +14,30 @@
   ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
+  ~
   -->
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <style name="ActionBar" parent="android:Widget.Holo.ActionBar">
-        <item name="android:indeterminateProgressStyle">@style/IndeterminateProgress</item>
+    <style name="NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="NoActionBar.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:background">@color/main_background_dark</item>
     </style>
 
-    <style name="ActionBar.Light">
-        <item name="android:background">@drawable/ab_transparent</item>
-    </style>
+    <style name="NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="NoActionBar.PopupOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark" />
 
-    <style name="ActionBar.Dark">
-        <item name="android:background">@drawable/ab_transparent_dark</item>
-    </style>
-
-    <style name="OverFlow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+    <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_action_overflow</item>
+        <item name="android:colorBackground">@color/card_background</item>
     </style>
 
-    <style name="OverFlow.Dark" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+    <style name="OverFlow.Dark" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_action_overflow_dark</item>
+        <item name="android:colorBackground">@color/card_background_dark</item>
     </style>
 
     <!-- Resize the action bar activity indicator to match the other action items -->
-    <style name="IndeterminateProgress" parent="@android:style/Widget.Holo.ProgressBar.Small">
+    <style name="IndeterminateProgress" parent="Widget.AppCompat.ProgressBar">
         <item name="android:minWidth">32dp</item>
         <item name="android:minHeight">32dp</item>
         <item name="android:width">48dp</item>
@@ -185,7 +185,7 @@
     <style name="SigninFailure" parent="CardText.Deleted.Dark" />
     <style name="SigninFailure.Light" parent="CardText.Deleted.Light" />
 
-    <style name="BorderlessBackground" parent="android:Widget.Holo.Light.Button.Borderless.Small"/>
-    <style name="BorderlessBackground.Dark" parent="android:Widget.Holo.Button.Borderless.Small"/>
+    <style name="BorderlessBackground" parent="Widget.AppCompat.Button.Borderless"/>
+    <style name="BorderlessBackground.Dark" parent="Widget.AppCompat.Button.Borderless"/>
 
 </resources>

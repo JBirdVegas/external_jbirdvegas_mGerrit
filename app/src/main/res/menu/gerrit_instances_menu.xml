@@ -17,43 +17,34 @@
   ~  limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_search"
         android:icon="?attr/searchMenuIcon"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/changes_search_hint"/>
 
     <item
         android:id="@+id/menu_team_instance"
         android:icon="?attr/gerritIcon"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/choose_gerrit_instance"/>
-
-    <item android:id="@+id/menu_projects"
-        android:title="@string/menu_projects"
-        android:showAsAction="ifRoom"
-        android:icon="?attr/projectsIcon"/>
 
     <item
         android:id="@+id/menu_refresh"
         android:icon="?attr/refreshIcon"
         android:title="@string/menu_refresh"
-        android:showAsAction="never"/>
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_save"
         android:title="@string/menu_preferences"
-        android:showAsAction="never"/>
-
-    <item
-        android:id="@+id/menu_changelog"
-        android:title="@string/aokp_changelog"
-        android:showAsAction="never"/>
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_help"
         android:title="@string/menu_help"
-        android:showAsAction="never"/>
+        app:showAsAction="never"/>
 </menu>

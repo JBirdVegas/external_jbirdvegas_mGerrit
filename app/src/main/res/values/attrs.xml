@@ -17,6 +17,13 @@
   -->
 
 <resources>
+    <declare-styleable name="android.support.design.widget.AppBarLayout">
+        <attr name="appBarTheme" format="reference"/>
+    </declare-styleable>
+    <declare-styleable name="android.support.v7.widget.Toolbar">
+        <attr name="toolbarTheme" format="reference"/>
+    </declare-styleable>
+
     <declare-styleable name="item">
         <attr name="gerritIcon" format="reference"/>
         <attr name="projectsIcon" format="reference"/>

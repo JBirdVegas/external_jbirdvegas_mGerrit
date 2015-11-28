@@ -230,7 +230,7 @@ public abstract class SearchKeyword implements Parcelable {
 
     /**
      * Formats the bind argument for query binding.
-     * May be overriden to include wildcards in the parameter for like queries
+     * May be overridden to include wildcards in the parameter for like queries
      */
     public String[] getEscapeArgument() {
         return new String[] { getParam() };
@@ -248,7 +248,7 @@ public abstract class SearchKeyword implements Parcelable {
     }
 
     /**
-     * Allows specifing a list of whitelisted parameters for this search keyword.
+     * Allows specifying a list of whitelisted parameters for this search keyword.
      *  If the parameter does not match one of the listed white parameters when building
      *  the token from a string an instance of this search keyword will not be created.
      * @return A list of whitelisted parameters. Returns null if all parameters are allowed (default)
@@ -334,6 +334,21 @@ public abstract class SearchKeyword implements Parcelable {
         return -1;
     }
 
+    /**
+     * Find a given search keyword in a list of tokens
+     * @param tokens The list of tokens to search through (haystack)
+     * @param keyword The token to search for (needle)
+     * @return The position of the search keyword or -1 if it was not found
+     */
+    public static int findKeyword(Set<SearchKeyword> tokens, SearchKeyword keyword) {
+        int i = 0;
+        for (SearchKeyword sk : tokens) {
+            if (sk.equals(keyword)) return i;
+            i++;
+        }
+        return -1;
+    }
+
     protected static String extractOperator(String param) {
         String op = "=";
         for (String operator : operators) {
@@ -361,16 +376,16 @@ public abstract class SearchKeyword implements Parcelable {
             throws UnsupportedEncodingException {
         StringBuilder builder = new StringBuilder();
         ServerVersion version = Config.getServerVersion(context);
-        boolean addSeperator = false;
+        boolean addSeparator = false;
         if (keywords != null && !keywords.isEmpty()) {
             for (SearchKeyword keyword : keywords) {
                 String operator =  URLEncoder.encode(keyword.getGerritQuery(version), "UTF-8");
                 if (operator != null && !operator.isEmpty()) {
-                    if (addSeperator) {
+                    if (addSeparator) {
                         builder.append('+');
                     }
                     builder.append(operator);
-                    addSeperator = true;
+                    addSeparator = true;
                 }
             }
         }
@@ -410,4 +425,51 @@ public abstract class SearchKeyword implements Parcelable {
             return new SearchKeyword[size];
         }
     };
+
+    public static String getDefaultOperatorName(SearchKeyword keyword) {
+        try {
+            // We have aliases for keywords so the the same search can have a different name
+            return (String) keyword.getClass().getField("OP_NAME").get(keyword);
+        } catch (IllegalAccessException e) {
+            Log.e(TAG, "Unable to compare SearchKeywords - OP_NAME in " + keyword.getClass().getName() + " must be public.");
+        } catch (NoSuchFieldException e) {
+            Log.e(TAG, "Unable to compare SearchKeywords - OP_NAME in " + keyword.getClass().getName() + " must be defined.");
+        }
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        else if (o == null) return false;
+        else if (!(o instanceof SearchKeyword)) return false;
+        SearchKeyword keyword = (SearchKeyword) o;
+
+        if (mOperator != null && !mOperator.equals(keyword.mOperator)) {
+            return false;
+        } else if (keyword.mOperator != null && !keyword.mOperator.equals(mOperator)) {
+            return false;
+        } else if (!mOpParam.equals(keyword.mOpParam)) {
+            return false;
+        } else if (mOpName.equals(keyword.mOpName)) {
+            return true; // We have checked the name, operator and parameters match
+        } else {
+            // We have aliases for keywords so the the same search can have a different name
+            String otherDefaultOp = getDefaultOperatorName(keyword);
+            String defaultOp = getDefaultOperatorName(this);
+            // Check for nulls here in case an exception was raised (should not happen)
+            return (otherDefaultOp != null && defaultOp != null && defaultOp.equals(otherDefaultOp));
+        }
+    }
+
+    // We need to override hashCode as we overrode equals
+    @Override
+    public int hashCode() {
+        int result = 17;
+        String name = getDefaultOperatorName(this);
+        result = 31 * result + (name == null ? 0 : name.hashCode());
+        result = 31 * result + (mOperator == null ? 0 : mOperator.hashCode());
+        result = 31 * result + (mOpParam == null ? 0 : mOpParam.hashCode());
+        return result;
+    }
 }

@@ -1,8 +1,6 @@
-package com.jbirdvegas.mgerrit.activities;
-
 /*
- * Copyright (C) 2013 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (P4R4N01D), 2013
+ * Copyright (C) 2015 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (P4R4N01D), 2015
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,22 +15,20 @@ package com.jbirdvegas.mgerrit.activities;
  *  limitations under the License.
  */
 
-import android.content.Context;
+package com.jbirdvegas.mgerrit.activities;
+
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ShareActionProvider;
-import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.PatchSetAdapter;
@@ -60,7 +56,7 @@ import hugo.weaving.DebugLog;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment}.
  */
-public class PatchSetViewerActivity extends FragmentActivity
+public class PatchSetViewerActivity extends BaseDrawerActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private ShareActionProvider mShareActionProvider;
@@ -79,6 +75,8 @@ public class PatchSetViewerActivity extends FragmentActivity
     private static Integer sChangeIdIndex;
     private Integer sChangeNumberIndex;
 
+    public static int LOADER_CHANGES = 20;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +85,7 @@ public class PatchSetViewerActivity extends FragmentActivity
 
         setContentView(R.layout.patchset_pager);
 
-        // Show the Up button in the action bar.
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        initNavigationDrawer(false);
 
         mEventBus = EventBus.getDefault();
 
@@ -97,7 +94,7 @@ public class PatchSetViewerActivity extends FragmentActivity
         setSelectedStatus(mStatus);
 
         // Don't pass args here as it does not have search query information
-        getSupportLoaderManager().initLoader(20, null, this);
+        getSupportLoaderManager().initLoader(LOADER_CHANGES, null, this);
 
         mAdapter = new PatchSetAdapter(this, getSupportFragmentManager(), args);
 
@@ -127,7 +124,7 @@ public class PatchSetViewerActivity extends FragmentActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.change_details_menu, menu);
         MenuItem item = menu.findItem(R.id.menu_details_share);
-        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
         if (mStatus != null) setShareIntent(mChangeId, mChangeNumber);
         return true;
@@ -199,6 +196,7 @@ public class PatchSetViewerActivity extends FragmentActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        if (id != LOADER_CHANGES) return super.onCreateLoader(id, args);
         if (args == null) {
             SearchQueryChanged ev = mEventBus.getStickyEvent(SearchQueryChanged.class);
             if (ev != null) {
@@ -225,13 +223,22 @@ public class PatchSetViewerActivity extends FragmentActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        sChangeIdIndex = null;
-        sChangeNumberIndex = null;
-        mAdapter.notifyDataSetChanged();
+        if (loader.getId() == LOADER_CHANGES) {
+            sChangeIdIndex = null;
+            sChangeNumberIndex = null;
+            mAdapter.notifyDataSetChanged();
+        } else {
+            super.onLoaderReset(loader);
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        if (cursorLoader.getId() != LOADER_CHANGES) {
+            super.onLoadFinished(cursorLoader, cursor);
+            return;
+        }
+
         /* Weird behaviour: This method gets called multiple times. Once after
          *  initialising this activity and starting the loader, then again later without
          *  manually resetting the loaders. If the current tab is set we have been here,

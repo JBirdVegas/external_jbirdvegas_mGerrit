@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 public class FileAdapter extends CursorAdapter {
 
     private final Context mContext;
-    private final LayoutInflater mInflator;
+    private final LayoutInflater mInflater;
     private final boolean mUsingLightTheme;
 
     private static Integer mStatus_index;
@@ -50,7 +50,7 @@ public class FileAdapter extends CursorAdapter {
 
     public FileAdapter(Context context, Cursor c) {
         super(context, c, 0);
-        mInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mContext = context;
         mUsingLightTheme = (PrefsFragment.getCurrentThemeID(context) == R.style.Theme_Light);
@@ -58,7 +58,7 @@ public class FileAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return mInflator.inflate(R.layout.diff_files_row, parent, false);
+        return mInflater.inflate(R.layout.diff_files_row, parent, false);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class FileAdapter extends CursorAdapter {
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = mInflator.inflate(R.layout.diff_files_dropdown_row, parent, false);
+            convertView = mInflater.inflate(R.layout.diff_files_dropdown_row, parent, false);
         }
 
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();

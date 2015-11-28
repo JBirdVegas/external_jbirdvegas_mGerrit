@@ -38,8 +38,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.activities.BaseDrawerActivity;
+import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
+import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
@@ -418,6 +421,10 @@ public abstract class CardsFragment extends Fragment
         String to = ev.getClazzName();
         if (isAdded() && mParent.getClass().getSimpleName().equals(to)) {
             getLoaderManager().restartLoader(0, null, this);
+        }
+        // Let the drawer know that the search query was changed
+        if (mParent instanceof BaseDrawerActivity) {
+            ((BaseDrawerActivity) mParent).onSearchQueryChanged(ev);
         }
     }
 
