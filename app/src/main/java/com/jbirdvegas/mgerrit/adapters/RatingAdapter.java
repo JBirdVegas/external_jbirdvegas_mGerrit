@@ -18,6 +18,7 @@
 package com.jbirdvegas.mgerrit.adapters;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,16 +41,16 @@ public class RatingAdapter extends ArrayAdapter<LabelValues> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return setupView(convertView, parent, false);
+        return setupView(convertView, parent, position, false);
     }
 
     @Nullable
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        return setupView(convertView, parent, true);
+        return setupView(convertView, parent, position, true);
     }
 
-    private View setupView(View convertView, ViewGroup parent, boolean isDropdown) {
+    private View setupView(View convertView, ViewGroup parent, int postition, boolean isDropdown) {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.item_label_values, parent, false);
         }
@@ -60,6 +61,9 @@ public class RatingAdapter extends ArrayAdapter<LabelValues> {
             convertView.setTag(viewHolder);
         }
 
+        LabelValues labelValues = getItem(postition);
+        viewHolder.txtValue.setText(labelValues.value);
+        viewHolder.txtDescription.setText(labelValues.description);
         viewHolder.txtDescription.setVisibility(isDropdown ? View.VISIBLE : View.GONE);
 
         return convertView;

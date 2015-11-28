@@ -79,7 +79,7 @@
                   android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".activities.SigninActivity"
             android:parentActivityName=".activities.GerritControllerActivity"/>
-        <activity android:name=".activities.CommentActivity"
+        <activity android:name=".activities.ReviewActivity"
             android:parentActivityName=".activities.GerritControllerActivity"/>
         <service android:name=".tasks.GerritService" />
         <provider

@@ -31,16 +31,14 @@ import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 public class CommentFragment extends Fragment {
 
-    public static final String CHANGE_ID = GerritService.CHANGE_ID;
-    public static final String PROJECT = Labels.C_PROJECT;
-    public static final String MESSAGE = GerritService.REVIEW_MESSAGE;
+    public static final String CHANGE_ID = PatchSetViewerFragment.CHANGE_ID;
+    public static final String MESSAGE = "message";
 
     private FragmentActivity mParent;
     private TextView mMessage;
 
     private String mChangeId;
-    private int mProject;
-    private ReviewFragment mReviewFragment;
+    private LabelsFragment mLabelsFragment;
 
 
     @Override
@@ -67,30 +65,25 @@ public class CommentFragment extends Fragment {
 
         Bundle args = getArguments();
         mChangeId = args.getString(CHANGE_ID);
-        mProject = args.getInt(PROJECT);
 
         String message = args.getString(MESSAGE);
         if (message != null) mMessage.setText(message);
 
-        mReviewFragment = new ReviewFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(ReviewFragment.C_CHANGE_ID, null); // TODO
-        mReviewFragment.setArguments(bundle);
-        getChildFragmentManager().beginTransaction().replace(R.id.review_fragment, mReviewFragment).commit();
+        mLabelsFragment = new LabelsFragment();
+        mLabelsFragment.setArguments(args);
+        getChildFragmentManager().beginTransaction().replace(R.id.review_fragment, mLabelsFragment).commit();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(CHANGE_ID, mChangeId);
-        outState.putInt(PROJECT, mProject);
     }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             mChangeId = savedInstanceState.getString(CHANGE_ID);
-            mProject = savedInstanceState.getInt(PROJECT);
         }
         super.onViewStateRestored(savedInstanceState);
     }
@@ -100,7 +93,6 @@ public class CommentFragment extends Fragment {
 
         Bundle bundle = new Bundle();
         bundle.putString(GerritService.CHANGE_ID, mChangeId);
-        bundle.putInt(GerritService.CHANGE_NUMBER, mProject);
         bundle.putString(GerritService.REVIEW_MESSAGE, message);
         GerritService.sendRequest(mParent, GerritService.DataType.Comment, bundle);
     }

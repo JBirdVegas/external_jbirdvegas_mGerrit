@@ -37,16 +37,17 @@ import com.jbirdvegas.mgerrit.objects.LabelValues;
 
 import java.util.ArrayList;
 
-public class ReviewFragment extends Fragment
+public class LabelsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String C_CHANGE_ID = Changes.C_CHANGE_ID;
+    public static final String CHANGE_ID = PatchSetViewerFragment.CHANGE_ID;
     public static final int LOADER_LABELS = 3;
+    public static final int LOADER_PROJECT = 4;
 
     private LayoutInflater mInflater;
     private Context mContext;
     ArrayList<View> labelViews = new ArrayList<>();
-    private String mChangeId;
+    private String mChangeId, mProject;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,10 +64,10 @@ public class ReviewFragment extends Fragment
 
         Bundle args = getArguments();
         if (args != null) {
-            mChangeId = args.getString(C_CHANGE_ID);
+            mChangeId = args.getString(CHANGE_ID);
         }
 
-        getLoaderManager().initLoader(LOADER_LABELS, null, this);
+        getLoaderManager().initLoader(LOADER_PROJECT, null, this);
     }
 
     private View inflateRow(LayoutInflater inflater, ViewGroup container) {
@@ -77,14 +78,25 @@ public class ReviewFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // TODO: Need to either pass the project in here or it needs to fetch the project from the
-        //  the change id. The latter would be easier
-        return Labels.getPermittedLabels(getContext(), mChangeId);
+        if (id == LOADER_LABELS) {
+            return Labels.getPermittedLabels(getContext(), mProject);
+        } else {
+            return Changes.getCommitProperties(getContext(), mChangeId);
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Inflate one item for item_label for each row
+        if (loader.getId() == LOADER_PROJECT) {
+            if (data.moveToFirst()) {
+                mProject = data.getString(data.getColumnIndex(Changes.C_PROJECT));
+                // Now we have the project we can load the labels
+                getLoaderManager().initLoader(LOADER_LABELS, null, this);
+            }
+            return; // Finished processing this loader
+        }
+
         int labelRowNumber = 0;
 
         int labelIndex = data.getColumnIndexOrThrow(Labels.C_NAME);
@@ -104,11 +116,11 @@ public class ReviewFragment extends Fragment
             txtLabel.setText(label);
 
             ArrayList<LabelValues> ratingValues = new ArrayList<>();
-            while (data.getString(labelIndex).equals(label)) {
+            do {
                 String value = data.getString(valueIndex);
                 String desc = data.getString(descIndex);
                 ratingValues.add(new LabelValues(label, value, desc));
-            }
+            } while (data.moveToNext() && data.getString(labelIndex).equals(label));
             data.moveToPrevious();
 
             RatingAdapter adapter = new RatingAdapter(mContext, R.layout.item_label_values);

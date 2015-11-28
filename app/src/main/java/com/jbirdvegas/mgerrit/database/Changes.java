@@ -84,7 +84,7 @@ public class Changes extends DatabaseTable {
 
     public static final String[] CHANGE_LIST_PROJECTION =  new String[] {
             Changes.TABLE + ".rowid AS _id", C_CHANGE_ID, C_CREATED, C_UPDATED,
-            C_STATUS, C_TOPIC, C_BRANCH, C_COMMIT_NUMBER };
+            C_STATUS, C_TOPIC, C_BRANCH, C_COMMIT_NUMBER, C_PROJECT };
 
     public static Changes getInstance() {
         if (mInstance == null) mInstance = new Changes();

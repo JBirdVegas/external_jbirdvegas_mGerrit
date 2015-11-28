@@ -39,7 +39,7 @@ import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.activities.CommentActivity;
+import com.jbirdvegas.mgerrit.activities.ReviewActivity;
 import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
 import com.jbirdvegas.mgerrit.adapters.CommitDetailsAdapter;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
@@ -239,7 +239,7 @@ public class PatchSetViewerFragment extends Fragment
         expandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(mParent, CommentActivity.class);
+                Intent i = new Intent(mParent, ReviewActivity.class);
                 i.putExtra(CommentFragment.CHANGE_ID, mSelectedChange);
                 i.putExtra(CommentFragment.MESSAGE, mCommentText.getText());
                 mParent.startActivity(i);

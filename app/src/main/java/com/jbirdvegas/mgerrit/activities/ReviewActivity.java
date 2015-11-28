@@ -34,7 +34,7 @@ import com.jbirdvegas.mgerrit.tasks.GerritService;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link CommentFragment}.
  */
-public class CommentActivity extends BaseDrawerActivity
+public class ReviewActivity extends BaseDrawerActivity
         implements LoaderCallbacks<Cursor> {
 
     private CommentFragment mCommentFragment;
