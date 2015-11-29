@@ -24,16 +24,10 @@ apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'hugo'
 apply plugin: 'checkstyle'
-apply plugin: 'com.getkeepsafe.dexcount'
 
 repositories {
     mavenCentral()
     jcenter()
-}
-
-dexcount {
-    printAsTree = true
-    orderByMethodCount = true
 }
 
 dependencies {
@@ -183,6 +177,13 @@ android {
             minifyEnabled false
             proguardFile 'proguard-project.txt'
             signingConfig signingConfigs.release
+        }
+        debug {
+            apply plugin: 'com.getkeepsafe.dexcount'
+            dexcount {
+                printAsTree = true
+                orderByMethodCount = true
+            }
         }
     }
     lintOptions {
