@@ -200,9 +200,9 @@ public abstract class CardsFragment extends Fragment
         sIsTabletMode = PrefsFragment.isTabletMode(mParent);
     }
 
-    private void setup()
-    {
-        loadNewerChanges();
+    private void setup() {
+        if (mListView.getCount() < 1) sendRequest(Direction.Older, null);
+        else loadNewerChanges();
 
         // We cannot use the search query here as the SearchView may not have been initialised yet.
         getLoaderManager().initLoader(0, null, this);
@@ -296,7 +296,10 @@ public abstract class CardsFragment extends Fragment
         }
 
         mNeedsForceUpdate = forceUpdate;
-        if (this.isAdded() && forceUpdate) loadNewerChanges();
+        if (this.isAdded() && forceUpdate) {
+            if (mListView.getCount() < 1) sendRequest(Direction.Older, null);
+            else loadNewerChanges();
+        }
     }
 
     @Override
@@ -312,7 +315,10 @@ public abstract class CardsFragment extends Fragment
         if (!mIsDirty) return;
         mIsDirty = false;
         getLoaderManager().restartLoader(0, null, this);
-        if (mNeedsForceUpdate) loadNewerChanges();
+        if (mNeedsForceUpdate) {
+            if (mListView.getCount() < 1) sendRequest(Direction.Older, null);
+            else loadNewerChanges();
+        }
     }
 
     @Override
