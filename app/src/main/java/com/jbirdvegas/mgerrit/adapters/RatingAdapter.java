@@ -62,7 +62,10 @@ public class RatingAdapter extends ArrayAdapter<LabelValues> {
         }
 
         LabelValues labelValues = getItem(postition);
-        viewHolder.txtValue.setText(labelValues.value);
+        String strVal = String.valueOf(labelValues.value);
+        if (labelValues.value > 0) strVal = "+" + strVal;
+        viewHolder.txtValue.setText(strVal);
+
         viewHolder.txtDescription.setText(labelValues.description);
         viewHolder.txtDescription.setVisibility(isDropdown ? View.VISIBLE : View.GONE);
 

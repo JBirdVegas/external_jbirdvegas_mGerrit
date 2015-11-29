@@ -26,7 +26,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.database.Labels;
+import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 public class CommentFragment extends Fragment {
@@ -39,6 +39,9 @@ public class CommentFragment extends Fragment {
 
     private String mChangeId;
     private LabelsFragment mLabelsFragment;
+
+    // The key to save the comment into the cache, it must be unique to this change
+    private String mCacheKey;
 
 
     @Override
@@ -72,6 +75,8 @@ public class CommentFragment extends Fragment {
         mLabelsFragment = new LabelsFragment();
         mLabelsFragment.setArguments(args);
         getChildFragmentManager().beginTransaction().replace(R.id.review_fragment, mLabelsFragment).commit();
+
+        mCacheKey = "comment." + mChangeId;
     }
 
     @Override
@@ -88,12 +93,22 @@ public class CommentFragment extends Fragment {
         super.onViewStateRestored(savedInstanceState);
     }
 
+    @Override
+    public void onPause() {
+        // Save the message into the cache
+        String message = mMessage.getText().toString();
+        CacheManager.put(mCacheKey, message, true);
+        super.onPause();
+    }
+
     public void addComment() {
         String message = mMessage.getText().toString();
+        Bundle review = mLabelsFragment.getReview();
 
         Bundle bundle = new Bundle();
         bundle.putString(GerritService.CHANGE_ID, mChangeId);
         bundle.putString(GerritService.REVIEW_MESSAGE, message);
+        bundle.putBundle(GerritService.CHANGE_LABELS, review);
         GerritService.sendRequest(mParent, GerritService.DataType.Comment, bundle);
     }
 }

@@ -15,19 +15,17 @@
  *  limitations under the License.
  */
 
-package com.jbirdvegas.mgerrit.objects;
+package com.jbirdvegas.mgerrit.message;
 
-public class LabelValues {
-    public String label, description;
-    public int value;
+public class CacheDataRetreived<T> {
 
-    public LabelValues(String label, int value, String description) {
-        this.label = label;
-        this.value = value;
-        this.description = description;
-    }
+    final Class<T> mTypeClass;
+    private final String mKey;
+    private final T mData;
 
-    public int getValue() {
-        return this.value;
+    public CacheDataRetreived(Class<T> typeClass, String key, T data) {
+        this.mTypeClass = typeClass;
+        this.mKey = key;
+        this.mData = data;
     }
 }

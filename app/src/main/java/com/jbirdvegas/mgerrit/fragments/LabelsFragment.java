@@ -36,6 +36,8 @@ import com.jbirdvegas.mgerrit.database.Labels;
 import com.jbirdvegas.mgerrit.objects.LabelValues;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LabelsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -74,6 +76,22 @@ public class LabelsFragment extends Fragment
         View view = inflater.inflate(R.layout.item_label, container, false);
         labelViews.add(view);
         return view;
+    }
+
+    /**
+     * Get the assigned labels with their values
+     * @return A bundle mapping the label (string) to its value (int)
+     */
+    public Bundle getReview() {
+        Bundle review = new Bundle();
+        for (View view : labelViews) {
+            TextView txtLabel = (TextView) view.findViewById(R.id.txtLabel);
+            Spinner spnRating = (Spinner) view.findViewById(R.id.spnLabelRating);
+            if (txtLabel != null && spnRating != null) {
+                review.putInt(txtLabel.getText().toString(), ((LabelValues) spnRating.getSelectedItem()).getValue());
+            }
+        }
+        return review;
     }
 
     @Override
@@ -117,7 +135,7 @@ public class LabelsFragment extends Fragment
 
             ArrayList<LabelValues> ratingValues = new ArrayList<>();
             do {
-                String value = data.getString(valueIndex);
+                int value = data.getInt(valueIndex);
                 String desc = data.getString(descIndex);
                 ratingValues.add(new LabelValues(label, value, desc));
             } while (data.moveToNext() && data.getString(labelIndex).equals(label));
@@ -128,7 +146,7 @@ public class LabelsFragment extends Fragment
             spnRating.setAdapter(adapter);
 
             // We have finished with this row, inflate another one if necessary
-            labelIndex++;
+            labelRowNumber++;
         }
     }
 

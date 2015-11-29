@@ -15,19 +15,17 @@
  *  limitations under the License.
  */
 
-package com.jbirdvegas.mgerrit.objects;
+package com.jbirdvegas.mgerrit.message;
 
-public class LabelValues {
-    public String label, description;
-    public int value;
+public class CacheFailure {
 
-    public LabelValues(String label, int value, String description) {
-        this.label = label;
-        this.value = value;
-        this.description = description;
-    }
+    private final String mKey;
+    private final Exception mException;
+    private boolean mWasInsert;
 
-    public int getValue() {
-        return this.value;
+    public CacheFailure(String key, Exception e, boolean wasInsert) {
+        this.mKey = key;
+        this.mException = e;
+        mWasInsert = wasInsert;
     }
 }

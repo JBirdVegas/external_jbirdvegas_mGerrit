@@ -17,7 +17,6 @@ package com.jbirdvegas.mgerrit.fragments;
  *  limitations under the License.
  */
 
-import com.jbirdvegas.mgerrit.fragments.CardsFragment;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 public class ReviewTab extends CardsFragment
