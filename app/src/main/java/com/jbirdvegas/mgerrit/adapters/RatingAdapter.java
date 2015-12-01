@@ -26,6 +26,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.objects.LabelValues;
 
 import org.jetbrains.annotations.Nullable;
@@ -33,10 +35,17 @@ import org.jetbrains.annotations.Nullable;
 public class RatingAdapter extends ArrayAdapter<LabelValues> {
 
     private final LayoutInflater mInflater;
+    private final int mGreen;
+    private final int mRed;
+    private final boolean mUsingLightTheme;
 
     public RatingAdapter(Context context, int resource) {
         super(context, resource);
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mGreen = context.getResources().getColor(R.color.text_green);
+        mRed = context.getResources().getColor(R.color.text_red);
+
+        mUsingLightTheme = (PrefsFragment.getCurrentThemeID(context) == R.style.Theme_Light);
     }
 
     @Override
@@ -63,13 +72,40 @@ public class RatingAdapter extends ArrayAdapter<LabelValues> {
 
         LabelValues labelValues = getItem(postition);
         String strVal = String.valueOf(labelValues.value);
-        if (labelValues.value > 0) strVal = "+" + strVal;
+        if (labelValues.value > 0) {
+            strVal = "+" + strVal;
+        }
         viewHolder.txtValue.setText(strVal);
+        if (labelValues.value > 0) {
+            setTextColor(mGreen, viewHolder.txtValue, viewHolder.txtDescription);
+        } else if (labelValues.value < 0) {
+            setTextColor(mRed, viewHolder.txtValue, viewHolder.txtDescription);
+        } else {
+            // Need to determine from the current theme what the default color is and set it back
+            if (mUsingLightTheme) {
+                int light = getContext().getResources().getColor(R.color.text_light);
+                setTextColor(light, viewHolder.txtValue, viewHolder.txtDescription);
+            } else {
+                int dark = getContext().getResources().getColor(R.color.text_dark);
+                setTextColor(dark, viewHolder.txtValue, viewHolder.txtDescription);
+            }
+        }
 
         viewHolder.txtDescription.setText(labelValues.description);
         viewHolder.txtDescription.setVisibility(isDropdown ? View.VISIBLE : View.GONE);
 
         return convertView;
+    }
+
+    /**
+     * Set the text color of multiple text views at once.
+     * @param color The colour to set the text views
+     * @param views A list of text vies whose color to set
+     */
+    private void setTextColor(int color, TextView... views) {
+        for (int i = 0; i < views.length; i++) {
+            views[i].setTextColor(color);
+        }
     }
 
     class ViewHolder {

@@ -220,4 +220,6 @@
     <string name="menu_view_changes">View Changes</string>
     <string name="menu_starred_changes">Starred Changes</string>
     <string name="menu_post_comment">Post comment</string>
+
+    <string name="review_labels_title">Labels</string>
 </resources>

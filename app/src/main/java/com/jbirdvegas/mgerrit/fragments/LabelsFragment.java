@@ -26,6 +26,8 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -36,8 +38,6 @@ import com.jbirdvegas.mgerrit.database.Labels;
 import com.jbirdvegas.mgerrit.objects.LabelValues;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class LabelsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -55,7 +55,9 @@ public class LabelsFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mInflater = inflater;
-        return inflateRow(inflater, container);
+        // Empty row has only a linear layout. We can use this as a parent to add inflate other
+        // views into
+        return inflater.inflate(R.layout.fragment_labels, container, false);
     }
 
     @Override
@@ -73,7 +75,9 @@ public class LabelsFragment extends Fragment
     }
 
     private View inflateRow(LayoutInflater inflater, ViewGroup container) {
-        View view = inflater.inflate(R.layout.item_label, container, false);
+        ViewGroup layout = (ViewGroup) container.findViewById(R.id.layout);
+        View view = inflater.inflate(R.layout.partial_label, layout, false);
+        layout.addView(view);
         labelViews.add(view);
         return view;
     }

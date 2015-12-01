@@ -39,6 +39,7 @@ public class CacheManager<T> {
         this.mEventBus = EventBus.getDefault();
     }
 
+    @SuppressWarnings("ProhibitedExceptionCaught")
     public static void init(Context context) {
         try {
             Reservoir.init(context, CACHE_SIZE);
@@ -54,6 +55,7 @@ public class CacheManager<T> {
      * @param object the object to be stored
      * @param async Whether this should be done asynchronously/non-blocking (true) or synchronously/blocking (false)
      */
+    @SuppressWarnings("ProhibitedExceptionCaught")
     public static void put(final String key, Object object, final boolean async) {
         if (async) {
             Reservoir.putAsync(key, object, new ReservoirPutCallback() {
@@ -84,6 +86,7 @@ public class CacheManager<T> {
      * @param clazz the class of the object to be retrieved
      * @param async Whether this should be done asynchronously/non-blocking (true) or synchronously/blocking (false)
      */
+    @SuppressWarnings("ProhibitedExceptionCaught")
     public T get(final String key, final Class<T> clazz, boolean async) {
         if (async) {
             Reservoir.getAsync(key, clazz, new ReservoirGetCallback<T>() {
