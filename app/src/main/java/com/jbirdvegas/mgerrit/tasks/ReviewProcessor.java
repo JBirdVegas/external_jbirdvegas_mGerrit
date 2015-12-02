@@ -55,7 +55,8 @@ public class ReviewProcessor extends SyncProcessor<ChangeInfo> {
 
     @Override
     boolean isSyncRequired(Context context) {
-        return true;
+        // Can only add a review if we have a comment
+        return (mMessage != null && !mMessage.isEmpty());
     }
 
     @Override
@@ -66,17 +67,22 @@ public class ReviewProcessor extends SyncProcessor<ChangeInfo> {
     @Override
     protected ChangeInfo getData(GerritRestApi gerritApi) throws RestApiException {
         ReviewInput reviewInput = new ReviewInput();
-        if (mMessage != null) {
+        if (mMessage != null && !mMessage.isEmpty()) {
             reviewInput = reviewInput.message(mMessage);
-        }
 
-        for (String label : mLabels.keySet()) {
-            reviewInput = reviewInput.label(label, mLabels.getInt(label));
-        }
-        gerritApi.changes().id(mChangeId).current().review(reviewInput);
+            if (mLabels != null) {
+                for (String label : mLabels.keySet()) {
+                    reviewInput = reviewInput.label(label, mLabels.getInt(label));
+                }
+            }
 
-        // We need to look up the change again so we know what was set on the change
-        return gerritApi.changes().id(mChangeId).get(queryOptions());
+            gerritApi.changes().id(mChangeId).current().review(reviewInput);
+
+            // We need to look up the change again so we know what was set on the change
+            return gerritApi.changes().id(mChangeId).get(queryOptions());
+        } else {
+            return null;
+        }
     }
 
     @Override
