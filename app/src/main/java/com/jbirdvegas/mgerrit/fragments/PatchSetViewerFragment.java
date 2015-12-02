@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -242,7 +244,9 @@ public class PatchSetViewerFragment extends Fragment
                 Intent i = new Intent(mParent, ReviewActivity.class);
                 i.putExtra(CommentFragment.CHANGE_ID, mSelectedChange);
                 i.putExtra(CommentFragment.MESSAGE, mCommentText.getText());
-                mParent.startActivity(i);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(mParent,
+                        mCommentText, "comment_message");
+                ActivityCompat.startActivity(mParent, i, options.toBundle());
             }
         });
     }

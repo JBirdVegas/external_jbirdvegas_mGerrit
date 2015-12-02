@@ -45,8 +45,8 @@
         android:gravity="start|top"
         android:hint="@string/review_add_comment"
         android:inputType="textMultiLine"
-        android:transitionName="comment_message"
-        android:padding="@dimen/standard_padding"/>
+        android:padding="@dimen/standard_padding"
+        android:transitionName="comment_message"/>
 
 
 </LinearLayout>
