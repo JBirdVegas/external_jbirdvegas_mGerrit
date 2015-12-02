@@ -20,6 +20,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorCardBackground"
+    android:elevation="@dimen/z_offset_low"
     android:orientation="vertical">
 
     <View android:id="@+id/divider"
@@ -29,14 +30,13 @@
         android:layout_marginTop="0dp"
         android:background="?android:attr/listDivider" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/commentContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/divider"
         android:layout_marginTop="2dp"
         android:background="?attr/colorCardBackground"
-        android:orientation="horizontal"
         android:padding="@dimen/standard_padding">
 
         <ImageButton
@@ -44,34 +44,43 @@
             style="?attr/borderlessButtonBackground"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="0.1"
+            android:layout_alignBottom="@+id/btn_add_comment"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/standard_padding"
             android:contentDescription="@string/review_advanced_comment_description"
             android:minHeight="36dp"
             android:minWidth="36dp"
             android:src="?attr/upIcon"
-            android:tint="?attr/mainBackgroundColor" />
+            android:tint="?attr/mainBackgroundColor"/>
 
         <EditText
             android:id="@+id/new_comment_message"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:ems="10"
             android:hint="@string/review_add_comment"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:paddingLeft="36dp"
+            android:paddingRight="36dp"
+            android:transitionName="comment_message"/>
 
         <ImageButton
             android:id="@+id/btn_add_comment"
             style="?attr/borderlessButtonBackground"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.1"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/standard_padding"
             android:contentDescription="@string/menu_post_comment"
             android:minHeight="36dp"
             android:minWidth="36dp"
             android:src="?attr/sendIcon"
-            android:tint="?attr/mainBackgroundColor" />
-    </LinearLayout>
+            android:tint="?attr/mainBackgroundColor"/>
+    </RelativeLayout>
 
 </RelativeLayout>
