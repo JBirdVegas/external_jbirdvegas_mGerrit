@@ -53,6 +53,7 @@ import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.database.UserMessage;
 import com.jbirdvegas.mgerrit.database.UserReviewers;
+import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
@@ -85,6 +86,8 @@ public class PatchSetViewerFragment extends Fragment
 
     private CommitDetailsAdapter mAdapter;
     private FilesCAB mFilesCAB;
+    private TextView mCommentText;
+    private View mQuickCommentLayout;
 
     public static final String CHANGE_ID = "changeID";
     public static final String CHANGE_NO = "changeNo";
@@ -96,9 +99,9 @@ public class PatchSetViewerFragment extends Fragment
     public static final int LOADER_FILES = 4;
     public static final int LOADER_REVIEWERS = 5;
     public static final int LOADER_COMMENTS = 6;
+    public static final int LOADER_USER = 21;
 
     private EventBus mEventBus;
-    private TextView mCommentText;
 
 
     @Override
@@ -152,6 +155,9 @@ public class PatchSetViewerFragment extends Fragment
         }
 
         mEventBus = EventBus.getDefault();
+
+        // Get the current user to check if we are logged in
+        getLoaderManager().initLoader(LOADER_USER, null, this);
     }
 
     private void initListview(View currentFragment) {
@@ -228,6 +234,7 @@ public class PatchSetViewerFragment extends Fragment
      * @param currentFragment This fragment's view - this.getView()
      */
     private void initAddCommentToolbar(View currentFragment) {
+        mQuickCommentLayout = currentFragment.findViewById(R.id.layout_quick_comment);
         mCommentText = (TextView) currentFragment.findViewById(R.id.new_comment_message);
         ImageButton commentButton = (ImageButton) currentFragment.findViewById(R.id.btn_add_comment);
         commentButton.setOnClickListener(new View.OnClickListener() {
@@ -243,7 +250,8 @@ public class PatchSetViewerFragment extends Fragment
             public void onClick(View v) {
                 Intent i = new Intent(mParent, ReviewActivity.class);
                 i.putExtra(CommentFragment.CHANGE_ID, mSelectedChange);
-                i.putExtra(CommentFragment.MESSAGE, mCommentText.getText());
+                // Have to call toString here as the object cannot reference the EditText view
+                i.putExtra(CommentFragment.MESSAGE, mCommentText.getText().toString());
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(mParent,
                         mCommentText, "comment_message");
                 ActivityCompat.startActivity(mParent, i, options.toBundle());
@@ -444,8 +452,10 @@ public class PatchSetViewerFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
-        String changeID = args.getString(PatchSetViewerFragment.CHANGE_ID);
+        String changeID = null;
+        if (args != null) {
+            changeID = args.getString(PatchSetViewerFragment.CHANGE_ID);
+        }
 
         switch (id) {
             case LOADER_COMMIT:
@@ -460,6 +470,8 @@ public class PatchSetViewerFragment extends Fragment
                 return UserReviewers.getReviewersForChange(mContext, changeID);
             case LOADER_COMMENTS:
                 return UserMessage.getMessagesForChange(mContext, changeID);
+            case LOADER_USER:
+                return Users.getSelf(mContext);
         }
 
         return null;
@@ -488,6 +500,12 @@ public class PatchSetViewerFragment extends Fragment
             case LOADER_COMMENTS:
                 cardType = CommitDetailsAdapter.Cards.COMMENTS;
                 break;
+            case LOADER_USER:
+                if (cursor == null || cursor.getCount() < 1) {
+                    mQuickCommentLayout.setVisibility(View.GONE);
+                } else {
+                    mQuickCommentLayout.setVisibility(View.VISIBLE);
+                }
         }
         if (cardType != null) mAdapter.setCursor(cardType, cursor);
     }
@@ -505,8 +523,7 @@ public class PatchSetViewerFragment extends Fragment
     public void onEventMainThread(ChangeLoadingFinished ev) {
         String status = ev.getStatus();
 
-        /* We may have got a broadcast saying that data from another tab
-         *  has been loaded. */
+        // We may have got a broadcast saying that data from another tab has been loaded.
         if (compareStatus(status, getStatus())) {
             setStatus(status);
             loadChange(false);

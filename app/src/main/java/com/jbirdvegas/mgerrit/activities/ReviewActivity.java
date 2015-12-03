@@ -46,7 +46,7 @@ public class ReviewActivity extends BaseDrawerActivity
         setTheme(PrefsFragment.getCurrentThemeID(this));
         setContentView(R.layout.activity_single_pane);
 
-        setupActionBar();
+        initNavigationDrawer(false);
 
         mCommentFragment = new CommentFragment();
         //Pass the arguments straight on to the fragment

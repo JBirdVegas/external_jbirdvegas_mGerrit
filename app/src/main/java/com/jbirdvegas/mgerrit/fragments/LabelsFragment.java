@@ -124,6 +124,7 @@ public class LabelsFragment extends Fragment
         int labelIndex = data.getColumnIndexOrThrow(Labels.C_NAME);
         int valueIndex = data.getColumnIndexOrThrow(Labels.C_VALUE);
         int descIndex = data.getColumnIndexOrThrow(Labels.C_DESCRIPTION);
+        int defaultIndex = data.getColumnIndexOrThrow(Labels.C_IS_DEFAULT);
 
         while (data.moveToNext()) {
             if (labelRowNumber >= labelViews.size()) {

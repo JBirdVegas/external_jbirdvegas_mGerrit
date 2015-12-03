@@ -17,11 +17,15 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_quick_comment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorCardBackground"
     android:elevation="@dimen/z_offset_low"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:visibility="gone"
+    tools:visibility="visible">
 
     <View android:id="@+id/divider"
         android:layout_width="match_parent"
@@ -31,7 +35,7 @@
         android:background="?android:attr/listDivider" />
 
     <RelativeLayout
-        android:id="@+id/commentContainer"
+        android:id="@+id/comment_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/divider"
@@ -45,27 +49,29 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignBottom="@+id/btn_add_comment"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/standard_padding"
             android:contentDescription="@string/review_advanced_comment_description"
             android:minHeight="36dp"
             android:minWidth="36dp"
             android:src="?attr/upIcon"
-            android:tint="?attr/mainBackgroundColor"/>
+            android:tint="?attr/mainBackgroundColor" />
 
         <EditText
             android:id="@+id/new_comment_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/btn_expand_comment"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/btn_expand_comment"
             android:background="@android:color/transparent"
             android:ems="10"
+            android:gravity="start|top"
             android:hint="@string/review_add_comment"
             android:inputType="textMultiLine"
-            android:paddingLeft="36dp"
+            android:paddingLeft="@dimen/standard_padding"
             android:paddingRight="36dp"
-            android:transitionName="comment_message"/>
+            android:paddingTop="2dp"
+            android:transitionName="comment_message" />
 
         <ImageButton
             android:id="@+id/btn_add_comment"
@@ -73,14 +79,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="@dimen/standard_padding"
             android:contentDescription="@string/menu_post_comment"
             android:minHeight="36dp"
             android:minWidth="36dp"
             android:src="?attr/sendIcon"
-            android:tint="?attr/mainBackgroundColor"/>
+            android:tint="?attr/mainBackgroundColor" />
     </RelativeLayout>
 
 </RelativeLayout>

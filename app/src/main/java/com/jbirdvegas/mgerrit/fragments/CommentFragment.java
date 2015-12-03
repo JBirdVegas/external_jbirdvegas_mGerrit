@@ -26,8 +26,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.message.CacheDataRetrieved;
 import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
+
+import de.greenrobot.event.EventBus;
 
 public class CommentFragment extends Fragment {
 
@@ -42,6 +45,7 @@ public class CommentFragment extends Fragment {
 
     // The key to save the comment into the cache, it must be unique to this change
     private String mCacheKey;
+    private EventBus mEventBus;
 
 
     @Override
@@ -77,6 +81,7 @@ public class CommentFragment extends Fragment {
         getChildFragmentManager().beginTransaction().replace(R.id.review_fragment, mLabelsFragment).commit();
 
         mCacheKey = "comment." + mChangeId;
+        mEventBus = EventBus.getDefault();
     }
 
     @Override
@@ -97,8 +102,17 @@ public class CommentFragment extends Fragment {
     public void onPause() {
         // Save the message into the cache
         String message = mMessage.getText().toString();
-        CacheManager.put(mCacheKey, message, true);
+        if (message.length() > 0) {
+            CacheManager.put(mCacheKey, message, true);
+        }
+        mEventBus.unregister(this);
         super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mEventBus.register(this);
     }
 
     public void addComment() {
@@ -110,5 +124,13 @@ public class CommentFragment extends Fragment {
         bundle.putString(GerritService.REVIEW_MESSAGE, message);
         bundle.putBundle(GerritService.CHANGE_LABELS, review);
         GerritService.sendRequest(mParent, GerritService.DataType.Comment, bundle);
+    }
+
+    public void onEventMainThread(CacheDataRetrieved<String> ev) {
+        if (ev.getKey().equals(mCacheKey) && mMessage != null) {
+            if (mMessage.length() < 1) {
+                mMessage.setText(ev.getData());
+            }
+        }
     }
 }

@@ -80,7 +80,7 @@
         <activity android:name=".activities.SigninActivity"
             android:parentActivityName=".activities.GerritControllerActivity"/>
         <activity android:name=".activities.ReviewActivity"
-            android:parentActivityName=".activities.GerritControllerActivity"/>
+            android:parentActivityName=".activities.PatchSetViewerActivity"/>
         <service android:name=".tasks.GerritService" />
         <provider
             android:name=".database.DatabaseFactory"

@@ -17,15 +17,23 @@
 
 package com.jbirdvegas.mgerrit.message;
 
-public class CacheDataRetreived<T> {
+public class CacheDataRetrieved<T> {
 
     final Class<T> mTypeClass;
     private final String mKey;
     private final T mData;
 
-    public CacheDataRetreived(Class<T> typeClass, String key, T data) {
+    public CacheDataRetrieved(Class<T> typeClass, String key, T data) {
         this.mTypeClass = typeClass;
         this.mKey = key;
         this.mData = data;
+    }
+
+    public String getKey() {
+        return mKey;
+    }
+
+    public T getData() {
+        return mData;
     }
 }

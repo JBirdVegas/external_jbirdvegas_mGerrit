@@ -23,7 +23,7 @@ import android.util.Log;
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.anupcowkur.reservoir.ReservoirPutCallback;
-import com.jbirdvegas.mgerrit.message.CacheDataRetreived;
+import com.jbirdvegas.mgerrit.message.CacheDataRetrieved;
 import com.jbirdvegas.mgerrit.message.CacheFailure;
 
 import de.greenrobot.event.EventBus;
@@ -81,7 +81,7 @@ public class CacheManager<T> {
 
     /**
      * Retreive an object into the cache with the given key.
-     * Call with new CacheManager<MyClass>(key, MyClass.class, async)
+     * Call with new CacheManager<String>().get(mCacheKey, String.class, true)
      * @param key the key string
      * @param clazz the class of the object to be retrieved
      * @param async Whether this should be done asynchronously/non-blocking (true) or synchronously/blocking (false)
@@ -92,7 +92,7 @@ public class CacheManager<T> {
             Reservoir.getAsync(key, clazz, new ReservoirGetCallback<T>() {
                 @Override
                 public void onSuccess(T data) {
-                    mEventBus.post(new CacheDataRetreived<T>(clazz, key, data));
+                    mEventBus.post(new CacheDataRetrieved<T>(clazz, key, data));
                 }
 
                 @Override
