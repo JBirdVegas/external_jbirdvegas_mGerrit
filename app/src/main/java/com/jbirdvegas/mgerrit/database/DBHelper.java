@@ -86,8 +86,15 @@ class DBHelper extends SQLiteOpenHelper {
             Tools.trimCache(mContext);
         }
 
+        if (oldVersion == 22 && newVersion == 26) {
+            // We only added a new table here, so just create that one so the user does not have to
+            // log back in again
+            new Labels().create(TAG, db);
+        } else {
+            onCreate(db); // run onCreate to get new database
+        }
+
         Log.d(TAG, "Database Updated.");
-        onCreate(db); // run onCreate to get new database
     }
 
     // Sanitise the names of the Gerrit instances so we do not create odd file names
