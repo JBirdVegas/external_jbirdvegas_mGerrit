@@ -17,31 +17,42 @@
 
 package com.jbirdvegas.mgerrit.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.activities.ReviewActivity;
 import com.jbirdvegas.mgerrit.message.CacheDataRetrieved;
+import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.objects.CacheManager;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
+
+import java.io.Serializable;
 
 import de.greenrobot.event.EventBus;
 
 public class CommentFragment extends Fragment {
 
     public static final String CHANGE_ID = PatchSetViewerFragment.CHANGE_ID;
+    public static final String CHANGE_STATUS = PatchSetViewerFragment.STATUS;
     public static final String MESSAGE = "message";
 
     private FragmentActivity mParent;
     private TextView mMessage;
+    private View mReviewFragment;
 
     private String mChangeId;
     private LabelsFragment mLabelsFragment;
+    private String mStatus;
 
     // The key to save the comment into the cache, it must be unique to this change
     private String mCacheKey;
@@ -75,10 +86,18 @@ public class CommentFragment extends Fragment {
 
         String message = args.getString(MESSAGE);
         if (message != null) mMessage.setText(message);
+        mStatus = args.getString(CHANGE_STATUS);
 
-        mLabelsFragment = new LabelsFragment();
-        mLabelsFragment.setArguments(args);
-        getChildFragmentManager().beginTransaction().replace(R.id.review_fragment, mLabelsFragment).commit();
+        mReviewFragment = currentFragment.findViewById(R.id.review_fragment);
+        if (canChangeBeReviewed()) {
+            hideLabels(false);
+
+            mLabelsFragment = new LabelsFragment();
+            mLabelsFragment.setArguments(args);
+            getChildFragmentManager().beginTransaction().replace(R.id.review_fragment, mLabelsFragment).commit();
+        } else {
+            hideLabels(true);
+        }
 
         mCacheKey = "comment." + mChangeId;
         mEventBus = EventBus.getDefault();
@@ -126,10 +145,45 @@ public class CommentFragment extends Fragment {
         GerritService.sendRequest(mParent, GerritService.DataType.Comment, bundle);
     }
 
+    private boolean canChangeBeReviewed() {
+        return mStatus == null || mStatus.equals(JSONCommit.Status.NEW.toString());
+    }
+
+    /**
+     * Hide or show the labels fragment
+     * @param hide true hides the labels fragment and makes the comment full height, false to
+     *             show the labels fragment
+     */
+    private void hideLabels(boolean hide) {
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+        if (hide) {
+            mReviewFragment.setVisibility(View.GONE);
+            lp.weight = 1;
+            mMessage.setLayoutParams(lp);
+        } else {
+            mReviewFragment.setVisibility(View.VISIBLE);
+            lp.weight = 0.75f;
+            mMessage.setLayoutParams(lp);
+        }
+    }
+
+    @Keep
     public void onEventMainThread(CacheDataRetrieved<String> ev) {
         if (ev.getKey().equals(mCacheKey) && mMessage != null) {
             if (mMessage.length() < 1) {
                 mMessage.setText(ev.getData());
+            }
+        }
+    }
+
+    @Keep
+    public void onEventMainThread(Finished ev) {
+        Intent intent = ev.getIntent();
+        Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
+        if (ev.getItems() < 1 && dataType == GerritService.DataType.Comment) {
+            // Commented successfully, remove comment from cache and go back to the change details
+            if (mParent instanceof ReviewActivity) {
+                ((ReviewActivity) mParent).onCommented(mCacheKey, mChangeId);
             }
         }
     }

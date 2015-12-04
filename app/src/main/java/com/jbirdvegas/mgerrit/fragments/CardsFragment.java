@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -432,6 +433,7 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
+    @Keep
     /* Tell the endless adapter we have finished loading when there was no data */
     public void onEventMainThread(Finished ev) {
         if (!getQuery().equals(ev.getStatus())) {

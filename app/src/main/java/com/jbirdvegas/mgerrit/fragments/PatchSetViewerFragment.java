@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -250,6 +251,7 @@ public class PatchSetViewerFragment extends Fragment
             public void onClick(View v) {
                 Intent i = new Intent(mParent, ReviewActivity.class);
                 i.putExtra(CommentFragment.CHANGE_ID, mSelectedChange);
+                i.putExtra(CommentFragment.CHANGE_STATUS, mStatus);
                 // Have to call toString here as the object cannot reference the EditText view
                 i.putExtra(CommentFragment.MESSAGE, mCommentText.getText().toString());
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(mParent,
@@ -515,11 +517,13 @@ public class PatchSetViewerFragment extends Fragment
         onLoadFinished(cursorLoader, null);
     }
 
+    @Keep
     public void onEventMainThread(StatusSelected ev) {
         setStatus(ev.getStatus());
         loadChange(false);
     }
 
+    @Keep
     public void onEventMainThread(ChangeLoadingFinished ev) {
         String status = ev.getStatus();
 

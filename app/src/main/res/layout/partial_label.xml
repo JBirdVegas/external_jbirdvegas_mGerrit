@@ -20,13 +20,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/standard_padding">
 
     <RelativeLayout
         android:id="@+id/labelRowContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/standard_padding">
+        android:paddingStart="@dimen/standard_padding"
+        android:paddingEnd="@dimen/standard_padding">
 
         <TextView
             android:id="@+id/txtLabel"
@@ -47,6 +49,14 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:textSize="@dimen/text_size_medium"/>
+
+        <View android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignBottom="@+id/spnLabelRating"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:background="?android:attr/listDivider"
+            android:padding="@dimen/standard_padding"/>
     </RelativeLayout>
 
 </ScrollView>

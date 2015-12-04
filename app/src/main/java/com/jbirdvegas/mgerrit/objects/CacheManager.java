@@ -21,6 +21,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.anupcowkur.reservoir.Reservoir;
+import com.anupcowkur.reservoir.ReservoirDeleteCallback;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.anupcowkur.reservoir.ReservoirPutCallback;
 import com.jbirdvegas.mgerrit.message.CacheDataRetrieved;
@@ -105,6 +106,30 @@ public class CacheManager<T> {
                 return Reservoir.get(key, clazz);
             } catch (Exception e) {
                 mEventBus.post(new CacheFailure(key, e, false));
+            }
+        }
+        return null;
+    }
+
+    public static Boolean remove(final String key, boolean async) {
+        if (async) {
+            Reservoir.deleteAsync(key, new ReservoirDeleteCallback() {
+                @Override
+                public void onSuccess() {
+                    // success
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    //error
+                }
+            });
+        } else {
+            try {
+                Reservoir.delete(key);
+                return true;
+            } catch (Exception e) {
+                return false;
             }
         }
         return null;

@@ -28,7 +28,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
-        tools:layout="@layout/partial_label" />
+        tools:layout="@layout/partial_label"
+        tools:visibility="visible"/>
 
     <View
         android:layout_width="match_parent"

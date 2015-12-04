@@ -26,6 +26,8 @@ import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
 import org.jetbrains.annotations.NotNull;
@@ -91,6 +93,12 @@ public class ReviewProcessor extends SyncProcessor<ChangeInfo> {
         // Don't comment on the same changeid
         String changeId = processor.getIntent().getStringExtra(GerritService.CHANGE_ID);
         return mChangeId.equals(changeId);
+    }
+
+    @Override
+    protected void trackEvent(String currentGerrit) {
+        AnalyticsHelper.sendAnalyticsEvent(mContext, AnalyticsHelper.GA_AUTHORISED_ACTION,
+                AnalyticsHelper.EVENT_CHANGE_COMMENT_ADDED, currentGerrit, null);
     }
 
     private EnumSet<ListChangesOption> queryOptions() {

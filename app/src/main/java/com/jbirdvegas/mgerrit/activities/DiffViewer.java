@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.View;
@@ -257,6 +258,7 @@ public class DiffViewer extends BaseDrawerActivity
         }
     }
 
+    @Keep
     public void onEventMainThread(ChangeDiffLoaded ev) {
         // TODO: Check if this is the event we requested.
         String diff = ev.getDiff();
@@ -265,6 +267,7 @@ public class DiffViewer extends BaseDrawerActivity
         switchViews(DiffType.Text);
     }
 
+    @Keep
     public void onEventMainThread(ImageLoaded ev) {
         Bitmap bitmap = ev.getImage();
         String filePath = ev.getFilePath();
@@ -286,6 +289,7 @@ public class DiffViewer extends BaseDrawerActivity
         }
     }
 
+    @Keep
     public void onEventMainThread(ErrorDuringConnection ev) {
         if (Tools.isImage(mFilePath)) {
             mDiffTextView.setText(R.string.failed_to_load_image);

@@ -20,15 +20,16 @@ package com.jbirdvegas.mgerrit.activities;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.fragments.CommentFragment;
+import com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
-import com.jbirdvegas.mgerrit.tasks.GerritService;
+import com.jbirdvegas.mgerrit.objects.CacheManager;
+import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 /**
  * This activity is mostly just a 'shell' activity containing nothing
@@ -76,5 +77,16 @@ public class ReviewActivity extends BaseDrawerActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Cleanup after we have commented on a change
+     * Remove comment from cache and go back to the change details
+     */
+    public void onCommented(String cacheKey, String changeId) {
+        CacheManager.remove(cacheKey, true);
+        String message = getResources().getString(R.string.review_sent_message, changeId);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        supportFinishAfterTransition();
     }
 }

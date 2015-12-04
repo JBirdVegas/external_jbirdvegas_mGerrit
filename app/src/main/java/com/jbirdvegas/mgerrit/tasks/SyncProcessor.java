@@ -209,6 +209,10 @@ abstract class SyncProcessor<T> {
         return true;
     }
 
+    protected void trackEvent(String currentGerrit) {
+        // Do nothing - subclasses can override this
+    }
+
     public Integer getQueueId() {
         return mQueueId;
     }
@@ -230,7 +234,10 @@ abstract class SyncProcessor<T> {
             }
 
             EventBus.getDefault().post(new Finished(intent, mQueueId, numItems));
-            if (mData != null) doPostProcess(mData);
+            if (mData != null) {
+                doPostProcess(mData);
+                trackEvent(PrefsFragment.getCurrentGerrit(mContext));
+            }
 
             GerritService.finishedRequest(mQueueId);
             // This thread has finished so the parent activity should no longer need it

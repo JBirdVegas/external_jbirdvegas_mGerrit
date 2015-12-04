@@ -53,8 +53,7 @@
             android:contentDescription="@string/review_advanced_comment_description"
             android:minHeight="36dp"
             android:minWidth="36dp"
-            android:src="?attr/upIcon"
-            android:tint="?attr/mainBackgroundColor" />
+            android:src="?attr/upIcon" />
 
         <EditText
             android:id="@+id/new_comment_message"
@@ -84,8 +83,7 @@
             android:contentDescription="@string/menu_post_comment"
             android:minHeight="36dp"
             android:minWidth="36dp"
-            android:src="?attr/sendIcon"
-            android:tint="?attr/mainBackgroundColor" />
+            android:src="?attr/sendIcon" />
     </RelativeLayout>
 
 </RelativeLayout>
