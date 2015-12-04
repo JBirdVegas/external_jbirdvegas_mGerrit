@@ -54,7 +54,9 @@ import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
 import de.greenrobot.event.EventBus;
+import nl.littlerobots.squadleader.Keep;
 
+@Keep
 public class GerritControllerActivity extends BaseDrawerActivity {
 
     private static final String GERRIT_INSTANCE = "gerrit";

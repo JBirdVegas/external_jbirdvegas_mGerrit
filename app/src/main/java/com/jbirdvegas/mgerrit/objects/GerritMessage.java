@@ -24,6 +24,9 @@ import com.jbirdvegas.mgerrit.tasks.GerritService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import nl.littlerobots.squadleader.Keep;
+
+@Keep
 public abstract class GerritMessage {
 
     private final Intent mIntent;

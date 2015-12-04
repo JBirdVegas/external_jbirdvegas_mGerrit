@@ -62,11 +62,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import nl.littlerobots.squadleader.Keep;
+
 /*
  * Extends the base activity with the main navigation drawer.
  * Activities requiring the navigation drawer can extend this class and call initNavigationDrawer.
  * A toolbar must also be present in the activity's layout
  */
+@Keep
 public abstract class BaseDrawerActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 

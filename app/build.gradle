@@ -67,6 +67,8 @@ dependencies {
         transitive = true
         exclude module: 'appcompat-v7'
     }
+
+    compile 'nl.littlerobots.squadleader:squadleader:1.2'
 }
 /**
  * Holds the complete formatted (incremented in specified) {@code android:versionCode}
@@ -176,11 +178,17 @@ android {
             signingConfig signingConfigs.release
         }
         debug {
-            apply plugin: 'com.getkeepsafe.dexcount'
-            dexcount {
-                printAsTree = true
-                orderByMethodCount = true
-            }
+            minifyEnabled true
+            proguardFile 'proguard-rules.pro'
+            proguardFile 'libs/proguard-eventbus.pro'
+            proguardFile 'libs/proguard-gerrit-rest-java-client.pro'
+            proguardFile 'libs/proguard-gson.pro'
+            proguardFile 'libs/proguard-guava.pro'
+            proguardFile 'libs/proguard-joda-time.pro'
+            proguardFile 'libs/proguard-support-design.pro'
+            proguardFile 'libs/proguard-support-v7-appcompat.pro'
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+            zipAlignEnabled true
         }
     }
     lintOptions {

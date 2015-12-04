@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import de.greenrobot.event.EventBus;
+import nl.littlerobots.squadleader.Keep;
 
 /**
  * Singleton class facilitating a publisher-subscriber model of events processing.
@@ -33,6 +34,7 @@ import de.greenrobot.event.EventBus;
  * Note: This class is not thread safe and assumes that there will be only one consumer for each
  * type of event
  */
+@Keep
 public class EventQueue {
     // Using an array list so we can push all messages on and filter for only the messages we are
     //  interested in
