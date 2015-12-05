@@ -32,20 +32,26 @@ import com.jbirdvegas.mgerrit.objects.LabelValues;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class RatingAdapter extends ArrayAdapter<LabelValues> {
 
     private final LayoutInflater mInflater;
     private final int mGreen;
     private final int mRed;
     private final boolean mUsingLightTheme;
+    private final List<LabelValues> mData;
 
-    public RatingAdapter(Context context, int resource) {
-        super(context, resource);
+
+    public RatingAdapter(Context context, int resource, List<LabelValues> objects) {
+        super(context, resource, objects);
+
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mGreen = context.getResources().getColor(R.color.text_green);
         mRed = context.getResources().getColor(R.color.text_red);
 
         mUsingLightTheme = (PrefsFragment.getCurrentThemeID(context) == R.style.Theme_Light);
+        mData = objects;
     }
 
     @Override
@@ -95,6 +101,19 @@ public class RatingAdapter extends ArrayAdapter<LabelValues> {
         viewHolder.txtDescription.setVisibility(isDropdown ? View.VISIBLE : View.GONE);
 
         return convertView;
+    }
+
+    /**
+     * @param value The label's value to search for
+     * @return The position of the label value in the adapter's spinner by value
+     */
+    public int getLabelPosition(int value) {
+        int i = 0;
+        for (LabelValues labelValues : mData) {
+            if (labelValues.value == value) return i;
+            else i++;
+        }
+        return -1;
     }
 
     /**

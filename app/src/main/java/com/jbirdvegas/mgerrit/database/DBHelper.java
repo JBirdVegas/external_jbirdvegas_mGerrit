@@ -69,39 +69,31 @@ class DBHelper extends SQLiteOpenHelper {
     //  idea to re-create the lot again.
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
-            try {
-                String tableName = table.getField("TABLE").get(null).toString();
-                db.execSQL("drop table if exists " + tableName);
-            } catch (IllegalAccessException e) {
-                throw new IllegalAccessError(DatabaseTable.PRIVATE_TABLE_CONST);
-            } catch (NoSuchFieldException e) {
-                throw new NoSuchFieldError(DatabaseTable.NO_TABLE_CONST);
-            }
-        }
+        boolean dbUpdated = false; // Whether the database has been fully updated
+        int currentVersion = oldVersion; // The current database version
 
         // We are now cancelling no longer needed profile picture requests.
         // Clear the cache to make sure the correct pictures are loaded
-        if (oldVersion < 22 && newVersion >= 22) {
+        if (currentVersion < 22 && newVersion >= 22) {
             Tools.trimCache(mContext);
         }
 
-        boolean dbUpdated = false;
-
-        if (oldVersion == 22) {
+        if (currentVersion == 22) {
             // We only added a new table here, so just create that one so the user does not have to
             // log back in again
             new Labels().create(TAG, db);
-            oldVersion = 26;
+            currentVersion = 26;
         }
 
-        if (oldVersion == 26) {
+        if (currentVersion == 26) {
             // Added a new view
             new ReviewerLabels().create(TAG, db);
-            oldVersion = 27;
+            currentVersion = 27;
+            dbUpdated = true;
         }
 
         if (!dbUpdated) {
+            dropTables(db);
             onCreate(db); // run onCreate to get new database
         }
 
@@ -117,6 +109,19 @@ class DBHelper extends SQLiteOpenHelper {
 
         // Conservative naming scheme - allow only letters. digits and underscores.
         return name.toLowerCase().replaceAll("[^a-z0-9_]+", "") + ".db";
+    }
+
+    private void dropTables(SQLiteDatabase db) {
+        for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
+            try {
+                String tableName = table.getField("TABLE").get(null).toString();
+                db.execSQL("drop table if exists " + tableName);
+            } catch (IllegalAccessException e) {
+                throw new IllegalAccessError(DatabaseTable.PRIVATE_TABLE_CONST);
+            } catch (NoSuchFieldException e) {
+                throw new NoSuchFieldError(DatabaseTable.NO_TABLE_CONST);
+            }
+        }
     }
 
     private void instantiateTables() {

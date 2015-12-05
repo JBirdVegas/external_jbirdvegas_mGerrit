@@ -35,24 +35,23 @@ public class ReviewerLabels extends DatabaseTable {
     public static final String TABLE = "ReviewerLabels";
 
     // Columns (Users table)
-    public static final String C_ACCOUNT_ID = Users.TABLE + "." + Users.C_ACCOUNT_ID;
+    public static final String C_ACCOUNT_ID = Users.C_ACCOUNT_ID;
 
     // --- Columns (Changes table) ---
-    public static final String C_CHANGE_ID = Changes.TABLE + "." + Changes.C_CHANGE_ID;
-    public static final String C_PROJECT = Changes.TABLE + "." + Changes.C_PROJECT;
+    public static final String C_CHANGE_ID = Changes.C_CHANGE_ID;
+    public static final String C_PROJECT = Changes.C_PROJECT;
 
     // --- Columns (Labels table) ---
-    public static final String C_LABEL = Labels.TABLE + "." + Labels.C_NAME;
-    public static final String C_VALUE = Labels.TABLE + "." + Labels.C_VALUE;
-    public static final String C_DESCRIPTION = Labels.TABLE + "." + Labels.C_DESCRIPTION;
-    public static final String C_IS_DEFAULT = Labels.TABLE + "." + Labels.C_IS_DEFAULT;
-    private static final String C_LABEL_PROJECT = Labels.TABLE + "." + Labels.C_PROJECT;
+    public static final String C_LABEL = Labels.C_NAME;
+    public static final String C_VALUE = Labels.C_VALUE;
+    public static final String C_DESCRIPTION = Labels.C_DESCRIPTION;
+    public static final String C_IS_DEFAULT = Labels.C_IS_DEFAULT;
+    private static final String C_LABEL_PROJECT = Labels.C_PROJECT;
 
     // --- Inferred column from Reviewers table ---
     // What rating the user gave for this label
     public static final String C_REVIEWED_VALUE = "reviewed_value";
-    private static final String C_REVIEWERS_CHANGE_ID = Reviewers.TABLE + "." + Reviewers.C_CHANGE_ID;
-    private static final String C_REVIEWERS_USER = Reviewers.TABLE + "." + Reviewers.C_USER;
+    private static final String C_USER = Reviewers.C_USER;
 
     public static final int ITEM_LIST = UriType.ReviewerLabelsList.ordinal();
     public static final int ITEM_ID = UriType.ReviewerLabelsID.ordinal();
@@ -66,7 +65,6 @@ public class ReviewerLabels extends DatabaseTable {
     public static final String SORT_BY = FileInfoTable.SORT_BY;
 
     public static final String[] PROJECTION = new String[] {
-            ReviewerLabels.TABLE + ".rowid AS _id",
             C_ACCOUNT_ID, C_CHANGE_ID, C_LABEL, C_VALUE, C_DESCRIPTION, C_IS_DEFAULT, C_REVIEWED_VALUE };
 
 
@@ -81,30 +79,25 @@ public class ReviewerLabels extends DatabaseTable {
     @Override
     public void create(String tag, SQLiteDatabase db) {
         /*
-        SELECT Changes.change_id, Changes.project, label, value, desc, is_default, account_id,
-        case when label = 'Code-Review' then code_review WHEN label = 'Verified' then verified end as reviewed_value FROM Labels, Users, Changes
-        LEFT OUTER JOIN Reviewers ON (Changes.change_id = Reviewers.change_id AND Users.account_id = Reviewers.user)
-        WHERE Users.http_user IS NOT NULL AND Users.http_password IS NOT NULL AND
-        Changes.project = Labels.project
-
-        SELECT Changes.change_id, Changes.project, Labels.label, Labels.value, Labels.desc, Labels.is_default,
-        Users.account_id, CASE WHEN label = 'Code-Review' THEN code_review WHEN label = 'Verified' THEN verified END AS reviewed_value
-        FROM Labels, Users, Changes
-        LEFT OUTER JOIN Reviewers ON (Changes.change_id = Reviewers.change_id AND Users.account_id = Reviewers.user)
-        WHERE Users.http_user IS NOT NULL AND Users.http_password IS NOT NULL AND Changes.project = Labels.project;
-
+        SELECT C.change_id, C.project, L.label, L.value, L.desc, L.is_default,
+        U.account_id, CASE WHEN L.label = 'Code-Review' THEN code_review WHEN L.label = 'Verified' THEN verified END AS reviewed_value
+        FROM Labels L, Users U, Changes C
+        LEFT OUTER JOIN Reviewers R ON (C.change_id = R.change_id AND U.account_id = R.user)
+        WHERE U.http_user IS NOT NULL AND U.http_password IS NOT NULL AND C.project = L.project;
          */
         // You cannot have a view without it being complex :)
-        db.execSQL("CREATE VIEW " + TABLE + " AS (" +
-                "SELECT " + C_CHANGE_ID + ", " + C_PROJECT + ", " + C_LABEL + ", " + C_VALUE + ", " + C_DESCRIPTION + ", " +
-                C_IS_DEFAULT + ", " + C_ACCOUNT_ID + ", " +
-                "CASE WHEN label = 'Code-Review' THEN code_review WHEN label = 'Verified' THEN verified END AS " + C_REVIEWED_VALUE + " " +
-                "FROM " + Labels.TABLE + ", " + Users.TABLE + ", " + Changes.TABLE + " " +
-                "LEFT OUTER JOIN " + Reviewers.TABLE + " ON " +
-                "(" + C_CHANGE_ID + " = " + C_REVIEWERS_CHANGE_ID + " AND " +
-                C_ACCOUNT_ID + " = " + C_REVIEWERS_USER + ") " +
-                "WHERE " + Users.TABLE + ".http_user IS NOT NULL AND " + Users.TABLE + ".http_password IS NOT NULL AND " +
-                C_PROJECT + " = " + C_LABEL_PROJECT + ");");
+        db.execSQL("CREATE VIEW IF NOT EXISTS " + TABLE + " AS SELECT "
+                + "C." + C_CHANGE_ID + " AS " + C_CHANGE_ID + ", C." + C_PROJECT + " AS " + C_PROJECT
+                + ", L." + C_LABEL + " AS " + C_LABEL + ", L." + C_VALUE + " AS " + C_VALUE
+                + ", L." + C_DESCRIPTION + " AS " + C_DESCRIPTION + ", L." + C_IS_DEFAULT + " AS " + C_IS_DEFAULT
+                + ", U." + C_ACCOUNT_ID + " AS " + C_ACCOUNT_ID
+                + ", (CASE WHEN L." + C_LABEL + " = 'Code-Review' THEN code_review WHEN L." + C_LABEL + " = 'Verified' THEN verified END) AS " + C_REVIEWED_VALUE
+                + " FROM `" + Changes.TABLE + "` C, " + Users.TABLE + " U, " + Labels.TABLE + " L "
+                + "LEFT OUTER JOIN " + Reviewers.TABLE + " R ON "
+                + "(C." + C_CHANGE_ID + " = R." + C_CHANGE_ID + " AND "
+                + "U." + C_ACCOUNT_ID + " = R." + C_USER + ") "
+                + "WHERE U.http_user IS NOT NULL AND U.http_password IS NOT NULL AND "
+                + "C." + C_PROJECT + " = L." + C_LABEL_PROJECT + ";");
     }
 
     public static void addURIMatches(UriMatcher _urim) {
@@ -113,15 +106,14 @@ public class ReviewerLabels extends DatabaseTable {
     }
 
     /**
-     * Get the last used reviewer labels
-     * @param context
-     * @param changeId
-     * @return
+     * @param context Application context from which to access the database
+     * @param changeId The change ID to get the labels for
+     * @return The last used reviewer labels for this change.
      */
     public static CursorLoader getReviewerLabels(Context context, String changeId) {
+        // This is really simple since we did all the work in the view
         String[] args = new String[]{changeId};
-
-        return new CursorLoader(context, DBParams.fetchOneRow(CONTENT_URI), PROJECTION,
+        return new CursorLoader(context, CONTENT_URI, PROJECTION,
                 C_CHANGE_ID + " = ?", args, null);
     }
 

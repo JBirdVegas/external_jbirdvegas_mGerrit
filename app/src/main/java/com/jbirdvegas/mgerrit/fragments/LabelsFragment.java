@@ -146,11 +146,14 @@ public class LabelsFragment extends Fragment
             } while (data.moveToNext() && data.getString(labelIndex).equals(label));
             data.moveToPrevious();
 
-            RatingAdapter adapter = new RatingAdapter(mContext, R.layout.item_label_values);
-            adapter.addAll(ratingValues);
+            RatingAdapter adapter = new RatingAdapter(mContext, R.layout.item_label_values, ratingValues);
             spnRating.setAdapter(adapter);
 
+            // Set the default value of the label - use the last selected rating if set otherwise the default
             int defaultValue = data.getInt((data.getType(reviewedValueIndex) == Cursor.FIELD_TYPE_NULL) ? defaultIndex : reviewedValueIndex);
+            int pos = adapter.getLabelPosition(defaultValue);
+            // The default value may not be permitted to be set by the user
+            if (pos >= 0) spnRating.setSelection(pos);
 
             // We have finished with this row, inflate another one if necessary
             labelRowNumber++;
