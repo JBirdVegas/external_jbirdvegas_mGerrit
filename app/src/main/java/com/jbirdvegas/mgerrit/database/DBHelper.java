@@ -34,7 +34,7 @@ class DBHelper extends SQLiteOpenHelper {
 
     // Don't forget to set this when a change to the database is made!
     // This must be strictly ascending, but can skip numbers
-    private static final int DB_VERSION = 26;
+    private static final int DB_VERSION = 27;
     private static List<DatabaseTable> mTables;
     private Context mContext;
 
@@ -86,11 +86,22 @@ class DBHelper extends SQLiteOpenHelper {
             Tools.trimCache(mContext);
         }
 
-        if (oldVersion == 22 && newVersion == 26) {
+        boolean dbUpdated = false;
+
+        if (oldVersion == 22) {
             // We only added a new table here, so just create that one so the user does not have to
             // log back in again
             new Labels().create(TAG, db);
-        } else {
+            oldVersion = 26;
+        }
+
+        if (oldVersion == 26) {
+            // Added a new view
+            new ReviewerLabels().create(TAG, db);
+            oldVersion = 27;
+        }
+
+        if (!dbUpdated) {
             onCreate(db); // run onCreate to get new database
         }
 

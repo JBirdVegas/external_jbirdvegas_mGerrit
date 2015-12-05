@@ -27,7 +27,7 @@
         android:id="@+id/review_fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.25"
+        android:layout_weight="0.22"
         tools:layout="@layout/partial_label"
         tools:visibility="visible"
         android:visibility="gone"/>
@@ -41,7 +41,7 @@
         android:id="@+id/new_comment_message"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.75"
+        android:layout_weight="0.78"
         android:background="?attr/colorCardBackground"
         android:ems="10"
         android:gravity="start|top"

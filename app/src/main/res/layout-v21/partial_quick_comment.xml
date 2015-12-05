@@ -69,7 +69,7 @@
             android:inputType="textMultiLine"
             android:paddingLeft="@dimen/standard_padding"
             android:paddingRight="36dp"
-            android:paddingTop="2dp"
+            android:layout_marginTop="2dp"
             android:transitionName="comment_message" />
 
         <ImageButton

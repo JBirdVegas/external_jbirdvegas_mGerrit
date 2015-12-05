@@ -162,7 +162,7 @@ public class CommentFragment extends Fragment {
             mMessage.setLayoutParams(lp);
         } else {
             mReviewFragment.setVisibility(View.VISIBLE);
-            lp.weight = 0.75f;
+            lp.weight = 0.78f;
             mMessage.setLayoutParams(lp);
         }
     }

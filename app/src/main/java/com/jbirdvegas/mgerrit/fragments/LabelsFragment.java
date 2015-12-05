@@ -33,6 +33,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.RatingAdapter;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.Labels;
+import com.jbirdvegas.mgerrit.database.ReviewerLabels;
 import com.jbirdvegas.mgerrit.objects.LabelValues;
 
 import java.util.ArrayList;
@@ -99,7 +100,7 @@ public class LabelsFragment extends Fragment
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == LOADER_LABELS) {
-            return Labels.getPermittedLabels(getContext(), mProject);
+            return ReviewerLabels.getReviewerLabels(getContext(), mChangeId);
         } else {
             return Changes.getCommitProperties(getContext(), mChangeId);
         }
@@ -119,10 +120,11 @@ public class LabelsFragment extends Fragment
 
         int labelRowNumber = 0;
 
-        int labelIndex = data.getColumnIndexOrThrow(Labels.C_NAME);
-        int valueIndex = data.getColumnIndexOrThrow(Labels.C_VALUE);
-        int descIndex = data.getColumnIndexOrThrow(Labels.C_DESCRIPTION);
-        int defaultIndex = data.getColumnIndexOrThrow(Labels.C_IS_DEFAULT);
+        int labelIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_LABEL);
+        int valueIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_VALUE);
+        int descIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_DESCRIPTION);
+        int defaultIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_IS_DEFAULT);
+        int reviewedValueIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_REVIEWED_VALUE);
 
         while (data.moveToNext()) {
             if (labelRowNumber >= labelViews.size()) {
@@ -147,6 +149,8 @@ public class LabelsFragment extends Fragment
             RatingAdapter adapter = new RatingAdapter(mContext, R.layout.item_label_values);
             adapter.addAll(ratingValues);
             spnRating.setAdapter(adapter);
+
+            int defaultValue = data.getInt((data.getType(reviewedValueIndex) == Cursor.FIELD_TYPE_NULL) ? defaultIndex : reviewedValueIndex);
 
             // We have finished with this row, inflate another one if necessary
             labelRowNumber++;

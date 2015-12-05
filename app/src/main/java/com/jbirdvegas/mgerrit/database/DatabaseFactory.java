@@ -351,11 +351,7 @@ public class DatabaseFactory extends ContentProvider {
         else if (tableName.equals(UserMessage.TABLE)) return Users.TABLE + ", " + MessageInfo.TABLE;
         else if (tableName.equals(FileChanges.TABLE)) return FileInfoTable.TABLE + ", " + Changes.TABLE;
         else if (tableName.equals(UserReviewers.TABLE)) return Users.TABLE + ", " + Reviewers.TABLE;
-
-        else if (tableName != null) return tableName;
-        else {
-            throw new IllegalArgumentException("Could not resolve URI data location: " + uri);
-        }
+        else return tableName;
     }
 
     private boolean isUriList(Uri uri) {
