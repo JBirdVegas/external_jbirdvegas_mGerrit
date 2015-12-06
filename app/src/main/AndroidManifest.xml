@@ -49,7 +49,8 @@
                        android:resource="@xml/changes_searchable"/>
         </activity>
         <activity android:name=".activities.PatchSetViewerActivity"
-                  android:parentActivityName=".activities.GerritControllerActivity"/>
+                  android:parentActivityName=".activities.GerritControllerActivity"
+                  android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity android:name=".activities.PrefsActivity"
                   android:parentActivityName=".activities.GerritControllerActivity"/>
         <activity android:name=".activities.AOKPChangelog"
