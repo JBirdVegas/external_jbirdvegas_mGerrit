@@ -141,7 +141,7 @@ mGerrit building instructions (from base of repository):
 - ANT: `ant clean debug`
 - gradle: `gradle clean build`
  
-gradle requires Build Tools revision 19.1.0
+gradle requires Build Tools revision 23.0.2
 
 
 AOKP
