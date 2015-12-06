@@ -1,14 +1,13 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.android.tools.build:gradle:2.0.0-alpha1'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'org.ajoberstar:gradle-git:1.1.0'
-        classpath 'com.jakewharton.sdkmanager:gradle-plugin:0.12.0'
         classpath 'org.apache.commons:commons-lang3:3.4'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.2.1'
     }
 }
 
@@ -20,7 +19,6 @@ import org.ajoberstar.grgit.Tag
 import org.ajoberstar.grgit.operation.BranchListOp
 import org.eclipse.jgit.util.StringUtils
 
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'hugo'
 apply plugin: 'checkstyle'
@@ -34,8 +32,8 @@ dependencies {
     compile files('libs/libGoogleAnalyticsServices.jar')
     compile files('libs/annotations.jar')
 
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:design:22.+'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
 
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.mcxiaoke.volley:library:1.0.18'
@@ -62,11 +60,11 @@ dependencies {
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
 
     // We have too many methods including the appcompat library
-    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:multidex:1.0.1'
 
     compile 'com.anupcowkur:reservoir:2.1'
 
-    compile('com.mikepenz:materialdrawer:4.4.6@aar') {
+    compile('com.mikepenz:materialdrawer:4.5.5@aar') {
         transitive = true
         exclude module: 'appcompat-v7'
     }
@@ -153,17 +151,21 @@ try {
 }
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion '22.0.1'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.2'
     // compile Using Java 7
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+    useLibrary  'org.apache.http.legacy'
 
     defaultConfig {
         // Enabling multidex support.
         multiDexEnabled true
+    }
+    dexOptions {
+        javaMaxHeapSize "2g"
     }
 
     sourceSets {
@@ -178,13 +180,6 @@ android {
             proguardFile 'proguard-project.txt'
             signingConfig signingConfigs.release
         }
-        debug {
-            apply plugin: 'com.getkeepsafe.dexcount'
-            dexcount {
-                printAsTree = true
-                orderByMethodCount = true
-            }
-        }
     }
     lintOptions {
         abortOnError false
@@ -193,6 +188,8 @@ android {
         exclude 'plugin.properties'
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/ECLIPSE_.RSA'
+        exclude 'META-INF/ECLIPSE_.SF'
     }
     if (versionPropsFile.canRead()) {
         versionProps.load(new FileInputStream(versionPropsFile))
@@ -224,7 +221,7 @@ android {
             versionName projectVersionName
             versionCode projectVersionCode
             minSdkVersion 14
-            targetSdkVersion 22
+            targetSdkVersion 23
             println("versionCode: $versionCode versionName: $versionName")
         }
     } else {
@@ -303,6 +300,11 @@ task commitFiles << {
      * Checkout feature branch, if branch does not exist create the branch
      */
     def branchExists = false
+
+    if (grgit == null) {
+        grgit = Grgit.open(project.rootDir, new Credentials(gitUsername.toString(), gitPassword.toString()))
+    }
+
     // get a List<Branch> of all local branches
     def branches = grgit.branch.list(mode: BranchListOp.Mode.LOCAL)
 
@@ -331,7 +333,7 @@ task commitFiles << {
     println 'Current Branch: ' + getCurrentBranch()
     if (versionPropsFile.exists() && versionPropsFile.canRead()) {
         // Stage changed files for commit
-        grgit.add(patterns: ['.'])
+        grgit.add(patterns: ['version.properties'])
         println "Grgit file staging: " + grgit.status()
         // Commit the updated version.properties
         grgit.commit(message: "Release: update version to: ${projectVersionName}", amend: false)
@@ -382,6 +384,10 @@ task push << {
         // push tags to remote
         grgit.push(tags: true)
     } finally {
+        if (getCurrentBranch() == branchName) {
+            println "Unexpected branch! {$branchName} Switching to master branch"
+            grgit.checkout(branch: 'master')
+        }
         grgit.branch.remove(names: [branchName], force: true)
         grgit.push()
     }
