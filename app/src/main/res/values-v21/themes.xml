@@ -76,7 +76,7 @@
         <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
         <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
         <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
-        <item name="shareIcon">@android:drawable/ic_menu_share</item>
+        <item name="shareIcon">@drawable/ic_action_share_dark</item>
         <item name="mainBackgroundColor">@color/main_background_dark</item>
         <item name="cardTextStyle">@style/CardText.Dark</item>
         <item name="cardTitleStyle">@style/CardTitle.Dark</item>

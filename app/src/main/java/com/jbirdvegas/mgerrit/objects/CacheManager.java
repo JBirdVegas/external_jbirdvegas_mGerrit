@@ -134,4 +134,8 @@ public class CacheManager<T> {
         }
         return null;
     }
+
+    public static String getCommentKey(final String changeId) {
+        return "comment." + changeId;
+    }
 }

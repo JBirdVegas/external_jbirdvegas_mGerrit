@@ -23,6 +23,7 @@
         android:id="@+id/menu_details_share"
         android:actionProviderClass="android.widget.ShareActionProvider"
         app:showAsAction="ifRoom"
+        android:icon="?attr/shareIcon"
         android:title="@string/share"/>
 
     <item

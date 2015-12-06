@@ -83,9 +83,6 @@ public class CommentFragment extends Fragment {
 
         Bundle args = getArguments();
         mChangeId = args.getString(CHANGE_ID);
-
-        String message = args.getString(MESSAGE);
-        if (message != null) mMessage.setText(message);
         mStatus = args.getString(CHANGE_STATUS);
 
         mReviewFragment = currentFragment.findViewById(R.id.review_fragment);
@@ -99,7 +96,7 @@ public class CommentFragment extends Fragment {
             hideLabels(true);
         }
 
-        mCacheKey = "comment." + mChangeId;
+        mCacheKey = CacheManager.getCommentKey(mChangeId);
         mEventBus = EventBus.getDefault();
     }
 
@@ -132,6 +129,11 @@ public class CommentFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mEventBus.register(this);
+
+        if (mChangeId != null) {
+            mCacheKey = CacheManager.getCommentKey(mChangeId);
+            new CacheManager<String>().get(mCacheKey, String.class, true);
+        }
     }
 
     public void addComment() {
@@ -178,7 +180,6 @@ public class CommentFragment extends Fragment {
 
     @Keep
     public void onEventMainThread(Finished ev) {
-        Intent intent = ev.getIntent();
         Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
         if (ev.getItems() < 1 && dataType == GerritService.DataType.Comment) {
             // Commented successfully, remove comment from cache and go back to the change details

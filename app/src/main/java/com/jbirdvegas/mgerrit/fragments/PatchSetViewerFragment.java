@@ -39,6 +39,7 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
@@ -57,14 +58,19 @@ import com.jbirdvegas.mgerrit.database.UserReviewers;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.message.CacheDataRetrieved;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
+import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
+import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.objects.FilesCAB;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.io.Serializable;
 
 import de.greenrobot.event.EventBus;
 
@@ -84,24 +90,25 @@ public class PatchSetViewerFragment extends Fragment
     private String mSelectedChange;
     private String mStatus;
     private int mChangeNumber;
+    private String mCacheCommentKey;
 
     private CommitDetailsAdapter mAdapter;
     private FilesCAB mFilesCAB;
     private TextView mCommentText;
-    private View mQuickCommentLayout;
 
+    private View mQuickCommentLayout;
     public static final String CHANGE_ID = "changeID";
     public static final String CHANGE_NO = "changeNo";
-    public static final String STATUS = "queryStatus";
 
+    public static final String STATUS = "queryStatus";
     public static final int LOADER_COMMIT = 1;
     public static final int LOADER_PROPERTIES = 2;
     public static final int LOADER_MESSAGE = 3;
     public static final int LOADER_FILES = 4;
     public static final int LOADER_REVIEWERS = 5;
     public static final int LOADER_COMMENTS = 6;
-    public static final int LOADER_USER = 21;
 
+    public static final int LOADER_USER = 21;
     private EventBus mEventBus;
 
 
@@ -253,7 +260,8 @@ public class PatchSetViewerFragment extends Fragment
                 i.putExtra(CommentFragment.CHANGE_ID, mSelectedChange);
                 i.putExtra(CommentFragment.CHANGE_STATUS, mStatus);
                 // Have to call toString here as the object cannot reference the EditText view
-                i.putExtra(CommentFragment.MESSAGE, mCommentText.getText().toString());
+                CacheManager.put(mCacheCommentKey, mCommentText.getText().toString(), false);
+                // Shared element transition for the edit text, we are also going to copy over the text
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(mParent,
                         mCommentText, "comment_message");
                 ActivityCompat.startActivity(mParent, i, options.toBundle());
@@ -376,6 +384,11 @@ public class PatchSetViewerFragment extends Fragment
     public void onResume() {
         super.onResume();
         mEventBus.register(this);
+
+        if (mSelectedChange != null) {
+            mCacheCommentKey = CacheManager.getCommentKey(mSelectedChange);
+            new CacheManager<String>().get(mCacheCommentKey, String.class, true);
+        }
     }
 
     @Override
@@ -398,10 +411,10 @@ public class PatchSetViewerFragment extends Fragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putString(CHANGE_ID, mSelectedChange);
         outState.putInt(CHANGE_NO, mChangeNumber);
         outState.putString(STATUS, mStatus);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -531,6 +544,30 @@ public class PatchSetViewerFragment extends Fragment
         if (compareStatus(status, getStatus())) {
             setStatus(status);
             loadChange(false);
+        }
+    }
+
+    @Keep
+    public void onEventMainThread(CacheDataRetrieved<String> ev) {
+        if (ev.getKey().equals(mCacheCommentKey) && mCommentText != null) {
+            // Overwrite the text as it is automatically populated with the text initially entered into the quick comment
+            // TODO: Alert message whether to restore if the length is > 1
+            if (mCommentText.length() < 1) {
+                // Only do this if the text is blank otherwise it messes with screen rotation
+                mCommentText.setText(ev.getData());
+            }
+        }
+    }
+
+    @Keep
+    public void onEventMainThread(Finished ev) {
+        Intent intent = ev.getIntent();
+        Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
+        if (ev.getItems() < 1 && dataType == GerritService.DataType.Comment) {
+            // Commented successfully, remove comment from cache
+            CacheManager.remove(mCacheCommentKey, true);
+            String message = getResources().getString(R.string.review_sent_message, mSelectedChange);
+            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
         }
     }
 }
