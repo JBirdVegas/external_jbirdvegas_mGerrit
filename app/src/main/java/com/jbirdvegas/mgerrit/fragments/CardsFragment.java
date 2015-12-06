@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -39,13 +40,10 @@ import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.activities.BaseDrawerActivity;
-import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
-import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
-import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
-import com.jbirdvegas.mgerrit.search.IsSearch;
-import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
+import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
+import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
 import com.jbirdvegas.mgerrit.cards.CommitCardBinder;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.MoreChanges;
@@ -64,6 +62,7 @@ import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 import com.jbirdvegas.mgerrit.tasks.GerritService.Direction;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
+import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -434,6 +433,7 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
+    @Keep
     /* Tell the endless adapter we have finished loading when there was no data */
     public void onEventMainThread(Finished ev) {
         if (!getQuery().equals(ev.getStatus())) {

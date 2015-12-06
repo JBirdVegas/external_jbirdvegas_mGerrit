@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2015
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_quick_comment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorCardBackground"
+    android:elevation="@dimen/z_offset_low"
+    android:orientation="vertical"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <View android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:background="?android:attr/listDivider" />
+
+    <RelativeLayout
+        android:id="@+id/comment_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider"
+        android:layout_marginTop="2dp"
+        android:background="?attr/colorCardBackground"
+        android:padding="@dimen/standard_padding">
+
+        <ImageButton
+            android:id="@+id/btn_expand_comment"
+            style="?attr/borderlessButtonBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/btn_add_comment"
+            android:layout_alignParentStart="true"
+            android:contentDescription="@string/review_advanced_comment_description"
+            android:minHeight="36dp"
+            android:minWidth="36dp"
+            android:src="?attr/upIcon" />
+
+        <EditText
+            android:id="@+id/new_comment_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/btn_expand_comment"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/btn_expand_comment"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="@string/review_add_comment"
+            android:inputType="textMultiLine"
+            android:paddingLeft="@dimen/standard_padding"
+            android:paddingRight="36dp"
+            android:layout_marginTop="2dp"
+            android:transitionName="comment_message" />
+
+        <ImageButton
+            android:id="@+id/btn_add_comment"
+            style="?attr/borderlessButtonBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/standard_padding"
+            android:contentDescription="@string/menu_post_comment"
+            android:minHeight="36dp"
+            android:minWidth="36dp"
+            android:src="?attr/sendIcon" />
+    </RelativeLayout>
+
+</RelativeLayout>

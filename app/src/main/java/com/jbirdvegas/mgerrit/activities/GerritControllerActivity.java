@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -273,6 +274,7 @@ public class GerritControllerActivity extends BaseDrawerActivity {
         builder.show();
     }
 
+    @Keep
     public void onEventMainThread(GerritChanged ev) {
         onGerritChanged(ev.getNewGerritUrl());
         super.onGerritChanged(ev);
@@ -281,6 +283,7 @@ public class GerritControllerActivity extends BaseDrawerActivity {
     /**
      * Handler for when a change is selected in the list.
      */
+    @Keep
     public void onEventMainThread(NewChangeSelected ev) {
         String changeId = ev.getChangeId();
         SelectedChange.setSelectedChange(this, changeId);
@@ -290,6 +293,7 @@ public class GerritControllerActivity extends BaseDrawerActivity {
         ev.inflate(this);
     }
 
+    @Keep
     public void onEventMainThread(NotSupported ev) {
         Toast.makeText(this, ev.getMessage(), Toast.LENGTH_LONG).show();
     }

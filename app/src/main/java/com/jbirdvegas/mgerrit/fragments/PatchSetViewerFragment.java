@@ -19,8 +19,12 @@ package com.jbirdvegas.mgerrit.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Keep;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -33,9 +37,13 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.activities.ReviewActivity;
 import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
 import com.jbirdvegas.mgerrit.adapters.CommitDetailsAdapter;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
@@ -47,16 +55,22 @@ import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.database.UserMessage;
 import com.jbirdvegas.mgerrit.database.UserReviewers;
+import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.message.CacheDataRetrieved;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
+import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
+import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.objects.FilesCAB;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import org.jetbrains.annotations.Nullable;
+
+import java.io.Serializable;
 
 import de.greenrobot.event.EventBus;
 
@@ -69,23 +83,24 @@ import de.greenrobot.event.EventBus;
 public class PatchSetViewerFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private View disconnectedView;
+    private View mDisconnectedView;
     private Activity mParent;
     private Context mContext;
 
     private String mSelectedChange;
     private String mStatus;
     private int mChangeNumber;
-    // Whether the server supports the new change details endpoint (false if so)
-    private boolean sIsLegacyVersion;
+    private String mCacheCommentKey;
 
     private CommitDetailsAdapter mAdapter;
     private FilesCAB mFilesCAB;
+    private TextView mCommentText;
 
+    private View mQuickCommentLayout;
     public static final String CHANGE_ID = "changeID";
     public static final String CHANGE_NO = "changeNo";
-    public static final String STATUS = "queryStatus";
 
+    public static final String STATUS = "queryStatus";
     public static final int LOADER_COMMIT = 1;
     public static final int LOADER_PROPERTIES = 2;
     public static final int LOADER_MESSAGE = 3;
@@ -93,6 +108,7 @@ public class PatchSetViewerFragment extends Fragment
     public static final int LOADER_REVIEWERS = 5;
     public static final int LOADER_COMMENTS = 6;
 
+    public static final int LOADER_USER = 21;
     private EventBus mEventBus;
 
 
@@ -118,17 +134,52 @@ public class PatchSetViewerFragment extends Fragment
     private void init() {
         View currentFragment = this.getView();
 
-        ExpandableListView mListView = (ExpandableListView) currentFragment.findViewById(R.id.commit_cards);
-        disconnectedView = currentFragment.findViewById(R.id.disconnected_view);
+        initListview(currentFragment);
 
-        sIsLegacyVersion = !Config.isDiffSupported(mParent);
+        mDisconnectedView = currentFragment.findViewById(R.id.disconnected_view);
+        Button retryButton = (Button) currentFragment.findViewById(R.id.btn_retry);
+        retryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendRequest(GerritService.DataType.CommitDetails, null);
+            }
+        });
+
+        initAddCommentToolbar(currentFragment);
+
+        if (getArguments() == null) {
+            /** This should be the default value of {@link ChangeListFragment.mSelectedStatus } */
+            setStatus(JSONCommit.Status.NEW.toString());
+            loadChange(true);
+        } else {
+            Bundle args = getArguments();
+            setStatus(args.getString(STATUS));
+            String changeid = args.getString(CHANGE_ID);
+            mChangeNumber = args.getInt(CHANGE_NO);
+
+            if (changeid != null && !changeid.isEmpty()) {
+                loadChange(changeid);
+            }
+        }
+
+        mEventBus = EventBus.getDefault();
+
+        // Get the current user to check if we are logged in
+        getLoaderManager().initLoader(LOADER_USER, null, this);
+    }
+
+    private void initListview(View currentFragment) {
+        ExpandableListView mListView = (ExpandableListView) currentFragment.findViewById(R.id.commit_cards);
+
+        // Whether the server supports the new change details endpoint (false if so)
+        boolean isLegacyVersion = !Config.isDiffSupported(mParent);
 
         mAdapter = new CommitDetailsAdapter(mParent);
         mListView.setAdapter(mAdapter);
 
         // Child click listeners (relevant for the changes cards)
         mListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-        mFilesCAB = new FilesCAB(mParent, !sIsLegacyVersion);
+        mFilesCAB = new FilesCAB(mParent, !isLegacyVersion);
         mAdapter.setContextualActionBar(mFilesCAB);
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -184,37 +235,44 @@ public class PatchSetViewerFragment extends Fragment
 
         // Remember to expand the groups which don't have a header otherwise they will not be shown
         mListView.expandGroup(0);
+    }
 
-        Button retryButton = (Button) currentFragment.findViewById(R.id.btn_retry);
-        retryButton.setOnClickListener(new View.OnClickListener() {
+    /**
+     * Setup the quick reply toolbar.
+     * @param currentFragment This fragment's view - this.getView()
+     */
+    private void initAddCommentToolbar(View currentFragment) {
+        mQuickCommentLayout = currentFragment.findViewById(R.id.layout_quick_comment);
+        mCommentText = (TextView) currentFragment.findViewById(R.id.new_comment_message);
+        ImageButton commentButton = (ImageButton) currentFragment.findViewById(R.id.btn_add_comment);
+        commentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequest(GerritService.DataType.CommitDetails);
+                addComment();
             }
         });
 
-        if (getArguments() == null) {
-            /** This should be the default value of {@link ChangeListFragment.mSelectedStatus } */
-            setStatus(JSONCommit.Status.NEW.toString());
-            loadChange(true);
-        } else {
-            Bundle args = getArguments();
-            setStatus(args.getString(STATUS));
-            String changeid = args.getString(CHANGE_ID);
-            mChangeNumber = args.getInt(CHANGE_NO);
-
-            if (changeid != null && !changeid.isEmpty()) {
-                loadChange(changeid);
+        ImageButton expandButton = (ImageButton) currentFragment.findViewById(R.id.btn_expand_comment);
+        expandButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(mParent, ReviewActivity.class);
+                i.putExtra(CommentFragment.CHANGE_ID, mSelectedChange);
+                i.putExtra(CommentFragment.CHANGE_STATUS, mStatus);
+                // Have to call toString here as the object cannot reference the EditText view
+                CacheManager.put(mCacheCommentKey, mCommentText.getText().toString(), false);
+                // Shared element transition for the edit text, we are also going to copy over the text
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(mParent,
+                        mCommentText, "comment_message");
+                ActivityCompat.startActivity(mParent, i, options.toBundle());
             }
-        }
-
-        mEventBus = EventBus.getDefault();
+        });
     }
 
     /**
      * Start the updater to check for an update if necessary
      */
-    private void sendRequest(GerritService.DataType dataType) {
+    private void sendRequest(GerritService.DataType dataType, Bundle bundle) {
 
         // If we aren't connected, there's nothing to do here
         if (!switchViews()) return;
@@ -225,10 +283,12 @@ public class PatchSetViewerFragment extends Fragment
          * so this will not be able to get the files changed or the full commit message
          * in prior Gerrit versions.
          */
-        Bundle b = new Bundle();
-        b.putString(GerritService.CHANGE_ID, mSelectedChange);
-        b.putInt(GerritService.CHANGE_NUMBER, mChangeNumber);
-        GerritService.sendRequest(mParent, dataType, b);
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putString(GerritService.CHANGE_ID, mSelectedChange);
+        bundle.putInt(GerritService.CHANGE_NUMBER, mChangeNumber);
+        GerritService.sendRequest(mParent, dataType, bundle);
     }
 
     private void restartLoaders(String changeID) {
@@ -256,7 +316,6 @@ public class PatchSetViewerFragment extends Fragment
 
         Pair<String, Integer> change = SelectedChange.getSelectedChange(mContext, mStatus);
         String changeID;
-        int changeNumber;
 
         if (change == null || change.first.isEmpty()) {
             change = Changes.getMostRecentChange(mParent, mStatus);
@@ -286,7 +345,7 @@ public class PatchSetViewerFragment extends Fragment
         // If we have already loaded this change there is nothing to do
         if (!changeId.equals(this.mSelectedChange)) {
             this.mSelectedChange = changeId;
-            sendRequest(GerritService.DataType.CommitDetails);
+            sendRequest(GerritService.DataType.CommitDetails, null);
 
             restartLoaders(changeId);
         }
@@ -325,6 +384,11 @@ public class PatchSetViewerFragment extends Fragment
     public void onResume() {
         super.onResume();
         mEventBus.register(this);
+
+        if (mSelectedChange != null) {
+            mCacheCommentKey = CacheManager.getCommentKey(mSelectedChange);
+            new CacheManager<String>().get(mCacheCommentKey, String.class, true);
+        }
     }
 
     @Override
@@ -347,10 +411,10 @@ public class PatchSetViewerFragment extends Fragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putString(CHANGE_ID, mSelectedChange);
         outState.putInt(CHANGE_NO, mChangeNumber);
         outState.putString(STATUS, mStatus);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -387,17 +451,26 @@ public class PatchSetViewerFragment extends Fragment
     private boolean switchViews() {
         boolean isconn = Tools.isConnected(mParent);
         if (isconn) {
-            disconnectedView.setVisibility(View.GONE);
+            mDisconnectedView.setVisibility(View.GONE);
         } else {
-            disconnectedView.setVisibility(View.VISIBLE);
+            mDisconnectedView.setVisibility(View.VISIBLE);
         }
         return isconn;
     }
 
+    public void addComment() {
+        String message = mCommentText.getText().toString();
+        Bundle bundle = new Bundle();
+        bundle.putString(GerritService.REVIEW_MESSAGE, message);
+        sendRequest(GerritService.DataType.Comment, bundle);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
-        String changeID = args.getString(PatchSetViewerFragment.CHANGE_ID);
+        String changeID = null;
+        if (args != null) {
+            changeID = args.getString(PatchSetViewerFragment.CHANGE_ID);
+        }
 
         switch (id) {
             case LOADER_COMMIT:
@@ -412,6 +485,8 @@ public class PatchSetViewerFragment extends Fragment
                 return UserReviewers.getReviewersForChange(mContext, changeID);
             case LOADER_COMMENTS:
                 return UserMessage.getMessagesForChange(mContext, changeID);
+            case LOADER_USER:
+                return Users.getSelf(mContext);
         }
 
         return null;
@@ -440,6 +515,12 @@ public class PatchSetViewerFragment extends Fragment
             case LOADER_COMMENTS:
                 cardType = CommitDetailsAdapter.Cards.COMMENTS;
                 break;
+            case LOADER_USER:
+                if (cursor == null || cursor.getCount() < 1) {
+                    mQuickCommentLayout.setVisibility(View.GONE);
+                } else {
+                    mQuickCommentLayout.setVisibility(View.VISIBLE);
+                }
         }
         if (cardType != null) mAdapter.setCursor(cardType, cursor);
     }
@@ -449,19 +530,44 @@ public class PatchSetViewerFragment extends Fragment
         onLoadFinished(cursorLoader, null);
     }
 
+    @Keep
     public void onEventMainThread(StatusSelected ev) {
         setStatus(ev.getStatus());
         loadChange(false);
     }
 
+    @Keep
     public void onEventMainThread(ChangeLoadingFinished ev) {
         String status = ev.getStatus();
 
-        /* We may have got a broadcast saying that data from another tab
-         *  has been loaded. */
+        // We may have got a broadcast saying that data from another tab has been loaded.
         if (compareStatus(status, getStatus())) {
             setStatus(status);
             loadChange(false);
+        }
+    }
+
+    @Keep
+    public void onEventMainThread(CacheDataRetrieved<String> ev) {
+        if (ev.getKey().equals(mCacheCommentKey) && mCommentText != null) {
+            // Overwrite the text as it is automatically populated with the text initially entered into the quick comment
+            // TODO: Alert message whether to restore if the length is > 1
+            if (mCommentText.length() < 1) {
+                // Only do this if the text is blank otherwise it messes with screen rotation
+                mCommentText.setText(ev.getData());
+            }
+        }
+    }
+
+    @Keep
+    public void onEventMainThread(Finished ev) {
+        Intent intent = ev.getIntent();
+        Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
+        if (ev.getItems() < 1 && dataType == GerritService.DataType.Comment) {
+            // Commented successfully, remove comment from cache
+            CacheManager.remove(mCacheCommentKey, true);
+            String message = getResources().getString(R.string.review_sent_message, mSelectedChange);
+            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
         }
     }
 }

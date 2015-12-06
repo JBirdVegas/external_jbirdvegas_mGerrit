@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.activities;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
@@ -289,6 +290,7 @@ public class PatchSetViewerActivity extends BaseDrawerActivity
         setTitle(String.format(s, commitNumber));
     }
 
+    @Keep
     // Listen for processed search query changes
     public void onEventMainThread(SearchQueryChanged ev) {
         getSupportLoaderManager().restartLoader(0, null, this);

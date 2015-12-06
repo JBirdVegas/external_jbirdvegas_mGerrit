@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2015
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/standard_padding">
+
+    <RelativeLayout
+        android:id="@+id/labelRowContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/standard_padding"
+        android:paddingEnd="@dimen/standard_padding">
+
+        <TextView
+            android:id="@+id/txtLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/spnLabelRating"
+            android:layout_toStartOf="@+id/spnLabelRating"
+            android:textSize="@dimen/text_size_medium"
+            tools:text="Code-Review"/>
+
+        <Spinner
+            android:id="@+id/spnLabelRating"
+            android:layout_width="172dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:textSize="@dimen/text_size_medium"/>
+
+        <View android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignBottom="@+id/spnLabelRating"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:background="?android:attr/listDivider"
+            android:padding="@dimen/standard_padding"/>
+    </RelativeLayout>
+
+</ScrollView>
+

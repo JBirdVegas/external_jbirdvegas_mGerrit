@@ -34,7 +34,7 @@ class DBHelper extends SQLiteOpenHelper {
 
     // Don't forget to set this when a change to the database is made!
     // This must be strictly ascending, but can skip numbers
-    private static final int DB_VERSION = 22;
+    private static final int DB_VERSION = 27;
     private static List<DatabaseTable> mTables;
     private Context mContext;
 
@@ -69,25 +69,35 @@ class DBHelper extends SQLiteOpenHelper {
     //  idea to re-create the lot again.
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
-            try {
-                String tableName = table.getField("TABLE").get(null).toString();
-                db.execSQL("drop table if exists " + tableName);
-            } catch (IllegalAccessException e) {
-                throw new IllegalAccessError(DatabaseTable.PRIVATE_TABLE_CONST);
-            } catch (NoSuchFieldException e) {
-                throw new NoSuchFieldError(DatabaseTable.NO_TABLE_CONST);
-            }
-        }
+        boolean dbUpdated = false; // Whether the database has been fully updated
+        int currentVersion = oldVersion; // The current database version
 
         // We are now cancelling no longer needed profile picture requests.
         // Clear the cache to make sure the correct pictures are loaded
-        if (oldVersion < 22 && newVersion >= 22) {
+        if (currentVersion < 22 && newVersion >= 22) {
             Tools.trimCache(mContext);
         }
 
+        if (currentVersion == 22) {
+            // We only added a new table here, so just create that one so the user does not have to
+            // log back in again
+            new Labels().create(TAG, db);
+            currentVersion = 26;
+        }
+
+        if (currentVersion == 26) {
+            // Added a new view
+            new ReviewerLabels().create(TAG, db);
+            currentVersion = 27;
+            dbUpdated = true;
+        }
+
+        if (!dbUpdated) {
+            dropTables(db);
+            onCreate(db); // run onCreate to get new database
+        }
+
         Log.d(TAG, "Database Updated.");
-        onCreate(db); // run onCreate to get new database
     }
 
     // Sanitise the names of the Gerrit instances so we do not create odd file names
@@ -99,6 +109,19 @@ class DBHelper extends SQLiteOpenHelper {
 
         // Conservative naming scheme - allow only letters. digits and underscores.
         return name.toLowerCase().replaceAll("[^a-z0-9_]+", "") + ".db";
+    }
+
+    private void dropTables(SQLiteDatabase db) {
+        for (Class<? extends DatabaseTable> table : DatabaseTable.tables) {
+            try {
+                String tableName = table.getField("TABLE").get(null).toString();
+                db.execSQL("drop table if exists " + tableName);
+            } catch (IllegalAccessException e) {
+                throw new IllegalAccessError(DatabaseTable.PRIVATE_TABLE_CONST);
+            } catch (NoSuchFieldException e) {
+                throw new NoSuchFieldError(DatabaseTable.NO_TABLE_CONST);
+            }
+        }
     }
 
     private void instantiateTables() {

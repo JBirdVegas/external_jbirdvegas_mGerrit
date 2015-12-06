@@ -24,6 +24,7 @@ import android.util.Log;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Users;
+import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
@@ -72,5 +73,11 @@ public class AccountProcessor extends SyncProcessor<UserAccountInfo> {
         } catch (RestApiException e) {
             handleException(e);
         }
+    }
+
+    @Override
+    protected void trackEvent(String currentGerrit) {
+        AnalyticsHelper.sendAnalyticsEvent(mContext, AnalyticsHelper.GA_AUTHORISED_ACTION,
+                AnalyticsHelper.EVENT_LOGGED_IN, currentGerrit, null);
     }
 }

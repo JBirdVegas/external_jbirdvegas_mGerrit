@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#Simple script to dectect the current branch.  This is used by TavisCI server to determine if
+#Simple script to detect the current branch.  This is used by TavisCI server to determine if
 #release actions should be performed.
 
 if [[ $(git branch) == "master" ]]; then

@@ -23,6 +23,7 @@ import android.content.Intent;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
+import com.jbirdvegas.mgerrit.database.Labels;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
@@ -80,6 +81,10 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
         MessageInfo.insertMessages(context, changeid, commit.messages);
 
         UserChanges.updateChange(context, commit);
+
+        if (!commit.permittedLabels.isEmpty()) {
+            Labels.insertLabels(context, commit.project, commit.labels, commit.permittedLabels);
+        }
 
         return 1;
     }

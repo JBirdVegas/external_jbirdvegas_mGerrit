@@ -28,4 +28,5 @@
     <item type="id" name="project" />
     <item type="id" name="status"/>
     <item type="id" name="imageRequest" />
+    <item type="id" name="adapter" />
 </resources>

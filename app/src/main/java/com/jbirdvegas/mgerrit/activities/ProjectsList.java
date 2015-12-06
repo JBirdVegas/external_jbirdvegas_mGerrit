@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
@@ -285,6 +286,7 @@ public class ProjectsList extends BaseDrawerActivity
         return false;
     }
 
+    @Keep
     public void onEventMainThread(StartingRequest ev) {
         Intent intent = ev.getIntent();
         if (intent.getSerializableExtra(GerritService.DATA_TYPE_KEY) == GerritService.DataType.Project) {
@@ -292,6 +294,7 @@ public class ProjectsList extends BaseDrawerActivity
         }
     }
 
+    @Keep
     public void onEventMainThread(Finished ev) {
         Intent intent = ev.getIntent();
         Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
@@ -300,6 +303,7 @@ public class ProjectsList extends BaseDrawerActivity
         }
     }
 
+    @Keep
     public void onEventMainThread(ErrorDuringConnection ev) {
         Intent intent = ev.getIntent();
         if (intent.getSerializableExtra(GerritService.DATA_TYPE_KEY) == GerritService.DataType.Project) {

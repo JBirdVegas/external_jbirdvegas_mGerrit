@@ -10,6 +10,7 @@ import android.support.multidex.MultiDex;
 import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
+import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 
@@ -45,6 +46,8 @@ public class TheApplication extends Application
 
         // Don't spam logs with no subscriber event messages as some are used only on tablet devices
         EventBus.builder().logNoSubscriberMessages(false).sendNoSubscriberEvent(false).installDefaultEventBus();
+
+        CacheManager.init(this);
 
         requestServerVersion(false);
     }

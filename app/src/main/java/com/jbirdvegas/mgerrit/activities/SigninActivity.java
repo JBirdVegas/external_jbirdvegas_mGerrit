@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.activities;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
@@ -177,6 +178,7 @@ public class SigninActivity extends AppCompatActivity
         // Not used
     }
 
+    @Keep
     public void onEventMainThread(SigninCompleted ev) {
         btnSignIn.setProgress(100);
         findViewById(R.id.txtAuthFailure).setVisibility(View.GONE);
@@ -220,6 +222,7 @@ public class SigninActivity extends AppCompatActivity
         }
     }
 
+    @Keep
     public void onEventMainThread(ErrorDuringConnection ev) {
         btnSignIn.setProgress(-1);
         if (ev.getException().getClass() == AuthFailureError.class) {
