@@ -186,7 +186,7 @@ public class CommentFragment extends Fragment {
                         CommentFragment.this.mParent.supportFinishAfterTransition();
                     }
                 })
-                .setNegativeButton(
+                .setNeutralButton(
                         R.string.review_save_option, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
@@ -196,7 +196,7 @@ public class CommentFragment extends Fragment {
                                 CommentFragment.this.mParent.finish();
                             }
                         })
-                .setNeutralButton(
+                .setNegativeButton(
                         R.string.review_cancel_option, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

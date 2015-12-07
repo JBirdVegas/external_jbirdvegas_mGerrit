@@ -53,8 +53,7 @@ public class LabelsFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mInflater = inflater;
-        // Empty row has only a linear layout. We can use this as a parent to add inflate other
-        // views into
+        // Use this as a parent to add inflate other views into
         return inflater.inflate(R.layout.fragment_labels, container, false);
     }
 
@@ -67,9 +66,8 @@ public class LabelsFragment extends Fragment
         Bundle args = getArguments();
         if (args != null) {
             mChangeId = args.getString(CHANGE_ID);
+            getLoaderManager().initLoader(LOADER_LABELS, null, this);
         }
-
-        getLoaderManager().initLoader(LOADER_LABELS, null, this);
     }
 
     private View inflateRow(LayoutInflater inflater, ViewGroup container) {
@@ -115,6 +113,8 @@ public class LabelsFragment extends Fragment
         int defaultIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_IS_DEFAULT);
         int reviewedValueIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_REVIEWED_VALUE);
 
+        // There is an issue where this is called and the cursor is moved to the end after a configuration change
+        data.moveToFirst();
         while (data.moveToNext()) {
             if (labelRowNumber >= labelViews.size()) {
                 inflateRow(mInflater, (ViewGroup) getView());
