@@ -78,7 +78,7 @@ public class Revisions extends DatabaseTable {
     }
 
     @Override
-    public void create(String TAG, SQLiteDatabase db) {
+    public void create(String tag, SQLiteDatabase db) {
         // Specify a conflict algorithm here so we don't have to worry about it later
         db.execSQL("create table " + TABLE + " ("
                 + C_CHANGE_ID + " text PRIMARY KEY ON CONFLICT REPLACE, "

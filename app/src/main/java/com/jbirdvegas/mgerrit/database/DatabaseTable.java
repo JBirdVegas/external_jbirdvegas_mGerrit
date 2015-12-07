@@ -48,10 +48,10 @@ public abstract class DatabaseTable {
 
     /**
      * Executes an SQL script to instantiate its database table
-     * @param TAG For logging purposes
+     * @param tag For logging purposes
      * @param db An open writable database instance
      */
-    public abstract void create(String TAG, SQLiteDatabase db);
+    public abstract void create(String tag, SQLiteDatabase db);
 
     /* Each subclass MUST implement this static method to facilitate construction
      *  of its database table. Obviously it cannot be declared abstract as it

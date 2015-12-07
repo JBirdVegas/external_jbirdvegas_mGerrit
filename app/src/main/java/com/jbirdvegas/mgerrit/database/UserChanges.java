@@ -51,6 +51,10 @@ public class UserChanges extends DatabaseTable {
     // The Change-Id of the change.
     public static final String C_CHANGE_ID = Changes.C_CHANGE_ID;
 
+
+
+
+
     //The subject of the change (header line of the commit message).
     public static final String C_SUBJECT = Changes.C_SUBJECT;
 
@@ -109,10 +113,8 @@ public class UserChanges extends DatabaseTable {
     public static final String SORT_BY = C_UPDATED + " DESC";
 
     public static final String[] CHANGE_LIST_PROJECTION = new String[] {
-            Changes.TABLE + ".rowid AS _id",
-            String.format("%s.%s", Changes.TABLE, Changes.C_CHANGE_ID), C_SUBJECT, C_PROJECT,
-            C_UPDATED, C_STATUS, C_TOPIC, C_USER_ID, C_EMAIL, C_NAME, C_BRANCH,
-            String.format("%s.%s", Changes.TABLE, Changes.C_COMMIT_NUMBER), C_STARRED };
+            "_id", C_CHANGE_ID, C_SUBJECT, C_PROJECT, C_UPDATED, C_STATUS, C_PROJECT, C_TOPIC,
+            C_USER_ID, C_EMAIL, C_NAME, C_BRANCH, C_COMMIT_NUMBER, C_STARRED };
 
     private static UserChanges mInstance = null;
     private MyObserver mObserver;
@@ -124,7 +126,17 @@ public class UserChanges extends DatabaseTable {
 
     @Override
     public void create(String TAG, SQLiteDatabase db) {
-        // This is not a real table (do nothing)
+        db.execSQL("CREATE VIEW IF NOT EXISTS " + TABLE + " AS SELECT "
+                + "C.rowid AS _id" + ", C." + C_CHANGE_ID + " AS " + C_CHANGE_ID
+                + ", C." + C_SUBJECT + " AS " + C_SUBJECT + ", C." + C_PROJECT + " AS " + C_PROJECT
+                + ", C." + C_UPDATED + " AS " + C_UPDATED + ", C." + C_STATUS + " AS " + C_STATUS
+                + ", C." + C_TOPIC + " AS " + C_TOPIC + ", U." + C_USER_ID + " AS " + C_USER_ID
+                + ", U." + C_EMAIL + " AS " + C_EMAIL + ", U." + C_NAME + " AS " + C_NAME
+                + ", C." + C_BRANCH + " AS " + C_BRANCH
+                + ", C." + C_COMMIT_NUMBER + "AS " + C_COMMIT_NUMBER
+                + ", C." + C_STARRED + " AS " + C_STARRED
+                + " FROM " + Users.TABLE + " U, " + Changes.TABLE + " C "
+                + " WHERE C." + C_OWNER + " = U." + Users.C_ACCOUNT_ID + ";");
     }
 
     @SuppressWarnings("unused")
@@ -251,9 +263,7 @@ public class UserChanges extends DatabaseTable {
                                            StringBuilder builder, List<String> bindArgs) {
         if (builder.length() > 0) builder.append(" AND ");
 
-        StringBuilder where = builder.append(C_STATUS).append(" = ?").append(" AND ")
-                .append(Changes.TABLE).append(".").append(C_OWNER)
-                .append(" = ").append(Users.TABLE).append(".").append(C_USER_ID);
+        StringBuilder where = builder.append(C_STATUS).append(" = ?");
 
         status = JSONCommit.Status.getStatusString(status);
         bindArgs.add(status);
@@ -273,9 +283,7 @@ public class UserChanges extends DatabaseTable {
     public static CursorLoader getCommitProperties(Context context, String changeid) {
         Uri uri = DBParams.fetchOneRow(CONTENT_URI);
         return new CursorLoader(context, uri, CHANGE_LIST_PROJECTION,
-                C_CHANGE_ID + " = ? AND " + Changes.TABLE + "." + Changes.C_OWNER
-                        + " = " + Users.TABLE + "." + Users.C_ACCOUNT_ID,
-                new String[] { changeid }, null);
+                C_CHANGE_ID + " = ?",  new String[] { changeid }, null);
     }
 
     @Override
@@ -292,3 +300,4 @@ public class UserChanges extends DatabaseTable {
         context.getContentResolver().unregisterContentObserver(mObserver);
     }
 }
+
