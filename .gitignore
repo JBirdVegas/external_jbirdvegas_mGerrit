@@ -1,19 +1,19 @@
-# Use Glob syntax
-syntax: glob
-
 idea_out/
 build.properties
 bin/
 gen/
 out/
-*.iml
 .idea/
 .classpath
 .project
 local.properties
 build-log.xml
 build.log
-build/
+**/build/*
+# include buildSrc files in version control
+!**/buildSrc/**
+buildSrc/build/*
+**/*.iml
 taskArtifacts/
 .gradle/
 mGerrit_release.keystore

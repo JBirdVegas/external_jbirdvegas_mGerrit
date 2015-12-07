@@ -1,0 +1,23 @@
+apply plugin: 'groovy'
+
+buildscript {
+    repositories {
+        jcenter()
+
+    }
+    dependencies {
+        classpath gradleApi()
+        classpath localGroovy()
+        classpath 'org.ajoberstar:gradle-git:1.1.0'
+        classpath 'org.apache.commons:commons-lang3:3.4'
+    }
+}
+
+dependencies {
+    repositories {
+        jcenter()
+    }
+    compile gradleApi()
+    compile 'org.ajoberstar:gradle-git:1.1.0'
+    compile 'org.apache.commons:commons-lang3:3.4'
+}
