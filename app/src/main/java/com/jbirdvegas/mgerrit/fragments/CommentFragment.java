@@ -17,7 +17,9 @@
 
 package com.jbirdvegas.mgerrit.fragments;
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Keep;
 import android.support.v4.app.Fragment;
@@ -44,7 +46,6 @@ public class CommentFragment extends Fragment {
 
     public static final String CHANGE_ID = PatchSetViewerFragment.CHANGE_ID;
     public static final String CHANGE_STATUS = PatchSetViewerFragment.STATUS;
-    public static final String MESSAGE = "message";
 
     private FragmentActivity mParent;
     private TextView mMessage;
@@ -116,11 +117,6 @@ public class CommentFragment extends Fragment {
 
     @Override
     public void onPause() {
-        // Save the message into the cache
-        String message = mMessage.getText().toString();
-        if (message.length() > 0) {
-            CacheManager.put(mCacheKey, message, true);
-        }
         mEventBus.unregister(this);
         super.onPause();
     }
@@ -136,6 +132,9 @@ public class CommentFragment extends Fragment {
         }
     }
 
+    /**
+     * Call the service to post the current message and labels for this change
+     */
     public void addComment() {
         String message = mMessage.getText().toString();
         Bundle review = mLabelsFragment.getReview();
@@ -167,6 +166,45 @@ public class CommentFragment extends Fragment {
             lp.weight = 0.78f;
             mMessage.setLayoutParams(lp);
         }
+    }
+
+    /**
+     * Launch a dialog for whether to save the message or discard it
+     * @param context
+     */
+    public void launchSaveMessageDialog(final Context context) {
+        final String message = mMessage.getText().toString();
+        AlertDialog.Builder ad = new AlertDialog.Builder(context)
+                .setMessage(R.string.review_discard_confirm)
+                .setPositiveButton(R.string.review_discard_option, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        // Discard the message from the cache
+                        String key = CacheManager.getCommentKey(mChangeId);
+                        CacheManager.remove(key, false);
+                        dialog.dismiss();
+                        CommentFragment.this.mParent.supportFinishAfterTransition();
+                    }
+                })
+                .setNegativeButton(
+                        R.string.review_save_option, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // Save the message into the cache
+                                String key = CacheManager.getCommentKey(mChangeId);
+                                CacheManager.put(key, message, false);
+                                CommentFragment.this.mParent.finish();
+                            }
+                        })
+                .setNeutralButton(
+                        R.string.review_cancel_option, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }
+                );
+        ad.create().show();
     }
 
     @Keep

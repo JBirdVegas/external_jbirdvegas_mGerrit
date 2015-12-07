@@ -43,12 +43,11 @@ public class LabelsFragment extends Fragment
 
     public static final String CHANGE_ID = PatchSetViewerFragment.CHANGE_ID;
     public static final int LOADER_LABELS = 3;
-    public static final int LOADER_PROJECT = 4;
 
     private LayoutInflater mInflater;
     private Context mContext;
     ArrayList<View> labelViews = new ArrayList<>();
-    private String mChangeId, mProject;
+    private String mChangeId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,7 +69,7 @@ public class LabelsFragment extends Fragment
             mChangeId = args.getString(CHANGE_ID);
         }
 
-        getLoaderManager().initLoader(LOADER_PROJECT, null, this);
+        getLoaderManager().initLoader(LOADER_LABELS, null, this);
     }
 
     private View inflateRow(LayoutInflater inflater, ViewGroup container) {
@@ -101,23 +100,13 @@ public class LabelsFragment extends Fragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == LOADER_LABELS) {
             return ReviewerLabels.getReviewerLabels(getContext(), mChangeId);
-        } else {
-            return Changes.getCommitProperties(getContext(), mChangeId);
         }
+        return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Inflate one item for item_label for each row
-        if (loader.getId() == LOADER_PROJECT) {
-            if (data.moveToFirst()) {
-                mProject = data.getString(data.getColumnIndex(Changes.C_PROJECT));
-                // Now we have the project we can load the labels
-                getLoaderManager().initLoader(LOADER_LABELS, null, this);
-            }
-            return; // Finished processing this loader
-        }
-
         int labelRowNumber = 0;
 
         int labelIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_LABEL);
