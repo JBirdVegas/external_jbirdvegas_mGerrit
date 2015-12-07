@@ -225,4 +225,8 @@
     <string name="review_advanced_comment_description">Expand to add labels</string>
     <string name="review_add_comment">Add a comment</string>
     <string name="review_sent_message" formatted="false">Commented on change #%s</string>
+    <string name="review_discard_confirm">Are you sure you want to discard this comment?</string>
+    <string name="review_discard_option">Discard</string>
+    <string name="review_save_option">Save</string>
+    <string name="review_cancel_option">Cancel</string>
 </resources>

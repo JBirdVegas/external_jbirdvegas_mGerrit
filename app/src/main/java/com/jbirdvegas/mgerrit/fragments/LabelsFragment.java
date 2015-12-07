@@ -43,19 +43,17 @@ public class LabelsFragment extends Fragment
 
     public static final String CHANGE_ID = PatchSetViewerFragment.CHANGE_ID;
     public static final int LOADER_LABELS = 3;
-    public static final int LOADER_PROJECT = 4;
 
     private LayoutInflater mInflater;
     private Context mContext;
     ArrayList<View> labelViews = new ArrayList<>();
-    private String mChangeId, mProject;
+    private String mChangeId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mInflater = inflater;
-        // Empty row has only a linear layout. We can use this as a parent to add inflate other
-        // views into
+        // Use this as a parent to add inflate other views into
         return inflater.inflate(R.layout.fragment_labels, container, false);
     }
 
@@ -68,9 +66,8 @@ public class LabelsFragment extends Fragment
         Bundle args = getArguments();
         if (args != null) {
             mChangeId = args.getString(CHANGE_ID);
+            getLoaderManager().initLoader(LOADER_LABELS, null, this);
         }
-
-        getLoaderManager().initLoader(LOADER_PROJECT, null, this);
     }
 
     private View inflateRow(LayoutInflater inflater, ViewGroup container) {
@@ -101,23 +98,13 @@ public class LabelsFragment extends Fragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == LOADER_LABELS) {
             return ReviewerLabels.getReviewerLabels(getContext(), mChangeId);
-        } else {
-            return Changes.getCommitProperties(getContext(), mChangeId);
         }
+        return null;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         // Inflate one item for item_label for each row
-        if (loader.getId() == LOADER_PROJECT) {
-            if (data.moveToFirst()) {
-                mProject = data.getString(data.getColumnIndex(Changes.C_PROJECT));
-                // Now we have the project we can load the labels
-                getLoaderManager().initLoader(LOADER_LABELS, null, this);
-            }
-            return; // Finished processing this loader
-        }
-
         int labelRowNumber = 0;
 
         int labelIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_LABEL);
@@ -126,6 +113,8 @@ public class LabelsFragment extends Fragment
         int defaultIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_IS_DEFAULT);
         int reviewedValueIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_REVIEWED_VALUE);
 
+        // There is an issue where this is called and the cursor is moved to the end after a configuration change
+        data.moveToFirst();
         while (data.moveToNext()) {
             if (labelRowNumber >= labelViews.size()) {
                 inflateRow(mInflater, (ViewGroup) getView());
