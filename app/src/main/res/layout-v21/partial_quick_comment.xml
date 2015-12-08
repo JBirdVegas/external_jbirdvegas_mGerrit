@@ -41,7 +41,8 @@
         android:layout_below="@id/divider"
         android:layout_marginTop="2dp"
         android:background="?attr/colorCardBackground"
-        android:padding="@dimen/standard_padding">
+        android:padding="@dimen/standard_padding"
+        android:focusableInTouchMode="true">
 
         <ImageButton
             android:id="@+id/btn_expand_comment"
@@ -70,7 +71,7 @@
             android:paddingLeft="@dimen/standard_padding"
             android:paddingRight="36dp"
             android:layout_marginTop="2dp"
-            android:transitionName="comment_message" />
+            android:transitionName="comment_message"/>
 
         <ImageButton
             android:id="@+id/btn_add_comment"

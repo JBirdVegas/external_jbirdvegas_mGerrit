@@ -46,6 +46,7 @@ public class CommentFragment extends Fragment {
 
     public static final String CHANGE_ID = PatchSetViewerFragment.CHANGE_ID;
     public static final String CHANGE_STATUS = PatchSetViewerFragment.STATUS;
+    public static final String MESSAGE = "message";
 
     private FragmentActivity mParent;
     private TextView mMessage;
@@ -69,7 +70,7 @@ public class CommentFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        init();
+        init(savedInstanceState);
     }
 
     @Override
@@ -78,12 +79,21 @@ public class CommentFragment extends Fragment {
         mParent = this.getActivity();
     }
 
-    private void init() {
+    private void init(Bundle savedInstanceState) {
         View currentFragment = this.getView();
         mMessage = (TextView) currentFragment.findViewById(R.id.new_comment_message);
 
         Bundle args = getArguments();
         mChangeId = args.getString(CHANGE_ID);
+
+        String message;
+        if (savedInstanceState == null) {
+            message = args.getString(MESSAGE);
+        } else {
+            message = savedInstanceState.getString(MESSAGE);
+        }
+        if (message != null && mMessage.length() < 1) mMessage.setText(message);
+
         mStatus = args.getString(CHANGE_STATUS);
 
         mReviewFragment = currentFragment.findViewById(R.id.review_fragment);
@@ -105,6 +115,7 @@ public class CommentFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(CHANGE_ID, mChangeId);
+        outState.putString(MESSAGE, mMessage.getText().toString());
     }
 
     @Override
