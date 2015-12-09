@@ -89,6 +89,9 @@ public class CommentFragment extends Fragment {
         String message;
         if (savedInstanceState == null) {
             message = args.getString(MESSAGE);
+            // TODO: Don't call this on screen rotation
+            mCacheKey = CacheManager.getCommentKey(mChangeId);
+            new CacheManager<String>().get(mCacheKey, String.class, true);
         } else {
             message = savedInstanceState.getString(MESSAGE);
         }
@@ -136,11 +139,6 @@ public class CommentFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mEventBus.register(this);
-
-        if (mChangeId != null) {
-            mCacheKey = CacheManager.getCommentKey(mChangeId);
-            new CacheManager<String>().get(mCacheKey, String.class, true);
-        }
     }
 
     /**
@@ -185,6 +183,8 @@ public class CommentFragment extends Fragment {
      */
     public void launchSaveMessageDialog(final Context context) {
         final String message = mMessage.getText().toString();
+        if (mMessage.length() < 1) return;
+
         AlertDialog.Builder ad = new AlertDialog.Builder(context)
                 .setMessage(R.string.review_discard_confirm)
                 .setPositiveButton(R.string.review_discard_option, new DialogInterface.OnClickListener() {
@@ -218,11 +218,35 @@ public class CommentFragment extends Fragment {
         ad.create().show();
     }
 
+    /**
+     * Launch a dialog for whether to restore the cached message or start fresh
+     * @param context
+     */
+    public void launchRestoreMessageDialog(final Context context, final String message) {
+        AlertDialog.Builder ad = new AlertDialog.Builder(context)
+            .setMessage(R.string.review_restore_confirm)
+            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int i) {
+                    mMessage.setText(message);
+                    dialog.dismiss();
+                }
+            })
+                .setNegativeButton(R.string.review_restore_no_option, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                }
+            });
+        ad.create().show();
+    }
+
     @Keep
     public void onEventMainThread(CacheDataRetrieved<String> ev) {
         if (ev.getKey().equals(mCacheKey) && mMessage != null) {
-            if (mMessage.length() < 1) {
-                mMessage.setText(ev.getData());
+            String message = ev.getData();
+            if (message != null && message.length() > 0) {
+                launchRestoreMessageDialog(mParent, message);
             }
         }
     }

@@ -229,4 +229,6 @@
     <string name="review_discard_option">Discard</string>
     <string name="review_save_option">Save</string>
     <string name="review_cancel_option">Cancel</string>
+    <string name="review_restore_confirm">Do you want to insert the previously saved draft into this comment?</string>
+    <string name="review_restore_no_option">Start New</string>
 </resources>

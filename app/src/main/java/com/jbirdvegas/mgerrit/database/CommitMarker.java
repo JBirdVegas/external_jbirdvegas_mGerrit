@@ -65,7 +65,7 @@ public class CommitMarker extends DatabaseTable {
     }
 
     @Override
-    public void create(String TAG, SQLiteDatabase db) {
+    public void create(String tag, SQLiteDatabase db) {
         db.execSQL("create table " + TABLE + " ("
                 + C_CHANGE_ID + " text NOT NULL, "
                 + C_UPDATED + " text NOT NULL, "

@@ -92,7 +92,7 @@ public class FileChanges extends DatabaseTable {
     }
 
     @Override
-    public void create(String TAG, SQLiteDatabase db) {
+    public void create(String tag, SQLiteDatabase db) {
         // This is not a real table (do nothing)
     }
 
