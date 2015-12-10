@@ -41,8 +41,8 @@
         android:layout_below="@id/divider"
         android:layout_marginTop="2dp"
         android:background="?attr/colorCardBackground"
-        android:padding="@dimen/standard_padding"
-        android:focusableInTouchMode="true">
+        android:focusableInTouchMode="true"
+        android:padding="@dimen/standard_padding">
 
         <ImageButton
             android:id="@+id/btn_expand_comment"
@@ -62,16 +62,18 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/btn_expand_comment"
             android:layout_alignParentTop="true"
+            android:layout_marginTop="2dp"
             android:layout_toEndOf="@+id/btn_expand_comment"
             android:background="@android:color/transparent"
             android:ems="10"
             android:gravity="start|top"
             android:hint="@string/review_add_comment"
-            android:inputType="textMultiLine"
+            android:imeOptions="actionSend|flagNoEnterAction"
+            android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
             android:paddingLeft="@dimen/standard_padding"
             android:paddingRight="36dp"
-            android:layout_marginTop="2dp"
-            android:transitionName="comment_message"/>
+            android:transitionName="comment_message"
+            android:nextFocusRight="@+id/btn_add_comment"/>
 
         <ImageButton
             android:id="@+id/btn_add_comment"

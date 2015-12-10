@@ -181,9 +181,9 @@ public class CommentFragment extends Fragment {
      * Launch a dialog for whether to save the message or discard it
      * @param context
      */
-    public void launchSaveMessageDialog(final Context context) {
+    public boolean launchSaveMessageDialog(final Context context) {
         final String message = mMessage.getText().toString();
-        if (mMessage.length() < 1) return;
+        if (mMessage.length() < 1) return false;
 
         AlertDialog.Builder ad = new AlertDialog.Builder(context)
                 .setMessage(R.string.review_discard_confirm)
@@ -216,6 +216,7 @@ public class CommentFragment extends Fragment {
                         }
                 );
         ad.create().show();
+        return true;
     }
 
     /**
