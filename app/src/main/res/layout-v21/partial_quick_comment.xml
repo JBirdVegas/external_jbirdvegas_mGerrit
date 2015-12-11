@@ -73,7 +73,8 @@
             android:paddingLeft="@dimen/standard_padding"
             android:paddingRight="36dp"
             android:transitionName="comment_message"
-            android:nextFocusRight="@+id/btn_add_comment"/>
+            android:nextFocusRight="@+id/btn_add_comment"
+            android:minHeight="48dip" />
 
         <ImageButton
             android:id="@+id/btn_add_comment"

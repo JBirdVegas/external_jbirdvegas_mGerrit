@@ -132,7 +132,7 @@ public class UserChanges extends DatabaseTable {
                 + ", C." + C_UPDATED + " AS " + C_UPDATED + ", C." + C_STATUS + " AS " + C_STATUS
                 + ", C." + C_TOPIC + " AS " + C_TOPIC + ", U." + C_USER_ID + " AS " + C_USER_ID
                 + ", U." + C_EMAIL + " AS " + C_EMAIL + ", U." + C_NAME + " AS " + C_NAME
-                + ", C." + C_BRANCH + " AS " + C_BRANCH
+                + ", C." + C_OWNER + " AS " + C_OWNER + ", C." + C_BRANCH + " AS " + C_BRANCH
                 + ", C." + C_COMMIT_NUMBER + " AS " + C_COMMIT_NUMBER
                 + ", C." + C_STARRED + " AS " + C_STARRED
                 + " FROM " + Users.TABLE + " U, " + Changes.TABLE + " C "

@@ -89,9 +89,12 @@ public class CommentFragment extends Fragment {
         String message;
         if (savedInstanceState == null) {
             message = args.getString(MESSAGE);
-            // TODO: Don't call this on screen rotation
             mCacheKey = CacheManager.getCommentKey(mChangeId);
-            new CacheManager<String>().get(mCacheKey, String.class, true);
+            String cachedMessage = new CacheManager<String>().get(mCacheKey, String.class, false);
+            if (cachedMessage != null && cachedMessage.length() > 0) {
+                launchRestoreMessageDialog(mParent, cachedMessage);
+            }
+
         } else {
             message = savedInstanceState.getString(MESSAGE);
         }
@@ -155,6 +158,9 @@ public class CommentFragment extends Fragment {
         GerritService.sendRequest(mParent, GerritService.DataType.Comment, bundle);
     }
 
+    /**
+     * Whether this change can be reviewed (i.e. labels can be applied to this change by any user)
+     * Gerrit always permits adding comments to a change */
     private boolean canChangeBeReviewed() {
         return mStatus == null || mStatus.equals(JSONCommit.Status.NEW.toString());
     }
@@ -236,20 +242,12 @@ public class CommentFragment extends Fragment {
                 .setNegativeButton(R.string.review_restore_no_option, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
+                        String key = CacheManager.getCommentKey(mChangeId);
+                        CacheManager.remove(key, false);
                         dialog.dismiss();
                 }
             });
         ad.create().show();
-    }
-
-    @Keep
-    public void onEventMainThread(CacheDataRetrieved<String> ev) {
-        if (ev.getKey().equals(mCacheKey) && mMessage != null) {
-            String message = ev.getData();
-            if (message != null && message.length() > 0) {
-                launchRestoreMessageDialog(mParent, message);
-            }
-        }
     }
 
     @Keep

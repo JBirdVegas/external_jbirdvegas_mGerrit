@@ -113,8 +113,9 @@ public class LabelsFragment extends Fragment
         int defaultIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_IS_DEFAULT);
         int reviewedValueIndex = data.getColumnIndexOrThrow(ReviewerLabels.C_REVIEWED_VALUE);
 
-        // There is an issue where this is called and the cursor is moved to the end after a configuration change
-        data.moveToFirst();
+        /* There is an issue where this is called and the cursor is moved to the end after a configuration change
+         *  so reset the cursor back to the start */
+        if (data.isAfterLast()) data.moveToPosition(-1);
         while (data.moveToNext()) {
             if (labelRowNumber >= labelViews.size()) {
                 inflateRow(mInflater, (ViewGroup) getView());
