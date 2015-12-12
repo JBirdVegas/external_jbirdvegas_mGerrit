@@ -34,7 +34,7 @@ class DBHelper extends SQLiteOpenHelper {
 
     // Don't forget to set this when a change to the database is made!
     // This must be strictly ascending, but can skip numbers
-    private static final int DB_VERSION = 27;
+    private static final int DB_VERSION = 28;
     private static List<DatabaseTable> mTables;
     private Context mContext;
 
@@ -69,7 +69,6 @@ class DBHelper extends SQLiteOpenHelper {
     //  idea to re-create the lot again.
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        boolean dbUpdated = false; // Whether the database has been fully updated
         int currentVersion = oldVersion; // The current database version
 
         // We are now cancelling no longer needed profile picture requests.
@@ -78,21 +77,23 @@ class DBHelper extends SQLiteOpenHelper {
             Tools.trimCache(mContext);
         }
 
-        if (currentVersion == 22) {
-            // We only added a new table here, so just create that one so the user does not have to
-            // log back in again
-            new Labels().create(TAG, db);
-            currentVersion = 26;
+        switch (currentVersion) {
+            case 22:
+                // We only added a new table here, so just create that one so the user does not have to
+                // log back in again
+                new Labels().create(TAG, db);
+                currentVersion = 26;
+            case 26:
+                // Added a new view
+                new ReviewerLabels().create(TAG, db);
+                currentVersion = 27;
+            case 27:
+                // The virtual table UserChanges was converted into a view
+                new UserChanges().create(TAG, db);
+                currentVersion = 28;
         }
 
-        if (currentVersion == 26) {
-            // Added a new view
-            new ReviewerLabels().create(TAG, db);
-            currentVersion = 27;
-            dbUpdated = true;
-        }
-
-        if (!dbUpdated) {
+        if (currentVersion != DB_VERSION) {
             dropTables(db);
             onCreate(db); // run onCreate to get new database
         }

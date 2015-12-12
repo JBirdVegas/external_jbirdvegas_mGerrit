@@ -46,6 +46,7 @@ public class CommentFragment extends Fragment {
 
     public static final String CHANGE_ID = PatchSetViewerFragment.CHANGE_ID;
     public static final String CHANGE_STATUS = PatchSetViewerFragment.STATUS;
+    public static final String MESSAGE = "message";
 
     private FragmentActivity mParent;
     private TextView mMessage;
@@ -69,7 +70,7 @@ public class CommentFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        init();
+        init(savedInstanceState);
     }
 
     @Override
@@ -78,12 +79,27 @@ public class CommentFragment extends Fragment {
         mParent = this.getActivity();
     }
 
-    private void init() {
+    private void init(Bundle savedInstanceState) {
         View currentFragment = this.getView();
         mMessage = (TextView) currentFragment.findViewById(R.id.new_comment_message);
 
         Bundle args = getArguments();
         mChangeId = args.getString(CHANGE_ID);
+
+        String message;
+        if (savedInstanceState == null) {
+            message = args.getString(MESSAGE);
+            mCacheKey = CacheManager.getCommentKey(mChangeId);
+            String cachedMessage = new CacheManager<String>().get(mCacheKey, String.class, false);
+            if (cachedMessage != null && cachedMessage.length() > 0) {
+                launchRestoreMessageDialog(mParent, cachedMessage);
+            }
+
+        } else {
+            message = savedInstanceState.getString(MESSAGE);
+        }
+        if (message != null && mMessage.length() < 1) mMessage.setText(message);
+
         mStatus = args.getString(CHANGE_STATUS);
 
         mReviewFragment = currentFragment.findViewById(R.id.review_fragment);
@@ -105,6 +121,7 @@ public class CommentFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(CHANGE_ID, mChangeId);
+        outState.putString(MESSAGE, mMessage.getText().toString());
     }
 
     @Override
@@ -125,11 +142,6 @@ public class CommentFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mEventBus.register(this);
-
-        if (mChangeId != null) {
-            mCacheKey = CacheManager.getCommentKey(mChangeId);
-            new CacheManager<String>().get(mCacheKey, String.class, true);
-        }
     }
 
     /**
@@ -146,6 +158,9 @@ public class CommentFragment extends Fragment {
         GerritService.sendRequest(mParent, GerritService.DataType.Comment, bundle);
     }
 
+    /**
+     * Whether this change can be reviewed (i.e. labels can be applied to this change by any user)
+     * Gerrit always permits adding comments to a change */
     private boolean canChangeBeReviewed() {
         return mStatus == null || mStatus.equals(JSONCommit.Status.NEW.toString());
     }
@@ -172,8 +187,10 @@ public class CommentFragment extends Fragment {
      * Launch a dialog for whether to save the message or discard it
      * @param context
      */
-    public void launchSaveMessageDialog(final Context context) {
+    public boolean launchSaveMessageDialog(final Context context) {
         final String message = mMessage.getText().toString();
+        if (mMessage.length() < 1) return false;
+
         AlertDialog.Builder ad = new AlertDialog.Builder(context)
                 .setMessage(R.string.review_discard_confirm)
                 .setPositiveButton(R.string.review_discard_option, new DialogInterface.OnClickListener() {
@@ -205,15 +222,32 @@ public class CommentFragment extends Fragment {
                         }
                 );
         ad.create().show();
+        return true;
     }
 
-    @Keep
-    public void onEventMainThread(CacheDataRetrieved<String> ev) {
-        if (ev.getKey().equals(mCacheKey) && mMessage != null) {
-            if (mMessage.length() < 1) {
-                mMessage.setText(ev.getData());
-            }
-        }
+    /**
+     * Launch a dialog for whether to restore the cached message or start fresh
+     * @param context
+     */
+    public void launchRestoreMessageDialog(final Context context, final String message) {
+        AlertDialog.Builder ad = new AlertDialog.Builder(context)
+            .setMessage(R.string.review_restore_confirm)
+            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int i) {
+                    mMessage.setText(message);
+                    dialog.dismiss();
+                }
+            })
+                .setNegativeButton(R.string.review_restore_no_option, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        String key = CacheManager.getCommentKey(mChangeId);
+                        CacheManager.remove(key, false);
+                        dialog.dismiss();
+                }
+            });
+        ad.create().show();
     }
 
     @Keep

@@ -347,8 +347,7 @@ public class DatabaseFactory extends ContentProvider {
 
         String tableName = DatabaseTable.sTableMap.get(result);
 
-        if (tableName.equals(UserChanges.TABLE)) return Users.TABLE + ", " + Changes.TABLE;
-        else if (tableName.equals(UserMessage.TABLE)) return Users.TABLE + ", " + MessageInfo.TABLE;
+        if (tableName.equals(UserMessage.TABLE)) return Users.TABLE + ", " + MessageInfo.TABLE;
         else if (tableName.equals(FileChanges.TABLE)) return FileInfoTable.TABLE + ", " + Changes.TABLE;
         else if (tableName.equals(UserReviewers.TABLE)) return Users.TABLE + ", " + Reviewers.TABLE;
         else return tableName;

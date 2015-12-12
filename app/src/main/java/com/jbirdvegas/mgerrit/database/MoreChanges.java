@@ -64,7 +64,7 @@ public class MoreChanges extends DatabaseTable {
     }
 
     @Override
-    public void create(String TAG, SQLiteDatabase db) {
+    public void create(String tag, SQLiteDatabase db) {
         db.execSQL("create table " + TABLE + " ("
                 + C_STATUS + " text NOT NULL, "
                 + C_DIRECTION + " text NOT NULL, "

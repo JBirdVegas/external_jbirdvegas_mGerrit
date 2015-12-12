@@ -26,10 +26,8 @@ import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.fragments.CommentFragment;
-import com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.objects.CacheManager;
-import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 /**
  * This activity is mostly just a 'shell' activity containing nothing
@@ -38,7 +36,8 @@ import com.jbirdvegas.mgerrit.objects.JSONCommit;
 public class ReviewActivity extends BaseDrawerActivity
         implements LoaderCallbacks<Cursor> {
 
-    private CommentFragment mCommentFragment;
+    private CommentFragment mFragment;
+    private static String FRAGMENT_TAG = "comment_fragment";
 
 
     @Override
@@ -49,13 +48,17 @@ public class ReviewActivity extends BaseDrawerActivity
 
         initNavigationDrawer(false);
 
-        mCommentFragment = new CommentFragment();
-        //Pass the arguments straight on to the fragment
-        mCommentFragment.setArguments(getIntent().getExtras());
-        // Display the fragment as the main content.
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, mCommentFragment)
-                .commit();
+        if (savedInstanceState == null) {
+            mFragment = new CommentFragment();
+            //Pass the arguments straight on to the fragment
+            mFragment.setArguments(getIntent().getExtras());
+            // Display the fragment as the main content.
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, mFragment, FRAGMENT_TAG)
+                    .commit();
+        } else {
+            mFragment = (CommentFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        }
     }
 
     @Override
@@ -69,10 +72,12 @@ public class ReviewActivity extends BaseDrawerActivity
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                mCommentFragment.launchSaveMessageDialog(this);
+                if (!mFragment.launchSaveMessageDialog(this)) {
+                    supportFinishAfterTransition();
+                }
                 return true;
             case R.id.menu_send:
-                mCommentFragment.addComment();
+                mFragment.addComment();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -80,7 +85,9 @@ public class ReviewActivity extends BaseDrawerActivity
 
     @Override
     public void onBackPressed() {
-        mCommentFragment.launchSaveMessageDialog(this);
+        if (!mFragment.launchSaveMessageDialog(this)) {
+            supportFinishAfterTransition();
+        }
     }
 
     /**

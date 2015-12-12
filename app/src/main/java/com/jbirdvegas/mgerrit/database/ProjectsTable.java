@@ -66,7 +66,7 @@ public class ProjectsTable extends DatabaseTable {
     }
 
     @Override
-    public void create(String TAG, SQLiteDatabase db) {
+    public void create(String tag, SQLiteDatabase db) {
         db.execSQL("create table " + TABLE + " ("
                 + C_PATH + " text PRIMARY KEY ON CONFLICT IGNORE, "
                 + C_ROOT + " text NOT NULL, "

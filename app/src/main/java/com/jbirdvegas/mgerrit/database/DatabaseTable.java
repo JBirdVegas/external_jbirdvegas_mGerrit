@@ -48,10 +48,10 @@ public abstract class DatabaseTable {
 
     /**
      * Executes an SQL script to instantiate its database table
-     * @param TAG For logging purposes
+     * @param tag For logging purposes
      * @param db An open writable database instance
      */
-    public abstract void create(String TAG, SQLiteDatabase db);
+    public abstract void create(String tag, SQLiteDatabase db);
 
     /* Each subclass MUST implement this static method to facilitate construction
      *  of its database table. Obviously it cannot be declared abstract as it
@@ -84,13 +84,13 @@ public abstract class DatabaseTable {
     }
 
     // Add each DatabaseTable class here, we need to add the virtual tables as well
+    // Note: These tables are created in order, so virtual tables and views should go last
     public static ArrayList<Class<? extends DatabaseTable>> tables;
     static {
         tables = new ArrayList<>();
         tables.add(Changes.class);
         tables.add(CommitMarker.class);
         tables.add(Config.class);
-        tables.add(FileChanges.class);
         tables.add(FileInfoTable.class);
         tables.add(MessageInfo.class);
         tables.add(MoreChanges.class);
@@ -99,11 +99,12 @@ public abstract class DatabaseTable {
         tables.add(Revisions.class);
         tables.add(SelectedChange.class);
         tables.add(SyncTime.class);
-        tables.add(UserChanges.class);
-        tables.add(UserMessage.class);
-        tables.add(UserReviewers.class);
         tables.add(Users.class);
         tables.add(Labels.class);
+        tables.add(FileChanges.class);
+        tables.add(UserMessage.class);
+        tables.add(UserReviewers.class);
+        tables.add(UserChanges.class);
         tables.add(ReviewerLabels.class);
     }
 

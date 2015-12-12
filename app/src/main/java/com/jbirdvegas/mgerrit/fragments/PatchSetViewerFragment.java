@@ -169,19 +169,19 @@ public class PatchSetViewerFragment extends Fragment
     }
 
     private void initListview(View currentFragment) {
-        ExpandableListView mListView = (ExpandableListView) currentFragment.findViewById(R.id.commit_cards);
+        ExpandableListView listView = (ExpandableListView) currentFragment.findViewById(R.id.commit_cards);
 
         // Whether the server supports the new change details endpoint (false if so)
         boolean isLegacyVersion = !Config.isDiffSupported(mParent);
 
         mAdapter = new CommitDetailsAdapter(mParent);
-        mListView.setAdapter(mAdapter);
+        listView.setAdapter(mAdapter);
 
         // Child click listeners (relevant for the changes cards)
-        mListView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         mFilesCAB = new FilesCAB(mParent, !isLegacyVersion);
         mAdapter.setContextualActionBar(mFilesCAB);
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 ExpandableListView listView = (ExpandableListView) parent;
@@ -215,7 +215,7 @@ public class PatchSetViewerFragment extends Fragment
                 return true;
             }
         });
-        mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 // This is only valid for the changed files group
@@ -234,7 +234,7 @@ public class PatchSetViewerFragment extends Fragment
         });
 
         // Remember to expand the groups which don't have a header otherwise they will not be shown
-        mListView.expandGroup(0);
+        listView.expandGroup(0);
     }
 
     /**
@@ -260,6 +260,7 @@ public class PatchSetViewerFragment extends Fragment
                 i.putExtra(CommentFragment.CHANGE_ID, mSelectedChange);
                 i.putExtra(CommentFragment.CHANGE_STATUS, mStatus);
                 // Have to call toString here as the object cannot reference the EditText view
+                i.putExtra(CommentFragment.MESSAGE, mCommentText.getText().toString());
                 CacheManager.put(mCacheCommentKey, mCommentText.getText().toString(), false);
                 // Shared element transition for the edit text, we are also going to copy over the text
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(mParent,
@@ -384,11 +385,6 @@ public class PatchSetViewerFragment extends Fragment
     public void onResume() {
         super.onResume();
         mEventBus.register(this);
-
-        if (mSelectedChange != null) {
-            mCacheCommentKey = CacheManager.getCommentKey(mSelectedChange);
-            new CacheManager<String>().get(mCacheCommentKey, String.class, true);
-        }
     }
 
     @Override

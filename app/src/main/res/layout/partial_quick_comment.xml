@@ -41,7 +41,8 @@
         android:layout_marginTop="2dp"
         android:background="?attr/colorCardBackground"
         android:orientation="horizontal"
-        android:padding="@dimen/standard_padding">
+        android:padding="@dimen/standard_padding"
+        android:focusableInTouchMode="true">
 
         <ImageButton
             android:id="@+id/btn_expand_comment"
