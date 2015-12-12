@@ -114,7 +114,7 @@ public class UserChanges extends DatabaseTable {
 
     public static final String[] CHANGE_LIST_PROJECTION = new String[] {
             "_id", C_CHANGE_ID, C_SUBJECT, C_PROJECT, C_UPDATED, C_STATUS, C_PROJECT, C_TOPIC,
-            C_USER_ID, C_EMAIL, C_NAME, C_BRANCH, C_COMMIT_NUMBER, C_STARRED };
+            C_USER_ID, C_EMAIL, C_NAME, C_OWNER, C_BRANCH, C_COMMIT_NUMBER, C_STARRED };
 
     private static UserChanges mInstance = null;
     private MyObserver mObserver;
