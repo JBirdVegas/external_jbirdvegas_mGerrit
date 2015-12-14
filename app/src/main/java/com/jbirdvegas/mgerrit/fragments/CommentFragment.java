@@ -32,7 +32,6 @@ import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.activities.ReviewActivity;
-import com.jbirdvegas.mgerrit.message.CacheDataRetrieved;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;

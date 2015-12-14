@@ -18,7 +18,6 @@
 package com.jbirdvegas.mgerrit.adapters;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
-import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.objects.LabelValues;
 
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +63,7 @@ public class RatingAdapter extends ArrayAdapter<LabelValues> {
         return setupView(convertView, parent, position, true);
     }
 
-    private View setupView(View convertView, ViewGroup parent, int postition, boolean isDropdown) {
+    private View setupView(View convertView, ViewGroup parent, int position, boolean isDropdown) {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.item_label_values, parent, false);
         }
@@ -76,7 +74,7 @@ public class RatingAdapter extends ArrayAdapter<LabelValues> {
             convertView.setTag(viewHolder);
         }
 
-        LabelValues labelValues = getItem(postition);
+        LabelValues labelValues = getItem(position);
         String strVal = String.valueOf(labelValues.value);
         if (labelValues.value > 0) {
             strVal = "+" + strVal;

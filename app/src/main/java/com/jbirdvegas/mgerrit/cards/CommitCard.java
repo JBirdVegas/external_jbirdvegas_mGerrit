@@ -19,10 +19,7 @@ package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.database.Cursor;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.jbirdvegas.mgerrit.R;

@@ -130,13 +130,28 @@ abstract class SyncProcessor<T> {
         return this.getClass().equals(processor.getClass());
     }
 
+    /**
+     * Check if this data has been cached so we can avoid fetching it again
+     * @param intent The original intent passed to this SyncProcessor
+     * @return The cached item or null if it was not found
+     */
+    protected T retreiveFromCache(Intent intent) {
+        return null;
+    }
+
     protected void fetchData() {
-        GerritRestApi gerritApi = getGerritApiInstance(true);
-        try {
-            mEventBus.post(new StartingRequest(intent, mQueueId));
-            onResponse(getData(gerritApi));
-        } catch (RestApiException e) {
-            handleRestApiException(e);
+        mEventBus.post(new StartingRequest(intent, mQueueId));
+
+        T data = retreiveFromCache(intent);
+        if (data != null) {
+            try {
+                GerritRestApi gerritApi = getGerritApiInstance(true);
+                onResponse(getData(gerritApi));
+            } catch (RestApiException e) {
+                handleRestApiException(e);
+            }
+        } else {
+            onResponse(data);
         }
     }
 

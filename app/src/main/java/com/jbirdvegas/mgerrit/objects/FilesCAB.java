@@ -25,7 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 

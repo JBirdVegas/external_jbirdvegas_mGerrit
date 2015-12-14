@@ -20,9 +20,6 @@ package com.jbirdvegas.mgerrit.search;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 public class ProjectSearch extends SearchKeyword {
 
     public static final String OP_NAME = "project";

@@ -56,7 +56,7 @@ public class ProjectsListAdapter extends SimpleCursorTreeAdapter
          */
 
         /* We cannot start a loader and return null here as the group onClick listener will always
-         *  think there are no children. Also, it causes alot of possible NPEs when trying to set
+         *  think there are no children. Also, it causes a lot of possible NPEs when trying to set
          *  the children cursor later.
          */
 

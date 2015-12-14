@@ -7,6 +7,7 @@ import android.util.Base64;
 import com.google.gerrit.extensions.restapi.BinaryResult;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.message.ChangeDiffLoaded;
+import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
 import java.io.ByteArrayOutputStream;
@@ -86,6 +87,21 @@ public class TextDiffProcessor extends SyncProcessor<String> {
         }
 
         return decodedContent;
+    }
+
+    // Save the decoded diff text to the cache
+    void doPostProcess(String data) {
+        CacheManager.put(CacheManager.getDiffKey(mChangeNumber, mPatchsetNumber), data, false);
+        /* Cleanup diffs for any superceeded revisions of this change as we will never attempt
+         * to fetch them again) */
+        for (int i = 0; i < mPatchsetNumber; i++) {
+            CacheManager.remove(CacheManager.getDiffKey(mChangeNumber, i), false);
+        }
+    }
+
+    protected String retreiveFromCache(Intent intent) {
+        CacheManager<String> cacheManager = new CacheManager<>();
+        return cacheManager.get(CacheManager.getDiffKey(mChangeNumber, mPatchsetNumber), String.class, false);
     }
 
     /**

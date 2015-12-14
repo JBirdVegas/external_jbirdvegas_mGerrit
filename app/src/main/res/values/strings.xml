@@ -231,4 +231,5 @@
     <string name="review_cancel_option">Cancel</string>
     <string name="review_restore_confirm">Do you want to insert the previously saved draft into this comment?</string>
     <string name="review_restore_no_option">Start New</string>
+    <string name="menu_overflow_description">More options</string>
 </resources>

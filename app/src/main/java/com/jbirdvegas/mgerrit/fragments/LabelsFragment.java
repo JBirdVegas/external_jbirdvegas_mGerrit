@@ -31,8 +31,6 @@ import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.RatingAdapter;
-import com.jbirdvegas.mgerrit.database.Changes;
-import com.jbirdvegas.mgerrit.database.Labels;
 import com.jbirdvegas.mgerrit.database.ReviewerLabels;
 import com.jbirdvegas.mgerrit.objects.LabelValues;
 
