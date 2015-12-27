@@ -102,6 +102,9 @@ public abstract class SearchKeyword implements Parcelable {
         return buildToken(in.readString());
     }
 
+    /**
+     * Search keywords should call this in their static block to register themselves so when parsing
+     *  the search query string, we can recognise the keyword based on the name */
     protected static void registerKeyword(String opName, Class<? extends SearchKeyword> clazz) {
         _KEYWORDS.put(opName, clazz);
     }
@@ -110,6 +113,7 @@ public abstract class SearchKeyword implements Parcelable {
     public String getParam() { return mOpParam; }
     public String getOperator() { return mOperator; }
 
+    // Modal the output search keywords on how they are used in the Gerrit web interface
     @Override
     public String toString() {
         // Keywords with empty parameters are ignored
@@ -161,8 +165,11 @@ public abstract class SearchKeyword implements Parcelable {
             s[1] = s[1].replaceAll("^\"|\"$", "");
             keyword = buildToken(s[0], s[1]);
         } else if (tokenStr.startsWith("#")) {
+            // If the search starts with a # then we are doing a change search
             keyword =  buildToken("#", tokenStr.substring(1));
         }
+        /* If we couldn't find a matching search keyword for this, then we will default to searching
+         * for a matching subject */
         if (keyword == null) keyword = buildToken(SubjectSearch.OP_NAME, tokenStr.replaceAll("^\"|\"$", ""));
         return keyword;
     }
@@ -202,6 +209,9 @@ public abstract class SearchKeyword implements Parcelable {
         return set;
     }
 
+    /**
+     * Get the query string from a list of search keywords.
+     * This simply calls toString on each keyword */
     public static String getQuery(Set<SearchKeyword> tokens) {
         String query = "";
         for (SearchKeyword token : tokens) {
@@ -214,6 +224,9 @@ public abstract class SearchKeyword implements Parcelable {
         if (token != null)  set.add(token);
     }
 
+    /**
+     * Get the database where query to be performed for this list of keywords,
+     *  so we don't have to contact the server with each query */
     public static String constructDbSearchQuery(Set<SearchKeyword> tokens) {
         StringBuilder whereQuery = new StringBuilder();
         Iterator<SearchKeyword> it = tokens.iterator();
@@ -226,6 +239,10 @@ public abstract class SearchKeyword implements Parcelable {
         return whereQuery.toString();
     }
 
+    /**
+     * Translates this keyword into a where condition for searching the database
+     * @return A string which corresponds to a condition on one or more columns of the UserChanges
+     * table */
     public abstract String buildSearch();
 
     /**
