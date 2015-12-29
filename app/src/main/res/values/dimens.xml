@@ -27,7 +27,6 @@
     <dimen name="diff_view_padding_top">12dip</dimen>
     <dimen name="goo_im_download_rom_ic_padding">12dip</dimen>
     <dimen name="checkable_view_padding">6dp</dimen>
-    <dimen name="changelog_padding_horiz">12dp</dimen>
     <dimen name="card_stroke_width">6dp</dimen>
     <dimen name="commit_card_stroke_padding">2dp</dimen>
     <dimen name="prop_label_padding_left">8dip</dimen>
@@ -47,7 +46,6 @@
     <dimen name="cards_list_padding_vert">8dp</dimen>
     <dimen name="cards_list_padding_horiz">8dp</dimen>
     <dimen name="cards_list_divider_height">8.0dp</dimen>
-    <dimen name="changelog_padding_vert">8dp</dimen>
     <dimen name="card_subitem_indent">@dimen/standard_padding</dimen>
 
     <!-- Material -->

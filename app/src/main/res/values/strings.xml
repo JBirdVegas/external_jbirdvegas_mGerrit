@@ -118,9 +118,7 @@
     <string name="commit_shared_from_mgerrit" formatted="false">Commit %s shared from mGerrit!</string>
     <string name="found_cards_toast" formatted="false"><![CDATA[Found %d commits in %d seconds]]></string>
     <string name="menu_projects">Projects list</string>
-    <string name="aokp_changelog">AOKP Changelog</string>
     <string name="download_update">Download</string>
-    <string name="please_select_update_for_range">Please select file to view changelog</string>
     <string name="download_rom_zip">Download ROM zip</string>
     <string name="failed_to_decode_base64">Failed to decode the Base64 response.</string>
     <string name="return_was_null">Response was null… Please view in browser</string>
@@ -166,8 +164,6 @@
     <string name="gerrit_help">Gerrit help</string>
     <string name="not_connected">There\'s no network connection right now. Try again later.</string>
 
-    <string name="aokp_changelog_card_title">Recent AOKP Builds</string>
-    <string name="changelog_loading">Searching for recent builds&#8230;</string>
     <string name="retry_label">Retry</string>
     <string name="header_properties">Properties</string>
     <string name="header_commit_message">Commit Message</string>
@@ -176,7 +172,6 @@
     <string name="header_comments">Comments</string>
     <string name="commit_updated">Updated:</string>
     <string name="renamed_label">Renamed from:</string>
-    <string name="no_changelog">There are no recent builds for your device</string>
     <string name="diff_back">Previous File</string>
     <string name="diff_next">Next File</string>
 
@@ -205,9 +200,9 @@
     <string name="gerrit_signin_help">Enter your username and password to star changes from mGerrit. If you do not know your username/password, you can generate one on %s.</string>
     <string name="gerrit_signin_help_link_text">your account settings page</string>
     <string name="gerrit_signin_btn_success">Signed in</string>
-    <string name="gerrit_signin_btn_progress">Signing in...</string>
+    <string name="gerrit_signin_btn_progress">Signing in…</string>
     <string name="gerrit_signin_btn_error">Error</string>
-    <string name="gerrit_signin_btn_loader_searching">Searching for credentials...</string>
+    <string name="gerrit_signin_btn_loader_searching">Searching for credentials…</string>
     <string name="gerrit_signin_username_password_failure">Your username and/or password is incorrect.
         Please try again.</string>
     <string name="gerrit_signin_protected_help">This Gerrit is protected and requires you to sign in before you can view changes. If you do not know your username/password, you can generate one on %s.</string>
@@ -232,4 +227,6 @@
     <string name="review_restore_confirm">Do you want to insert the previously saved draft into this comment?</string>
     <string name="review_restore_no_option">Start New</string>
     <string name="menu_overflow_description">More options</string>
+    <string name="search_category_branch">Branch</string>
+    <string name="search_category_generic_text">Search…</string>
 </resources>

@@ -210,7 +210,6 @@ public class GerritSearchView extends SearchView
      *  keywords to search for that will not be present in the original
      *  search query. This clears all old keywords that were previously injected.
      *
-     *  Used for the changelog
      * @param keywords
      */
     public void injectKeywords(Set<SearchKeyword> keywords) {

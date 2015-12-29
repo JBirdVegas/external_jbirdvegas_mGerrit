@@ -15,6 +15,9 @@ package com.jbirdvegas.mgerrit.search;/*
  *  limitations under the License.
  */
 
+import android.app.Dialog;
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -38,18 +41,21 @@ public abstract class SearchCategory<K extends SearchKeyword> {
 
     /**
      * Create the layout to use with this dialog
+     * @param inflater
      */
-    protected abstract View dialogLayout(int viewNum);
+    protected abstract View dialogLayout(LayoutInflater inflater);
 
     /**
      * A friendly name for this category used in the listing
+     * @param context
      */
-    protected abstract String name();
+    protected abstract String name(Context context);
 
     /**
      * Process what was entered in the view and create a search keyword for it
+     * @param dialog
      */
-    protected abstract SearchKeyword onSave();
+    protected abstract SearchKeyword onSave(Dialog dialog);
 
     /**
      * Add a search keyword to the list of keywords.

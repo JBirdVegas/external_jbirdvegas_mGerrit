@@ -32,10 +32,6 @@ public class AnalyticsHelper {
     public static final String GA_FAIL_UI = "fail_ui";
     public static final String GA_AUTHORISED_ACTION = "Authorised Action";
     public static final String GA_THEME_SET_ON_OPEN = "ui_theme";
-    public static final String ACTION_CHANGELOG_SAVE_FAIL = "changelog_save";
-    public static final String EVENT_CHANGELOG_FILE_NULL = "goo_file_null";
-    public static final String EVENT_CHANGELOG_SHORT_URL_NULL = "goo_shorturl_null";
-    public static final String EVENT_SYNCTIME_CLEAR_FAIL = "delete_url_failed:";
     public static final String EVENT_CHANGE_COMMENT_ADDED = "Change comment added";
     public static final String EVENT_LOGGED_IN = "User signed in";
 
