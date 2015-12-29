@@ -30,6 +30,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
+import com.jbirdvegas.mgerrit.message.SearchStateChanged;
 import com.jbirdvegas.mgerrit.search.OwnerSearch;
 import com.jbirdvegas.mgerrit.search.ProjectSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
@@ -51,6 +52,7 @@ public class GerritSearchView extends SearchView
 
     private static final String TAG = "GerrritSearchView";
     private final SharedPreferences mPrefs;
+    private final EventBus mEventBus;
     Context mContext;
 
     Set<SearchKeyword> mAdditionalKeywords;
@@ -64,6 +66,7 @@ public class GerritSearchView extends SearchView
         setOnQueryTextListener(this);
         setupCancelButton();
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mEventBus = EventBus.getDefault();
 
         mCurrentKeywords = new HashSet<>();
     }
@@ -157,7 +160,7 @@ public class GerritSearchView extends SearchView
             }
         }
 
-        EventBus.getDefault().postSticky(new SearchQueryChanged(where, bindArgs,
+        mEventBus.postSticky(new SearchQueryChanged(where, bindArgs,
                 getContext().getClass().getSimpleName(), tokens));
         return true;
     }
@@ -203,6 +206,8 @@ public class GerritSearchView extends SearchView
         if (!query.isEmpty() && visibility == GONE) setQuery("", true);
         super.setVisibility(visibility);
         setIconified(visibility == GONE);
+        mEventBus.post(new SearchStateChanged(visibility == VISIBLE));
+
     }
 
     /**

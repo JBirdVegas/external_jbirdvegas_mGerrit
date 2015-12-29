@@ -143,7 +143,7 @@ abstract class SyncProcessor<T> {
         mEventBus.post(new StartingRequest(intent, mQueueId));
 
         T data = retreiveFromCache(intent);
-        if (data != null) {
+        if (data == null) {
             try {
                 GerritRestApi gerritApi = getGerritApiInstance(true);
                 onResponse(getData(gerritApi));

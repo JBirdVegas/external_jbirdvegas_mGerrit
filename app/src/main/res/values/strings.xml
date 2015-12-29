@@ -229,4 +229,5 @@
     <string name="menu_overflow_description">More options</string>
     <string name="search_category_branch">Branch</string>
     <string name="search_category_generic_text">Search…</string>
+    <string name="refine_search_title">Refine Your Search</string>
 </resources>

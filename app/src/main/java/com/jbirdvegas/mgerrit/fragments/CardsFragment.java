@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.fragments;
  */
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -55,6 +56,7 @@ import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
+import com.jbirdvegas.mgerrit.message.SearchStateChanged;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
 import com.jbirdvegas.mgerrit.search.AfterSearch;
 import com.jbirdvegas.mgerrit.search.BeforeSearch;
@@ -111,6 +113,8 @@ public abstract class CardsFragment extends Fragment
     private EventBus mEventBus;
     private HeaderAdapterDecorator mHeaderAdapterWrapper;
     private HeaderAdapterWrapper mHeaderAdapter;
+
+    View mRefineSearchCard;
 
 
     @Override
@@ -420,8 +424,22 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
+    private void toggleRefineSeachCard(boolean show) {
+        LayoutInflater inflater = (LayoutInflater) mParent.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (show) {
+            if (mRefineSearchCard == null) {
+                mRefineSearchCard = inflater.inflate(R.layout.refine_search, null);
+            }
+            mListView.addHeaderView(mRefineSearchCard, null, true);
+        } else {
+            mListView.removeHeaderView(mRefineSearchCard);
+
+        }
+    }
+
 
     // Listen for processed search query changes
+    @Keep
     public void onEventMainThread(SearchQueryChanged ev) {
         String to = ev.getClazzName();
         if (isAdded() && mParent.getClass().getSimpleName().equals(to)) {
@@ -461,15 +479,22 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
+    @Keep
     public void onEventMainThread(StartingRequest ev) {
         if (getQuery().equals(ev.getStatus())) {
             onStartRefresh();
         }
     }
 
+    @Keep
     public void onEventMainThread(ErrorDuringConnection ev) {
         if (getQuery().equals(ev.getStatus())) {
             onStopRefresh();
         }
+    }
+
+    @Keep
+    public void onEventMainThread(SearchStateChanged ev) {
+        toggleRefineSeachCard(ev.isSearchVisible());
     }
 }
