@@ -26,7 +26,7 @@ import android.widget.EditText;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 
-public class BranchCategory extends SearchCategory<BranchSearch> {
+public class TopicCategory extends SearchCategory<TopicSearch> {
 
     @Override
     protected int drawableId(Context context) {
@@ -40,14 +40,14 @@ public class BranchCategory extends SearchCategory<BranchSearch> {
 
     @Override
     protected String name(Context context) {
-        return context.getString(R.string.search_category_branch);
+        return context.getString(R.string.search_category_topic);
     }
 
     @Override
     protected SearchKeyword onSave(Dialog dialog) {
         EditText text = (EditText) dialog.findViewById(android.R.id.text1);
         String s = text.getText().toString();
-        if (s.length() > 0) return new BranchSearch(s);
+        if (s.length() > 0) return new TopicSearch(s);
         else return null;
     }
 }

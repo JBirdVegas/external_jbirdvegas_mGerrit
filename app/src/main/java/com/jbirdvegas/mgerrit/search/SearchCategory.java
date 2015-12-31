@@ -37,7 +37,7 @@ public abstract class SearchCategory<K extends SearchKeyword> {
     /**
      * An id of a drawable to use for this category in the listing
      */
-    protected abstract int drawableId();
+    protected abstract int drawableId(Context context);
 
     /**
      * Create the layout to use with this dialog

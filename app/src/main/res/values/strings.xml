@@ -230,4 +230,5 @@
     <string name="search_category_branch">Branch</string>
     <string name="search_category_generic_text">Search…</string>
     <string name="refine_search_title">Refine Your Search</string>
+    <string name="search_category_topic">Topic</string>
 </resources>
