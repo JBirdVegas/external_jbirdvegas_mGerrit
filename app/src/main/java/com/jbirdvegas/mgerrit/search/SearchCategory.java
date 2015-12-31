@@ -20,6 +20,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 /**
@@ -30,32 +32,33 @@ public abstract class SearchCategory<K extends SearchKeyword> {
 
     ArrayList<K> mKeywords;
 
-    protected ArrayList<K> getKeywords() {
+    public ArrayList<K> getKeywords() {
         return mKeywords;
     }
 
     /**
      * An id of a drawable to use for this category in the listing
      */
-    protected abstract int drawableId(Context context);
+    public abstract int drawableId(Context context);
 
     /**
      * Create the layout to use with this dialog
      * @param inflater
      */
-    protected abstract View dialogLayout(LayoutInflater inflater);
+    public abstract View dialogLayout(LayoutInflater inflater);
 
     /**
      * A friendly name for this category used in the listing
      * @param context
      */
-    protected abstract String name(Context context);
+    @NotNull
+    public abstract String name(Context context);
 
     /**
      * Process what was entered in the view and create a search keyword for it
      * @param dialog
      */
-    protected abstract SearchKeyword onSave(Dialog dialog);
+    public abstract SearchKeyword onSave(Dialog dialog);
 
     /**
      * Add a search keyword to the list of keywords.
@@ -73,7 +76,7 @@ public abstract class SearchCategory<K extends SearchKeyword> {
         return true;
     }
 
-    protected int viewCount() {
+    public int viewCount() {
         return 1;
     }
 }

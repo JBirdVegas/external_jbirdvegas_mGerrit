@@ -18,7 +18,9 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="36dp">
+    android:paddingTop="@dimen/standard_padding"
+    android:paddingBottom="@dimen/standard_padding"
+    android:layout_height="wrap_content">
 
     <ImageView
         android:layout_width="36dp"
@@ -41,7 +43,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
         android:id="@+id/txtFilters"
         android:layout_below="@id/txtCategoryName"
         android:layout_toRightOf="@id/imgCategory"

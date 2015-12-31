@@ -29,22 +29,22 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 public class TopicCategory extends SearchCategory<TopicSearch> {
 
     @Override
-    protected int drawableId(Context context) {
+    public int drawableId(Context context) {
         return Tools.getResIdFromAttribute(context, R.attr.branchIcon);
     }
 
     @Override
-    protected View dialogLayout(LayoutInflater inflater) {
+    public View dialogLayout(LayoutInflater inflater) {
         return inflater.inflate(R.layout.search_category_text, null);
     }
 
     @Override
-    protected String name(Context context) {
+    public String name(Context context) {
         return context.getString(R.string.search_category_topic);
     }
 
     @Override
-    protected SearchKeyword onSave(Dialog dialog) {
+    public SearchKeyword onSave(Dialog dialog) {
         EditText text = (EditText) dialog.findViewById(android.R.id.text1);
         String s = text.getText().toString();
         if (s.length() > 0) return new TopicSearch(s);

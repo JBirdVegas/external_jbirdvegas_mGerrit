@@ -31,6 +31,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.adapters.SearchCategoryAdapter;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.search.BranchCategory;
 import com.jbirdvegas.mgerrit.search.SearchCategory;
@@ -40,7 +41,9 @@ import java.util.ArrayList;
 
 public class RefineSearchActivity extends AppCompatActivity {
     private ListView mCategoriesListView;
+    private SearchCategoryAdapter mAdapter;
 
+    public static final String SEARCH_QUERY = "search_query";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,12 +56,7 @@ public class RefineSearchActivity extends AppCompatActivity {
 
         mCategoriesListView = (ListView) findViewById(R.id.lv_search_categories);
 
-        mCategoriesListView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        loadAdapter();
     }
 
     private void setupActionBar() {
@@ -68,10 +66,13 @@ public class RefineSearchActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void loadAdapter(){
+    private void loadAdapter() {
         ArrayList<SearchCategory> categories = new ArrayList<>();
         categories.add(new BranchCategory());
         categories.add(new TopicCategory());
+
+        mAdapter = new SearchCategoryAdapter(this, R.layout.item_search_category, categories);
+        mCategoriesListView.setAdapter(mAdapter);
     }
 
     // Source: http://developer.android.com/guide/topics/search/search-dialog.html
@@ -83,9 +84,17 @@ public class RefineSearchActivity extends AppCompatActivity {
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        MenuItem item = menu.findItem(R.id.menu_search);
+        item.setTitle(R.string.changes_search_hint);
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        if (getParent() instanceof GerritControllerActivity) {
+            // The main GerritControllerActivity handles searching
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getParent().getComponentName()));
+        }
+        CharSequence searchQuery = getIntent().getCharSequenceExtra(SEARCH_QUERY);
+        if (searchQuery != null && searchQuery.length() > 0) {
+            searchView.setQuery(searchQuery, false);
+        }
         searchView.setIconifiedByDefault(false);
 
         return true;

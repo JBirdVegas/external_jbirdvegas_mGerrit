@@ -41,6 +41,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.activities.BaseDrawerActivity;
+import com.jbirdvegas.mgerrit.activities.RefineSearchActivity;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
@@ -115,6 +116,7 @@ public abstract class CardsFragment extends Fragment
     private HeaderAdapterWrapper mHeaderAdapter;
 
     View mRefineSearchCard;
+    private boolean refineSearchShowing = false;
 
 
     @Override
@@ -424,16 +426,25 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
-    private void toggleRefineSeachCard(boolean show) {
+    private void toggleRefineSearchCard(boolean show) {
         LayoutInflater inflater = (LayoutInflater) mParent.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (show) {
+        if (show && !refineSearchShowing) {
             if (mRefineSearchCard == null) {
                 mRefineSearchCard = inflater.inflate(R.layout.refine_search, null);
+                mRefineSearchCard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent it = new Intent(mParent, RefineSearchActivity.class);
+                        it.putExtra(RefineSearchActivity.SEARCH_QUERY, mSearchView.getQuery());
+                        startActivity(it);
+                    }
+                });
             }
+            refineSearchShowing = true;
             mListView.addHeaderView(mRefineSearchCard, null, true);
-        } else {
+        } else if (!show && refineSearchShowing) {
+            refineSearchShowing = false;
             mListView.removeHeaderView(mRefineSearchCard);
-
         }
     }
 
@@ -495,6 +506,6 @@ public abstract class CardsFragment extends Fragment
 
     @Keep
     public void onEventMainThread(SearchStateChanged ev) {
-        toggleRefineSeachCard(ev.isSearchVisible());
+        toggleRefineSearchCard(ev.isSearchVisible());
     }
 }

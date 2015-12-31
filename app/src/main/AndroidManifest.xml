@@ -71,6 +71,8 @@
             android:parentActivityName=".activities.GerritControllerActivity"/>
         <activity android:name=".activities.ReviewActivity"
             android:parentActivityName=".activities.PatchSetViewerActivity"/>
+        <activity android:name=".activities.RefineSearchActivity"
+            android:parentActivityName=".activities.GerritControllerActivity"/>
         <service android:name=".tasks.GerritService" />
         <provider
             android:name=".database.DatabaseFactory"
