@@ -22,6 +22,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.Tools;
@@ -29,8 +30,8 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 public class BranchCategory extends SearchCategory<BranchSearch> {
 
     @Override
-    public int drawableId(Context context) {
-        return Tools.getResIdFromAttribute(context, R.attr.branchIcon);
+    public void setIcon(Context context, ImageView view) {
+        view.setImageResource(Tools.getResIdFromAttribute(context, R.attr.branchIcon));
     }
 
     @Override

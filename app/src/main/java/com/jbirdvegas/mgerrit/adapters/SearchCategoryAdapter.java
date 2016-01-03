@@ -17,7 +17,10 @@
 
 package com.jbirdvegas.mgerrit.adapters;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,9 +37,6 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
 
     Context mContext;
     private final LayoutInflater mInflater;
-
-    // When a popup menu is expanded, this is set to the view where all the associated data is bound
-    private View mPopupMenuTagHolder;
 
 
     public SearchCategoryAdapter(Context context, int resource, List<SearchCategory> objects) {
@@ -60,10 +60,33 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
         SearchCategory category = getItem(position);
 
         viewHolder.categoryName.setText(category.name(mContext));
-        int icon = category.drawableId(mContext);
-        if (icon > 0) {
-            viewHolder.imgCategory.setImageResource(icon);
-        }
+        category.setIcon(mContext, viewHolder.imgCategory);
+
+        // Need to save and restore the category on the view so we don't end up using a cached one
+        convertView.setTag(R.id.searchCategory, category);
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final SearchCategory searchCategory = (SearchCategory) v.getTag(R.id.searchCategory);
+                AlertDialog.Builder ad = new AlertDialog.Builder(mContext)
+                        .setTitle(searchCategory.name(mContext))
+                        .setView(searchCategory.dialogLayout(mInflater))
+                        .setPositiveButton(R.string.search_category_option_ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                               searchCategory.onSave((Dialog) dialog);
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton(R.string.search_category_option_cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                dialog.dismiss();
+                            }
+                        });
+                ad.create().show();
+            }
+        });
 
         return convertView;
     }

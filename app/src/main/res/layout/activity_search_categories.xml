@@ -17,17 +17,62 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/standard_padding"
-    android:background="?attr/mainBackgroundColor">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include layout="@layout/toolbar" />
 
-    <ListView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/lv_search_categories"
-        android:background="?attr/colorCardBackground"
-        android:elevation="@dimen/z_offset_medium"/>
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="?attr/mainBackgroundColor"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/standard_padding">
+
+        <ListView
+            android:id="@+id/lv_search_categories"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="?attr/colorCardBackground"
+            android:elevation="@dimen/z_offset_medium"
+            android:layout_marginLeft="@dimen/standard_padding"
+            android:layout_marginRight="@dimen/standard_padding"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:paddingTop="@dimen/standard_padding">
+
+            <Button
+                android:id="@+id/btnClear"
+                style="?attr/borderlessButtonBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="@string/search_category_option_cancel" />
+
+            <View android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/md_white_1000"/>
+
+            <Button
+                android:id="@+id/btnApply"
+                style="?attr/borderlessButtonBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_weight="0.5"
+                android:text="@string/search_category_option_ok" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
 </LinearLayout>

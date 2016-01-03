@@ -231,4 +231,6 @@
     <string name="search_category_generic_text">Search…</string>
     <string name="refine_search_title">Refine Your Search</string>
     <string name="search_category_topic">Topic</string>
+    <string name="search_category_option_ok">Apply</string>
+    <string name="search_category_option_cancel">Clear</string>
 </resources>

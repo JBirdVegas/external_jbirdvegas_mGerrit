@@ -22,4 +22,6 @@
     android:layout_height="match_parent"
     android:id="@android:id/text1"
     android:inputType="text"
+    android:layout_marginLeft="@dimen/standard_padding"
+    android:layout_marginRight="@dimen/standard_padding"
     android:hint="@string/search_category_generic_text"/>

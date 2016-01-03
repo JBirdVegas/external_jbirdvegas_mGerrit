@@ -19,19 +19,16 @@ package com.jbirdvegas.mgerrit.search;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.helpers.Tools;
 
 public class TopicCategory extends SearchCategory<TopicSearch> {
-
-    @Override
-    public int drawableId(Context context) {
-        return Tools.getResIdFromAttribute(context, R.attr.branchIcon);
-    }
 
     @Override
     public View dialogLayout(LayoutInflater inflater) {

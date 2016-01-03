@@ -17,8 +17,11 @@ package com.jbirdvegas.mgerrit.search;/*
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,8 +41,11 @@ public abstract class SearchCategory<K extends SearchKeyword> {
 
     /**
      * An id of a drawable to use for this category in the listing
+     * The default is a transparent icon
      */
-    public abstract int drawableId(Context context);
+    public void setIcon(Context context, ImageView view) {
+        view.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
 
     /**
      * Create the layout to use with this dialog
