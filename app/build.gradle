@@ -24,7 +24,8 @@ repositories {
 
 dependencies {
     compile files('libs/libGoogleAnalyticsServices.jar')
-    compile files('libs/annotations.jar')
+
+    compile 'org.jetbrains:annotations:13.0'
 
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
@@ -43,12 +44,9 @@ dependencies {
     }
     compile 'de.hdodenhof:circleimageview:1.2.2'
 
-/*  TODO: Enable this when the Android variant of the Gerrit Rest Java Client is officially released
-       The corresponding jar can then be removed
-    compile('com.urswolfer.gerrit.client.rest:gerrit-rest-java-client:0.8.6-android') {
+    compile('com.urswolfer.gerrit.client.rest:gerrit-rest-java-client:0.8.6') {
         exclude module: 'httpclient'
-    }*/
-    compile files('libs/gerrit-rest-java-client-0.8.6-android.jar')
+    }
     // These are dependencies of the gerrit-rest-java-client library above
     compile 'com.google.guava:guava:18.0'
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
