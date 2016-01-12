@@ -22,10 +22,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.jbirdvegas.mgerrit.R;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
 
 /**
  * Base class for a category in which a search can be refined by.
@@ -33,10 +34,13 @@ import java.util.ArrayList;
  * SearchKeywords */
 public abstract class SearchCategory<K extends SearchKeyword> {
 
-    ArrayList<K> mKeywords;
+    private K mKeyword;
 
-    public ArrayList<K> getKeywords() {
-        return mKeywords;
+    public K getKeyword() {
+        return mKeyword;
+    }
+    public void clearKeyword() {
+        mKeyword = null;
     }
 
     /**
@@ -49,7 +53,7 @@ public abstract class SearchCategory<K extends SearchKeyword> {
 
     /**
      * Create the layout to use with this dialog
-     * @param inflater
+     * @param inflater To inflate the view
      */
     public abstract View dialogLayout(LayoutInflater inflater);
 
@@ -64,25 +68,28 @@ public abstract class SearchCategory<K extends SearchKeyword> {
      * Process what was entered in the view and create a search keyword for it
      * @param dialog
      */
-    public abstract SearchKeyword onSave(Dialog dialog);
+    public abstract K onSave(Dialog dialog);
 
-    /**
-     * Add a search keyword to the list of keywords.
-     * The default implementation will add a keyword if there are none of that class
-     * @param keyword The keyword to add
-     * @return Whether this keyword could be added successfully
-     */
-    protected boolean addSearchKeyword(K keyword) {
-        for (K token : mKeywords) {
-            if (token.getClass().equals(keyword.getClass())) {
-                return false;
-            }
-        }
-        mKeywords.add(keyword);
-        return true;
+    public final void save(Dialog dialog) {
+        mKeyword = onSave(dialog);
     }
 
     public int viewCount() {
         return 1;
+    }
+
+    /**
+     * A basic dialogLayout implementation which just contains a TextView
+     * @param inflater To inflate the view
+     * @return
+     */
+    protected View getTextDialogView(LayoutInflater inflater) {
+        View view = inflater.inflate(R.layout.search_category_text, null);
+        K keyword = getKeyword();
+        if (keyword != null) {
+            TextView textView = (TextView) view.findViewById(android.R.id.text1);
+            textView.setText(getKeyword().getParam());
+        }
+        return view;
     }
 }

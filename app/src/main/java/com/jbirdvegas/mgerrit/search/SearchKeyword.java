@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -244,6 +245,13 @@ public abstract class SearchKeyword implements Parcelable {
      * @return A string which corresponds to a condition on one or more columns of the UserChanges
      * table */
     public abstract String buildSearch();
+
+    /**
+     * Provide a friendly description for this keyword
+     */
+    public String describe() {
+        return mOpParam;
+    }
 
     /**
      * Formats the bind argument for query binding.

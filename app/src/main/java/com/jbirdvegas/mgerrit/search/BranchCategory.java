@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.Tools;
@@ -36,7 +37,7 @@ public class BranchCategory extends SearchCategory<BranchSearch> {
 
     @Override
     public View dialogLayout(LayoutInflater inflater) {
-        return inflater.inflate(R.layout.search_category_text, null);
+        return getTextDialogView(inflater);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class BranchCategory extends SearchCategory<BranchSearch> {
     }
 
     @Override
-    public SearchKeyword onSave(Dialog dialog) {
+    public BranchSearch onSave(Dialog dialog) {
         EditText text = (EditText) dialog.findViewById(android.R.id.text1);
         String s = text.getText().toString();
         if (s.length() > 0) return new BranchSearch(s);

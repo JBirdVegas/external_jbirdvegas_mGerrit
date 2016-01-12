@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.search.SearchCategory;
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
             convertView.setTag(viewHolder);
         }
 
-        SearchCategory category = getItem(position);
+        SearchCategory<SearchKeyword> category = getItem(position);
 
         viewHolder.categoryName.setText(category.name(mContext));
         category.setIcon(mContext, viewHolder.imgCategory);
@@ -74,19 +75,29 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
                         .setPositiveButton(R.string.search_category_option_ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
-                               searchCategory.onSave((Dialog) dialog);
+                               searchCategory.save((Dialog) dialog);
                                 dialog.dismiss();
+                                SearchCategoryAdapter.this.notifyDataSetChanged();
                             }
                         })
                         .setNegativeButton(R.string.search_category_option_cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
+                                searchCategory.clearKeyword();
                                 dialog.dismiss();
+                                SearchCategoryAdapter.this.notifyDataSetChanged();
                             }
                         });
                 ad.create().show();
             }
         });
+
+        SearchKeyword keyword = category.getKeyword();
+        String text = "";
+        if (keyword != null) {
+            text = keyword.describe();
+        }
+        viewHolder.filters.setText(text);
 
         return convertView;
     }
@@ -94,10 +105,12 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
     private static class ViewHolder {
         ImageView imgCategory;
         TextView categoryName;
+        TextView filters;
 
         ViewHolder(View view) {
             imgCategory = (ImageView) view.findViewById(R.id.imgCategory);
             categoryName = (TextView) view.findViewById(R.id.txtCategoryName);
+            filters = (TextView) view.findViewById(R.id.txtFilters);
         }
     }
 }
