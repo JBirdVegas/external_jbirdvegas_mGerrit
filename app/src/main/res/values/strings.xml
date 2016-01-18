@@ -234,5 +234,7 @@
     <string name="search_category_option_ok">Apply</string>
     <string name="search_category_option_cancel">Clear</string>
     <string name="search_category_project">Project</string>
+    <string name="search_category_owner">Commit Owner</string>
+    <string name="search_category_owner_format" formatted="false">%s &lt;%s&gt;</string>
     <string name="refine_search_num_keywords" formatted="false">(%d filters active)</string>
 </resources>

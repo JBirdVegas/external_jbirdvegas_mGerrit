@@ -27,16 +27,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.SearchCategoryAdapter;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.message.RefineSearchUpdated;
 import com.jbirdvegas.mgerrit.search.BranchCategory;
+import com.jbirdvegas.mgerrit.search.OwnerCategory;
 import com.jbirdvegas.mgerrit.search.ProjectCategory;
 import com.jbirdvegas.mgerrit.search.SearchCategory;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
@@ -78,8 +77,10 @@ public class RefineSearchActivity extends AppCompatActivity {
     private void loadAdapter() {
         ArrayList<SearchCategory> categories = new ArrayList<>();
         categories.add(new BranchCategory());
+        categories.add(new OwnerCategory());
         categories.add(new ProjectCategory());
         categories.add(new TopicCategory());
+
 
         mAdapter = new SearchCategoryAdapter(this, R.layout.item_search_category, categories);
         mCategoriesListView.setAdapter(mAdapter);

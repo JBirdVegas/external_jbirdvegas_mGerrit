@@ -29,16 +29,17 @@ import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.database.ProjectsTable;
+import com.jbirdvegas.mgerrit.adapters.UserAdapter;
+import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 
-public class ProjectCategory extends SearchCategory<ProjectSearch> {
+public class OwnerCategory extends SearchCategory<OwnerSearch> {
     private SimpleCursorAdapter mAdapter;
 
     @Override
     public View dialogLayout(Context context, LayoutInflater inflater) {
         View view = inflater.inflate(R.layout.search_category_autocomplete, null);
-        ProjectSearch keyword = getKeyword();
+        OwnerSearch keyword = getKeyword();
         AutoCompleteTextView textView = (AutoCompleteTextView) view.findViewById(R.id.autoComplete);
         if (keyword != null) {
             textView.setText(getKeyword().getParam());
@@ -51,19 +52,19 @@ public class ProjectCategory extends SearchCategory<ProjectSearch> {
 
     @Override
     public String name(Context context) {
-        return context.getString(R.string.search_category_project);
+        return context.getString(R.string.search_category_owner);
     }
 
     @Override
     public void setIcon(Context context, ImageView view) {
-        view.setImageResource(Tools.getResIdFromAttribute(context, R.attr.projectsIcon));
+        view.setImageResource(Tools.getResIdFromAttribute(context, R.attr.userIcon));
     }
 
     @Override
-    public ProjectSearch onSave(Dialog dialog) {
+    public OwnerSearch onSave(Dialog dialog) {
         EditText text = (EditText) dialog.findViewById(R.id.autoComplete);
         String s = text.getText().toString();
-        if (s.length() > 0) return new ProjectSearch(s);
+        if (s.length() > 0) return new OwnerSearch(s);
         else return null;
     }
 
@@ -71,22 +72,26 @@ public class ProjectCategory extends SearchCategory<ProjectSearch> {
      * Setup the autocomplete adapter
      */
     private void setupAdapter(final Context context) {
-        mAdapter = new SimpleCursorAdapter(context, android.R.layout.simple_expandable_list_item_2, null,
-                new String[] {ProjectsTable.C_ROOT, ProjectsTable.C_SUBPROJECT}, new int[] { android.R.id.text1, android.R.id.text2}, 0);
+        // TODO
+        mAdapter = new UserAdapter(context, R.layout.item_user, null,
+                new String[] {Users.C_NAME, Users.C_EMAIL}, new int[] { R.id.txtUserName, R.id.txtUserEmail}, 0);
 
         mAdapter.setCursorToStringConverter(new SimpleCursorAdapter.CursorToStringConverter() {
             @Override
             public CharSequence convertToString(Cursor cursor) {
-                final int index = cursor.getColumnIndexOrThrow(ProjectsTable.C_PATH);
-                return cursor.getString(index);
+                final int emailIndex = cursor.getColumnIndexOrThrow(Users.C_EMAIL);
+                final int nameIndex = cursor.getColumnIndexOrThrow(Users.C_NAME);
+                return String.format(context.getString(R.string.search_category_owner_format),
+                        cursor.getString(nameIndex), cursor.getString(emailIndex));
             }
         });
 
         mAdapter.setFilterQueryProvider(new FilterQueryProvider() {
             @Override
-            public Cursor runQuery(CharSequence description) {
-                return ProjectsTable.searchProjects(context, description.toString());
+            public Cursor runQuery(CharSequence constraint) {
+                return Users.searchUsers(context, constraint.toString());
             }
         });
     }
+
 }

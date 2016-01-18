@@ -58,6 +58,7 @@
         <item name="upIcon">@drawable/ic_nav_expand</item>
         <item name="sendIcon">@drawable/ic_action_send</item>
         <item name="branchIcon">@drawable/ic_action_split</item>
+        <item name="userIcon">@drawable/ic_account</item>
 
         <item name="colorPrimary">@color/card_background</item>
         <item name="material_drawer_background">@color/card_background</item>
@@ -102,6 +103,7 @@
         <item name="upIcon">@drawable/ic_nav_expand_dark</item>
         <item name="sendIcon">@drawable/ic_action_send_dark</item>
         <item name="branchIcon">@drawable/ic_action_split_dark</item>
+        <item name="userIcon">@drawable/ic_account_dark</item>
 
         <item name="colorAccent">@color/material_drawer_accent</item>
         <item name="colorPrimary">@color/card_background_dark</item>

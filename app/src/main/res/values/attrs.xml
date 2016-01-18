@@ -62,6 +62,7 @@
         <attr name="backIcon" format="reference"/>
         <attr name="nextIcon" format="reference"/>
         <attr name="branchIcon" format="reference"/>
+        <attr name="userIcon" format="reference"/>
     </declare-styleable>
 
     <attr name="diffStyle" format="reference" />
