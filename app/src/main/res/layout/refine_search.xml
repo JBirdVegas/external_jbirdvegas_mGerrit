@@ -16,17 +16,27 @@
   ~  limitations under the License.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/clickableCardBackground"
     android:elevation="@dimen/z_offset_medium"
-    android:padding="@dimen/standard_padding"
-    android:background="?attr/clickableCardBackground">
+    android:orientation="horizontal"
+    android:padding="@dimen/standard_padding">
 
     <TextView
-        android:layout_width="match_parent"
+        style="?attr/cardTextStyle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/refine_search_title"
-        style="?attr/cardTextStyle" />
+        android:text="@string/refine_search_title" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/txtRefineSearchKeywordCount"
+        style="?attr/cardTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/standard_padding"
+        tools:text="@string/refine_search_num_keywords" />
+
+</LinearLayout>

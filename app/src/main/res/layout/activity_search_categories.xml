@@ -34,11 +34,11 @@
             android:id="@+id/lv_search_categories"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/standard_padding"
+            android:layout_marginRight="@dimen/standard_padding"
             android:layout_weight="1"
             android:background="?attr/colorCardBackground"
-            android:elevation="@dimen/z_offset_medium"
-            android:layout_marginLeft="@dimen/standard_padding"
-            android:layout_marginRight="@dimen/standard_padding"/>
+            android:elevation="@dimen/z_offset_medium"/>
 
 
         <LinearLayout
@@ -46,8 +46,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:orientation="horizontal"
-            android:weightSum="1"
-            android:paddingTop="@dimen/standard_padding">
+            android:paddingTop="@dimen/standard_padding"
+            android:weightSum="1">
 
             <Button
                 android:id="@+id/btnClear"
@@ -55,6 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
+                android:onClick="onClear"
                 android:text="@string/search_category_option_cancel" />
 
             <View android:layout_width="1dp"
@@ -68,6 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_weight="0.5"
+                android:onClick="onApply"
                 android:text="@string/search_category_option_ok" />
 
         </LinearLayout>

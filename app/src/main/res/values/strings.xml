@@ -233,4 +233,6 @@
     <string name="search_category_topic">Topic</string>
     <string name="search_category_option_ok">Apply</string>
     <string name="search_category_option_cancel">Clear</string>
+    <string name="search_category_project">Project</string>
+    <string name="refine_search_num_keywords" formatted="false">(%d filters active)</string>
 </resources>

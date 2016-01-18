@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -56,6 +57,7 @@ import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
+import com.jbirdvegas.mgerrit.message.RefineSearchUpdated;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
 import com.jbirdvegas.mgerrit.message.SearchStateChanged;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
@@ -440,11 +442,22 @@ public abstract class CardsFragment extends Fragment
                     }
                 });
             }
+            setFilterCount();
             refineSearchShowing = true;
             mListView.addHeaderView(mRefineSearchCard, null, true);
         } else if (!show && refineSearchShowing) {
             refineSearchShowing = false;
             mListView.removeHeaderView(mRefineSearchCard);
+        }
+    }
+
+    private void setFilterCount() {
+        TextView txtFilterCount = (TextView) mRefineSearchCard.findViewById(R.id.txtRefineSearchKeywordCount);
+        int filterCount = mSearchView.getFilterCount();
+        if (filterCount > 0) {
+            txtFilterCount.setText(String.format(getString(R.string.refine_search_num_keywords), filterCount));
+        } else {
+            txtFilterCount.setText("");
         }
     }
 
@@ -507,5 +520,13 @@ public abstract class CardsFragment extends Fragment
     @Keep
     public void onEventMainThread(SearchStateChanged ev) {
         toggleRefineSearchCard(ev.isSearchVisible());
+    }
+
+    @Keep
+    public void onRefineSearchUpdated(RefineSearchUpdated ev) {
+        if (mSearchView != null) {
+            mSearchView.injectKeywords(ev.getKeywords());
+            setFilterCount();
+        }
     }
 }

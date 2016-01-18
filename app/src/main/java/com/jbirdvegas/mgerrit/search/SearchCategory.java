@@ -53,9 +53,10 @@ public abstract class SearchCategory<K extends SearchKeyword> {
 
     /**
      * Create the layout to use with this dialog
+     * @param context
      * @param inflater To inflate the view
      */
-    public abstract View dialogLayout(LayoutInflater inflater);
+    public abstract View dialogLayout(Context context, LayoutInflater inflater);
 
     /**
      * A friendly name for this category used in the listing

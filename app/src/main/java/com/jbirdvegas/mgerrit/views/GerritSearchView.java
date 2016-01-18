@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Contract;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -97,12 +98,6 @@ public class GerritSearchView extends SearchView
     public boolean onQueryTextSubmit(String query) {
         Set<SearchKeyword> tokens = constructTokens(query);
         if (tokens != null) {
-            // If there is no project keyword in the query, it should be cleared
-            if (SearchKeyword.findKeyword(tokens, ProjectSearch.class) < 0 &&
-                    !PrefsFragment.getCurrentProject(mContext).isEmpty()) {
-                PrefsFragment.setCurrentProject(mContext, null);
-            }
-
             // If there is no owner keyword in the query, it should be cleared
             if (SearchKeyword.findKeyword(tokens, OwnerSearch.class) < 0 &&
                     PrefsFragment.getTrackingUser(mContext) != null) {
@@ -217,8 +212,18 @@ public class GerritSearchView extends SearchView
      *
      * @param keywords
      */
-    public void injectKeywords(Set<SearchKeyword> keywords) {
-        mAdditionalKeywords = new HashSet<>(keywords);
+    public void injectKeywords(Collection<SearchKeyword> keywords) {
+        if (keywords == null) {
+            mAdditionalKeywords.clear();
+        } else {
+            mAdditionalKeywords = new HashSet<>(keywords);
+        }
+        // If there is no project keyword in the query, it should be cleared
+        if (SearchKeyword.findKeyword(mAdditionalKeywords, ProjectSearch.class) < 0 &&
+                !PrefsFragment.getCurrentProject(mContext).isEmpty()) {
+            PrefsFragment.setCurrentProject(mContext, null);
+        }
+
         onQueryTextSubmit(getQuery().toString()); // Force search refresh
     }
 
@@ -258,6 +263,13 @@ public class GerritSearchView extends SearchView
      */
     public boolean hasKeyword(SearchKeyword keyword) {
         return SearchKeyword.findKeyword(mCurrentKeywords, keyword) != -1;
+    }
+
+    /**
+     * @return The number of refine search filters (SearchKeywords) already active
+     */
+    public int getFilterCount() {
+        return mAdditionalKeywords == null ? 0 : mAdditionalKeywords.size();
     }
 
     @Override

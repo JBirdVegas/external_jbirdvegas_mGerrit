@@ -23,7 +23,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.Tools;
@@ -36,7 +35,7 @@ public class BranchCategory extends SearchCategory<BranchSearch> {
     }
 
     @Override
-    public View dialogLayout(LayoutInflater inflater) {
+    public View dialogLayout(Context context, LayoutInflater inflater) {
         return getTextDialogView(inflater);
     }
 

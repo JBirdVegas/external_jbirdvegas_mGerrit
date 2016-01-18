@@ -27,21 +27,29 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.SearchCategoryAdapter;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.message.RefineSearchUpdated;
 import com.jbirdvegas.mgerrit.search.BranchCategory;
+import com.jbirdvegas.mgerrit.search.ProjectCategory;
 import com.jbirdvegas.mgerrit.search.SearchCategory;
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.search.TopicCategory;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
+
 public class RefineSearchActivity extends AppCompatActivity {
     private ListView mCategoriesListView;
     private SearchCategoryAdapter mAdapter;
+    private EventBus mEventBus;
 
     public static final String SEARCH_QUERY = "search_query";
 
@@ -55,6 +63,7 @@ public class RefineSearchActivity extends AppCompatActivity {
         setupActionBar();
 
         mCategoriesListView = (ListView) findViewById(R.id.lv_search_categories);
+        mEventBus = EventBus.getDefault();
 
         loadAdapter();
     }
@@ -69,6 +78,7 @@ public class RefineSearchActivity extends AppCompatActivity {
     private void loadAdapter() {
         ArrayList<SearchCategory> categories = new ArrayList<>();
         categories.add(new BranchCategory());
+        categories.add(new ProjectCategory());
         categories.add(new TopicCategory());
 
         mAdapter = new SearchCategoryAdapter(this, R.layout.item_search_category, categories);
@@ -98,6 +108,18 @@ public class RefineSearchActivity extends AppCompatActivity {
         searchView.setIconifiedByDefault(false);
 
         return true;
+    }
+
+    public void onClear(View view) {
+        mAdapter.clear();
+        mEventBus.postSticky(new RefineSearchUpdated());
+        this.finish();
+    }
+
+    public void onApply(View view) {
+        ArrayList<SearchKeyword> keywords = mAdapter.getKeywords();
+        mEventBus.postSticky(new RefineSearchUpdated(keywords));
+        this.finish();
     }
 
     @Override

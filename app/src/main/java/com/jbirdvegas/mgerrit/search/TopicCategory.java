@@ -22,14 +22,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
 
 public class TopicCategory extends SearchCategory<TopicSearch> {
 
     @Override
-    public View dialogLayout(LayoutInflater inflater) {
+    public View dialogLayout(Context context, LayoutInflater inflater) {
         return getTextDialogView(inflater);
     }
 

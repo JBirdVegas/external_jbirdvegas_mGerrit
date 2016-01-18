@@ -29,6 +29,8 @@ import android.util.Pair;
 import com.google.gerrit.extensions.common.ProjectInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +107,7 @@ public class ProjectsTable extends DatabaseTable {
     }
 
     /**
-     * Get a list of distinct columns in the database.
+     * Get a list of distinct root projects in the database.
      * @param context Application context reference
      * @return A new CursorLoader object
      */
@@ -152,6 +154,12 @@ public class ProjectsTable extends DatabaseTable {
         }
         return context.getContentResolver().query(CONTENT_URI, projection,
                 where.toString(), whereQuery,SORT_BY);
+    }
+
+    public static Cursor searchProjects(@NotNull Context context, @NotNull final String query) {
+        String columns[] = { "rowid AS _id", ProjectsTable.C_PATH, ProjectsTable.C_ROOT, ProjectsTable.C_SUBPROJECT};
+        return context.getContentResolver().query(CONTENT_URI,
+                columns, C_PATH + " LIKE ?", new String[] {"%" + query + "%"}, SORT_BY);
     }
 
     // Split a project's path (name) into its root and subproject

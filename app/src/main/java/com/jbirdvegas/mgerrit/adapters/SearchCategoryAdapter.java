@@ -32,18 +32,21 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.search.SearchCategory;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
 
     Context mContext;
     private final LayoutInflater mInflater;
+    private final List<SearchCategory> mCategories;
 
 
     public SearchCategoryAdapter(Context context, int resource, List<SearchCategory> objects) {
         super(context, resource, objects);
         this.mContext = context;
         this.mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.mCategories = objects;
     }
 
     @Override
@@ -71,7 +74,7 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
                 final SearchCategory searchCategory = (SearchCategory) v.getTag(R.id.searchCategory);
                 AlertDialog.Builder ad = new AlertDialog.Builder(mContext)
                         .setTitle(searchCategory.name(mContext))
-                        .setView(searchCategory.dialogLayout(mInflater))
+                        .setView(searchCategory.dialogLayout(mContext, mInflater))
                         .setPositiveButton(R.string.search_category_option_ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
@@ -100,6 +103,21 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
         viewHolder.filters.setText(text);
 
         return convertView;
+    }
+
+    public ArrayList<SearchKeyword> getKeywords() {
+        ArrayList<SearchKeyword> keywords = new ArrayList<>();
+        for (SearchCategory category : mCategories) {
+            keywords.add(category.getKeyword());
+        }
+        return keywords;
+    }
+
+    public void clear() {
+        for (SearchCategory category : mCategories) {
+            category.clearKeyword();
+        }
+        notifyDataSetChanged();
     }
 
     private static class ViewHolder {
