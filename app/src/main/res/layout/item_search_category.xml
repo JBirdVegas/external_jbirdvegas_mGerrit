@@ -18,6 +18,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="@dimen/standard_padding"
     android:layout_height="wrap_content">
 
@@ -28,26 +29,31 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/txtCategoryName"
-        android:layout_gravity="center_vertical"
-        style="?attr/cardTextStyle"
-        android:paddingLeft="@dimen/standard_padding"
-        android:paddingRight="@dimen/standard_padding"
         android:layout_toRightOf="@id/imgCategory"
-        android:textSize="@dimen/text_size_larger"/>
+        android:layout_centerVertical="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtFilters"
-        android:layout_below="@id/txtCategoryName"
-        android:layout_toRightOf="@id/imgCategory"
-        android:layout_toEndOf="@id/imgCategory"
-        android:paddingLeft="@dimen/standard_padding"
-        android:paddingRight="@dimen/standard_padding"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="@string/search_category_branch"
+            android:id="@+id/txtCategoryName"
+            android:layout_gravity="center_vertical"
+            style="?attr/cardTextStyle"
+            android:paddingLeft="@dimen/standard_padding"
+            android:paddingRight="@dimen/standard_padding"
+            android:textSize="@dimen/text_size_larger"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtFilters"
+            android:paddingLeft="@dimen/standard_padding"
+            android:paddingRight="@dimen/standard_padding"
+            tools:text="cm-13.0"/>
+    </LinearLayout>
 
 </RelativeLayout>

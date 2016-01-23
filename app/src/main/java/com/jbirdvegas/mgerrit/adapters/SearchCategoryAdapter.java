@@ -96,9 +96,13 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
         });
 
         SearchKeyword keyword = category.getKeyword();
-        String text = "";
+        String text;
         if (keyword != null) {
             text = keyword.describe();
+            viewHolder.filters.setVisibility(View.VISIBLE);
+        } else {
+            text = "";
+            viewHolder.filters.setVisibility(View.GONE);
         }
         viewHolder.filters.setText(text);
 
