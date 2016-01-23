@@ -28,6 +28,9 @@ import com.jbirdvegas.mgerrit.R;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Set;
+
 /**
  * Base class for a category in which a search can be refined by.
  * Instances of this class associate a View with one or more
@@ -41,6 +44,13 @@ public abstract class SearchCategory<K extends SearchKeyword> {
     }
     public void clearKeyword() {
         mKeyword = null;
+    }
+
+    public void setKeyword(K keyword) {
+        mKeyword = keyword;
+    }
+    public void setKeyword(Context context, K keyword) {
+        setKeyword(keyword);
     }
 
     /**
@@ -79,6 +89,8 @@ public abstract class SearchCategory<K extends SearchKeyword> {
         return 1;
     }
 
+    public abstract Class<K> getClazz();
+
     /**
      * A basic dialogLayout implementation which just contains a TextView
      * @param inflater To inflate the view
@@ -92,5 +104,25 @@ public abstract class SearchCategory<K extends SearchKeyword> {
             textView.setText(getKeyword().getParam());
         }
         return view;
+    }
+
+    /**
+     * Bind a list of keywords to search categories in case filters were already active.
+     *  As only one keyword of each class is supported, only the first one will be used (e.g.
+     *  there can only be one ProjectSearch).
+     * @param categories A list of search categories for the refine search
+     * @param keywords The keywords to bind to
+     */
+    public static void bindKeywordsToCategories(Context context, Collection<SearchCategory> categories,
+                                                Collection<SearchKeyword> keywords) {
+        for (SearchCategory category : categories) {
+            for (SearchKeyword keyword : keywords) {
+                if (keyword.getClass().equals(category.getClazz())) {
+                    category.setKeyword(context, keyword);
+                    break;
+                }
+            }
+            if (category.getKeyword() != null) break;
+        }
     }
 }

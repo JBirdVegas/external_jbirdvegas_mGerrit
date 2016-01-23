@@ -131,6 +131,11 @@ public abstract class SearchKeyword implements Parcelable {
         return param != null && !param.isEmpty();
     }
 
+    /* Whether this is a valid SearchKeyword */
+    public boolean isValid() {
+        return !(mOpName == null || mOpName.isEmpty()) && isParameterValid(mOpParam);
+    }
+
     /**
      * Build a search keyword given a name and its parameter
      * @param name The name of the keyword (a key of _KEYWORDS)
@@ -450,6 +455,9 @@ public abstract class SearchKeyword implements Parcelable {
             return new SearchKeyword[size];
         }
     };
+
+
+
 
     public static String getDefaultOperatorName(SearchKeyword keyword) {
         try {

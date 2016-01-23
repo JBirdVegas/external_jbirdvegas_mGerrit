@@ -108,7 +108,10 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
     public ArrayList<SearchKeyword> getKeywords() {
         ArrayList<SearchKeyword> keywords = new ArrayList<>();
         for (SearchCategory category : mCategories) {
-            keywords.add(category.getKeyword());
+            SearchKeyword keyword = category.getKeyword();
+            if (keyword != null) {
+                keywords.add(keyword);
+            }
         }
         return keywords;
     }

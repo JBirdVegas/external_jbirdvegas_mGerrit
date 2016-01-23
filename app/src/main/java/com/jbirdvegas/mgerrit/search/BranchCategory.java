@@ -25,7 +25,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 
 public class BranchCategory extends SearchCategory<BranchSearch> {
 
@@ -50,5 +52,10 @@ public class BranchCategory extends SearchCategory<BranchSearch> {
         String s = text.getText().toString();
         if (s.length() > 0) return new BranchSearch(s);
         else return null;
+    }
+
+    @Override
+    public Class<BranchSearch> getClazz() {
+        return BranchSearch.class;
     }
 }

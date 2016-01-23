@@ -32,6 +32,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.UserAdapter;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 
 public class OwnerCategory extends SearchCategory<OwnerSearch> {
     private SimpleCursorAdapter mAdapter;
@@ -66,6 +67,31 @@ public class OwnerCategory extends SearchCategory<OwnerSearch> {
         String s = text.getText().toString();
         if (s.length() > 0) return new OwnerSearch(s);
         else return null;
+    }
+
+    @Override
+    public Class<OwnerSearch> getClazz() {
+        return OwnerSearch.class;
+    }
+
+    // Override the setKeyword method so we set it in pretty format
+    @Override
+    public void setKeyword(Context context, OwnerSearch keyword) {
+        if (keyword == null) super.setKeyword(null);
+        else if (keyword.isValid()) {
+            try {
+                Integer userId = Integer.parseInt(keyword.getParam());
+                UserAccountInfo user = Users.getUser(context, userId);
+                if (user != null) {
+                    keyword = new OwnerSearch(String.format(context.getString(R.string.search_category_owner_format),
+                            user.name, user.email));
+                }
+            } catch (NumberFormatException e) {
+                // This must not be a user id, set the keyword as is
+            } finally {
+                super.setKeyword(keyword);
+            }
+        }
     }
 
     /**

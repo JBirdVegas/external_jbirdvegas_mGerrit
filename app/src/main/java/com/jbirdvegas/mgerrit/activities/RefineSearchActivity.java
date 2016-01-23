@@ -17,8 +17,10 @@
 
 package com.jbirdvegas.mgerrit.activities;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +37,7 @@ import com.jbirdvegas.mgerrit.adapters.SearchCategoryAdapter;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.message.RefineSearchUpdated;
 import com.jbirdvegas.mgerrit.search.BranchCategory;
+import com.jbirdvegas.mgerrit.search.BranchSearch;
 import com.jbirdvegas.mgerrit.search.OwnerCategory;
 import com.jbirdvegas.mgerrit.search.ProjectCategory;
 import com.jbirdvegas.mgerrit.search.SearchCategory;
@@ -42,15 +45,18 @@ import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.search.TopicCategory;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 
 public class RefineSearchActivity extends AppCompatActivity {
     private ListView mCategoriesListView;
     private SearchCategoryAdapter mAdapter;
-    private EventBus mEventBus;
 
     public static final String SEARCH_QUERY = "search_query";
+    public static final String SEARCH_KEYWORDS = "search_keywords";
+    public static final int REFINE_SEARCH_REQUEST = 13;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,7 +68,6 @@ public class RefineSearchActivity extends AppCompatActivity {
         setupActionBar();
 
         mCategoriesListView = (ListView) findViewById(R.id.lv_search_categories);
-        mEventBus = EventBus.getDefault();
 
         loadAdapter();
     }
@@ -81,6 +86,8 @@ public class RefineSearchActivity extends AppCompatActivity {
         categories.add(new ProjectCategory());
         categories.add(new TopicCategory());
 
+        Collection<SearchKeyword> keywords = getIntent().getParcelableArrayListExtra(SEARCH_KEYWORDS);
+        SearchCategory.bindKeywordsToCategories(this, categories, keywords);
 
         mAdapter = new SearchCategoryAdapter(this, R.layout.item_search_category, categories);
         mCategoriesListView.setAdapter(mAdapter);
@@ -113,14 +120,20 @@ public class RefineSearchActivity extends AppCompatActivity {
 
     public void onClear(View view) {
         mAdapter.clear();
-        mEventBus.postSticky(new RefineSearchUpdated());
+        returnResult(null);
         this.finish();
     }
 
     public void onApply(View view) {
-        ArrayList<SearchKeyword> keywords = mAdapter.getKeywords();
-        mEventBus.postSticky(new RefineSearchUpdated(keywords));
+        returnResult(mAdapter.getKeywords());
         this.finish();
+    }
+
+    private void returnResult(ArrayList<SearchKeyword> keywords) {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(SEARCH_QUERY, keywords);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 
     @Override

@@ -34,6 +34,8 @@ import com.jbirdvegas.mgerrit.message.SearchStateChanged;
 import com.jbirdvegas.mgerrit.search.OwnerSearch;
 import com.jbirdvegas.mgerrit.search.ProjectSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
+
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import org.jetbrains.annotations.Contract;
@@ -79,12 +81,12 @@ public class GerritSearchView extends SearchView
 
         Integer user = PrefsFragment.getTrackingUser(mContext);
         if (user != null) {
-            replaceKeyword(new OwnerSearch(user.toString()), true);
+            injectKeyword(new OwnerSearch(user.toString()));
         }
 
         String project = PrefsFragment.getCurrentProject(mContext);
-        if (project != null) {
-            replaceKeyword(new ProjectSearch(project), true);
+        if (!project.isEmpty()) {
+            injectKeyword(new ProjectSearch(project));
         }
     }
 
@@ -97,13 +99,8 @@ public class GerritSearchView extends SearchView
     @Override
     public boolean onQueryTextSubmit(String query) {
         Set<SearchKeyword> tokens = constructTokens(query);
-        if (tokens != null) {
-            // If there is no owner keyword in the query, it should be cleared
-            if (SearchKeyword.findKeyword(tokens, OwnerSearch.class) < 0 &&
-                    PrefsFragment.getTrackingUser(mContext) != null) {
-                PrefsFragment.clearTrackingUser(mContext);
-            }
-        }
+
+        if (mAdditionalKeywords != null) updatePreferences();
 
         // Pass this on to the current CardsFragment instance
         if (!processTokens(tokens)) {
@@ -218,10 +215,24 @@ public class GerritSearchView extends SearchView
         } else {
             mAdditionalKeywords = new HashSet<>(keywords);
         }
-        // If there is no project keyword in the query, it should be cleared
-        if (SearchKeyword.findKeyword(mAdditionalKeywords, ProjectSearch.class) < 0 &&
-                !PrefsFragment.getCurrentProject(mContext).isEmpty()) {
-            PrefsFragment.setCurrentProject(mContext, null);
+
+        onQueryTextSubmit(getQuery().toString()); // Force search refresh
+    }
+
+    /**
+     * Modifies future searches for this fragment by appending additional
+     *  keywords to search for that will not be present in the original
+     *  search query.
+     *
+     * @param keyword
+     */
+    public void injectKeyword(@NotNull SearchKeyword keyword) {
+        if (mAdditionalKeywords == null) mAdditionalKeywords = new HashSet<>();
+
+        if (!keyword.isValid()) {
+            SearchKeyword.replaceKeyword(mAdditionalKeywords, keyword);
+        } else {
+            mAdditionalKeywords.add(keyword);
         }
 
         onQueryTextSubmit(getQuery().toString()); // Force search refresh
@@ -241,12 +252,6 @@ public class GerritSearchView extends SearchView
         return newSet;
     }
 
-    public void replaceKeyword(SearchKeyword keyword, boolean submit) {
-        String currentQuery = getQuery().toString();
-        String query = SearchKeyword.replaceKeyword(currentQuery, keyword);
-        if (!query.equals(currentQuery)) this.setQuery(query, submit);
-    }
-
     /**
      * @return The list of search keywords that were included in the query plus any additional
      *  keywords that were set via injectKeywords(Set<SearchKeyword>)
@@ -254,7 +259,6 @@ public class GerritSearchView extends SearchView
     public Set<SearchKeyword> getLastQuery() {
         return mCurrentKeywords;
     }
-
 
     /**
      * Search for a given search keyword in the current list of tokens
@@ -272,14 +276,28 @@ public class GerritSearchView extends SearchView
         return mAdditionalKeywords == null ? 0 : mAdditionalKeywords.size();
     }
 
+    private void updatePreferences() {
+        // If there is no project keyword in the query, it should be cleared
+        if (SearchKeyword.findKeyword(mAdditionalKeywords, ProjectSearch.class) < 0 &&
+                !PrefsFragment.getCurrentProject(mContext).isEmpty()) {
+            PrefsFragment.setCurrentProject(mContext, null);
+        }
+
+        // If there is no owner keyword in the query, it should be cleared
+        if (SearchKeyword.findKeyword(mAdditionalKeywords, OwnerSearch.class) < 0 &&
+                PrefsFragment.getTrackingUser(mContext) != null) {
+            PrefsFragment.clearTrackingUser(mContext);
+        }
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case PrefsFragment.CURRENT_PROJECT:
-                replaceKeyword(new ProjectSearch(PrefsFragment.getCurrentProject(mContext)), true);
+                injectKeyword(new ProjectSearch(PrefsFragment.getCurrentProject(mContext)));
                 break;
             case PrefsFragment.TRACKING_USER:
-                replaceKeyword(new OwnerSearch(PrefsFragment.getTrackingUser(mContext)), true);
+                injectKeyword(new OwnerSearch(PrefsFragment.getTrackingUser(mContext)));
                 break;
         }
     }

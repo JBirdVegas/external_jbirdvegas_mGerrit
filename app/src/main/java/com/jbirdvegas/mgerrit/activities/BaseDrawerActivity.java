@@ -294,7 +294,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                 return true;
             case R.id.menu_starred:
                 if (mSearchView != null) {
-                    mSearchView.replaceKeyword(new IsSearch("starred"), true);
+                    mSearchView.injectKeyword(new IsSearch("starred"));
                 }
                 return true;
             default:

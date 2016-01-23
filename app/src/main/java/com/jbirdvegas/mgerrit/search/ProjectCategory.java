@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.objects.Project;
 
 public class ProjectCategory extends SearchCategory<ProjectSearch> {
     private SimpleCursorAdapter mAdapter;
@@ -65,6 +66,11 @@ public class ProjectCategory extends SearchCategory<ProjectSearch> {
         String s = text.getText().toString();
         if (s.length() > 0) return new ProjectSearch(s);
         else return null;
+    }
+
+    @Override
+    public Class<ProjectSearch> getClazz() {
+        return ProjectSearch.class;
     }
 
     /**

@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Keep;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -72,6 +73,7 @@ import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import de.greenrobot.event.EventBus;
@@ -81,7 +83,7 @@ public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static int sChangesLimit = 0;
-    protected String TAG = "CardsFragment";
+    protected final String TAG = getClass().getSimpleName();
 
     private FragmentActivity mParent;
 
@@ -412,6 +414,21 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        ArrayList<SearchKeyword> keywords;
+
+        if (requestCode == RefineSearchActivity.REFINE_SEARCH_REQUEST) {
+            if(resultCode == Activity.RESULT_OK){
+                keywords = (ArrayList<SearchKeyword>) data.getSerializableExtra(RefineSearchActivity.SEARCH_QUERY);
+                if (mSearchView != null) {
+                    mSearchView.injectKeywords(keywords);
+                    setFilterCount();
+                }
+            }
+        }
+    }
+
     public void onStartRefresh() {
         if (isAdded() && mSwipeLayout != null) {
             mSwipeLayout.setRefreshing(true);
@@ -436,9 +453,14 @@ public abstract class CardsFragment extends Fragment
                 mRefineSearchCard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Set<SearchKeyword> keywords = mSearchView.getLastQuery();
                         Intent it = new Intent(mParent, RefineSearchActivity.class);
+                        // The search query so the SearchView in the toolbar is copied over
                         it.putExtra(RefineSearchActivity.SEARCH_QUERY, mSearchView.getQuery());
-                        startActivity(it);
+                        // The active SearchKeyword filters to be bound to the SearchCategories
+                        it.putParcelableArrayListExtra(RefineSearchActivity.SEARCH_KEYWORDS, new ArrayList<Parcelable>(keywords));
+                        // Expect a result as we are processing the data of the activity here
+                        startActivityForResult(it, RefineSearchActivity.REFINE_SEARCH_REQUEST);
                     }
                 });
             }
@@ -520,13 +542,5 @@ public abstract class CardsFragment extends Fragment
     @Keep
     public void onEventMainThread(SearchStateChanged ev) {
         toggleRefineSearchCard(ev.isSearchVisible());
-    }
-
-    @Keep
-    public void onRefineSearchUpdated(RefineSearchUpdated ev) {
-        if (mSearchView != null) {
-            mSearchView.injectKeywords(ev.getKeywords());
-            setFilterCount();
-        }
     }
 }

@@ -44,4 +44,9 @@ public class TopicCategory extends SearchCategory<TopicSearch> {
         if (s.length() > 0) return new TopicSearch(s);
         else return null;
     }
+
+    @Override
+    public Class<TopicSearch> getClazz() {
+        return TopicSearch.class;
+    }
 }
