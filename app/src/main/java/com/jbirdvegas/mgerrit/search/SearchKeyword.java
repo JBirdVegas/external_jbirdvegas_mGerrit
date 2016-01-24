@@ -287,18 +287,16 @@ public abstract class SearchKeyword implements Parcelable {
         return null;
     }
 
-    public static String replaceKeyword(final String query, final SearchKeyword keyword) {
-        Set<SearchKeyword> tokens = SearchKeyword.constructTokens(query);
-        tokens = replaceKeyword(tokens, keyword);
-        return SearchKeyword.getQuery(tokens);
-    }
-
     public static Set<SearchKeyword> replaceKeyword(final Set<SearchKeyword> tokens,
                                                     SearchKeyword keyword) {
-        Set<SearchKeyword> retVal = removeKeyword(tokens, keyword.getClass());
-        if (isParameterValid(keyword.getParam())) {
-            retVal.add(keyword);
+        Set<SearchKeyword> retVal;
+        if (tokens == null) {
+            retVal = new HashSet<>();
+        } else {
+            retVal = removeKeyword(tokens, keyword.getClass());
         }
+
+        if (isParameterValid(keyword.getParam())) retVal.add(keyword);
         return retVal;
     }
 
@@ -327,17 +325,10 @@ public abstract class SearchKeyword implements Parcelable {
         return new HashSet<>(otherSearches);
     }
 
-    public static String addKeyword(String query, SearchKeyword keyword) {
-        if (keyword != null && isParameterValid(keyword.getParam())) {
-            Set<SearchKeyword> tokens = SearchKeyword.constructTokens(query);
-            tokens.add(keyword);
-            return SearchKeyword.getQuery(tokens);
-        }
-        return query;
-    }
-
     public static Set<SearchKeyword> removeKeyword(Set<SearchKeyword> tokens,
                                                    Class<? extends SearchKeyword> clazz) {
+        if (tokens == null) return null;
+
         Iterator<SearchKeyword> it = tokens.iterator();
         while (it.hasNext()) {
             Object token = it.next();

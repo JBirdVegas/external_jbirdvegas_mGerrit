@@ -43,6 +43,7 @@ import com.jbirdvegas.mgerrit.search.ProjectCategory;
 import com.jbirdvegas.mgerrit.search.SearchCategory;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.search.TopicCategory;
+import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -70,6 +71,9 @@ public class RefineSearchActivity extends AppCompatActivity {
         mCategoriesListView = (ListView) findViewById(R.id.lv_search_categories);
 
         loadAdapter();
+
+        // Update the list of projects for the project autocomplete
+        startService(GerritService.DataType.Project);
     }
 
     private void setupActionBar() {
@@ -145,5 +149,11 @@ public class RefineSearchActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startService(GerritService.DataType dataType) {
+        Intent it = new Intent(this, GerritService.class);
+        it.putExtra(GerritService.DATA_TYPE_KEY, dataType);
+        startService(it);
     }
 }

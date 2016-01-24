@@ -210,7 +210,7 @@ public class GerritSearchView extends SearchView
      * @param keywords
      */
     public void injectKeywords(Collection<SearchKeyword> keywords) {
-        if (keywords == null) {
+        if (keywords == null && mAdditionalKeywords != null) {
             mAdditionalKeywords.clear();
         } else {
             mAdditionalKeywords = new HashSet<>(keywords);

@@ -151,6 +151,7 @@ public class UserChanges extends DatabaseTable {
 
         List<ContentValues> values = new ArrayList<>();
         Set<AccountInfo> committers = new HashSet<>();
+        Set<String> projects = new HashSet<>();
 
         for (ChangeInfo commit : commits) {
             ContentValues row = new ContentValues(9);
@@ -169,11 +170,14 @@ public class UserChanges extends DatabaseTable {
             values.add(row);
 
             committers.add(commit.owner);
+            projects.add(commit.project);
         }
 
         // Insert the list of users into the database as well.
-        AccountInfo usersArray[] = new AccountInfo[committers.size()];
         Users.insertUsers(context, committers);
+
+        // Insert the list of projects into the database as well
+        ProjectsTable.insertProjectsArray(context, projects);
 
         // Now insert the commits
         Uri uri = DBParams.insertWithReplace(Changes.CONTENT_URI);

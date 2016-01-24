@@ -32,6 +32,7 @@ import com.jbirdvegas.mgerrit.helpers.DBParams;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ProjectsTable extends DatabaseTable {
@@ -91,6 +92,27 @@ public class ProjectsTable extends DatabaseTable {
             ContentValues projectRow = new ContentValues(2);
 
             String path = project.name;
+            projectRow.put(C_PATH, path);
+            Pair<String, String> proj = splitPath(path);
+            projectRow.put(C_ROOT, proj.first);
+            projectRow.put(C_SUBPROJECT, proj.second);
+
+            projectValues.add(projectRow);
+        }
+
+        // We are only inserting PK columns so we should use the IGNORE resolution algorithm.
+        Uri uri = DBParams.insertWithIgnore(CONTENT_URI);
+
+        ContentValues valuesArray[] = new ContentValues[projectValues.size()];
+        return context.getContentResolver().bulkInsert(uri, projectValues.toArray(valuesArray));
+    }
+
+    public static int insertProjectsArray(Context context, Collection<String> projects) {
+        List<ContentValues> projectValues = new ArrayList<>();
+
+        for (String path : projects) {
+            ContentValues projectRow = new ContentValues(2);
+
             projectRow.put(C_PATH, path);
             Pair<String, String> proj = splitPath(path);
             projectRow.put(C_ROOT, proj.first);

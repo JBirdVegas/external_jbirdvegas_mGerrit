@@ -234,6 +234,11 @@ public abstract class CardsFragment extends Fragment
         if (ev != null && ev.compareStatuses(getQuery())) {
             mAdapter.setSelectedChangeId(ev.getChangeId());
         }
+
+        // If we have filters active, show the option to refine the search
+        if (mSearchView.getFilterCount() > 0) {
+            toggleRefineSearchCard(true);
+        }
     }
 
     @Override
@@ -541,6 +546,9 @@ public abstract class CardsFragment extends Fragment
 
     @Keep
     public void onEventMainThread(SearchStateChanged ev) {
-        toggleRefineSearchCard(ev.isSearchVisible());
+        boolean show = ev.isSearchVisible();
+        // Show the refine search card when their are filters (SearchKeywords) set
+        if (!ev.isSearchVisible() && mSearchView.getFilterCount() > 0) show = true;
+        toggleRefineSearchCard(show);
     }
 }
