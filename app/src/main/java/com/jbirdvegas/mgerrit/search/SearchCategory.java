@@ -47,11 +47,22 @@ public abstract class SearchCategory<K extends SearchKeyword> {
     }
 
     public void setKeyword(K keyword) {
-        mKeyword = keyword;
+        if (keyword.isValid()) {
+            mKeyword = keyword;
+        } else {
+            mKeyword = null;
+        }
     }
     public void setKeyword(Context context, K keyword) {
         setKeyword(keyword);
     }
+
+    /**
+     * How the adapter should handle clicking on this SearchCategory
+     * Dialog: Open up a dialog for the user to provide more details
+     * Inline: Just call save on the dialog (useful for toggles)
+     */
+    public enum ViewType { Dialog, Inline }
 
     /**
      * An id of a drawable to use for this category in the listing
@@ -85,11 +96,11 @@ public abstract class SearchCategory<K extends SearchKeyword> {
         mKeyword = onSave(dialog);
     }
 
-    public int viewCount() {
-        return 1;
-    }
-
     public abstract Class<K> getClazz();
+
+    public ViewType getViewType() {
+        return ViewType.Dialog;
+    }
 
     /**
      * A basic dialogLayout implementation which just contains a TextView

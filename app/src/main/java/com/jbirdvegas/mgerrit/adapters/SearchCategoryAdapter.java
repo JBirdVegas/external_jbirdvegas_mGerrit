@@ -72,32 +72,17 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
             @Override
             public void onClick(View v) {
                 final SearchCategory searchCategory = (SearchCategory) v.getTag(R.id.searchCategory);
-                AlertDialog.Builder ad = new AlertDialog.Builder(mContext)
-                        .setTitle(searchCategory.name(mContext))
-                        .setView(searchCategory.dialogLayout(mContext, mInflater))
-                        .setPositiveButton(R.string.search_category_option_ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i) {
-                               searchCategory.save((Dialog) dialog);
-                                dialog.dismiss();
-                                SearchCategoryAdapter.this.notifyDataSetChanged();
-                            }
-                        })
-                        .setNegativeButton(R.string.search_category_option_cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int i) {
-                                searchCategory.clearKeyword();
-                                dialog.dismiss();
-                                SearchCategoryAdapter.this.notifyDataSetChanged();
-                            }
-                        });
-                ad.create().show();
+                if (searchCategory.getViewType() == SearchCategory.ViewType.Dialog) {
+                    getSecondView(v, searchCategory);
+                } else {
+                    getDefaultView(v, searchCategory);
+                }
             }
         });
 
         SearchKeyword keyword = category.getKeyword();
         String text;
-        if (keyword != null) {
+        if (keyword != null && category.getViewType() != SearchCategory.ViewType.Inline) {
             text = keyword.describe();
             viewHolder.filters.setVisibility(View.VISIBLE);
         } else {
@@ -118,6 +103,34 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
             }
         }
         return keywords;
+    }
+
+    private void getSecondView(View view, final SearchCategory category) {
+        AlertDialog.Builder ad = new AlertDialog.Builder(mContext)
+                .setTitle(category.name(mContext))
+                .setView(category.dialogLayout(mContext, mInflater))
+                .setPositiveButton(R.string.search_category_option_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        category.save((Dialog) dialog);
+                        dialog.dismiss();
+                        SearchCategoryAdapter.this.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(R.string.search_category_option_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        category.clearKeyword();
+                        dialog.dismiss();
+                        SearchCategoryAdapter.this.notifyDataSetChanged();
+                    }
+                });
+        ad.create().show();
+    }
+
+    public void getDefaultView(View view, final SearchCategory category) {
+        category.save(null);
+        SearchCategoryAdapter.this.notifyDataSetChanged();
     }
 
     public void clear() {

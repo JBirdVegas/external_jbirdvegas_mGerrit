@@ -197,7 +197,7 @@
     <string name="gerrit_signin_username">Username</string>
     <string name="gerrit_signin_password">Password</string>
     <string name="gerrit_signin_signin">Sign in</string>
-    <string name="gerrit_signin_help">Enter your username and password to star changes from mGerrit. If you do not know your username/password, you can generate one on %s.</string>
+    <string name="gerrit_signin_help">Enter your username and password to star and review changes from mGerrit. If you do not know your username/password, you can generate one on %s.</string>
     <string name="gerrit_signin_help_link_text">your account settings page</string>
     <string name="gerrit_signin_btn_success">Signed in</string>
     <string name="gerrit_signin_btn_progress">Signing in…</string>
@@ -237,4 +237,6 @@
     <string name="search_category_owner">Commit Owner</string>
     <string name="search_category_owner_format" formatted="false">%s &lt;%s&gt;</string>
     <string name="refine_search_num_keywords" formatted="false">(%d filters active)</string>
+    <string name="search_category_starred_on">Starred (showing)</string>
+    <string name="search_category_starred_off">Starred (starred and unstarred)</string>
 </resources>

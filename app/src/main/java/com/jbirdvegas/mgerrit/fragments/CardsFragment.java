@@ -58,7 +58,6 @@ import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
-import com.jbirdvegas.mgerrit.message.RefineSearchUpdated;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
 import com.jbirdvegas.mgerrit.message.SearchStateChanged;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
@@ -73,7 +72,6 @@ import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 import de.greenrobot.event.EventBus;

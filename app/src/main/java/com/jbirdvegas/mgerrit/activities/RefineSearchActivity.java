@@ -35,21 +35,17 @@ import android.widget.SearchView;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.SearchCategoryAdapter;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
-import com.jbirdvegas.mgerrit.message.RefineSearchUpdated;
 import com.jbirdvegas.mgerrit.search.BranchCategory;
-import com.jbirdvegas.mgerrit.search.BranchSearch;
 import com.jbirdvegas.mgerrit.search.OwnerCategory;
 import com.jbirdvegas.mgerrit.search.ProjectCategory;
 import com.jbirdvegas.mgerrit.search.SearchCategory;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
+import com.jbirdvegas.mgerrit.search.StarredCategory;
 import com.jbirdvegas.mgerrit.search.TopicCategory;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
-
-import de.greenrobot.event.EventBus;
 
 public class RefineSearchActivity extends AppCompatActivity {
     private ListView mCategoriesListView;
@@ -88,6 +84,7 @@ public class RefineSearchActivity extends AppCompatActivity {
         categories.add(new BranchCategory());
         categories.add(new OwnerCategory());
         categories.add(new ProjectCategory());
+        categories.add(new StarredCategory());
         categories.add(new TopicCategory());
 
         Collection<SearchKeyword> keywords = getIntent().getParcelableArrayListExtra(SEARCH_KEYWORDS);
