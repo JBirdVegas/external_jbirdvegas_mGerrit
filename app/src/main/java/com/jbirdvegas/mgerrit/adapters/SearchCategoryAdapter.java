@@ -80,10 +80,9 @@ public class SearchCategoryAdapter extends ArrayAdapter<SearchCategory> {
             }
         });
 
-        SearchKeyword keyword = category.getKeyword();
-        String text;
-        if (keyword != null && category.getViewType() != SearchCategory.ViewType.Inline) {
-            text = keyword.describe();
+
+        String text = category.getFilterDescription(mContext);
+        if (text != null) {
             viewHolder.filters.setVisibility(View.VISIBLE);
         } else {
             text = "";

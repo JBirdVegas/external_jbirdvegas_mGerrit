@@ -25,12 +25,14 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.SearchCategoryAdapter;
@@ -65,6 +67,9 @@ public class RefineSearchActivity extends AppCompatActivity {
         setupActionBar();
 
         mCategoriesListView = (ListView) findViewById(R.id.lv_search_categories);
+
+        View view = getLayoutInflater().inflate(R.layout.item_textview_header, mCategoriesListView, false);
+        mCategoriesListView.addHeaderView(view, null, false);
 
         loadAdapter();
 

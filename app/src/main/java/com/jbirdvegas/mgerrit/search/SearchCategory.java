@@ -103,6 +103,16 @@ public abstract class SearchCategory<K extends SearchKeyword> {
     }
 
     /**
+     * Get the active filter description to be displayed for this search category
+     * @return A string to display as the active filter description or null to hide it (default)
+     */
+    public String getFilterDescription(Context context) {
+        SearchKeyword keyword = getKeyword();
+        if (keyword == null) return null;
+        return keyword.describe();
+    }
+
+    /**
      * A basic dialogLayout implementation which just contains a TextView
      * @param inflater To inflate the view
      * @return

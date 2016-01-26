@@ -237,6 +237,7 @@
     <string name="search_category_owner">Commit Owner</string>
     <string name="search_category_owner_format" formatted="false">%s &lt;%s&gt;</string>
     <string name="refine_search_num_keywords" formatted="false">(%d filters active)</string>
-    <string name="search_category_starred_on">Starred (showing)</string>
-    <string name="search_category_starred_off">Starred (starred and unstarred)</string>
+    <string name="search_category_starred">Starred</string>
+    <string name="search_category_starred_off">starred and unstarred</string>
+    <string name="refine_search_activity_title">Refine search by</string>
 </resources>

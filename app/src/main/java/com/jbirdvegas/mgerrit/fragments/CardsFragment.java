@@ -452,7 +452,7 @@ public abstract class CardsFragment extends Fragment
         LayoutInflater inflater = (LayoutInflater) mParent.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (show && !refineSearchShowing) {
             if (mRefineSearchCard == null) {
-                mRefineSearchCard = inflater.inflate(R.layout.refine_search, null);
+                mRefineSearchCard = inflater.inflate(R.layout.refine_search_card, null);
                 mRefineSearchCard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

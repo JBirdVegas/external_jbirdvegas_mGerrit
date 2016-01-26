@@ -49,11 +49,7 @@ public class StarredCategory extends SearchCategory<IsSearch> {
 
     @Override
     public String name(Context context) {
-        if (isKeywordSet()) {
-            return context.getString(R.string.search_category_starred_on);
-        } else {
-            return context.getString(R.string.search_category_starred_off);
-        }
+        return context.getString(R.string.search_category_starred);
     }
 
     @Override
@@ -74,6 +70,13 @@ public class StarredCategory extends SearchCategory<IsSearch> {
     @Override
     public ViewType getViewType() {
         return ViewType.Inline;
+    }
+
+    @Override
+    public String getFilterDescription(Context context) {
+        SearchKeyword keyword = getKeyword();
+        if (keyword == null) return "starred and unstarred";
+        return keyword.describe();
     }
 
     private boolean isKeywordSet() {
