@@ -134,6 +134,12 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
         mPeriod = null;
     }
 
+    public AgeSearch(Instant instant, String operator) {
+        super(OP_NAME, operator, String.valueOf(instant.getMillis()));
+        mInstant = instant;
+        mPeriod = null;
+    }
+
     @Override
     public String buildSearch() {
         String operator = getOperator();
@@ -342,6 +348,18 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
         Instant now = new Instant();
         Duration duration = period.toDurationTo(now);
         return now.minus(duration);
+    }
+
+    protected long getMillis() {
+        Instant instant = mInstant;
+        if (instant == null) instant = getInstantFromPeriod(mPeriod);
+        return instant.getMillis();
+    }
+
+    @Override
+    public String describe() {
+        if (mInstant != null) return sInstantFormatter.print(mInstant);
+        else return periodParser.print(mPeriod);
     }
 
     @Override

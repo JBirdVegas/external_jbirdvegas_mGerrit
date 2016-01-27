@@ -146,7 +146,7 @@
     <string name="remove_content">Remove this content</string>
     <string name="connection_starting">Starting Gerrit request</string>
     <string name="projects_search_hint">Search projects</string>
-    <string name="changes_search_hint">Search changes</string>
+    <string name="changes_search_hint">Search #no, ID or subject</string>
     <string name="failed_to_find_url">Failed to find project\'s URL</string>
     <string name="change_status_update">A new change status was selected</string>
     <string name="invalid_gerrit_name">The Gerrit name set was invalid</string>
@@ -227,17 +227,18 @@
     <string name="review_restore_confirm">Do you want to insert the previously saved draft into this comment?</string>
     <string name="review_restore_no_option">Start New</string>
     <string name="menu_overflow_description">More options</string>
-    <string name="search_category_branch">Branch</string>
     <string name="search_category_generic_text">Search…</string>
     <string name="refine_search_title">Refine Your Search</string>
-    <string name="search_category_topic">Topic</string>
+    <string name="refine_search_activity_title">Refine search by</string>
     <string name="search_category_option_ok">Apply</string>
     <string name="search_category_option_cancel">Clear</string>
+    <string name="refine_search_num_keywords" formatted="false">(%d filters active)</string>
+    <string name="search_category_branch">Branch</string>
     <string name="search_category_project">Project</string>
+    <string name="search_category_topic">Topic</string>
     <string name="search_category_owner">Commit Owner</string>
     <string name="search_category_owner_format" formatted="false">%s &lt;%s&gt;</string>
-    <string name="refine_search_num_keywords" formatted="false">(%d filters active)</string>
     <string name="search_category_starred">Starred</string>
     <string name="search_category_starred_off">starred and unstarred</string>
-    <string name="refine_search_activity_title">Refine search by</string>
+    <string name="search_category_before">Updated before</string>
 </resources>

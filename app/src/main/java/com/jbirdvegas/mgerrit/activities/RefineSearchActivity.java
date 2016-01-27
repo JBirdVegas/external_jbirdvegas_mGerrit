@@ -37,6 +37,7 @@ import android.widget.TextView;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.SearchCategoryAdapter;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.search.BeforeCategory;
 import com.jbirdvegas.mgerrit.search.BranchCategory;
 import com.jbirdvegas.mgerrit.search.OwnerCategory;
 import com.jbirdvegas.mgerrit.search.ProjectCategory;
@@ -91,6 +92,7 @@ public class RefineSearchActivity extends AppCompatActivity {
         categories.add(new ProjectCategory());
         categories.add(new StarredCategory());
         categories.add(new TopicCategory());
+        categories.add(new BeforeCategory());
 
         Collection<SearchKeyword> keywords = getIntent().getParcelableArrayListExtra(SEARCH_KEYWORDS);
         SearchCategory.bindKeywordsToCategories(this, categories, keywords);
@@ -108,9 +110,9 @@ public class RefineSearchActivity extends AppCompatActivity {
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        MenuItem item = menu.findItem(R.id.menu_search);
-        item.setTitle(R.string.changes_search_hint);
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint(getString(R.string.changes_search_hint));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
         if (getParent() instanceof GerritControllerActivity) {
             // The main GerritControllerActivity handles searching
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getParent().getComponentName()));

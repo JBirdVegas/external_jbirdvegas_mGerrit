@@ -59,16 +59,17 @@ public class HeaderAdapterWrapper extends BaseAdapter implements StickyListHeade
 
     public View getHeaderView(int position, View convertView, ViewGroup parent) {
         String dateText = ((Categorizable) wrapped).categoryName(position);
-
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.date_card_header, parent, false);
-            holder = new ViewHolder((TextView) convertView.findViewById(R.id.header));
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
+        if (dateText != null) {
+            ViewHolder holder;
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.date_card_header, parent, false);
+                holder = new ViewHolder((TextView) convertView.findViewById(R.id.header));
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.text.setText(dateText);
         }
-        holder.text.setText(dateText);
         return convertView;
     }
 

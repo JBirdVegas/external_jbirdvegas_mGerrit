@@ -37,6 +37,10 @@ public class BeforeSearch extends AgeSearch {
         super(timestamp, "<=");
     }
 
+    public BeforeSearch(Instant instant) {
+        super(instant, "<=");
+    }
+
     @Override
     public String toString() {
         Instant instant = getInstant();

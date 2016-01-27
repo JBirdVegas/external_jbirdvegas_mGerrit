@@ -38,6 +38,10 @@ public class AfterSearch extends AgeSearch {
         super(timestamp, ">=");
     }
 
+    public AfterSearch(Instant instant) {
+        super(instant, ">=");
+    }
+
     @Override
     public String toString() {
         Instant instant = getInstant();
