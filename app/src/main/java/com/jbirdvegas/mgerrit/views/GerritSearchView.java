@@ -212,9 +212,9 @@ public class GerritSearchView extends SearchView
     public void injectKeywords(Collection<SearchKeyword> keywords) {
         if (keywords == null && mAdditionalKeywords != null) {
             mAdditionalKeywords.clear();
-        } else {
+        } else if (keywords != null) {
             mAdditionalKeywords = new HashSet<>(keywords);
-        }
+        } // We can leave mAdditionalKeywords unset as we will only use it if it is non-null
 
         onQueryTextSubmit(getQuery().toString()); // Force search refresh
     }

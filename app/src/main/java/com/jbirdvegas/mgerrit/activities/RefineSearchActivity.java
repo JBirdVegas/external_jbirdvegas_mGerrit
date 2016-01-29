@@ -53,6 +53,7 @@ import java.util.Collection;
 public class RefineSearchActivity extends AppCompatActivity {
     private ListView mCategoriesListView;
     private SearchCategoryAdapter mAdapter;
+    private SearchView mSearchView;
 
     public static final String SEARCH_QUERY = "search_query";
     public static final String SEARCH_KEYWORDS = "search_keywords";
@@ -110,18 +111,18 @@ public class RefineSearchActivity extends AppCompatActivity {
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint(getString(R.string.changes_search_hint));
-        searchView.setMaxWidth(Integer.MAX_VALUE);
+        mSearchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        mSearchView.setQueryHint(getString(R.string.changes_search_hint));
+        mSearchView.setMaxWidth(Integer.MAX_VALUE);
         if (getParent() instanceof GerritControllerActivity) {
             // The main GerritControllerActivity handles searching
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getParent().getComponentName()));
+            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getParent().getComponentName()));
         }
         CharSequence searchQuery = getIntent().getCharSequenceExtra(SEARCH_QUERY);
         if (searchQuery != null && searchQuery.length() > 0) {
-            searchView.setQuery(searchQuery, false);
+            mSearchView.setQuery(searchQuery, false);
         }
-        searchView.setIconifiedByDefault(false);
+        mSearchView.setIconifiedByDefault(false);
 
         return true;
     }
@@ -139,7 +140,10 @@ public class RefineSearchActivity extends AppCompatActivity {
 
     private void returnResult(ArrayList<SearchKeyword> keywords) {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(SEARCH_QUERY, keywords);
+        if (mSearchView != null) {
+            returnIntent.putExtra(SEARCH_QUERY, mSearchView.getQuery().toString());
+        }
+        returnIntent.putExtra(SEARCH_KEYWORDS, keywords);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }

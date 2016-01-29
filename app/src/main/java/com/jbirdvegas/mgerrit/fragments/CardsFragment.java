@@ -420,13 +420,18 @@ public abstract class CardsFragment extends Fragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         ArrayList<SearchKeyword> keywords;
+        String query;
 
         if (requestCode == RefineSearchActivity.REFINE_SEARCH_REQUEST) {
-            if(resultCode == Activity.RESULT_OK){
-                keywords = (ArrayList<SearchKeyword>) data.getSerializableExtra(RefineSearchActivity.SEARCH_QUERY);
+            if (resultCode == Activity.RESULT_OK){
+                keywords = (ArrayList<SearchKeyword>) data.getSerializableExtra(RefineSearchActivity.SEARCH_KEYWORDS);
                 if (mSearchView != null) {
                     mSearchView.injectKeywords(keywords);
                     setFilterCount();
+                }
+                query = data.getStringExtra(RefineSearchActivity.SEARCH_QUERY);
+                if (!mSearchView.getQuery().toString().equals(query)) {
+                    mSearchView.setQuery(query, true);
                 }
             }
         }
