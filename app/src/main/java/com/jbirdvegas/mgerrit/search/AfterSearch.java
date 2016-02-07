@@ -19,7 +19,7 @@ package com.jbirdvegas.mgerrit.search;
 
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
-import org.joda.time.Instant;
+import org.joda.time.DateTime;
 
 public class AfterSearch extends AgeSearch {
 
@@ -34,21 +34,17 @@ public class AfterSearch extends AgeSearch {
         super(param, ">=");
     }
 
-    public AfterSearch(long timestamp) {
-        super(timestamp, ">=");
-    }
-
-    public AfterSearch(Instant instant) {
+    public AfterSearch(DateTime instant) {
         super(instant, ">=");
     }
 
     @Override
     public String toString() {
-        Instant instant = getInstant();
-        if (instant == null) {
-            instant = AgeSearch.getInstantFromPeriod(getPeriod());
+        DateTime dateTime = getDateTime();
+        if (dateTime == null) {
+            dateTime = AgeSearch.getDateTimeFromPeriod(getPeriod());
         }
-        return OP_NAME + ":" + instant.toString();
+        return OP_NAME + ":" + dateTime.toString();
     }
 
     @Override
@@ -56,15 +52,15 @@ public class AfterSearch extends AgeSearch {
         return _getGerritQuery(this, serverVersion);
     }
 
-    protected static String _getGerritQuery(AgeSearch ageSearch, ServerVersion serverVersion) {
-        Instant instant = ageSearch.getInstant();
+    static String _getGerritQuery(AgeSearch ageSearch, ServerVersion serverVersion) {
+        DateTime instant = ageSearch.getDateTime();
         if (serverVersion != null &&
                 serverVersion.isFeatureSupported(ServerVersion.VERSION_BEFORE_SEARCH)) {
             if (instant == null) {
-                instant = AgeSearch.getInstantFromPeriod(ageSearch.getPeriod());
+                instant = AgeSearch.getDateTimeFromPeriod(ageSearch.getPeriod());
             }
 
-            return "after:{" + sInstantFormatter.print(instant) +'}';
+            return "after:{" + sGerritFormat.print(instant) +'}';
         }
         return "";
     }

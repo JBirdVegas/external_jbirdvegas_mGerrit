@@ -1,3 +1,5 @@
+package com.jbirdvegas.mgerrit.build.tasks
+
 import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.tasks.TaskAction
 

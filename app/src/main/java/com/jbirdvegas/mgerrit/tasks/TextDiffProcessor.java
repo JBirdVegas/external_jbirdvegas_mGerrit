@@ -115,7 +115,7 @@ public class TextDiffProcessor extends SyncProcessor<String> {
      * @param base64 The string to decode
      * @return A new string that has been decoded from base64
      */
-    private String decodeBase64(String base64) throws IOException,  IllegalArgumentException {
+    private String decodeBase64(String base64) throws IllegalArgumentException {
         int missingPadding = 4 - base64.length() % 4;
         switch (missingPadding) {
             case 1:

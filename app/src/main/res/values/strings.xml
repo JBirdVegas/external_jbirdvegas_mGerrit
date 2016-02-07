@@ -146,7 +146,7 @@
     <string name="remove_content">Remove this content</string>
     <string name="connection_starting">Starting Gerrit request</string>
     <string name="projects_search_hint">Search projects</string>
-    <string name="changes_search_hint">Search #no, ID or subject</string>
+    <string name="changes_search_hint" translatable="false">Search #no or subject</string>
     <string name="failed_to_find_url">Failed to find project\'s URL</string>
     <string name="change_status_update">A new change status was selected</string>
     <string name="invalid_gerrit_name">The Gerrit name set was invalid</string>

@@ -22,7 +22,7 @@ package com.jbirdvegas.mgerrit.message;
  */
 public class SearchStateChanged {
 
-    boolean mSearchVisible;
+    private boolean mSearchVisible;
 
     public SearchStateChanged(boolean searchVisible) {
         this.mSearchVisible = searchVisible;

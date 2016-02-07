@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.search;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -32,6 +33,7 @@ public class TopicCategory extends SearchCategory<TopicSearch> {
         return getTextDialogView(inflater);
     }
 
+    @NonNull
     @Override
     public String name(Context context) {
         return context.getString(R.string.search_category_topic);

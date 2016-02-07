@@ -70,7 +70,7 @@ import java.util.Set;
 public abstract class BaseDrawerActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static int DRAWER_PROFILE_LOADER = 10;
+    private static int DRAWER_PROFILE_LOADER = 10;
 
     private Drawer mDrawer;
     private GerritSearchView mSearchView;
