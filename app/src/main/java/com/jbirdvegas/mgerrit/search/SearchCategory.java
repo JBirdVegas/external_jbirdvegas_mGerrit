@@ -19,6 +19,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,7 +30,6 @@ import com.jbirdvegas.mgerrit.R;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Base class for a category in which a search can be refined by.
@@ -83,6 +83,7 @@ public abstract class SearchCategory<K extends SearchKeyword> {
      * A friendly name for this category used in the listing
      * @param context
      */
+    @NonNull
     @NotNull
     public abstract String name(Context context);
 

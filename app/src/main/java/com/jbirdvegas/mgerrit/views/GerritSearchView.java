@@ -133,7 +133,6 @@ public class GerritSearchView extends SearchView
         return SearchKeyword.constructTokens(query);
     }
 
-    @Contract("null -> true")
     private boolean processTokens(final Set<SearchKeyword> tokens) {
         Set<SearchKeyword> newTokens = safeMerge(tokens, mAdditionalKeywords);
         mCurrentKeywords = newTokens;

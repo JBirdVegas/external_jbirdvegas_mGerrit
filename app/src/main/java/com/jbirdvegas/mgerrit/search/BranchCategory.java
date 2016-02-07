@@ -19,15 +19,14 @@ package com.jbirdvegas.mgerrit.search;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.helpers.Tools;
-import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 
 public class BranchCategory extends SearchCategory<BranchSearch> {
 
@@ -41,6 +40,7 @@ public class BranchCategory extends SearchCategory<BranchSearch> {
         return getTextDialogView(inflater);
     }
 
+    @NonNull
     @Override
     public String name(Context context) {
         return context.getString(R.string.search_category_branch);

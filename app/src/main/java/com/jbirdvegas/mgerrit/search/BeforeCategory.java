@@ -19,21 +19,32 @@ package com.jbirdvegas.mgerrit.search;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CalendarView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.fragments.DatePickerFragment;
+import com.jbirdvegas.mgerrit.fragments.TimePickerFragment;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 
 import org.joda.time.DateTime;
-import org.joda.time.Instant;
+import org.joda.time.LocalTime;
+import org.joda.time.MutableDateTime;
 
-public class BeforeCategory extends SearchCategory<BeforeSearch> {
+import java.util.Locale;
+
+public class BeforeCategory extends SearchCategory<BeforeSearch>
+        implements DatePickerFragment.DialogListener, TimePickerFragment.DialogListener {
 
     // The currently selected date in the CalendarView
-    DateTime mSelectedDateTime = null;
+    private DateTime mSelectedDateTime = null;
+    private TextView mTxtDate, mTxtTime;
+    private Context mContext;
 
     @Override
     public void setIcon(Context context, ImageView view) {
@@ -41,34 +52,54 @@ public class BeforeCategory extends SearchCategory<BeforeSearch> {
     }
 
     @Override
-    public View dialogLayout(Context context, LayoutInflater inflater) {
-        View view = inflater.inflate(R.layout.search_category_date, null);
-        CalendarView calendarView = (CalendarView) view.findViewById(R.id.datePicker);
-        // We are not going to find any changes into the future
-        long now = System.currentTimeMillis();
-        calendarView.setMaxDate(now);
+    public View dialogLayout(final Context context, final LayoutInflater inflater) {
+        this.mContext = context;
 
-        // We cannot call a method to get the selected date, we need to register a listener to
-        //  watch for changes to the date instead
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+        View view = inflater.inflate(R.layout.search_category_date_absolute, null);
+
+        mTxtDate = (TextView) view.findViewById(R.id.txtSearchDate);
+        mTxtTime = (TextView) view.findViewById(R.id.txtSearchTime);
+
+        BeforeSearch keyword = getKeyword();
+        final DateTime dt = (keyword != null) ? keyword.getDateTime() : DateTime.now();
+
+        mTxtDate.setText(prettyPrintDate(dt));
+        mTxtTime.setText(dt.toString("kk:mm"));
+
+        final AppCompatActivity activity = (AppCompatActivity) context;
+
+        mTxtDate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month,
-                                            int date) {
-                // month is in the range 0-11 but Jodatime expects it in 1-12
-                mSelectedDateTime = new DateTime(year, month + 1, date, 0, 0);
+            public void onClick(View v) {
+                DatePickerFragment newFragment = new DatePickerFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(DatePickerFragment.DEFAULT_DATE, dt);
+                // We are not going to find any changes into the future
+                bundle.putLong(DatePickerFragment.MAX_DATE, System.currentTimeMillis());
+                newFragment.setArguments(bundle);
+
+                newFragment.setListener(BeforeCategory.this);
+                newFragment.show(activity.getFragmentManager(), "datePicker");
             }
         });
 
+        mTxtTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerFragment newFragment = new TimePickerFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(TimePickerFragment.DEFAULT_TIME, dt);
+                newFragment.setArguments(bundle);
 
-        BeforeSearch keyword = getKeyword();
-        if (keyword != null) {
-            calendarView.setDate(keyword.getMillis());
-        } else {
-            calendarView.setDate(now);
-        }
+                newFragment.setListener(BeforeCategory.this);
+                newFragment.show(activity.getFragmentManager(), "timePicker");
+            }
+        });
+
         return view;
     }
 
+    @NonNull
     @Override
     public String name(Context context) {
         return context.getString(R.string.search_category_before);
@@ -76,11 +107,57 @@ public class BeforeCategory extends SearchCategory<BeforeSearch> {
 
     @Override
     public BeforeSearch onSave(Dialog dialog) {
-        return new BeforeSearch(mSelectedDateTime.toInstant());
+        if (mSelectedDateTime != null) {
+            return new BeforeSearch(mSelectedDateTime);
+        } else {
+            // We default to now, so that is what must have been selected as the time has not changed
+            return new BeforeSearch(DateTime.now());
+        }
     }
 
     @Override
     public Class<BeforeSearch> getClazz() {
         return BeforeSearch.class;
+    }
+
+    @Override
+    public void onDateChanged(DateTime dateTime) {
+        if (dateTime != null && mTxtDate != null) {
+            mTxtDate.setText(prettyPrintDate(dateTime));
+            if (mSelectedDateTime == null) {
+                mSelectedDateTime = DateTime.now();
+            } else {
+                /* Copy the date fields over to the selected datetime.
+                 * Temporarily create a mutable datetime otherwise we will needlessly be creating
+                 * immutable objects */
+                MutableDateTime dt = new MutableDateTime(dateTime);
+                dt.setDayOfMonth(dateTime.getDayOfMonth());
+                dt.setMonthOfYear(dateTime.getMonthOfYear());
+                dt.setYear(dateTime.getYear());
+                mSelectedDateTime = dt.toDateTime();
+            }
+        }
+    }
+
+    @Override
+    public void onTimeChanged(LocalTime time) {
+        if (time != null && mTxtTime != null) {
+            if (mSelectedDateTime == null) mSelectedDateTime = DateTime.now();
+
+            mSelectedDateTime = mSelectedDateTime.withHourOfDay(time.getHourOfDay())
+                .withMinuteOfHour(time.getMinuteOfHour());
+            mTxtTime.setText(time.toString("kk:mm"));
+        }
+    }
+
+    /**
+     * Pretty print the date portion of a datetime (not hour/minute) using the user's locale
+     * @param dateTime A datetime
+     * @return A string
+     */
+    public @NonNull
+    String prettyPrintDate(@NonNull DateTime dateTime) {
+        String dateFormat = mContext.getResources().getString(R.string.header_date_format);
+        return dateTime.toString(dateFormat, Locale.getDefault());
     }
 }

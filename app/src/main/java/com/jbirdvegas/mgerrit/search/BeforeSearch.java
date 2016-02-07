@@ -2,7 +2,7 @@ package com.jbirdvegas.mgerrit.search;
 
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
-import org.joda.time.Instant;
+import org.joda.time.DateTime;
 
 /*
  * Copyright (C) 2014 Android Open Kang Project (AOKP)
@@ -33,21 +33,13 @@ public class BeforeSearch extends AgeSearch {
         super(param, "<=");
     }
 
-    public BeforeSearch(long timestamp) {
-        super(timestamp, "<=");
-    }
-
-    public BeforeSearch(Instant instant) {
-        super(instant, "<=");
+    public BeforeSearch(DateTime dateTime) {
+        super(dateTime, "<=");
     }
 
     @Override
     public String toString() {
-        Instant instant = getInstant();
-        if (instant == null) {
-            instant = AgeSearch.getInstantFromPeriod(getPeriod());
-        }
-        return OP_NAME + ":" + instant.toString();
+        return super.toString(OP_NAME);
     }
 
     @Override
@@ -56,14 +48,14 @@ public class BeforeSearch extends AgeSearch {
     }
 
     public static String _getGerritQuery(AgeSearch ageSearch, ServerVersion serverVersion) {
-        Instant instant = ageSearch.getInstant();
+        DateTime dateTime = ageSearch.getDateTime();
         if (serverVersion != null &&
                 serverVersion.isFeatureSupported(ServerVersion.VERSION_BEFORE_SEARCH)) {
-            if (instant == null) {
-                instant = AgeSearch.getInstantFromPeriod(ageSearch.getPeriod());
+            if (dateTime == null) {
+                dateTime = AgeSearch.getDateTimeFromPeriod(ageSearch.getPeriod());
             }
 
-            return "before:{" + sInstantFormatter.print(instant) +'}';
+            return "before:{" + sGerritFormat.print(dateTime) +'}';
         }
         // Need to leave off the operator and make sure we are using relative format
         /* Gerrit only supports specifying one time unit, so we will normalize the period

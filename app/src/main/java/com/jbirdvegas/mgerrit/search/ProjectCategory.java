@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.search;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,6 @@ import android.widget.ImageView;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.helpers.Tools;
-import com.jbirdvegas.mgerrit.objects.Project;
 
 public class ProjectCategory extends SearchCategory<ProjectSearch> {
     private SimpleCursorAdapter mAdapter;
@@ -50,6 +50,7 @@ public class ProjectCategory extends SearchCategory<ProjectSearch> {
         return view;
     }
 
+    @NonNull
     @Override
     public String name(Context context) {
         return context.getString(R.string.search_category_project);

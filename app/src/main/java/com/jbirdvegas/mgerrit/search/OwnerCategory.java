@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.search;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,7 @@ public class OwnerCategory extends SearchCategory<OwnerSearch> {
         return view;
     }
 
+    @NonNull
     @Override
     public String name(Context context) {
         return context.getString(R.string.search_category_owner);
