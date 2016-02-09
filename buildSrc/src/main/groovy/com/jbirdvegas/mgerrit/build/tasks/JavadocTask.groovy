@@ -1,12 +1,8 @@
-package com.jbirdvegas.mgerrit.build.tasks
-
-import org.gradle.api.tasks.javadoc.Javadoc
-
 /**
  * Generates JavaDoc website.  Jenkins picks this up as an artifact.
  * Allows standardized api usage docs.
  */
-class JavadocTask extends Javadoc {
+class JavadocTask extends org.gradle.api.tasks.javadoc.Javadoc {
     JavadocTask() {
         source project.android.sourceSets.main.java.srcDirs
         def androidJar = "${project.android.sdkDirectory}/platforms/${project.android.compileSdkVersion}/android.jar"

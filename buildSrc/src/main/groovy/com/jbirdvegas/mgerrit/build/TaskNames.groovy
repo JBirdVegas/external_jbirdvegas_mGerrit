@@ -1,5 +1,3 @@
-package com.jbirdvegas.mgerrit.build
-
 class TaskNames {
     static String COMMIT_TASK = "commit"
     static String PUSH_TASK = "push"

@@ -125,7 +125,7 @@ public class BeforeCategory extends SearchCategory<BeforeSearch>
         if (dateTime != null && mTxtDate != null) {
             mTxtDate.setText(prettyPrintDate(dateTime));
             if (mSelectedDateTime == null) {
-                mSelectedDateTime = DateTime.now();
+                mSelectedDateTime = dateTime;
             } else {
                 /* Copy the date fields over to the selected datetime.
                  * Temporarily create a mutable datetime otherwise we will needlessly be creating

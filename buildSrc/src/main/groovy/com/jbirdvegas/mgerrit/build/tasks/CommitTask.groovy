@@ -1,5 +1,3 @@
-package com.jbirdvegas.mgerrit.build.tasks
-
 import com.jbirdvegas.mgerrit.build.utils.GitUtil
 import com.jbirdvegas.mgerrit.build.utils.VersionHelper
 import org.ajoberstar.grgit.Branch
