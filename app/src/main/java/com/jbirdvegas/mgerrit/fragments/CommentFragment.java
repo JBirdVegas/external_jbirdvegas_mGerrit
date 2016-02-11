@@ -252,7 +252,7 @@ public class CommentFragment extends Fragment {
     @Keep
     public void onEventMainThread(Finished ev) {
         Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
-        if (ev.getItems() < 1 && dataType == GerritService.DataType.Comment) {
+        if (dataType == GerritService.DataType.Comment) {
             // Commented successfully, remove comment from cache and go back to the change details
             if (mParent instanceof ReviewActivity) {
                 ((ReviewActivity) mParent).onCommented(mCacheKey, mChangeId);

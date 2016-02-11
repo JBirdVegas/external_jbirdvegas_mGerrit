@@ -558,8 +558,8 @@ public class PatchSetViewerFragment extends Fragment
     @Keep
     public void onEventMainThread(Finished ev) {
         Intent intent = ev.getIntent();
-        Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
-        if (ev.getItems() < 1 && dataType == GerritService.DataType.Comment) {
+        Serializable dataType = intent.getSerializableExtra(GerritService.DATA_TYPE_KEY);
+        if (dataType == GerritService.DataType.Comment) {
             // Commented successfully, remove comment from cache
             CacheManager.remove(mCacheCommentKey, true);
             String message = getResources().getString(R.string.review_sent_message, mSelectedChange);
