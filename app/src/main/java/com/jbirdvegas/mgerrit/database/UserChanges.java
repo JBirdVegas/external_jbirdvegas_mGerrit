@@ -51,10 +51,6 @@ public class UserChanges extends DatabaseTable {
     // The Change-Id of the change.
     public static final String C_CHANGE_ID = Changes.C_CHANGE_ID;
 
-
-
-
-
     //The subject of the change (header line of the commit message).
     public static final String C_SUBJECT = Changes.C_SUBJECT;
 
@@ -163,7 +159,9 @@ public class UserChanges extends DatabaseTable {
             row.put(C_UPDATED, commit.updated.toString());
             row.put(C_OWNER, commit.owner._accountId);
             row.put(C_PROJECT, commit.project);
-            row.put(C_STATUS, commit.status.name());
+            /* Should not occur, but since we need a status, put it in the open queue,
+             * fetching details can update the status incase it is incorrect */
+            row.put(C_STATUS, (commit.status != null) ? commit.status.name() : "NEW");
             row.put(C_TOPIC, commit.topic);
             row.put(C_BRANCH, commit.branch);
             row.put(C_STARRED, commit.starred);

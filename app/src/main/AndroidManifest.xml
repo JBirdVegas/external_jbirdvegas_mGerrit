@@ -28,13 +28,15 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- We cannot support Google deep linking due to adding custom Gerrits -->
+    <!--Add TargetAPI to remove the parentActivity warnings, which we have already handled-->
     <application
         android:name=".TheApplication"
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher"
         android:theme="@style/Theme.Light"
         android:allowBackup="true"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:targetApi="jelly_bean">
         <activity
             android:name=".activities.GerritControllerActivity"
             android:label="@string/app_name"
@@ -46,33 +48,66 @@
 
             </intent-filter>
             <meta-data android:name="android.app.searchable"
-                       android:resource="@xml/changes_searchable"/>
+                android:resource="@xml/changes_searchable"/>
         </activity>
         <activity android:name=".activities.PatchSetViewerActivity"
-                  android:parentActivityName=".activities.GerritControllerActivity"
-                  android:windowSoftInputMode="stateUnchanged|adjustPan" />
+            android:parentActivityName=".activities.GerritControllerActivity"
+            android:windowSoftInputMode="stateUnchanged|adjustPan">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <!--See: http://developer.android.com/training/implementing-navigation/ancestral.html -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.GerritControllerActivity" />
+        </activity>
         <activity android:name=".activities.PrefsActivity"
-                  android:parentActivityName=".activities.GerritControllerActivity"/>
+            android:parentActivityName=".activities.GerritControllerActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.GerritControllerActivity" />
+        </activity>
         <activity android:name=".activities.ProjectsList"
-                  android:parentActivityName=".activities.GerritControllerActivity"
-                  android:launchMode="singleTop">
-                  <intent-filter>
-                      <action android:name="android.intent.action.SEARCH" />
-                  </intent-filter>
-                  <meta-data android:name="android.app.searchable"
-                      android:resource="@xml/projects_searchable"/>
+            android:parentActivityName=".activities.GerritControllerActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/projects_searchable"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.GerritControllerActivity" />
         </activity>
         <activity android:name=".activities.DiffViewer"
-                  android:parentActivityName=".activities.GerritControllerActivity"/>
+            android:parentActivityName=".activities.GerritControllerActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.GerritControllerActivity" />
+        </activity>
         <activity android:name=".activities.GerritSwitcher"
-                  android:parentActivityName=".activities.PrefsActivity"
-                  android:windowSoftInputMode="adjustPan"/>
+            android:parentActivityName=".activities.PrefsActivity"
+            android:windowSoftInputMode="adjustPan">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.PrefsActivity" />
+        </activity>
         <activity android:name=".activities.SigninActivity"
-            android:parentActivityName=".activities.GerritControllerActivity"/>
+            android:parentActivityName=".activities.GerritControllerActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.GerritControllerActivity" />
+        </activity>
         <activity android:name=".activities.ReviewActivity"
-            android:parentActivityName=".activities.PatchSetViewerActivity"/>
+            android:parentActivityName=".activities.PatchSetViewerActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.PatchSetViewerActivity" />
+        </activity>
         <activity android:name=".activities.RefineSearchActivity"
-            android:parentActivityName=".activities.GerritControllerActivity"/>
+            android:parentActivityName=".activities.GerritControllerActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.GerritControllerActivity" />
+        </activity>
         <service android:name=".tasks.GerritService" />
         <provider
             android:name=".database.DatabaseFactory"

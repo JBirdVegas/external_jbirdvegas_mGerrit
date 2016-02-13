@@ -25,6 +25,7 @@ import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.DurationFieldType;
 import org.joda.time.Period;
@@ -39,6 +40,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -117,8 +119,8 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
     static {
         registerKeyword(OP_NAME, AgeSearch.class);
 
-        sGerritFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").withLocale(Locale.US);
-                //.withZone(DateTimeZone.forOffsetMillis(TimeZone.getDefault().getRawOffset()));
+        sGerritFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z").withLocale(Locale.US)
+                .withZone(DateTimeZone.forOffsetMillis(TimeZone.getDefault().getRawOffset()));
 
         // Format for serializing and deserialising this keyword
         sLocalFormat = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd")
