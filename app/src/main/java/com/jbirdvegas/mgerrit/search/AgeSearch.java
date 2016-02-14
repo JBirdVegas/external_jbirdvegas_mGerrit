@@ -17,18 +17,21 @@ package com.jbirdvegas.mgerrit.search;
  *  limitations under the License.
  */
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.DurationFieldType;
-import org.joda.time.Instant;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.ISODateTimeFormat;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -37,6 +40,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,10 +48,10 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
 
     public static final String OP_NAME = "age";
 
-    // Set only if a relative time period was given. Should not be set if mInstant is set
+    // Set only if a relative time period was given. Should not be set if mDateTime is set
     private Period mPeriod;
     // Set only if an absolute time was given. Should not be set if mPeriod is set
-    private Instant mInstant;
+    private DateTime mDateTime;
 
     /**
      * An array of supported time units and their corresponding meaning
@@ -99,7 +103,7 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
 
     /** Used for serialising the period into a string and must be output
      *   in a format that can be re-parsed later */
-    protected static PeriodFormatter periodParser = new PeriodFormatterBuilder()
+    private static PeriodFormatter periodParser = new PeriodFormatterBuilder()
             .appendYears().appendSuffix(" years ")
             .appendMonths().appendSuffix(" months ")
             .appendWeeks().appendSuffix(" weeks ")
@@ -110,12 +114,20 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
             .toFormatter();
 
 
-    protected static final DateTimeFormatter sInstantFormatter;
+    protected static final DateTimeFormatter sGerritFormat, sLocalFormat, prettyFormatter;
 
     static {
         registerKeyword(OP_NAME, AgeSearch.class);
 
-        sInstantFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").withLocale(Locale.US);
+        sGerritFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss Z").withLocale(Locale.US)
+                .withZone(DateTimeZone.forOffsetMillis(TimeZone.getDefault().getRawOffset()));
+
+        // Format for serializing and deserialising this keyword
+        sLocalFormat = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd")
+                .appendLiteral('T').appendPattern("HH:mm:ss").toFormatter();
+
+        // For pretty printing the datetime as the selected value for refine search
+        prettyFormatter = DateTimeFormat.forPattern("MMM dd, YYYY 'at' HH:mm").withLocale(Locale.getDefault());
     }
 
     public AgeSearch(String param, String operator) {
@@ -128,9 +140,9 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
         this(extractParameter(param), extractOperator(param));
     }
 
-    public AgeSearch(long timestamp, String operator) {
-        super(OP_NAME, operator, String.valueOf(timestamp));
-        mInstant = new Instant(timestamp);
+    public AgeSearch(DateTime dateTime, String operator) {
+        super(OP_NAME, operator, String.valueOf(dateTime.getMillis()));
+        mDateTime = dateTime;
         mPeriod = null;
     }
 
@@ -154,16 +166,16 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
         // Equals: we need to do some arithmetic to get a range from the period
         if ("=".equals(getOperator())) {
             if (period == null) {
-                period = new Period(mInstant, Instant.now());
+                period = new Period(mDateTime, now);
             }
             DateTime earlier = now.minus(adjust(period, +1));
             DateTime later = now.minus(period);
-            return new String[] { earlier.toString(), later.toString() };
+            return new String[] { earlier.toString(sLocalFormat), later.toString(sLocalFormat) };
         } else {
             if (period == null) {
-                return new String[] { mInstant.toString() };
+                return new String[] { mDateTime.toString(sLocalFormat) };
             }
-            return new String[] { now.minus(period).toString() };
+            return new String[] { now.minus(period).toString(sLocalFormat) };
         }
     }
 
@@ -172,19 +184,18 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
     }
 
     private void parseDate(String param) {
+        String newParam = extractParameter(param);
         try {
-            if (param.endsWith("Z")) {
+            if (newParam.endsWith("Z")) {
                 /* The string representation of an instant includes a Z at the end, but this is not
                  *  a valid format for the parser. */
-                String newParam = param.substring(0, param.length() - 1);
-                mInstant = Instant.parse(newParam, ISODateTimeFormat.localDateOptionalTimeParser());
-            } else {
-                mInstant = Instant.parse(param, ISODateTimeFormat.localDateOptionalTimeParser());
+                newParam = newParam.substring(0, param.length() - 1);
             }
+            mDateTime = DateTime.parse(newParam, ISODateTimeFormat.localDateOptionalTimeParser());
             mPeriod = null;
         } catch (IllegalArgumentException ignored) {
-            mPeriod = toPeriod(param);
-            mInstant = null;
+            mPeriod = toPeriod(newParam);
+            mDateTime = null;
         }
     }
 
@@ -203,7 +214,7 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
         if (mPeriod != null) {
             return string + periodParser.print(mPeriod) + '"';
         } else {
-            return string + mInstant.toString() + '"';
+            return string + mDateTime.toString(sLocalFormat) + '"';
         }
     }
 
@@ -304,17 +315,17 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
 
         if (serverVersion != null &&
                 serverVersion.isFeatureSupported(ServerVersion.VERSION_BEFORE_SEARCH) &&
-                mInstant != null) {
+                mDateTime != null) {
             // Use a combination of before and after to get an interval
-            if (mPeriod == null) {
-                mPeriod = new Period(mInstant, Instant.now());
-            }
             DateTime now = new DateTime();
+            if (mPeriod == null) {
+                mPeriod = new Period(mDateTime, now);
+            }
             DateTime earlier = now.minus(adjust(mPeriod, +1));
             DateTime later = now.minus(mPeriod);
 
-            SearchKeyword newer = new AfterSearch(earlier.toString());
-            SearchKeyword older = new BeforeSearch(later.toString());
+            SearchKeyword newer = new AfterSearch(earlier.toString(sGerritFormat));
+            SearchKeyword older = new BeforeSearch(later.toString(sGerritFormat));
             return newer.getGerritQuery(serverVersion) + "+" + older.getGerritQuery(serverVersion);
         } else {
             // Need to leave off the operator and make sure we are using relative format
@@ -328,7 +339,7 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
         // Need to leave off the operator and make sure we are using relative format
         Period period = mPeriod;
         if (period == null) {
-            period = new Period(mInstant, Instant.now());
+            period = new Period(mDateTime, DateTime.now());
         }
             /* Gerrit only supports specifying one time unit, so we will normalize the period
              *  into days.  */
@@ -336,19 +347,31 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
     }
 
     protected Period getPeriod() { return mPeriod; }
-    protected Instant getInstant() { return mInstant; }
+    public DateTime getDateTime() { return mDateTime; }
 
-    protected static Instant getInstantFromPeriod(Period period) {
-        Instant now = new Instant();
+    protected static DateTime getDateTimeFromPeriod(Period period) {
+        DateTime now = new DateTime();
         Duration duration = period.toDurationTo(now);
         return now.minus(duration);
+    }
+
+    protected long getMillis() {
+        DateTime dt = mDateTime;
+        if (dt == null) dt = getDateTimeFromPeriod(mPeriod);
+        return dt.getMillis();
+    }
+
+    @Override
+    public String describe() {
+        if (mDateTime != null) return prettyFormatter.print(mDateTime);
+        else return periodParser.print(mPeriod);
     }
 
     @Override
     public int compareTo(@NonNull AgeSearch rhs) {
         if (this.equals(rhs)) return 0;
-        else if (mInstant != null && rhs.mInstant != null) {
-            return mInstant.compareTo(rhs.mInstant);
+        else if (mDateTime != null && rhs.mDateTime != null) {
+            return mDateTime.compareTo(rhs.mDateTime);
         } else {
             // Compare the normalised period format (i.e. the period in days)
             return toDays() - rhs.toDays();

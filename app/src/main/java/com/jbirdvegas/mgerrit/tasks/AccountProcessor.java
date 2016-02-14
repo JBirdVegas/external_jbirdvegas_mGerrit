@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;

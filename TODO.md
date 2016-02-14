@@ -28,7 +28,6 @@ mGerrit TODO List
 	- E.g. If a broadcast response is broadcast delivered while the ProjectsList activity is open for a change query, the broadcast should be
 		(re-)delivered to the activity that was listening to broadcasts matching the actual query
 - Option to disable quick scroll
-- Fetching changes updates projects list
 - Commit message text highlighting
 
 
@@ -53,6 +52,9 @@ mGerrit TODO List
 	- Investigate card swiping
 - Titles only
     - Easiest to do with a setting in the preferences
+- Fast scrolling section labels
+    - Implementation similar to the CM Messaging app
+    - See: http://toastdroid.com/2014/05/09/adding-sections-to-cursoradapter/
 
 
 ### Tablet (master-detail layout)

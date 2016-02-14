@@ -24,8 +24,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.CursorLoader;
 
-import com.jbirdvegas.mgerrit.helpers.DBParams;
-
 /**
  * View to get the labels and what the user has rated a change with those labels
  */

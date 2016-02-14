@@ -7,6 +7,7 @@ import android.util.Base64;
 import com.google.gerrit.extensions.restapi.BinaryResult;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.message.ChangeDiffLoaded;
+import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
 import java.io.ByteArrayOutputStream;
@@ -88,6 +89,21 @@ public class TextDiffProcessor extends SyncProcessor<String> {
         return decodedContent;
     }
 
+    // Save the decoded diff text to the cache
+    void doPostProcess(String data) {
+        CacheManager.put(CacheManager.getDiffKey(mChangeNumber, mPatchsetNumber), data, false);
+        /* Cleanup diffs for any superceeded revisions of this change as we will never attempt
+         * to fetch them again) */
+        for (int i = 0; i < mPatchsetNumber; i++) {
+            CacheManager.remove(CacheManager.getDiffKey(mChangeNumber, i), false);
+        }
+    }
+
+    protected String retreiveFromCache(Intent intent) {
+        CacheManager<String> cacheManager = new CacheManager<>();
+        return cacheManager.get(CacheManager.getDiffKey(mChangeNumber, mPatchsetNumber), String.class, false);
+    }
+
     /**
      * Android appears to be strict with padding the string according to the Base64 standard.
      * While using the URL_SAFE parameter does not throw an error, it will result in a corrupted string
@@ -99,7 +115,7 @@ public class TextDiffProcessor extends SyncProcessor<String> {
      * @param base64 The string to decode
      * @return A new string that has been decoded from base64
      */
-    private String decodeBase64(String base64) throws IOException,  IllegalArgumentException {
+    private String decodeBase64(String base64) throws IllegalArgumentException {
         int missingPadding = 4 - base64.length() % 4;
         switch (missingPadding) {
             case 1:

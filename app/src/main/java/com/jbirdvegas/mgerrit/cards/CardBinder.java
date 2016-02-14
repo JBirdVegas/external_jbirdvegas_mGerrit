@@ -37,5 +37,5 @@ public interface CardBinder {
      * @param parent The parent that this view will eventually be attached to
      * @return The view where the data was bound
      */
-    public View setViewValue(Cursor cursor, View convertView, ViewGroup parent);
+    View setViewValue(Cursor cursor, View convertView, ViewGroup parent);
 }

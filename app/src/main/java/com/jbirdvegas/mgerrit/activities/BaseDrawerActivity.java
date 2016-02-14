@@ -70,7 +70,7 @@ import java.util.Set;
 public abstract class BaseDrawerActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static int DRAWER_PROFILE_LOADER = 10;
+    private static int DRAWER_PROFILE_LOADER = 10;
 
     private Drawer mDrawer;
     private GerritSearchView mSearchView;
@@ -294,7 +294,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                 return true;
             case R.id.menu_starred:
                 if (mSearchView != null) {
-                    mSearchView.replaceKeyword(new IsSearch("starred"), true);
+                    mSearchView.injectKeyword(new IsSearch("starred"));
                 }
                 return true;
             default:

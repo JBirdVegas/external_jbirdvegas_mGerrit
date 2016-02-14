@@ -24,7 +24,6 @@ import android.util.Log;
 
 import com.jbirdvegas.mgerrit.helpers.Tools;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;

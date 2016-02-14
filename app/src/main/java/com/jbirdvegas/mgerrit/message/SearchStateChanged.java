@@ -1,8 +1,6 @@
-package com.jbirdvegas.mgerrit.activities;
-
 /*
- * Copyright (C) 2013 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (P4R4N01D), 2013
+ * Copyright (C) 2015 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (P4R4N01D), 2015
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +15,20 @@ package com.jbirdvegas.mgerrit.activities;
  *  limitations under the License.
  */
 
-import com.jbirdvegas.mgerrit.objects.GooFileObject;
+package com.jbirdvegas.mgerrit.message;
 
-public interface ChangelogActivity {
-    void onBuildSelected(GooFileObject earlier, GooFileObject later);
+/**
+ * Message for when the search state changes (we start or stop searching)
+ */
+public class SearchStateChanged {
+
+    private boolean mSearchVisible;
+
+    public SearchStateChanged(boolean searchVisible) {
+        this.mSearchVisible = searchVisible;
+    }
+
+    public boolean isSearchVisible() {
+        return mSearchVisible;
+    }
 }

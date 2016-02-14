@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2015
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="?attr/mainBackgroundColor"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/standard_padding">
+
+        <ListView
+            android:id="@+id/lv_search_categories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/standard_padding"
+            android:layout_marginRight="@dimen/standard_padding"
+            android:background="?attr/colorCardBackground"
+            android:elevation="@dimen/z_offset_medium"
+            android:layout_above="@+id/container_action_buttons"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="@dimen/standard_padding"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/standard_padding"
+            android:weightSum="1"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/container_action_buttons">
+
+            <Button
+                android:id="@+id/btnClear"
+                style="?attr/borderlessButtonBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="onClear"
+                android:text="@string/search_category_option_cancel" />
+
+            <View android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/listDivider"/>
+
+            <Button
+                android:id="@+id/btnApply"
+                style="?attr/borderlessButtonBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_weight="0.5"
+                android:onClick="onApply"
+                android:text="@string/search_category_option_ok" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

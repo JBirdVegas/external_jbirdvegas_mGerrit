@@ -30,6 +30,8 @@ import com.google.gerrit.extensions.common.AccountInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -227,5 +229,11 @@ public class Users extends DatabaseTable {
         userValues.putNull(C_USENRAME);
         userValues.putNull(C_PASSWORD);
         context.getContentResolver().update(CONTENT_URI, userValues, C_USENRAME + " IS NOT NULL AND " + C_PASSWORD + " IS NOT NULL", null);
+    }
+
+    public static Cursor searchUsers(@NotNull Context context, @NotNull final String query) {
+        String columns[] = { "rowid AS _id", Users.C_ACCOUNT_ID, Users.C_NAME, Users.C_EMAIL};
+        return context.getContentResolver().query(CONTENT_URI,
+                columns, C_NAME + " LIKE ? OR " + C_EMAIL + " LIKE ?", new String[] {"%" + query + "%", "%" + query + "%"}, SORT_BY);
     }
 }

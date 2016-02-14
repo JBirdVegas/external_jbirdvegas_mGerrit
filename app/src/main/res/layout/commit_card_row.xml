@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:src="?attr/overflowIcon"
         style="?attr/borderlessButtonBackground"
-        android:contentDescription="More options"
+        android:contentDescription="@string/menu_overflow_description"
         android:id="@+id/commit_card_settings"
         android:paddingRight="24dp"
         android:paddingTop="2dp"

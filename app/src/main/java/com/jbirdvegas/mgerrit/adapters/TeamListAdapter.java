@@ -105,7 +105,6 @@ public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-        String gerritUrl;
         GerritDetails rowData;
 
         // Row specific handling
@@ -116,9 +115,7 @@ public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
 
             viewHolder = (ViewHolder) convertView.getTag();
             if (viewHolder == null) {
-                viewHolder = new ViewHolder((CheckableView) convertView);
-                viewHolder.gerritName = (TextView) convertView.findViewById(R.id.txtGerritName);
-                viewHolder.gerritUrl = (TextView) convertView.findViewById(R.id.txtGerritURL);
+                viewHolder = new ViewHolder((CheckableView) convertView, 0);
                 convertView.setTag(viewHolder);
             }
 
@@ -136,9 +133,8 @@ public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
 
             viewHolder = (ViewHolder) convertView.getTag();
             if (viewHolder == null) {
-                viewHolder = new ViewHolder((CheckableView) convertView);
-                viewHolder.gerritEditName = (EditText) convertView.findViewById(R.id.add_team_name_edittext);
-                viewHolder.gerritEditUrl = (EditText) convertView.findViewById(R.id.add_team_url_edittext);
+                viewHolder = new ViewHolder((CheckableView) convertView, getItemViewType(position));
+
                 convertView.setTag(viewHolder);
             }
 
@@ -213,9 +209,16 @@ public class TeamListAdapter extends ArrayAdapter<GerritDetails> {
         EditText gerritEditUrl;
         RadioButton gerritChecked;
 
-        private ViewHolder(CheckableView view) {
+        private ViewHolder(CheckableView view, int viewType) {
             row = view;
-            gerritChecked = (RadioButton) view.findViewById(R.id.chk_gerrit_selected);
+            if (viewType == 0) {
+                gerritName = (TextView) view.findViewById(R.id.txtGerritName);
+                gerritUrl = (TextView) view.findViewById(R.id.txtGerritURL);
+            } else {
+                gerritEditName = (EditText) view.findViewById(R.id.add_team_name_edittext);
+                gerritEditUrl = (EditText) view.findViewById(R.id.add_team_url_edittext);
+                gerritChecked = (RadioButton) view.findViewById(R.id.chk_gerrit_selected);
+            }
         }
     }
 

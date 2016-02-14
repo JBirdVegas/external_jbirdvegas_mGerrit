@@ -29,4 +29,5 @@
     <item type="id" name="status"/>
     <item type="id" name="imageRequest" />
     <item type="id" name="adapter" />
+    <item type="id" name="searchCategory" />
 </resources>

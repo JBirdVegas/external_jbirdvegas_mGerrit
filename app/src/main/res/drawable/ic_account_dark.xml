@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <!--
-  ~ Copyright (C) 2013 Android Open Kang Project (AOKP)
-  ~  Author: Evan Conway (P4R4N01D), 2013
+  ~ Copyright (C) 2016 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2016
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -17,10 +15,10 @@
   ~  limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/menu_search"
-        android:icon="?attr/searchMenuIcon"
-        android:showAsAction="ifRoom"
-        android:title="@string/changes_search_hint"/>
-</menu>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="24dp"
+    android:width="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path android:fillColor="#FFF" android:pathData="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
+</vector>

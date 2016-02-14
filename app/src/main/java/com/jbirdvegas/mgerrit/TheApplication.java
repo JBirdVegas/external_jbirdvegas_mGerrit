@@ -64,7 +64,7 @@ public class TheApplication extends Application
      *
      * @param newGerrit The URL to the new Gerrit instance
      */
-    public void onGerritChanged(String newGerrit) {
+    private void onGerritChanged(String newGerrit) {
         DatabaseFactory.changeGerrit(this, newGerrit);
 
         // Unset the project - we don't track these across Gerrit instances

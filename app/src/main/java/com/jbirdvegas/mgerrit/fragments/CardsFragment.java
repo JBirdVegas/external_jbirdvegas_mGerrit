@@ -18,9 +18,11 @@ package com.jbirdvegas.mgerrit.fragments;
  */
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Keep;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -34,12 +36,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.activities.BaseDrawerActivity;
+import com.jbirdvegas.mgerrit.activities.RefineSearchActivity;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
@@ -55,6 +59,7 @@ import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
+import com.jbirdvegas.mgerrit.message.SearchStateChanged;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
 import com.jbirdvegas.mgerrit.search.AfterSearch;
 import com.jbirdvegas.mgerrit.search.BeforeSearch;
@@ -76,7 +81,7 @@ public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static int sChangesLimit = 0;
-    protected String TAG = "CardsFragment";
+    protected final String TAG = getClass().getSimpleName();
 
     private FragmentActivity mParent;
 
@@ -111,6 +116,9 @@ public abstract class CardsFragment extends Fragment
     private EventBus mEventBus;
     private HeaderAdapterDecorator mHeaderAdapterWrapper;
     private HeaderAdapterWrapper mHeaderAdapter;
+
+    View mRefineSearchCard;
+    private boolean refineSearchShowing = false;
 
 
     @Override
@@ -223,6 +231,11 @@ public abstract class CardsFragment extends Fragment
         NewChangeSelected ev = mEventBus.getStickyEvent(NewChangeSelected.class);
         if (ev != null && ev.compareStatuses(getQuery())) {
             mAdapter.setSelectedChangeId(ev.getChangeId());
+        }
+
+        // If we have filters active, show the option to refine the search
+        if (mSearchView.getFilterCount() > 0) {
+            toggleRefineSearchCard(true);
         }
     }
 
@@ -404,6 +417,26 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        ArrayList<SearchKeyword> keywords;
+        String query;
+
+        if (requestCode == RefineSearchActivity.REFINE_SEARCH_REQUEST) {
+            if (resultCode == Activity.RESULT_OK){
+                keywords = (ArrayList<SearchKeyword>) data.getSerializableExtra(RefineSearchActivity.SEARCH_KEYWORDS);
+                if (mSearchView != null) {
+                    mSearchView.injectKeywords(keywords);
+                    setFilterCount();
+                }
+                query = data.getStringExtra(RefineSearchActivity.SEARCH_QUERY);
+                if (!mSearchView.getQuery().toString().equals(query)) {
+                    mSearchView.setQuery(query, true);
+                }
+            }
+        }
+    }
+
     public void onStartRefresh() {
         if (isAdded() && mSwipeLayout != null) {
             mSwipeLayout.setRefreshing(true);
@@ -420,8 +453,47 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
+    private void toggleRefineSearchCard(boolean show) {
+        LayoutInflater inflater = (LayoutInflater) mParent.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (show && !refineSearchShowing) {
+            if (mRefineSearchCard == null) {
+                mRefineSearchCard = inflater.inflate(R.layout.refine_search_card, null);
+                mRefineSearchCard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Set<SearchKeyword> keywords = mSearchView.getLastQuery();
+                        Intent it = new Intent(mParent, RefineSearchActivity.class);
+                        // The search query so the SearchView in the toolbar is copied over
+                        it.putExtra(RefineSearchActivity.SEARCH_QUERY, mSearchView.getQuery());
+                        // The active SearchKeyword filters to be bound to the SearchCategories
+                        it.putParcelableArrayListExtra(RefineSearchActivity.SEARCH_KEYWORDS, new ArrayList<Parcelable>(keywords));
+                        // Expect a result as we are processing the data of the activity here
+                        startActivityForResult(it, RefineSearchActivity.REFINE_SEARCH_REQUEST);
+                    }
+                });
+            }
+            setFilterCount();
+            refineSearchShowing = true;
+            mListView.addHeaderView(mRefineSearchCard, null, true);
+        } else if (!show && refineSearchShowing) {
+            refineSearchShowing = false;
+            mListView.removeHeaderView(mRefineSearchCard);
+        }
+    }
+
+    private void setFilterCount() {
+        TextView txtFilterCount = (TextView) mRefineSearchCard.findViewById(R.id.txtRefineSearchKeywordCount);
+        int filterCount = mSearchView.getFilterCount();
+        if (filterCount > 0) {
+            txtFilterCount.setText(String.format(getString(R.string.refine_search_num_keywords), filterCount));
+        } else {
+            txtFilterCount.setText("");
+        }
+    }
+
 
     // Listen for processed search query changes
+    @Keep
     public void onEventMainThread(SearchQueryChanged ev) {
         String to = ev.getClazzName();
         if (isAdded() && mParent.getClass().getSimpleName().equals(to)) {
@@ -461,15 +533,25 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
+    @Keep
     public void onEventMainThread(StartingRequest ev) {
         if (getQuery().equals(ev.getStatus())) {
             onStartRefresh();
         }
     }
 
+    @Keep
     public void onEventMainThread(ErrorDuringConnection ev) {
         if (getQuery().equals(ev.getStatus())) {
             onStopRefresh();
         }
+    }
+
+    @Keep
+    public void onEventMainThread(SearchStateChanged ev) {
+        boolean show = ev.isSearchVisible();
+        // Show the refine search card when their are filters (SearchKeywords) set
+        if (!ev.isSearchVisible() && mSearchView.getFilterCount() > 0) show = true;
+        toggleRefineSearchCard(show);
     }
 }

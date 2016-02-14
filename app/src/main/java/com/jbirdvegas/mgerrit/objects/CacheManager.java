@@ -138,4 +138,8 @@ public class CacheManager<T> {
     public static String getCommentKey(final String changeId) {
         return "comment." + changeId;
     }
+
+    public static String getDiffKey(final int changeNumber, final int psNumber) {
+        return "diff~" + changeNumber + "~" + psNumber;
+    }
 }

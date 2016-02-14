@@ -102,6 +102,9 @@ public abstract class SearchKeyword implements Parcelable {
         return buildToken(in.readString());
     }
 
+    /**
+     * Search keywords should call this in their static block to register themselves so when parsing
+     *  the search query string, we can recognise the keyword based on the name */
     protected static void registerKeyword(String opName, Class<? extends SearchKeyword> clazz) {
         _KEYWORDS.put(opName, clazz);
     }
@@ -110,6 +113,7 @@ public abstract class SearchKeyword implements Parcelable {
     public String getParam() { return mOpParam; }
     public String getOperator() { return mOperator; }
 
+    // Modal the output search keywords on how they are used in the Gerrit web interface
     @Override
     public String toString() {
         // Keywords with empty parameters are ignored
@@ -124,6 +128,11 @@ public abstract class SearchKeyword implements Parcelable {
     @Contract("null -> false")
     protected static boolean isParameterValid(String param) {
         return param != null && !param.isEmpty();
+    }
+
+    /* Whether this is a valid SearchKeyword */
+    public boolean isValid() {
+        return !(mOpName == null || mOpName.isEmpty()) && isParameterValid(mOpParam);
     }
 
     /**
@@ -161,8 +170,11 @@ public abstract class SearchKeyword implements Parcelable {
             s[1] = s[1].replaceAll("^\"|\"$", "");
             keyword = buildToken(s[0], s[1]);
         } else if (tokenStr.startsWith("#")) {
+            // If the search starts with a # then we are doing a change search
             keyword =  buildToken("#", tokenStr.substring(1));
         }
+        /* If we couldn't find a matching search keyword for this, then we will default to searching
+         * for a matching subject */
         if (keyword == null) keyword = buildToken(SubjectSearch.OP_NAME, tokenStr.replaceAll("^\"|\"$", ""));
         return keyword;
     }
@@ -202,6 +214,9 @@ public abstract class SearchKeyword implements Parcelable {
         return set;
     }
 
+    /**
+     * Get the query string from a list of search keywords.
+     * This simply calls toString on each keyword */
     public static String getQuery(Set<SearchKeyword> tokens) {
         String query = "";
         for (SearchKeyword token : tokens) {
@@ -214,6 +229,9 @@ public abstract class SearchKeyword implements Parcelable {
         if (token != null)  set.add(token);
     }
 
+    /**
+     * Get the database where query to be performed for this list of keywords,
+     *  so we don't have to contact the server with each query */
     public static String constructDbSearchQuery(Set<SearchKeyword> tokens) {
         StringBuilder whereQuery = new StringBuilder();
         Iterator<SearchKeyword> it = tokens.iterator();
@@ -226,7 +244,18 @@ public abstract class SearchKeyword implements Parcelable {
         return whereQuery.toString();
     }
 
+    /**
+     * Translates this keyword into a where condition for searching the database
+     * @return A string which corresponds to a condition on one or more columns of the UserChanges
+     * table */
     public abstract String buildSearch();
+
+    /**
+     * Provide a friendly description for this keyword
+     */
+    public String describe() {
+        return mOpParam;
+    }
 
     /**
      * Formats the bind argument for query binding.
@@ -257,18 +286,16 @@ public abstract class SearchKeyword implements Parcelable {
         return null;
     }
 
-    public static String replaceKeyword(final String query, final SearchKeyword keyword) {
-        Set<SearchKeyword> tokens = SearchKeyword.constructTokens(query);
-        tokens = replaceKeyword(tokens, keyword);
-        return SearchKeyword.getQuery(tokens);
-    }
-
     public static Set<SearchKeyword> replaceKeyword(final Set<SearchKeyword> tokens,
                                                     SearchKeyword keyword) {
-        Set<SearchKeyword> retVal = removeKeyword(tokens, keyword.getClass());
-        if (isParameterValid(keyword.getParam())) {
-            retVal.add(keyword);
+        Set<SearchKeyword> retVal;
+        if (tokens == null) {
+            retVal = new HashSet<>();
+        } else {
+            retVal = removeKeyword(tokens, keyword.getClass());
         }
+
+        if (isParameterValid(keyword.getParam())) retVal.add(keyword);
         return retVal;
     }
 
@@ -297,17 +324,10 @@ public abstract class SearchKeyword implements Parcelable {
         return new HashSet<>(otherSearches);
     }
 
-    public static String addKeyword(String query, SearchKeyword keyword) {
-        if (keyword != null && isParameterValid(keyword.getParam())) {
-            Set<SearchKeyword> tokens = SearchKeyword.constructTokens(query);
-            tokens.add(keyword);
-            return SearchKeyword.getQuery(tokens);
-        }
-        return query;
-    }
-
     public static Set<SearchKeyword> removeKeyword(Set<SearchKeyword> tokens,
                                                    Class<? extends SearchKeyword> clazz) {
+        if (tokens == null) return null;
+
         Iterator<SearchKeyword> it = tokens.iterator();
         while (it.hasNext()) {
             Object token = it.next();
@@ -425,6 +445,9 @@ public abstract class SearchKeyword implements Parcelable {
             return new SearchKeyword[size];
         }
     };
+
+
+
 
     public static String getDefaultOperatorName(SearchKeyword keyword) {
         try {

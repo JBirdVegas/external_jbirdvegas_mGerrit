@@ -277,8 +277,10 @@ public class PrefsFragment extends PreferenceFragment implements Preference.OnPr
     }
 
     public static TimeZone getServerTimeZone(Context context) {
+        /* Default to localtime as selecting the wrong timezone can result showing change
+         * which occurred in the future */
         return TimeZone.getTimeZone(PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(SERVER_TIMEZONE_KEY, "PST"));
+                .getString(SERVER_TIMEZONE_KEY, TimeZone.getDefault().getID()));
     }
 
     public static TimeZone getLocalTimeZone(Context context) {

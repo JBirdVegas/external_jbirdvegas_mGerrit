@@ -29,7 +29,10 @@ import android.util.Pair;
 import com.google.gerrit.extensions.common.ProjectInfo;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ProjectsTable extends DatabaseTable {
@@ -104,8 +107,29 @@ public class ProjectsTable extends DatabaseTable {
         return context.getContentResolver().bulkInsert(uri, projectValues.toArray(valuesArray));
     }
 
+    public static int insertProjectsArray(Context context, Collection<String> projects) {
+        List<ContentValues> projectValues = new ArrayList<>();
+
+        for (String path : projects) {
+            ContentValues projectRow = new ContentValues(2);
+
+            projectRow.put(C_PATH, path);
+            Pair<String, String> proj = splitPath(path);
+            projectRow.put(C_ROOT, proj.first);
+            projectRow.put(C_SUBPROJECT, proj.second);
+
+            projectValues.add(projectRow);
+        }
+
+        // We are only inserting PK columns so we should use the IGNORE resolution algorithm.
+        Uri uri = DBParams.insertWithIgnore(CONTENT_URI);
+
+        ContentValues valuesArray[] = new ContentValues[projectValues.size()];
+        return context.getContentResolver().bulkInsert(uri, projectValues.toArray(valuesArray));
+    }
+
     /**
-     * Get a list of distinct columns in the database.
+     * Get a list of distinct root projects in the database.
      * @param context Application context reference
      * @return A new CursorLoader object
      */
@@ -152,6 +176,12 @@ public class ProjectsTable extends DatabaseTable {
         }
         return context.getContentResolver().query(CONTENT_URI, projection,
                 where.toString(), whereQuery,SORT_BY);
+    }
+
+    public static Cursor searchProjects(@NotNull Context context, @NotNull final String query) {
+        String columns[] = { "rowid AS _id", ProjectsTable.C_PATH, ProjectsTable.C_ROOT, ProjectsTable.C_SUBPROJECT};
+        return context.getContentResolver().query(CONTENT_URI,
+                columns, C_PATH + " LIKE ?", new String[] {"%" + query + "%"}, SORT_BY);
     }
 
     // Split a project's path (name) into its root and subproject

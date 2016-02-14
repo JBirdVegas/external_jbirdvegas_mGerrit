@@ -78,7 +78,7 @@ public class StarProcessor extends SyncProcessor<String> {
     protected String getData(GerritRestApi gerritApi) throws RestApiException {
         AccountApi self = gerritApi.accounts().self();
         if (mIsStarring) self.starChange(mChangeId);
-        else gerritApi.accounts().self().unstarChange(mChangeId);
+        else self.unstarChange(mChangeId);
         return "204";
     }
 

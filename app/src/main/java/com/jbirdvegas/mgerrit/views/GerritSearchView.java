@@ -30,9 +30,12 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
+import com.jbirdvegas.mgerrit.message.SearchStateChanged;
 import com.jbirdvegas.mgerrit.search.OwnerSearch;
 import com.jbirdvegas.mgerrit.search.ProjectSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
+
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import org.jetbrains.annotations.Contract;
@@ -40,6 +43,7 @@ import org.jetbrains.annotations.Contract;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,6 +55,7 @@ public class GerritSearchView extends SearchView
 
     private static final String TAG = "GerrritSearchView";
     private final SharedPreferences mPrefs;
+    private final EventBus mEventBus;
     Context mContext;
 
     Set<SearchKeyword> mAdditionalKeywords;
@@ -64,6 +69,7 @@ public class GerritSearchView extends SearchView
         setOnQueryTextListener(this);
         setupCancelButton();
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mEventBus = EventBus.getDefault();
 
         mCurrentKeywords = new HashSet<>();
     }
@@ -75,12 +81,12 @@ public class GerritSearchView extends SearchView
 
         Integer user = PrefsFragment.getTrackingUser(mContext);
         if (user != null) {
-            replaceKeyword(new OwnerSearch(user.toString()), true);
+            injectKeyword(new OwnerSearch(user.toString()));
         }
 
         String project = PrefsFragment.getCurrentProject(mContext);
-        if (project != null) {
-            replaceKeyword(new ProjectSearch(project), true);
+        if (!project.isEmpty()) {
+            injectKeyword(new ProjectSearch(project));
         }
     }
 
@@ -93,19 +99,8 @@ public class GerritSearchView extends SearchView
     @Override
     public boolean onQueryTextSubmit(String query) {
         Set<SearchKeyword> tokens = constructTokens(query);
-        if (tokens != null) {
-            // If there is no project keyword in the query, it should be cleared
-            if (SearchKeyword.findKeyword(tokens, ProjectSearch.class) < 0 &&
-                    !PrefsFragment.getCurrentProject(mContext).isEmpty()) {
-                PrefsFragment.setCurrentProject(mContext, null);
-            }
 
-            // If there is no owner keyword in the query, it should be cleared
-            if (SearchKeyword.findKeyword(tokens, OwnerSearch.class) < 0 &&
-                    PrefsFragment.getTrackingUser(mContext) != null) {
-                PrefsFragment.clearTrackingUser(mContext);
-            }
-        }
+        if (mAdditionalKeywords != null) updatePreferences();
 
         // Pass this on to the current CardsFragment instance
         if (!processTokens(tokens)) {
@@ -138,7 +133,6 @@ public class GerritSearchView extends SearchView
         return SearchKeyword.constructTokens(query);
     }
 
-    @Contract("null -> true")
     private boolean processTokens(final Set<SearchKeyword> tokens) {
         Set<SearchKeyword> newTokens = safeMerge(tokens, mAdditionalKeywords);
         mCurrentKeywords = newTokens;
@@ -157,7 +151,7 @@ public class GerritSearchView extends SearchView
             }
         }
 
-        EventBus.getDefault().postSticky(new SearchQueryChanged(where, bindArgs,
+        mEventBus.postSticky(new SearchQueryChanged(where, bindArgs,
                 getContext().getClass().getSimpleName(), tokens));
         return true;
     }
@@ -203,6 +197,8 @@ public class GerritSearchView extends SearchView
         if (!query.isEmpty() && visibility == GONE) setQuery("", true);
         super.setVisibility(visibility);
         setIconified(visibility == GONE);
+        mEventBus.post(new SearchStateChanged(visibility == VISIBLE));
+
     }
 
     /**
@@ -210,11 +206,34 @@ public class GerritSearchView extends SearchView
      *  keywords to search for that will not be present in the original
      *  search query. This clears all old keywords that were previously injected.
      *
-     *  Used for the changelog
      * @param keywords
      */
-    public void injectKeywords(Set<SearchKeyword> keywords) {
-        mAdditionalKeywords = new HashSet<>(keywords);
+    public void injectKeywords(Collection<SearchKeyword> keywords) {
+        if (keywords == null && mAdditionalKeywords != null) {
+            mAdditionalKeywords.clear();
+        } else if (keywords != null) {
+            mAdditionalKeywords = new HashSet<>(keywords);
+        } // We can leave mAdditionalKeywords unset as we will only use it if it is non-null
+
+        onQueryTextSubmit(getQuery().toString()); // Force search refresh
+    }
+
+    /**
+     * Modifies future searches for this fragment by appending additional
+     *  keywords to search for that will not be present in the original
+     *  search query.
+     *
+     * @param keyword
+     */
+    public void injectKeyword(@NotNull SearchKeyword keyword) {
+        if (mAdditionalKeywords == null) mAdditionalKeywords = new HashSet<>();
+
+        if (!keyword.isValid()) {
+            SearchKeyword.replaceKeyword(mAdditionalKeywords, keyword);
+        } else {
+            mAdditionalKeywords.add(keyword);
+        }
+
         onQueryTextSubmit(getQuery().toString()); // Force search refresh
     }
 
@@ -232,12 +251,6 @@ public class GerritSearchView extends SearchView
         return newSet;
     }
 
-    public void replaceKeyword(SearchKeyword keyword, boolean submit) {
-        String currentQuery = getQuery().toString();
-        String query = SearchKeyword.replaceKeyword(currentQuery, keyword);
-        if (!query.equals(currentQuery)) this.setQuery(query, submit);
-    }
-
     /**
      * @return The list of search keywords that were included in the query plus any additional
      *  keywords that were set via injectKeywords(Set<SearchKeyword>)
@@ -245,7 +258,6 @@ public class GerritSearchView extends SearchView
     public Set<SearchKeyword> getLastQuery() {
         return mCurrentKeywords;
     }
-
 
     /**
      * Search for a given search keyword in the current list of tokens
@@ -256,14 +268,35 @@ public class GerritSearchView extends SearchView
         return SearchKeyword.findKeyword(mCurrentKeywords, keyword) != -1;
     }
 
+    /**
+     * @return The number of refine search filters (SearchKeywords) already active
+     */
+    public int getFilterCount() {
+        return mAdditionalKeywords == null ? 0 : mAdditionalKeywords.size();
+    }
+
+    private void updatePreferences() {
+        // If there is no project keyword in the query, it should be cleared
+        if (SearchKeyword.findKeyword(mAdditionalKeywords, ProjectSearch.class) < 0 &&
+                !PrefsFragment.getCurrentProject(mContext).isEmpty()) {
+            PrefsFragment.setCurrentProject(mContext, null);
+        }
+
+        // If there is no owner keyword in the query, it should be cleared
+        if (SearchKeyword.findKeyword(mAdditionalKeywords, OwnerSearch.class) < 0 &&
+                PrefsFragment.getTrackingUser(mContext) != null) {
+            PrefsFragment.clearTrackingUser(mContext);
+        }
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
             case PrefsFragment.CURRENT_PROJECT:
-                replaceKeyword(new ProjectSearch(PrefsFragment.getCurrentProject(mContext)), true);
+                injectKeyword(new ProjectSearch(PrefsFragment.getCurrentProject(mContext)));
                 break;
             case PrefsFragment.TRACKING_USER:
-                replaceKeyword(new OwnerSearch(PrefsFragment.getTrackingUser(mContext)), true);
+                injectKeyword(new OwnerSearch(PrefsFragment.getTrackingUser(mContext)));
                 break;
         }
     }

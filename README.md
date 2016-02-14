@@ -32,6 +32,23 @@ Simplified Chinese translations by YULIANGMAX and Czech translation by Petr Rezn
 
 
 ## Change List Searching
+Change list searching has been significantly revised in mGerrit v2.111.74 to make it easier to search for changes given a set
+criteria.
+
+When searching for changes a card will appear at the top of the list with a message indicating whether to refine the search,
+ this allows specifying a number of filters (or search keywords) to filter the changes by.
+
+The search view in the action bar/toolbar allows searching for changes based on the change subject (the title of the commit and the first line in the commit message).
+ Alternatively, searching by change number is supported:
+
+`#'NUMBER'`
+Changes with commit number 'NUMBER'. This is the legacy commit number and is shown as the title of the change details screen and also uniquely identifies a change in the Gerrit web interface
+
+### Old change list searching
+
+This section is not relevant for users of mGerrit v2.111.74 and higher. If when searching for changes you see a card "Refine this search" or similar, you can safely skip over this section
+ including the Supported keywords section
+
 Searching the change lists, either the 'Review', 'Merged' or 'Abandoned' tabs is designed to mimic the functionality in the Gerrit
  web interface. As each change contains a lot of different data, Gerrit uses what are known as operators. To avoid confusing these
  with what they call boolean operators we will call these "keywords".

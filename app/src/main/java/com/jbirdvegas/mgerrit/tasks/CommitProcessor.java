@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
+import com.google.gerrit.extensions.api.changes.Changes;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
@@ -37,10 +38,12 @@ import java.util.EnumSet;
 class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
     private final String mChangeId;
+    private final int mChangeNumber;
 
     CommitProcessor(Context context, Intent intent) {
         super(context, intent);
         mChangeId = intent.getStringExtra(GerritService.CHANGE_ID);
+        mChangeNumber = intent.getIntExtra(GerritService.CHANGE_NUMBER, 0);
     }
 
     @Override
@@ -60,7 +63,24 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
     @Override
     ChangeInfo getData(GerritRestApi gerritApi) throws RestApiException {
-        return gerritApi.changes().id(mChangeId).get(queryOptions());
+        Changes changes = gerritApi.changes();
+        EnumSet<ListChangesOption> options = queryOptions();
+        try {
+            return changes.id(mChangeId).get(options);
+        } catch (IllegalArgumentException e) {
+            /* We may have a situation where multiple changes have the same change id
+             * this usually occurs when cherry-picking or reverting a commit.
+             * We have to fallback to the legacy change number
+             * See: http://review.cyanogenmod.org/#/q/change:I6c7a14a9ab4090b4aabf5de7663f5de51bdc4615
+             */
+            if (mChangeNumber > 0) {
+                return changes.id(mChangeNumber).get(options);
+            } else {
+                // We don't have anything we can use to uniquely identify the change we are trying to fetch
+                throw new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
+            }
+        }
+
     }
 
     @Override

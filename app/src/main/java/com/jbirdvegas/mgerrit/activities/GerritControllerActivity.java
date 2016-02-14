@@ -51,7 +51,6 @@ import com.jbirdvegas.mgerrit.helpers.ROMHelper;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.NotSupported;
-import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
 import de.greenrobot.event.EventBus;

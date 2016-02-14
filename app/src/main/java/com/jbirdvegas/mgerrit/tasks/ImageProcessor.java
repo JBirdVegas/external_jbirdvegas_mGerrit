@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.google.gerrit.extensions.restapi.RestApiException;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.message.ImageLoaded;
 import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
