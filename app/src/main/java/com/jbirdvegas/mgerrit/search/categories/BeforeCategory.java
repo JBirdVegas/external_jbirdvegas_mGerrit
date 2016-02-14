@@ -15,13 +15,11 @@
  *  limitations under the License.
  */
 
-package com.jbirdvegas.mgerrit.search;
+package com.jbirdvegas.mgerrit.search.categories;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,12 +29,10 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.fragments.DatePickerFragment;
 import com.jbirdvegas.mgerrit.fragments.TimePickerFragment;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.search.BeforeSearch;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
-import org.joda.time.MutableDateTime;
-
-import java.util.Locale;
 
 public class BeforeCategory extends SearchCategory<BeforeSearch>
         implements DatePickerFragment.DialogListener, TimePickerFragment.DialogListener {
@@ -55,46 +51,15 @@ public class BeforeCategory extends SearchCategory<BeforeSearch>
     public View dialogLayout(final Context context, final LayoutInflater inflater) {
         this.mContext = context;
 
-        View view = inflater.inflate(R.layout.search_category_date_absolute, null);
-
-        mTxtDate = (TextView) view.findViewById(R.id.txtSearchDate);
-        mTxtTime = (TextView) view.findViewById(R.id.txtSearchTime);
-
         BeforeSearch keyword = getKeyword();
         final DateTime dt = (keyword != null) ? keyword.getDateTime() : DateTime.now();
 
-        mTxtDate.setText(prettyPrintDate(dt));
-        mTxtTime.setText(dt.toString("kk:mm"));
+        View view = getDatetimeDialogView(context, inflater, this, this, dt);
+        mTxtDate = (TextView) view.findViewById(R.id.txtSearchDate);
+        mTxtTime = (TextView) view.findViewById(R.id.txtSearchTime);
 
-        final AppCompatActivity activity = (AppCompatActivity) context;
-
-        mTxtDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerFragment newFragment = new DatePickerFragment();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(DatePickerFragment.DEFAULT_DATE, dt);
-                // We are not going to find any changes into the future
-                bundle.putLong(DatePickerFragment.MAX_DATE, System.currentTimeMillis());
-                newFragment.setArguments(bundle);
-
-                newFragment.setListener(BeforeCategory.this);
-                newFragment.show(activity.getFragmentManager(), "datePicker");
-            }
-        });
-
-        mTxtTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TimePickerFragment newFragment = new TimePickerFragment();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(TimePickerFragment.DEFAULT_TIME, dt);
-                newFragment.setArguments(bundle);
-
-                newFragment.setListener(BeforeCategory.this);
-                newFragment.show(activity.getFragmentManager(), "timePicker");
-            }
-        });
+        mTxtDate.setText(Tools.prettyPrintDate(mContext, dt));
+        mTxtTime.setText(dt.toString("HH:mm"));
 
         return view;
     }
@@ -123,20 +88,9 @@ public class BeforeCategory extends SearchCategory<BeforeSearch>
     @Override
     public void onDateChanged(DateTime dateTime) {
         if (dateTime != null && mTxtDate != null) {
-            mTxtDate.setText(prettyPrintDate(dateTime));
-            if (mSelectedDateTime == null) {
-                mSelectedDateTime = dateTime;
-            } else {
-                /* Copy the date fields over to the selected datetime.
-                 * Temporarily create a mutable datetime otherwise we will needlessly be creating
-                 * immutable objects */
-                MutableDateTime dt = new MutableDateTime(dateTime);
-                dt.setDayOfMonth(dateTime.getDayOfMonth());
-                dt.setMonthOfYear(dateTime.getMonthOfYear());
-                dt.setYear(dateTime.getYear());
-                mSelectedDateTime = dt.toDateTime();
-            }
+            mTxtDate.setText(Tools.prettyPrintDate(mContext, dateTime));
         }
+        mSelectedDateTime = DatePickerFragment.onDateChanged(dateTime, mSelectedDateTime);
     }
 
     @Override
@@ -146,18 +100,9 @@ public class BeforeCategory extends SearchCategory<BeforeSearch>
 
             mSelectedDateTime = mSelectedDateTime.withHourOfDay(time.getHourOfDay())
                 .withMinuteOfHour(time.getMinuteOfHour());
-            mTxtTime.setText(time.toString("kk:mm"));
+            mTxtTime.setText(time.toString("HH:mm"));
         }
     }
 
-    /**
-     * Pretty print the date portion of a datetime (not hour/minute) using the user's locale
-     * @param dateTime A datetime
-     * @return A string
-     */
-    public @NonNull
-    String prettyPrintDate(@NonNull DateTime dateTime) {
-        String dateFormat = mContext.getResources().getString(R.string.header_date_format);
-        return dateTime.toString(dateFormat, Locale.getDefault());
-    }
+
 }

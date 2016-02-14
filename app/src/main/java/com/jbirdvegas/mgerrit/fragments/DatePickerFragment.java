@@ -22,8 +22,10 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.widget.DatePicker;
+import android.widget.TextView;
 
 import org.joda.time.DateTime;
+import org.joda.time.MutableDateTime;
 
 import java.util.Calendar;
 
@@ -89,5 +91,24 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
      * implement this interface in order to receive event callbacks. */
     public interface DialogListener {
         void onDateChanged(DateTime dateTime);
+    }
+
+    public static DateTime onDateChanged(DateTime dateTime, DateTime selectedDateTime) {
+        if (dateTime != null) {
+
+            if (selectedDateTime == null) {
+                selectedDateTime = dateTime;
+            } else {
+                /* Copy the date fields over to the selected datetime.
+                 * Temporarily create a mutable datetime otherwise we will needlessly be creating
+                 * immutable objects */
+                MutableDateTime dt = new MutableDateTime(dateTime);
+                dt.setDayOfMonth(dateTime.getDayOfMonth());
+                dt.setMonthOfYear(dateTime.getMonthOfYear());
+                dt.setYear(dateTime.getYear());
+                selectedDateTime = dt.toDateTime();
+            }
+        }
+        return selectedDateTime;
     }
 }

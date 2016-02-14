@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package com.jbirdvegas.mgerrit.search;
+package com.jbirdvegas.mgerrit.search.categories;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.search.ProjectSearch;
 
 public class ProjectCategory extends SearchCategory<ProjectSearch> {
     private SimpleCursorAdapter mAdapter;

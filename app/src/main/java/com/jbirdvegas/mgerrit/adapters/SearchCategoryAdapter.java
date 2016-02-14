@@ -29,7 +29,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.search.SearchCategory;
+import com.jbirdvegas.mgerrit.search.categories.SearchCategory;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
 import java.util.ArrayList;

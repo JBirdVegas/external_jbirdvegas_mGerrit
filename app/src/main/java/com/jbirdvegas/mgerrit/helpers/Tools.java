@@ -25,6 +25,7 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.BaseAdapter;
@@ -337,5 +338,18 @@ public class Tools {
                             }
                         });
         ad.create().show();
+    }
+
+    /**
+     * Pretty print the date portion of a datetime (not hour/minute) using the user's locale
+     *
+     * @param context
+     * @param dateTime A datetime
+     * @return A string
+     */
+    @NonNull
+    public static String prettyPrintDate(Context context, @NonNull DateTime dateTime) {
+        String dateFormat = context.getResources().getString(R.string.header_date_format);
+        return dateTime.toString(dateFormat, Locale.getDefault());
     }
 }

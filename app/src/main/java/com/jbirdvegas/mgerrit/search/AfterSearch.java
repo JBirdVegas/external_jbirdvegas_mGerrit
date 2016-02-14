@@ -40,11 +40,7 @@ public class AfterSearch extends AgeSearch {
 
     @Override
     public String toString() {
-        DateTime dateTime = getDateTime();
-        if (dateTime == null) {
-            dateTime = AgeSearch.getDateTimeFromPeriod(getPeriod());
-        }
-        return OP_NAME + ":" + dateTime.toString();
+        return super.toString(OP_NAME);
     }
 
     @Override

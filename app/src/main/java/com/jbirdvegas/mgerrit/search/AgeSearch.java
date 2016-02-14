@@ -347,7 +347,7 @@ public class AgeSearch extends SearchKeyword implements Comparable<AgeSearch> {
     }
 
     protected Period getPeriod() { return mPeriod; }
-    protected DateTime getDateTime() { return mDateTime; }
+    public DateTime getDateTime() { return mDateTime; }
 
     protected static DateTime getDateTimeFromPeriod(Period period) {
         DateTime now = new DateTime();

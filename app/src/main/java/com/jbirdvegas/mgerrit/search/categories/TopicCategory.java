@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2015 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (P4R4N01D), 2015
+ * Copyright (C) 2016 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (P4R4N01D), 2016
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package com.jbirdvegas.mgerrit.search;
+package com.jbirdvegas.mgerrit.search.categories;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.search.TopicSearch;
 
 public class TopicCategory extends SearchCategory<TopicSearch> {
 

@@ -15,30 +15,25 @@
  *  limitations under the License.
  */
 
-package com.jbirdvegas.mgerrit.search;
+package com.jbirdvegas.mgerrit.search.categories;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.search.BranchSearch;
 
-public class StarredCategory extends SearchCategory<IsSearch> {
+public class BranchCategory extends SearchCategory<BranchSearch> {
 
     @Override
     public void setIcon(Context context, ImageView view) {
-        // Set the icon based on whether the keyword is set
-        int resId;
-        if (isKeywordSet()) {
-            resId = R.attr.starredIcon;
-        } else {
-            resId = R.attr.unstarredIcon;
-        }
-        view.setImageResource(Tools.getResIdFromAttribute(context, resId));
+        view.setImageResource(Tools.getResIdFromAttribute(context, R.attr.branchIcon));
     }
 
     @Override
@@ -49,38 +44,19 @@ public class StarredCategory extends SearchCategory<IsSearch> {
     @NonNull
     @Override
     public String name(Context context) {
-        return context.getString(R.string.search_category_starred);
+        return context.getString(R.string.search_category_branch);
     }
 
     @Override
-    public IsSearch onSave(Dialog dialog) {
-        SearchKeyword keyword = getKeyword();
-        if (keyword != null) {
-            return null;
-        } else {
-            return new IsSearch("starred");
-        }
+    public BranchSearch onSave(Dialog dialog) {
+        EditText text = (EditText) dialog.findViewById(android.R.id.text1);
+        String s = text.getText().toString();
+        if (s.length() > 0) return new BranchSearch(s);
+        else return null;
     }
 
     @Override
-    public Class<IsSearch> getClazz() {
-        return IsSearch.class;
-    }
-
-    @Override
-    public ViewType getViewType() {
-        return ViewType.Inline;
-    }
-
-    @Override
-    public String getFilterDescription(Context context) {
-        SearchKeyword keyword = getKeyword();
-        if (keyword == null) return "starred and unstarred";
-        return keyword.describe();
-    }
-
-    private boolean isKeywordSet() {
-        SearchKeyword keyword = getKeyword();
-        return keyword != null && IsSearch.OP_VALUE_STARRED.equals(keyword.getParam());
+    public Class<BranchSearch> getClazz() {
+        return BranchSearch.class;
     }
 }

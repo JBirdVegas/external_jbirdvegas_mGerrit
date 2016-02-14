@@ -1,4 +1,21 @@
-package com.jbirdvegas.mgerrit.search;/*
+/*
+ * Copyright (C) 2016 Android Open Kang Project (AOKP)
+ *  Author: Evan Conway (P4R4N01D), 2016
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package com.jbirdvegas.mgerrit.search.categories;/*
  * Copyright (C) 2015 Android Open Kang Project (AOKP)
  *  Author: Evan Conway (P4R4N01D), 2015
  *
@@ -19,15 +36,22 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.fragments.DatePickerFragment;
+import com.jbirdvegas.mgerrit.fragments.TimePickerFragment;
+import com.jbirdvegas.mgerrit.search.AgeSearch;
+import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
 import java.util.Collection;
 
@@ -125,6 +149,54 @@ public abstract class SearchCategory<K extends SearchKeyword> {
             TextView textView = (TextView) view.findViewById(android.R.id.text1);
             textView.setText(getKeyword().getParam());
         }
+        return view;
+    }
+
+    /**
+     * A basic dialogLayout implementation which allows selecting a date and time
+     * @param inflater To inflate the view
+     * @return
+     */
+    protected View getDatetimeDialogView(final Context context,
+                                         final LayoutInflater inflater,
+                                         final DatePickerFragment.DialogListener dateListener,
+                                         final TimePickerFragment.DialogListener timeListener,
+                                         final DateTime dt) {
+        View view = inflater.inflate(R.layout.search_category_date_absolute, null);
+
+        TextView txtDate = (TextView) view.findViewById(R.id.txtSearchDate);
+        TextView txtTime = (TextView) view.findViewById(R.id.txtSearchTime);
+
+        final AppCompatActivity activity = (AppCompatActivity) context;
+
+        txtDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment newFragment = new DatePickerFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(DatePickerFragment.DEFAULT_DATE, dt);
+                // We are not going to find any changes into the future
+                bundle.putLong(DatePickerFragment.MAX_DATE, System.currentTimeMillis());
+                newFragment.setArguments(bundle);
+
+                newFragment.setListener(dateListener);
+                newFragment.show(activity.getFragmentManager(), "datePicker");
+            }
+        });
+
+        txtTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimePickerFragment newFragment = new TimePickerFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(TimePickerFragment.DEFAULT_TIME, dt);
+                newFragment.setArguments(bundle);
+
+                newFragment.setListener(timeListener);
+                newFragment.show(activity.getFragmentManager(), "timePicker");
+            }
+        });
+
         return view;
     }
 

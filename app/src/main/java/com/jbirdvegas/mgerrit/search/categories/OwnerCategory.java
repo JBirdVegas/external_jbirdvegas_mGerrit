@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-package com.jbirdvegas.mgerrit.search;
+package com.jbirdvegas.mgerrit.search.categories;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -34,6 +34,7 @@ import com.jbirdvegas.mgerrit.adapters.UserAdapter;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
+import com.jbirdvegas.mgerrit.search.OwnerSearch;
 
 public class OwnerCategory extends SearchCategory<OwnerSearch> {
     private SimpleCursorAdapter mAdapter;

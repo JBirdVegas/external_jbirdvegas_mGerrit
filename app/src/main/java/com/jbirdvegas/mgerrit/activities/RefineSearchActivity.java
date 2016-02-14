@@ -35,14 +35,15 @@ import android.widget.SearchView;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.SearchCategoryAdapter;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
-import com.jbirdvegas.mgerrit.search.BeforeCategory;
-import com.jbirdvegas.mgerrit.search.BranchCategory;
-import com.jbirdvegas.mgerrit.search.OwnerCategory;
-import com.jbirdvegas.mgerrit.search.ProjectCategory;
-import com.jbirdvegas.mgerrit.search.SearchCategory;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
-import com.jbirdvegas.mgerrit.search.StarredCategory;
-import com.jbirdvegas.mgerrit.search.TopicCategory;
+import com.jbirdvegas.mgerrit.search.categories.AfterCategory;
+import com.jbirdvegas.mgerrit.search.categories.BeforeCategory;
+import com.jbirdvegas.mgerrit.search.categories.BranchCategory;
+import com.jbirdvegas.mgerrit.search.categories.OwnerCategory;
+import com.jbirdvegas.mgerrit.search.categories.ProjectCategory;
+import com.jbirdvegas.mgerrit.search.categories.SearchCategory;
+import com.jbirdvegas.mgerrit.search.categories.StarredCategory;
+import com.jbirdvegas.mgerrit.search.categories.TopicCategory;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.ArrayList;
@@ -91,6 +92,7 @@ public class RefineSearchActivity extends AppCompatActivity {
         categories.add(new ProjectCategory());
         categories.add(new StarredCategory());
         categories.add(new TopicCategory());
+        categories.add(new AfterCategory());
         categories.add(new BeforeCategory());
 
         Collection<SearchKeyword> keywords = getIntent().getParcelableArrayListExtra(SEARCH_KEYWORDS);

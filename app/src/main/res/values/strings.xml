@@ -241,4 +241,5 @@
     <string name="search_category_starred">Starred</string>
     <string name="search_category_starred_off">starred and unstarred</string>
     <string name="search_category_before">Updated before</string>
+    <string name="search_category_after">Updated after</string>
 </resources>
