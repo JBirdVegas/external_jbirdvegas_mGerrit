@@ -20,24 +20,23 @@ class VersionHelper {
     // this class will manage its own version incrementing
     VersionHelper increment() {
         if (mProject.hasProperty('incrementVersion') && mProject.properties['incrementVersion']) {
-            increment()
-        }
-        println("Original version: ${getVersionName()}")
-        // increment last version part
-        parts[parts.length - 1] = parts[parts.length - 1].toInteger() + 1
-        println("Incremented version: ${getVersionName()}")
+            println("Original version: ${getVersionName()}")
+            // increment last version part
+            parts[parts.length - 1] = parts[parts.length - 1].toInteger() + 1
+            println("Incremented version: ${getVersionName()}")
 
-        // write the updated properties to file
-        FileOutputStream outStream = null;
-        try {
-            versionProps.put(KEY_VERSION, getVersionName())
-            // Persist. Since bot will always increment before release using the
-            // version xxx.xxx.000 is impossible. Note this quirk in the version file
-            versionProps.store(new FileOutputStream(versionFile),
-                    "mGerrit build bot will increment this version")
-        } finally {
-            if (outStream != null) {
-                outStream.close()
+            // write the updated properties to file
+            FileOutputStream outStream = null;
+            try {
+                versionProps.put(KEY_VERSION, getVersionName())
+                // Persist. Since bot will always increment before release using the
+                // version xxx.xxx.000 is impossible. Note this quirk in the version file
+                versionProps.store(new FileOutputStream(versionFile),
+                        "mGerrit build bot will increment this version")
+            } finally {
+                if (outStream != null) {
+                    outStream.close()
+                }
             }
         }
         return this
