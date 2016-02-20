@@ -20,7 +20,7 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.google.gerrit.extensions.api.changes.Changes;
+import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
@@ -29,6 +29,7 @@ import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.helpers.ApiHelper;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
 import org.jetbrains.annotations.NotNull;
@@ -63,24 +64,19 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
     @Override
     ChangeInfo getData(GerritRestApi gerritApi) throws RestApiException {
-        Changes changes = gerritApi.changes();
         EnumSet<ListChangesOption> options = queryOptions();
+        ChangeApi changes;
         try {
-            return changes.id(mChangeId).get(options);
+            changes = ApiHelper.fetchChange(mContext, gerritApi, mChangeId, mChangeNumber);
+            return changes.get(options);
         } catch (IllegalArgumentException e) {
-            /* We may have a situation where multiple changes have the same change id
-             * this usually occurs when cherry-picking or reverting a commit.
-             * We have to fallback to the legacy change number
-             * See: http://review.cyanogenmod.org/#/q/change:I6c7a14a9ab4090b4aabf5de7663f5de51bdc4615
-             */
-            if (mChangeNumber > 0) {
-                return changes.id(mChangeNumber).get(options);
-            } else {
+            if (mChangeNumber <= 0) {
                 // We don't have anything we can use to uniquely identify the change we are trying to fetch
                 throw new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
+            } else {
+                throw e;
             }
         }
-
     }
 
     @Override
