@@ -42,11 +42,13 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-import de.greenrobot.event.EventBus;
 import hugo.weaving.DebugLog;
 
 /**
@@ -290,9 +292,9 @@ public class PatchSetViewerActivity extends BaseDrawerActivity
         setTitle(String.format(s, commitNumber));
     }
 
-    @Keep
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
     // Listen for processed search query changes
-    public void onEventMainThread(SearchQueryChanged ev) {
+    public void onSearchQueryChanged(SearchQueryChanged ev) {
         getSupportLoaderManager().restartLoader(0, null, this);
     }
 }

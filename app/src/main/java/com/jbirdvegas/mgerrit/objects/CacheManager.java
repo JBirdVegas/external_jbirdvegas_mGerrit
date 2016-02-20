@@ -27,7 +27,8 @@ import com.anupcowkur.reservoir.ReservoirPutCallback;
 import com.jbirdvegas.mgerrit.message.CacheDataRetrieved;
 import com.jbirdvegas.mgerrit.message.CacheFailure;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+
 
 public class CacheManager<T> {
 

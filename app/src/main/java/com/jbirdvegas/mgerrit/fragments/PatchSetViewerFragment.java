@@ -68,11 +68,13 @@ import com.jbirdvegas.mgerrit.objects.FilesCAB;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 
-import de.greenrobot.event.EventBus;
 
 /**
  * Class handles populating the screen with several
@@ -526,14 +528,14 @@ public class PatchSetViewerFragment extends Fragment
         onLoadFinished(cursorLoader, null);
     }
 
-    @Keep
-    public void onEventMainThread(StatusSelected ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStatusChanged(StatusSelected ev) {
         setStatus(ev.getStatus());
         loadChange(false);
     }
 
-    @Keep
-    public void onEventMainThread(ChangeLoadingFinished ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onChangeLoaded(ChangeLoadingFinished ev) {
         String status = ev.getStatus();
 
         // We may have got a broadcast saying that data from another tab has been loaded.
@@ -543,8 +545,8 @@ public class PatchSetViewerFragment extends Fragment
         }
     }
 
-    @Keep
-    public void onEventMainThread(CacheDataRetrieved<String> ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCachedCommentLoaded(CacheDataRetrieved<String> ev) {
         if (ev.getKey().equals(mCacheCommentKey) && mCommentText != null) {
             // Overwrite the text as it is automatically populated with the text initially entered into the quick comment
             // TODO: Alert message whether to restore if the length is > 1
@@ -555,8 +557,8 @@ public class PatchSetViewerFragment extends Fragment
         }
     }
 
-    @Keep
-    public void onEventMainThread(Finished ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommentSuccess(Finished ev) {
         Intent intent = ev.getIntent();
         Serializable dataType = intent.getSerializableExtra(GerritService.DATA_TYPE_KEY);
         if (dataType == GerritService.DataType.Comment) {

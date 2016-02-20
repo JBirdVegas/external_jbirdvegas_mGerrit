@@ -46,9 +46,12 @@ import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.Serializable;
 
-import de.greenrobot.event.EventBus;
 
 public class ProjectsList extends BaseDrawerActivity
     implements LoaderManager.LoaderCallbacks<Cursor>,
@@ -286,16 +289,16 @@ public class ProjectsList extends BaseDrawerActivity
         return false;
     }
 
-    @Keep
-    public void onEventMainThread(StartingRequest ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStartingLoadingProjects(StartingRequest ev) {
         Intent intent = ev.getIntent();
         if (intent.getSerializableExtra(GerritService.DATA_TYPE_KEY) == GerritService.DataType.Project) {
             mSwipeLayout.setRefreshing(true);
         }
     }
 
-    @Keep
-    public void onEventMainThread(Finished ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFinishedLoadingProjects(Finished ev) {
         Intent intent = ev.getIntent();
         Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
         if (ev.getItems() < 1 && dataType == GerritService.DataType.Project) {
@@ -303,8 +306,8 @@ public class ProjectsList extends BaseDrawerActivity
         }
     }
 
-    @Keep
-    public void onEventMainThread(ErrorDuringConnection ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onConnectionError(ErrorDuringConnection ev) {
         Intent intent = ev.getIntent();
         if (intent.getSerializableExtra(GerritService.DATA_TYPE_KEY) == GerritService.DataType.Project) {
             mSwipeLayout.setRefreshing(false);

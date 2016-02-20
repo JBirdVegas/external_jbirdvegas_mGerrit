@@ -37,9 +37,12 @@ import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.Serializable;
 
-import de.greenrobot.event.EventBus;
 
 public class CommentFragment extends Fragment {
 
@@ -249,8 +252,8 @@ public class CommentFragment extends Fragment {
         ad.create().show();
     }
 
-    @Keep
-    public void onEventMainThread(Finished ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCommented(Finished ev) {
         Serializable dataType = ev.getIntent().getSerializableExtra(GerritService.DATA_TYPE_KEY);
         if (dataType == GerritService.DataType.Comment) {
             // Commented successfully, remove comment from cache and go back to the change details

@@ -31,6 +31,7 @@ import com.jbirdvegas.mgerrit.objects.EventQueue;
 import com.jbirdvegas.mgerrit.objects.GerritMessage;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
+import com.urswolfer.gerrit.client.rest.http.HttpStatusException;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -77,9 +78,21 @@ public class StarProcessor extends SyncProcessor<String> {
     @Override
     protected String getData(GerritRestApi gerritApi) throws RestApiException {
         AccountApi self = gerritApi.accounts().self();
-        if (mIsStarring) self.starChange(mChangeId);
-        else self.unstarChange(mChangeId);
+        try {
+            if (mIsStarring) self.starChange(mChangeId);
+            else self.unstarChange(mChangeId);
+        } catch (HttpStatusException e) {
+            if (e.getStatusCode() == 422 || e.getStatusCode() == 404) {
+                // We may have a case where multiple changes have the same change id.
+                int changeNumber = mIntent.getIntExtra(GerritService.CHANGE_NUMBER, 0);
+                if (mIsStarring) self.starChange(String.valueOf(changeNumber));
+                else self.unstarChange(String.valueOf(changeNumber));
+            } else {
+                throw e; // Don't know how to recover from this
+            }
+        }
         return "204";
+
     }
 
     @Override

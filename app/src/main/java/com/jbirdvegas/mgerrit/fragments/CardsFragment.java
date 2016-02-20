@@ -69,12 +69,14 @@ import com.jbirdvegas.mgerrit.tasks.GerritService.Direction;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Set;
 
-import de.greenrobot.event.EventBus;
 import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
 public abstract class CardsFragment extends Fragment
@@ -226,11 +228,13 @@ public abstract class CardsFragment extends Fragment
 
         EasyTracker.getInstance(getActivity()).activityStart(getActivity());
 
-        mEventBus.registerSticky(this);
+        mEventBus.register(this);
 
+        // We would get this event after using the viewpager in the Patchset Viewer
         NewChangeSelected ev = mEventBus.getStickyEvent(NewChangeSelected.class);
         if (ev != null && ev.compareStatuses(getQuery())) {
             mAdapter.setSelectedChangeId(ev.getChangeId());
+            mEventBus.removeStickyEvent(ev); // Only remove if we processed it
         }
 
         // If we have filters active, show the option to refine the search
@@ -493,8 +497,10 @@ public abstract class CardsFragment extends Fragment
 
 
     // Listen for processed search query changes
-    @Keep
-    public void onEventMainThread(SearchQueryChanged ev) {
+    @Keep @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onSearchQueryChanged(SearchQueryChanged ev) {
+        // mEventBus.removeStickyEvent(ev);
+
         String to = ev.getClazzName();
         if (isAdded() && mParent.getClass().getSimpleName().equals(to)) {
             getLoaderManager().restartLoader(0, null, this);
@@ -505,9 +511,9 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
-    @Keep
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
     /* Tell the endless adapter we have finished loading when there was no data */
-    public void onEventMainThread(Finished ev) {
+    public void onFinishedLoadingChanges(Finished ev) {
         if (!getQuery().equals(ev.getStatus())) {
             return;
         }
@@ -533,22 +539,22 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
-    @Keep
-    public void onEventMainThread(StartingRequest ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStartingLoadingChanges(StartingRequest ev) {
         if (getQuery().equals(ev.getStatus())) {
             onStartRefresh();
         }
     }
 
-    @Keep
-    public void onEventMainThread(ErrorDuringConnection ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onConnectionError(ErrorDuringConnection ev) {
         if (getQuery().equals(ev.getStatus())) {
             onStopRefresh();
         }
     }
 
-    @Keep
-    public void onEventMainThread(SearchStateChanged ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSearchStateChanged(SearchStateChanged ev) {
         boolean show = ev.isSearchVisible();
         // Show the refine search card when their are filters (SearchKeywords) set
         if (!ev.isSearchVisible() && mSearchView.getFilterCount() > 0) show = true;

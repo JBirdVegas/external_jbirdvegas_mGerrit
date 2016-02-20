@@ -21,12 +21,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
+import com.jbirdvegas.mgerrit.helpers.ApiHelper;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
 import org.jetbrains.annotations.NotNull;
@@ -77,10 +79,11 @@ public class ReviewProcessor extends SyncProcessor<ChangeInfo> {
                 }
             }
 
-            gerritApi.changes().id(mChangeId).current().review(reviewInput);
+            ChangeApi change = ApiHelper.fetchChange(mContext, gerritApi, mChangeId, null);
+            change.current().review(reviewInput);
 
             // We need to look up the change again so we know what was set on the change
-            return gerritApi.changes().id(mChangeId).get(queryOptions());
+            return change.get(queryOptions());
         } else {
             return null;
         }

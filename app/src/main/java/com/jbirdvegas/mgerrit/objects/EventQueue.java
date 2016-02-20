@@ -19,10 +19,11 @@ package com.jbirdvegas.mgerrit.objects;
 
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.HashSet;
 import java.util.Iterator;
 
-import de.greenrobot.event.EventBus;
 
 /**
  * Singleton class facilitating a publisher-subscriber model of events processing.

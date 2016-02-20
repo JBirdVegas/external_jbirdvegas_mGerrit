@@ -10,10 +10,11 @@ import com.jbirdvegas.mgerrit.message.ChangeDiffLoaded;
 import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import de.greenrobot.event.EventBus;
 
 /*
  * Copyright (C) 2015 Android Open Kang Project (AOKP)
