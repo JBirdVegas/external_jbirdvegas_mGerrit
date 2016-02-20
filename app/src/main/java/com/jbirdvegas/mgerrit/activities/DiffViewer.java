@@ -45,9 +45,12 @@ import com.jbirdvegas.mgerrit.views.DiffTextView;
 import com.jbirdvegas.mgerrit.views.LoadingView;
 import com.jbirdvegas.mgerrit.views.StripedImageView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.regex.Pattern;
 
-import de.greenrobot.event.EventBus;
 
 public class DiffViewer extends BaseDrawerActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -258,8 +261,8 @@ public class DiffViewer extends BaseDrawerActivity
         }
     }
 
-    @Keep
-    public void onEventMainThread(ChangeDiffLoaded ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTextDiffLoaded(ChangeDiffLoaded ev) {
         // TODO: Check if this is the event we requested.
         String diff = ev.getDiff();
         if (diff != null) setTextView(diff);
@@ -267,8 +270,8 @@ public class DiffViewer extends BaseDrawerActivity
         switchViews(DiffType.Text);
     }
 
-    @Keep
-    public void onEventMainThread(ImageLoaded ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onImageLoaded(ImageLoaded ev) {
         Bitmap bitmap = ev.getImage();
         String filePath = ev.getFilePath();
         ChangedFileInfo.Status fileStatus = ev.getFileStatus();
@@ -289,8 +292,8 @@ public class DiffViewer extends BaseDrawerActivity
         }
     }
 
-    @Keep
-    public void onEventMainThread(ErrorDuringConnection ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onConnectionError(ErrorDuringConnection ev) {
         if (Tools.isImage(mFilePath)) {
             mDiffTextView.setText(R.string.failed_to_load_image);
         } else {

@@ -35,7 +35,7 @@ dependencies {
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
     compile 'com.nineoldandroids:library:2.4.0'
-    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'org.greenrobot:eventbus:3.0.0'
     compile 'joda-time:joda-time:2.9.2'
     compile 'org.ajoberstar:gradle-git:1.1.0'
     compile 'se.emilsjolander:stickylistheaders:2.6.0'

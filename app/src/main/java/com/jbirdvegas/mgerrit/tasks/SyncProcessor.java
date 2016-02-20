@@ -36,10 +36,10 @@ import com.urswolfer.gerrit.client.rest.GerritRestApi;
 import com.urswolfer.gerrit.client.rest.GerritRestApiFactory;
 import com.urswolfer.gerrit.client.rest.http.HttpStatusException;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import de.greenrobot.event.EventBus;
 
 /**
  * Base class that the GerritService expects as a contract to synchronise data from the

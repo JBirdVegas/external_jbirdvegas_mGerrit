@@ -41,6 +41,7 @@ import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
+import org.greenrobot.eventbus.EventBus;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -53,7 +54,6 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import de.greenrobot.event.EventBus;
 
 public class Tools {
 

@@ -35,6 +35,7 @@ import com.jbirdvegas.mgerrit.search.OwnerSearch;
 import com.jbirdvegas.mgerrit.search.ProjectSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +48,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.greenrobot.event.EventBus;
 
 public class GerritSearchView extends SearchView
         implements SearchView.OnQueryTextListener,

@@ -53,7 +53,10 @@ import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.NotSupported;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 
 public class GerritControllerActivity extends BaseDrawerActivity {
 
@@ -273,8 +276,8 @@ public class GerritControllerActivity extends BaseDrawerActivity {
         builder.show();
     }
 
-    @Keep
-    public void onEventMainThread(GerritChanged ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onGerritChanged(GerritChanged ev) {
         onGerritChanged(ev.getNewGerritUrl());
         super.onGerritChanged(ev);
     }
@@ -282,8 +285,8 @@ public class GerritControllerActivity extends BaseDrawerActivity {
     /**
      * Handler for when a change is selected in the list.
      */
-    @Keep
-    public void onEventMainThread(NewChangeSelected ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNewChangeSelected(NewChangeSelected ev) {
         String changeId = ev.getChangeId();
         SelectedChange.setSelectedChange(this, changeId);
 
@@ -292,8 +295,8 @@ public class GerritControllerActivity extends BaseDrawerActivity {
         ev.inflate(this);
     }
 
-    @Keep
-    public void onEventMainThread(NotSupported ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUnsupportedEvent(NotSupported ev) {
         Toast.makeText(this, ev.getMessage(), Toast.LENGTH_LONG).show();
     }
 }

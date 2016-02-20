@@ -12,6 +12,7 @@ import com.urswolfer.gerrit.client.rest.GerritRestApi;
 import com.urswolfer.gerrit.client.rest.RestClient;
 
 import org.apache.http.HttpResponse;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.zip.ZipInputStream;
 
-import de.greenrobot.event.EventBus;
 
 /*
  * Copyright (C) 2015 Android Open Kang Project (AOKP)

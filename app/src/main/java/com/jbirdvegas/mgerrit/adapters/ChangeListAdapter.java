@@ -39,6 +39,7 @@ import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.objects.Categorizable;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
@@ -47,7 +48,6 @@ import org.joda.time.format.DateTimeFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import de.greenrobot.event.EventBus;
 
 public class ChangeListAdapter extends SimpleCursorAdapter implements Categorizable,
         PopupMenu.OnMenuItemClickListener {

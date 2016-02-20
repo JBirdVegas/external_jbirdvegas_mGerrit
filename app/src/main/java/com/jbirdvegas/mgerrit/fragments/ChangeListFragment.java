@@ -32,11 +32,11 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.message.StatusSelected;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-import de.greenrobot.event.EventBus;
 
 public class ChangeListFragment extends Fragment {
 

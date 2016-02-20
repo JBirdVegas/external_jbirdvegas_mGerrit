@@ -28,7 +28,8 @@ import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.UserAccountInfo;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+
 
 public class AccountProcessor extends SyncProcessor<UserAccountInfo> {
 

@@ -46,9 +46,11 @@ import com.jbirdvegas.mgerrit.search.IsSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
-import java.util.ArrayList;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
-import de.greenrobot.event.EventBus;
+import java.util.ArrayList;
 
 public class SigninActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>
@@ -115,7 +117,7 @@ public class SigninActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().registerSticky(this);
+        EventBus.getDefault().register(this);
         mActive = true;
     }
 
@@ -178,8 +180,8 @@ public class SigninActivity extends AppCompatActivity
         // Not used
     }
 
-    @Keep
-    public void onEventMainThread(SigninCompleted ev) {
+    @Keep @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onSigninSucess(SigninCompleted ev) {
         btnSignIn.setProgress(100);
         findViewById(R.id.txtAuthFailure).setVisibility(View.GONE);
         findViewById(R.id.btnLogout).setVisibility(View.VISIBLE);
@@ -222,8 +224,8 @@ public class SigninActivity extends AppCompatActivity
         }
     }
 
-    @Keep
-    public void onEventMainThread(ErrorDuringConnection ev) {
+    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onConnectionError(ErrorDuringConnection ev) {
         btnSignIn.setProgress(-1);
         if (ev.getException().getClass() == AuthFailureError.class) {
             findViewById(R.id.txtAuthFailure).setVisibility(View.VISIBLE);
