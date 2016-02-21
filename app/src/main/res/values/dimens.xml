@@ -17,10 +17,9 @@
   -->
 
 <resources>
-    <dimen name="sticky_height">120dp</dimen>
     <dimen name="gravatar_image_padding">4dip</dimen>
-    <dimen name="standard_padding">8dip</dimen>
-    <dimen name="extra_padding">16dip</dimen>
+    <dimen name="standard_padding">8dp</dimen>
+    <dimen name="extra_padding">16dp</dimen>
     <dimen name="default_left_card_start">5dip</dimen>
     <dimen name="reviewer_padding_top">2dip</dimen>
     <dimen name="reviewer_padding_left_indent">15dip</dimen>
@@ -31,6 +30,8 @@
     <dimen name="commit_card_stroke_padding">2dp</dimen>
     <dimen name="prop_label_padding_left">8dip</dimen>
     <dimen name="project_row_padding">2dp</dimen>
+    <dimen name="material_drawer_account_header_height">148dp</dimen>
+    <dimen name="small_padding">4dp</dimen>
 
     <!-- Text sizes -->
     <dimen name="text_size_extra_micro">10.0sp</dimen>

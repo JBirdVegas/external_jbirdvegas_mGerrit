@@ -91,7 +91,8 @@
                 android:value=".activities.PrefsActivity" />
         </activity>
         <activity android:name=".activities.SigninActivity"
-            android:parentActivityName=".activities.GerritControllerActivity">
+            android:parentActivityName=".activities.GerritControllerActivity"
+            android:windowSoftInputMode="stateVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GerritControllerActivity" />
