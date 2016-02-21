@@ -52,7 +52,7 @@
         </activity>
         <activity android:name=".activities.PatchSetViewerActivity"
             android:parentActivityName=".activities.GerritControllerActivity"
-            android:windowSoftInputMode="stateUnchanged|adjustPan">
+            android:windowSoftInputMode="stateUnchanged|adjustResize">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <!--See: http://developer.android.com/training/implementing-navigation/ancestral.html -->
             <meta-data

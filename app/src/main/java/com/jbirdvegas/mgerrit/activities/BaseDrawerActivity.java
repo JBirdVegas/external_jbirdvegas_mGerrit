@@ -34,7 +34,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.activities.SigninActivity;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
@@ -126,7 +125,8 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        boolean result = onMenuItemSelected(drawerItem.getIdentifier());
+                        // We need to cast the identifier down to an int as cannot use long with switch
+                        boolean result = onMenuItemSelected((int) drawerItem.getIdentifier());
 
                         if (drawerItem.getTag() instanceof GerritDetails) {
                             GerritDetails gerrit = (GerritDetails) drawerItem.getTag();
