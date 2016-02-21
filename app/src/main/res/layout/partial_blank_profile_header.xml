@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2016 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2016
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/material_drawer_account_header_height"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/material_drawer_account_header_background"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_drawer_account_header_height"
+        android:src="@drawable/header"
+        android:scaleType="fitXY" />
+
+    <RelativeLayout
+        android:id="@+id/material_drawer_account_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_drawer_account_header_height">
+
+        <LinearLayout
+            android:id="@+id/material_drawer_account_header_text_section"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/standard_padding"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingRight="56dp">
+
+            <TextView
+                android:id="@+id/txtHeaderLine1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/extra_padding"
+                android:lines="1"
+                android:singleLine="true"
+                android:textSize="@dimen/text_size_small"
+                tools:text="CyanogenMod"
+                android:textColor="@color/text_dark"/>
+
+            <TextView
+                android:id="@+id/txtHeaderLine2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/extra_padding"
+                android:lines="1"
+                android:singleLine="true"
+                android:textSize="@dimen/text_size_small"
+                android:text="@string/gerrit_signin_signin"
+                android:textColor="@color/text_dark"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</FrameLayout>

@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/checkable_view_padding"
-    android:paddingRight="@dimen/checkable_view_padding">
+    android:paddingRight="@dimen/checkable_view_padding"
+    android:paddingTop="@dimen/small_padding"
+    android:paddingBottom="@dimen/small_padding">
 
     <TextView
         android:id="@+id/txtGerritName"
@@ -29,6 +31,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
+        android:gravity="center_vertical"
+        android:layout_centerVertical="true"
         android:clickable="false"
         android:focusable="false"
         android:checkMark="?android:attr/listChoiceIndicatorSingle"/>

@@ -17,18 +17,17 @@ package com.jbirdvegas.mgerrit.helpers;
  *  limitations under the License.
  */
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.jbirdvegas.mgerrit.R;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -112,39 +111,5 @@ public class GravatarHelper {
         );
         requestQueue.add(imageRequest);
         return imageRequest;
-    }
-
-    public static void attachGravatarToTextView(final TextView textView, String email,
-                                                RequestQueue imageRequest) {
-        String url = getGravatarUrl(email);
-        if (url == null) return;
-
-        imageRequest.add(new ImageRequest(url, new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap bitmap) {
-                Resources resources = textView.getResources();
-                textView.setCompoundDrawablesWithIntrinsicBounds(
-                        new BitmapDrawable(resources, bitmap),
-                        null,
-                        null,
-                        null);
-                textView.setCompoundDrawablePadding(
-                        Math.round(
-                                resources.getDimension(
-                                        R.dimen.gravatar_image_padding)));
-            }
-        },
-                // set a basic max height/width
-                // but the textview handles the actual resizing
-                80, 80,
-                Bitmap.Config.ARGB_8888,
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        // don't do anything just show the textview as is
-                        Log.e(TAG, "http Volley request failed!", volleyError);
-                    }
-                }
-        ));
     }
 }

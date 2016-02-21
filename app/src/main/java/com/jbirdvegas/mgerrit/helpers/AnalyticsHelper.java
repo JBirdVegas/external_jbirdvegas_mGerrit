@@ -34,6 +34,7 @@ public class AnalyticsHelper {
     public static final String GA_THEME_SET_ON_OPEN = "ui_theme";
     public static final String EVENT_CHANGE_COMMENT_ADDED = "Change comment added";
     public static final String EVENT_LOGGED_IN = "User signed in";
+    public static final String CHANGE_NOT_UNIQUE = "Change not unique";
 
 
     public static void sendAnalyticsEvent(Context context,

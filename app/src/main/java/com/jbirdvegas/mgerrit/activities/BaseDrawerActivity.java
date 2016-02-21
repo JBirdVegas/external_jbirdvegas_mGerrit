@@ -17,24 +17,26 @@
 
 package com.jbirdvegas.mgerrit.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.activities.SigninActivity;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
@@ -82,6 +84,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
     private AbstractDrawerImageLoader mDrawerImageLoader = new AbstractDrawerImageLoader() {
         @Override
         public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+            imageView.setImageDrawable(placeholder);
             ImageRequest imageRequest = GravatarHelper.imageVolleyRequest(imageView, uri.toString(), mRequestQuery);
             imageView.setTag(R.id.imageRequest, imageRequest);
         }
@@ -90,6 +93,16 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
         public void cancel(ImageView imageView) {
             ImageRequest imageRequest = (ImageRequest) imageView.getTag(R.id.imageRequest);
             if (imageRequest != null) imageRequest.cancel();
+        }
+
+        @Override
+        public Drawable placeholder(Context ctx) {
+            return ContextCompat.getDrawable(ctx, R.drawable.gravatar);
+        }
+
+        @Override
+        public Drawable placeholder(Context ctx, String tag) {
+            return placeholder(ctx);
         }
     };
 
@@ -126,7 +139,8 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        boolean result = onMenuItemSelected(drawerItem.getIdentifier());
+                        // We need to cast the identifier down to an int as cannot use long with switch
+                        boolean result = onMenuItemSelected((int) drawerItem.getIdentifier());
 
                         if (drawerItem.getTag() instanceof GerritDetails) {
                             GerritDetails gerrit = (GerritDetails) drawerItem.getTag();
@@ -199,6 +213,9 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                             .withIcon(Uri.parse(GravatarHelper.getGravatarUrl(email))), 0
             );
             mProfileHeader.setDrawer(mDrawer);
+
+        } else {
+            mDrawer.setHeader(setBlankProfileView());
         }
     }
 
@@ -325,5 +342,27 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                 navigationSetSelectedById(R.id.menu_changes);
             }
         }
+    }
+
+    /**
+     * View to use in case the user is not signed in
+     * @return
+     */
+    private View setBlankProfileView() {
+        View header = getLayoutInflater().inflate(R.layout.partial_blank_profile_header, null);
+        String gerrit = PrefsFragment.getCurrentGerritName(this);
+        TextView tv = (TextView) header.findViewById(R.id.txtHeaderLine1);
+        tv.setText(gerrit);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BaseDrawerActivity.this, SigninActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
+            }
+        });
+        return header;
+
     }
 }

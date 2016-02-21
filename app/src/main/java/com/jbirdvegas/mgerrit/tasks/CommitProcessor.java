@@ -29,6 +29,7 @@ import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
 import com.jbirdvegas.mgerrit.database.Revisions;
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.ApiHelper;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
 
@@ -70,12 +71,11 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
             changes = ApiHelper.fetchChange(mContext, gerritApi, mChangeId, mChangeNumber);
             return changes.get(options);
         } catch (IllegalArgumentException e) {
-            if (mChangeNumber <= 0) {
-                // We don't have anything we can use to uniquely identify the change we are trying to fetch
-                throw new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
-            } else {
-                throw e;
-            }
+            // Track this so we can find what changes cause this issue
+            AnalyticsHelper.sendAnalyticsEvent(mContext, getClass().getSimpleName(),
+                    AnalyticsHelper.CHANGE_NOT_UNIQUE, mChangeId, null);
+            // We don't have anything we can use to uniquely identify the change we are trying to fetch
+            throw new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
         }
     }
 
