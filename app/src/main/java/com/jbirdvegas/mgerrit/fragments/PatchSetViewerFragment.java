@@ -92,7 +92,6 @@ public class PatchSetViewerFragment extends Fragment
     private String mSelectedChange;
     private String mStatus;
     private int mChangeNumber;
-    private String mCacheCommentKey;
 
     private CommitDetailsAdapter mAdapter;
     private FilesCAB mFilesCAB;
@@ -132,6 +131,8 @@ public class PatchSetViewerFragment extends Fragment
         mParent = this.getActivity();
         mContext = mParent.getApplicationContext();
     }
+
+
 
     private void init() {
         View currentFragment = this.getView();
@@ -263,7 +264,8 @@ public class PatchSetViewerFragment extends Fragment
                 i.putExtra(CommentFragment.CHANGE_STATUS, mStatus);
                 // Have to call toString here as the object cannot reference the EditText view
                 i.putExtra(CommentFragment.MESSAGE, mCommentText.getText().toString());
-                CacheManager.put(mCacheCommentKey, mCommentText.getText().toString(), false);
+
+                CacheManager.put(CacheManager.getCommentKey(mSelectedChange), mCommentText.getText().toString(), false);
                 // Shared element transition for the edit text, we are also going to copy over the text
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(mParent,
                         mCommentText, "comment_message");
@@ -547,7 +549,8 @@ public class PatchSetViewerFragment extends Fragment
 
     @Keep @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCachedCommentLoaded(CacheDataRetrieved<String> ev) {
-        if (ev.getKey().equals(mCacheCommentKey) && mCommentText != null) {
+        String cacheCommentKey = CacheManager.getCommentKey(mSelectedChange);
+        if (ev.getKey().equals(cacheCommentKey) && mCommentText != null) {
             // Overwrite the text as it is automatically populated with the text initially entered into the quick comment
             // TODO: Alert message whether to restore if the length is > 1
             if (mCommentText.length() < 1) {
@@ -563,7 +566,8 @@ public class PatchSetViewerFragment extends Fragment
         Serializable dataType = intent.getSerializableExtra(GerritService.DATA_TYPE_KEY);
         if (dataType == GerritService.DataType.Comment) {
             // Commented successfully, remove comment from cache
-            CacheManager.remove(mCacheCommentKey, true);
+            String cacheCommentKey = CacheManager.getCommentKey(mSelectedChange);
+            CacheManager.remove(cacheCommentKey, true);
             String message = getResources().getString(R.string.review_sent_message, mSelectedChange);
             Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
         }

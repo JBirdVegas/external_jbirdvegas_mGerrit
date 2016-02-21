@@ -85,7 +85,7 @@
         </activity>
         <activity android:name=".activities.GerritSwitcher"
             android:parentActivityName=".activities.PrefsActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="stateUnchanged|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.PrefsActivity" />
@@ -97,7 +97,8 @@
                 android:value=".activities.GerritControllerActivity" />
         </activity>
         <activity android:name=".activities.ReviewActivity"
-            android:parentActivityName=".activities.PatchSetViewerActivity">
+            android:parentActivityName=".activities.PatchSetViewerActivity"
+            android:windowSoftInputMode="stateUnchanged|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.PatchSetViewerActivity" />
