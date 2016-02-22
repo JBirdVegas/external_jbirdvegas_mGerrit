@@ -213,7 +213,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
                             .withIcon(Uri.parse(GravatarHelper.getGravatarUrl(email))), 0
             );
             mProfileHeader.setDrawer(mDrawer);
-
+            mDrawer.setHeader(mProfileHeader.getView());
         } else {
             mDrawer.setHeader(setBlankProfileView());
         }

@@ -127,13 +127,15 @@ apply plugin: 'tasks-plugin'
  */
 task fullRelease << {
     // just an anchor for complete release builds
+    // Build script below: should run commit before build otherwise the resulting apk will not have the latest version number attached
+    // gradle clean -PincrementVersion=true style commit build push
 }
 
 // config the style checks to run during the testing phase
 //check.dependsOn 'checkstyle'
 // Configure commit to only run after clean builds
-//commitFiles.dependsOn 'build'
+commit.dependsOn 'clean', 'style', 'assembleRelease'
 // Pushing requires having committed files and created tags
-//push.dependsOn 'commitFiles'
+push.dependsOn 'commit'
 // full release can only be successful if all pushes were successful
-//fullRelease.dependsOn 'push'
+fullRelease.dependsOn 'push'
