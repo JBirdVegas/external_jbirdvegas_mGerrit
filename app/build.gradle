@@ -134,7 +134,7 @@ task fullRelease << {
 // config the style checks to run during the testing phase
 //check.dependsOn 'checkstyle'
 // Configure commit to only run after clean builds
-commit.dependsOn 'clean', 'style', 'assembleRelease'
+commit.dependsOn 'style', 'assembleRelease'
 // Pushing requires having committed files and created tags
 push.dependsOn 'commit'
 // full release can only be successful if all pushes were successful
