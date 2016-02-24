@@ -99,6 +99,10 @@ public class DiffTextView extends TextView {
         }
     }
 
+    public boolean hasDiff() {
+        return this.length() > 0;
+    }
+
     @Contract("null -> null")
     protected SpannableString spanColoredText(String incoming) {
         if (incoming == null) return null;
