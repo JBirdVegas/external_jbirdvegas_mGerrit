@@ -59,6 +59,7 @@ public class DiffViewer extends BaseDrawerActivity
     private DiffTextView mDiffTextView;
     private Spinner mSpinner;
     private FileAdapter mAdapter;
+
     private final AdapterView.OnItemSelectedListener mSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -79,7 +80,7 @@ public class DiffViewer extends BaseDrawerActivity
                 makeRequest(mFilePath, status);
             } else {
                 /* Finished restoring the state, resetting the saved file path is enough to make sure
-                 *  this is triggered until the next configuration change */
+                 *  we keep making a new request until the next configuration change */
                 mSelectedFilePath = null;
                 switchViews(DiffType.Text);
             }
@@ -304,13 +305,25 @@ public class DiffViewer extends BaseDrawerActivity
         }
     }
 
-    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    /* Setting this sticky will deliver any events that may have come through during
+     *  a configuration change */
+    @Keep @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onTextDiffLoaded(ChangeDiffLoaded ev) {
-        // TODO: Check if this is the event we requested.
-        String diff = ev.getDiff();
-        if (diff != null) setTextView(diff);
-        else mDiffTextView.setText(getString(R.string.failed_to_get_diff));
-        switchViews(DiffType.Text);
+        // Check if this is the event we requested.
+        int psNumber = ev.getPatchsetNumber();
+        if (ev.getChangeNumber() == mChangeNumber && psNumber == mPatchsetNumber) {
+            String diff = ev.getDiff();
+            if (diff != null) setTextView(diff);
+            else mDiffTextView.setText(getString(R.string.failed_to_get_diff));
+            switchViews(DiffType.Text);
+
+            // Record that we have already loaded this diff (don't need to re-query it)
+            mSelectedPatchsetNumber = psNumber;
+            mSelectedFilePath = mFilePath;
+
+            // Remove the event so we don't process the response again
+            mEventBus.removeStickyEvent(ev);
+        }
     }
 
     @Keep @Subscribe(threadMode = ThreadMode.MAIN)

@@ -59,7 +59,7 @@ dependencies {
 
     compile 'com.anupcowkur:reservoir:2.1'
 
-    compile('com.mikepenz:materialdrawer:5.0.0@aar') {
+    compile('com.mikepenz:materialdrawer:5.0.5@aar') {
         transitive = true
         exclude module: 'appcompat-v7'
     }
