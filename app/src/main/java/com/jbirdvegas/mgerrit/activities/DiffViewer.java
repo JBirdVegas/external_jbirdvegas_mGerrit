@@ -285,7 +285,6 @@ public class DiffViewer extends BaseDrawerActivity
         if (cursorLoader.getId() == LOADER_DIFF) {
             mAdapter.swapCursor(cursor);
             if (cursor != null && cursor.isAfterLast()) {
-                //if (request != null) request.cancel(); TODO: What was this doing?
                 mDiffTextView.setText(getString(R.string.diff_no_files));
             }
 
@@ -326,7 +325,7 @@ public class DiffViewer extends BaseDrawerActivity
         }
     }
 
-    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    @Keep @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onImageLoaded(ImageLoaded ev) {
         Bitmap bitmap = ev.getImage();
         String filePath = ev.getFilePath();

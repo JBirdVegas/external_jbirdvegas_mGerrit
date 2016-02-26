@@ -58,7 +58,7 @@ public class ImageProcessor extends SyncProcessor<Bitmap> {
         /* We don't store images in the database -send out a message instead when we
          * have finished loading it.
          * TODO Cache responses. */
-        EventBus.getDefault().post(new ImageLoaded(getIntent(), getQueueId(), data));
+        EventBus.getDefault().postSticky(new ImageLoaded(getIntent(), getQueueId(), data));
         return 1;
     }
 
