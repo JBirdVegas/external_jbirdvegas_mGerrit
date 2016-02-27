@@ -16,27 +16,45 @@
   ~  limitations under the License.
   -->
 
+<!-- Wrap the layout inside a FrameLayout so we can toggle its visibility instead of adding/removing
+ the header view -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/clickableCardBackground"
-    android:elevation="@dimen/z_offset_medium"
-    android:orientation="horizontal"
-    android:padding="@dimen/standard_padding">
+    android:id="@+id/refine_search_container"
+    android:orientation="vertical">
 
-    <TextView
-        style="?attr/cardTextStyle"
-        android:layout_width="wrap_content"
+    <!-- Hack to remove the permanent blank space at the top of the view, but keep some padding
+      when the refine search card is showing -->
+    <View
+        android:id="@+id/blank_list_divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/standard_padding"
+        android:background="?attr/mainBackgroundColor"/>
+
+    <LinearLayout
+        android:id="@+id/refine_search_wrapper"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/refine_search_title" />
+        android:elevation="@dimen/z_offset_medium"
+        android:orientation="horizontal"
+        android:padding="@dimen/standard_padding"
+        android:background="?attr/clickableCardBackground">
 
-    <TextView
-        android:id="@+id/txtRefineSearchKeywordCount"
-        style="?attr/cardTextStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/standard_padding"
-        tools:text="@string/refine_search_num_keywords" />
+        <TextView
+            style="?attr/cardTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/refine_search_title"/>
 
+        <TextView
+            android:id="@+id/txtRefineSearchKeywordCount"
+            style="?attr/cardTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/standard_padding"
+            tools:text="@string/refine_search_num_keywords" />
+
+    </LinearLayout>
 </LinearLayout>

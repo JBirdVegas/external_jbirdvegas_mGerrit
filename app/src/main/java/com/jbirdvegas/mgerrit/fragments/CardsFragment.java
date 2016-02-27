@@ -157,6 +157,9 @@ public abstract class CardsFragment extends Fragment
         View mCurrentFragment = this.getView();
         RequestQueue mRequestQueue = Volley.newRequestQueue(mParent);
 
+        // We need to setup the SearchView before adding the refine search card
+        mSearchView = (GerritSearchView) mParent.findViewById(R.id.search);
+
         // Setup the list
         int[] to = new int[] { R.id.commit_card_title, R.id.commit_card_commit_owner,
                 R.id.commit_card_project_name, R.id.commit_card_last_updated,
@@ -195,14 +198,16 @@ public abstract class CardsFragment extends Fragment
             }
         });
 
+        /* Call this to set the header view BEFORE the adapter is set to prevent crashes on
+         * Android KitKat and below */
+        addRefineSearchCard();
+
         mHeaderAdapterWrapper = new HeaderAdapterDecorator(mEndlessAdapter, mHeaderAdapter);
         mListView.setAdapter(mHeaderAdapterWrapper);
         mListView.setDrawingListUnderStickyHeader(false);
         mListView.getWrappedList().setDividerHeight(32);
 
         sChangesLimit = mParent.getResources().getInteger(R.integer.changes_limit);
-
-        mSearchView = (GerritSearchView) mParent.findViewById(R.id.search);
 
         mEventBus = EventBus.getDefault();
 
@@ -240,6 +245,8 @@ public abstract class CardsFragment extends Fragment
         // If we have filters active, show the option to refine the search
         if (mSearchView.getFilterCount() > 0) {
             toggleRefineSearchCard(true);
+        } else {
+            toggleRefineSearchCard(false);
         }
     }
 
@@ -457,32 +464,38 @@ public abstract class CardsFragment extends Fragment
         }
     }
 
-    private void toggleRefineSearchCard(boolean show) {
+    private void addRefineSearchCard() {
         LayoutInflater inflater = (LayoutInflater) mParent.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (show && !refineSearchShowing) {
-            if (mRefineSearchCard == null) {
-                mRefineSearchCard = inflater.inflate(R.layout.refine_search_card, null);
-                mRefineSearchCard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Set<SearchKeyword> keywords = mSearchView.getLastQuery();
-                        Intent it = new Intent(mParent, RefineSearchActivity.class);
-                        // The search query so the SearchView in the toolbar is copied over
-                        it.putExtra(RefineSearchActivity.SEARCH_QUERY, mSearchView.getQuery());
-                        // The active SearchKeyword filters to be bound to the SearchCategories
-                        it.putParcelableArrayListExtra(RefineSearchActivity.SEARCH_KEYWORDS, new ArrayList<Parcelable>(keywords));
-                        // Expect a result as we are processing the data of the activity here
-                        startActivityForResult(it, RefineSearchActivity.REFINE_SEARCH_REQUEST);
-                    }
-                });
-            }
-            setFilterCount();
+        if (mRefineSearchCard == null) {
+            mRefineSearchCard = inflater.inflate(R.layout.refine_search_card, null);
+            mRefineSearchCard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Set<SearchKeyword> keywords = mSearchView.getLastQuery();
+                    Intent it = new Intent(mParent, RefineSearchActivity.class);
+                    // The search query so the SearchView in the toolbar is copied over
+                    it.putExtra(RefineSearchActivity.SEARCH_QUERY, mSearchView.getQuery());
+                    // The active SearchKeyword filters to be bound to the SearchCategories
+                    it.putParcelableArrayListExtra(RefineSearchActivity.SEARCH_KEYWORDS, new ArrayList<Parcelable>(keywords));
+                    // Expect a result as we are processing the data of the activity here
+                    startActivityForResult(it, RefineSearchActivity.REFINE_SEARCH_REQUEST);
+                }
+            });
+        }
+        if (!refineSearchShowing) {
             refineSearchShowing = true;
             mListView.addHeaderView(mRefineSearchCard, null, true);
-        } else if (!show && refineSearchShowing) {
-            refineSearchShowing = false;
-            mListView.removeHeaderView(mRefineSearchCard);
+            setFilterCount();
         }
+    }
+
+    private void toggleRefineSearchCard(boolean show) {
+        View wrapper = mRefineSearchCard.findViewById(R.id.refine_search_wrapper);
+        View v = mRefineSearchCard.findViewById(R.id.blank_list_divider);
+        wrapper.setVisibility(show ? View.VISIBLE : View.GONE);
+        v.setVisibility(show ? View.VISIBLE : View.GONE);
+        refineSearchShowing = show;
+        if (show) setFilterCount();
     }
 
     private void setFilterCount() {

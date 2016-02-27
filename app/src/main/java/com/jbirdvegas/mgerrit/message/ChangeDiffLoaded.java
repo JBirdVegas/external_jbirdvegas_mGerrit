@@ -23,11 +23,23 @@ import com.jbirdvegas.mgerrit.objects.GerritMessage;
 public class ChangeDiffLoaded extends GerritMessage {
 
     private final String mChangeDiff;
+    private final int mChangeNumber;
+    private final int mPatchsetNumber;
 
-    public ChangeDiffLoaded(Intent intent, int queueId, String changeDiff) {
+    public ChangeDiffLoaded(Intent intent, int queueId, String changeDiff, int changeNo, int patchsetNo) {
         super(intent, queueId);
         this.mChangeDiff = changeDiff;
+        this.mChangeNumber = changeNo;
+        this.mPatchsetNumber = patchsetNo;
     }
 
     public String getDiff() { return mChangeDiff; }
+
+    public int getChangeNumber() {
+        return mChangeNumber;
+    }
+
+    public int getPatchsetNumber() {
+        return mPatchsetNumber;
+    }
 }

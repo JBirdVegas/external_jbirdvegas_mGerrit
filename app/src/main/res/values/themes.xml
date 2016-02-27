@@ -25,6 +25,7 @@
         <item name="appBarTheme">@style/NoActionBar.AppBarOverlay</item>
         <item name="toolbarTheme">@style/NoActionBar.PopupOverlay</item>
         <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
 
         <item name="gerritIcon">@drawable/ic_menu_source</item>
         <item name="projectsIcon">@drawable/ic_menu_project</item>
@@ -66,12 +67,13 @@
         <item name="material_drawer_background">@color/card_background</item>
     </style>
 
-    <style name="Theme.Dark" parent="Theme.AppCompat">
+    <style name="Theme.Dark" parent="MaterialDrawerTheme">
         <item name="android:textColorPrimary">@color/actionbar_text_dark</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow.Dark</item>
         <item name="appBarTheme">@style/NoActionBar.AppBarOverlay.Dark</item>
         <item name="toolbarTheme">@style/NoActionBar.PopupOverlay.Dark</item>
         <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
 
         <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
         <item name="projectsIcon">@drawable/ic_menu_project_dark</item>

@@ -59,6 +59,7 @@ public class DiffViewer extends BaseDrawerActivity
     private DiffTextView mDiffTextView;
     private Spinner mSpinner;
     private FileAdapter mAdapter;
+
     private final AdapterView.OnItemSelectedListener mSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -72,7 +73,17 @@ public class DiffViewer extends BaseDrawerActivity
             } else {
                 mLoadingView.loadingDiffText();
             }
-            makeRequest(mFilePath, status);
+
+            // Whether we are already showing this diff due to a recent configuration change
+            boolean diffSelected = (mFilePath.equals(mSelectedFilePath) && mPatchsetNumber == mSelectedPatchsetNumber);
+            if (Tools.isImage(mFilePath) || !diffSelected || !mDiffTextView.hasDiff()) {
+                makeRequest(mFilePath, status);
+            } else {
+                /* Finished restoring the state, resetting the saved file path is enough to make sure
+                 *  we keep making a new request until the next configuration change */
+                mSelectedFilePath = null;
+                switchViews(DiffType.Text);
+            }
 
             int previousPosition = mAdapter.getPreviousPosition(position);
             mBtnPrevious.setVisibility(previousPosition >= 0 ? View.VISIBLE : View.INVISIBLE);
@@ -94,11 +105,16 @@ public class DiffViewer extends BaseDrawerActivity
     private String mFilePath;
     private int mChangeNumber;
     private int mPatchsetNumber;
+    // Used for restoring the Diff text - we don't need to requery if the text hasn't changed
+    private String mSelectedFilePath;
+    private int mSelectedPatchsetNumber;
 
     public static final String CHANGE_NUMBER_TAG = "changeNumber";
     public static final String PATCH_SET_NUMBER_TAG = "patchSetNumber";
     public static final String FILE_PATH_TAG = "file";
 
+    private static final String _DIFF_TEXT_TAG = "diff_text";
+    private static final String _DIFF_STATE = "diff_state";
     private EventBus mEventBus;
 
     private enum DiffType { Loading, Text, Image }
@@ -129,6 +145,7 @@ public class DiffViewer extends BaseDrawerActivity
         mDiffTextView = (DiffTextView) findViewById(R.id.diff_view_diff);
         mSpinner = (Spinner) findViewById(R.id.diff_spinner);
         mSwitcher = (ViewFlipper) findViewById(R.id.diff_switcher);
+        mSwitcher.setDisplayedChild(DiffType.Loading.ordinal());
 
         mBtnPrevious = (ImageButton) findViewById(R.id.diff_previous);
         mBtnNext = (ImageButton) findViewById(R.id.diff_next);
@@ -215,6 +232,10 @@ public class DiffViewer extends BaseDrawerActivity
         mSwitcher.setDisplayedChild(type.ordinal());
     }
 
+    private boolean isDisplayedView(DiffType type) {
+        return mSwitcher.getDisplayedChild() == type.ordinal();
+    }
+
     // Handler for clicking on the previous file button
     public void onPreviousClick(View view) {
         int position = mAdapter.getPreviousPosition(mSpinner.getSelectedItemPosition());
@@ -225,6 +246,34 @@ public class DiffViewer extends BaseDrawerActivity
     public void onNextClick(View view) {
         int position = mAdapter.getNextPosition(mSpinner.getSelectedItemPosition());
         if (position >= 0) mSpinner.setSelection(position);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (outState == null) outState = new Bundle();
+        outState.putString(FILE_PATH_TAG, mFilePath);
+        outState.putInt(PATCH_SET_NUMBER_TAG, mPatchsetNumber);
+        outState.putInt(_DIFF_STATE, mSwitcher.getDisplayedChild());
+
+        if (isDisplayedView(DiffType.Text)) {
+            outState.putCharSequence(_DIFF_TEXT_TAG, mDiffTextView.getText());
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        mSelectedFilePath = savedInstanceState.getString(FILE_PATH_TAG);
+        mSelectedPatchsetNumber = savedInstanceState.getInt(PATCH_SET_NUMBER_TAG);
+        CharSequence text = savedInstanceState.getCharSequence(_DIFF_TEXT_TAG);
+        if (text != null) {
+            mDiffTextView.setText(text);
+            switchViews(DiffType.Text);
+        } else {
+            mSwitcher.setDisplayedChild(savedInstanceState.getInt(_DIFF_STATE, 0));
+        }
     }
 
     @Override
@@ -241,7 +290,6 @@ public class DiffViewer extends BaseDrawerActivity
         if (cursorLoader.getId() == LOADER_DIFF) {
             mAdapter.swapCursor(cursor);
             if (cursor != null && cursor.isAfterLast()) {
-                //if (request != null) request.cancel(); TODO: What was this doing?
                 mDiffTextView.setText(getString(R.string.diff_no_files));
             }
 
@@ -261,16 +309,28 @@ public class DiffViewer extends BaseDrawerActivity
         }
     }
 
-    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    /* Setting this sticky will deliver any events that may have come through during
+     *  a configuration change */
+    @Keep @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onTextDiffLoaded(ChangeDiffLoaded ev) {
-        // TODO: Check if this is the event we requested.
-        String diff = ev.getDiff();
-        if (diff != null) setTextView(diff);
-        else mDiffTextView.setText(getString(R.string.failed_to_get_diff));
-        switchViews(DiffType.Text);
+        // Check if this is the event we requested.
+        int psNumber = ev.getPatchsetNumber();
+        if (ev.getChangeNumber() == mChangeNumber && psNumber == mPatchsetNumber) {
+            String diff = ev.getDiff();
+            if (diff != null) setTextView(diff);
+            else mDiffTextView.setText(getString(R.string.failed_to_get_diff));
+            switchViews(DiffType.Text);
+
+            // Record that we have already loaded this diff (don't need to re-query it)
+            mSelectedPatchsetNumber = psNumber;
+            mSelectedFilePath = mFilePath;
+
+            // Remove the event so we don't process the response again
+            mEventBus.removeStickyEvent(ev);
+        }
     }
 
-    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    @Keep @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onImageLoaded(ImageLoaded ev) {
         Bitmap bitmap = ev.getImage();
         String filePath = ev.getFilePath();

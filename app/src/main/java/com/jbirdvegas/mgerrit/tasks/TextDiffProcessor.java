@@ -45,10 +45,9 @@ public class TextDiffProcessor extends SyncProcessor<String> {
 
     @Override
     int insert(String data) {
-        /* We don't store change diffs in the database -send out a message instead when we
-         * have finished loading it.
-         * TODO Cache responses. */
-        EventBus.getDefault().post(new ChangeDiffLoaded(getIntent(), getQueueId(), data));
+        /* We don't store change diffs in the database - send out a message instead when we
+         * have finished loading it. */
+        EventBus.getDefault().postSticky(new ChangeDiffLoaded(getIntent(), getQueueId(), data, mChangeNumber, mPatchsetNumber));
         return 1;
     }
 
@@ -90,7 +89,10 @@ public class TextDiffProcessor extends SyncProcessor<String> {
         return decodedContent;
     }
 
-    // Save the decoded diff text to the cache
+    /* Save the decoded diff text to the cache.
+     * This is pretty important as we fetch the diff for all text files in the change, but
+     * will only display one file at a time. Hence, requesting other files in the change will
+     * result in a cache hit instead of another query. */
     void doPostProcess(String data) {
         CacheManager.put(CacheManager.getDiffKey(mChangeNumber, mPatchsetNumber), data, false);
         /* Cleanup diffs for any superceeded revisions of this change as we will never attempt

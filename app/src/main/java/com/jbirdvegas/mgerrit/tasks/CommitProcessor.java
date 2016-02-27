@@ -24,6 +24,7 @@ import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
+import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.Labels;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.database.Reviewers;
@@ -66,16 +67,33 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
     @Override
     ChangeInfo getData(GerritRestApi gerritApi) throws RestApiException {
         EnumSet<ListChangesOption> options = queryOptions();
-        ChangeApi changes;
+        ChangeApi change;
+        int changeNumber = mChangeNumber;
         try {
-            changes = ApiHelper.fetchChange(mContext, gerritApi, mChangeId, mChangeNumber);
-            return changes.get(options);
-        } catch (IllegalArgumentException e) {
-            // Track this so we can find what changes cause this issue
-            AnalyticsHelper.sendAnalyticsEvent(mContext, getClass().getSimpleName(),
-                    AnalyticsHelper.CHANGE_NOT_UNIQUE, mChangeId, null);
-            // We don't have anything we can use to uniquely identify the change we are trying to fetch
-            throw new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
+            change = ApiHelper.fetchChange(mContext, gerritApi, mChangeId, changeNumber);
+            return change.get(options);
+        } catch (IllegalArgumentException | RestApiException e1) {
+            /* We may have a situation where multiple changes have the same change id
+             * this usually occurs when cherry-picking or reverting a commit.
+             * We have to fallback to the legacy change number
+             * See: http://review.cyanogenmod.org/#/q/change:I6c7a14a9ab4090b4aabf5de7663f5de51bdc4615 */
+            if (changeNumber < 1) {
+                changeNumber = Changes.getChangeNumberForChange(mContext, mChangeId);
+            }
+            try {
+                if (changeNumber > 0) {
+                    change = gerritApi.changes().id(changeNumber);
+                } else {
+                    throw new RestApiException(e1.getMessage(), e1);
+                }
+                return change.get(options);
+            } catch (RestApiException e2) {
+                // Track this so we can find what changes cause this issue
+                AnalyticsHelper.sendAnalyticsEvent(mContext, getClass().getSimpleName(),
+                        AnalyticsHelper.CHANGE_NOT_UNIQUE, mChangeId, null);
+                // We don't have anything we can use to uniquely identify the change we are trying to fetch
+                throw new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e2);
+            }
         }
     }
 

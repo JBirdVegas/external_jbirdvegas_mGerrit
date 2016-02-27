@@ -58,7 +58,7 @@ public class ImageProcessor extends SyncProcessor<Bitmap> {
         /* We don't store images in the database -send out a message instead when we
          * have finished loading it.
          * TODO Cache responses. */
-        EventBus.getDefault().post(new ImageLoaded(getIntent(), getQueueId(), data));
+        EventBus.getDefault().postSticky(new ImageLoaded(getIntent(), getQueueId(), data));
         return 1;
     }
 
@@ -125,5 +125,10 @@ public class ImageProcessor extends SyncProcessor<Bitmap> {
         decodeOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
         return bitmap;
+    }
+
+    /* This is a custom endpoint not part of the Gerrit api, so it doesn't handle authentication */
+    protected boolean isAuthenticationSupported() {
+        return false;
     }
 }

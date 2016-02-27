@@ -25,3 +25,4 @@ gradle/daemon/
 *.*~
 .DS_Store
 private.creds
+buildSrc/local.properties
