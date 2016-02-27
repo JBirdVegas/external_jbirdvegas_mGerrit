@@ -126,4 +126,9 @@ public class ImageProcessor extends SyncProcessor<Bitmap> {
         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
         return bitmap;
     }
+
+    /* This is a custom endpoint not part of the Gerrit api, so it doesn't handle authentication */
+    protected boolean isAuthenticationSupported() {
+        return false;
+    }
 }

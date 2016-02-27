@@ -160,7 +160,7 @@ abstract class SyncProcessor<T> {
         GerritAuthData.Basic authData;
         String username = null, password = null;
 
-        if (isAuthenticating) {
+        if (isAuthenticating && isAuthenticationSupported()) {
             username = intent.getStringExtra(GerritService.HTTP_USERNAME);
             password = intent.getStringExtra(GerritService.HTTP_PASSWORD);
             if (username == null || password == null) {
@@ -203,6 +203,15 @@ abstract class SyncProcessor<T> {
         if (lastSync == 0) return false; // Always sync if this is the first time
         long timeNow = System.currentTimeMillis();
         return ((timeNow - lastSync) < syncInterval);
+    }
+
+    /**
+     * Whether authentication is supported for this processor. If false, all requests will be
+     *  unauthenticated regardless of whether the user has signed in
+     * @return Whether authentication is supported for this processor.
+     */
+    protected boolean isAuthenticationSupported() {
+        return true;
     }
 
     public void cancelOperation() {

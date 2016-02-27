@@ -114,6 +114,7 @@ public class DiffViewer extends BaseDrawerActivity
     public static final String FILE_PATH_TAG = "file";
 
     private static final String _DIFF_TEXT_TAG = "diff_text";
+    private static final String _DIFF_STATE = "diff_state";
     private EventBus mEventBus;
 
     private enum DiffType { Loading, Text, Image }
@@ -144,6 +145,7 @@ public class DiffViewer extends BaseDrawerActivity
         mDiffTextView = (DiffTextView) findViewById(R.id.diff_view_diff);
         mSpinner = (Spinner) findViewById(R.id.diff_spinner);
         mSwitcher = (ViewFlipper) findViewById(R.id.diff_switcher);
+        mSwitcher.setDisplayedChild(DiffType.Loading.ordinal());
 
         mBtnPrevious = (ImageButton) findViewById(R.id.diff_previous);
         mBtnNext = (ImageButton) findViewById(R.id.diff_next);
@@ -251,6 +253,7 @@ public class DiffViewer extends BaseDrawerActivity
         if (outState == null) outState = new Bundle();
         outState.putString(FILE_PATH_TAG, mFilePath);
         outState.putInt(PATCH_SET_NUMBER_TAG, mPatchsetNumber);
+        outState.putInt(_DIFF_STATE, mSwitcher.getDisplayedChild());
 
         if (isDisplayedView(DiffType.Text)) {
             outState.putCharSequence(_DIFF_TEXT_TAG, mDiffTextView.getText());
@@ -268,6 +271,8 @@ public class DiffViewer extends BaseDrawerActivity
         if (text != null) {
             mDiffTextView.setText(text);
             switchViews(DiffType.Text);
+        } else {
+            mSwitcher.setDisplayedChild(savedInstanceState.getInt(_DIFF_STATE, 0));
         }
     }
 
