@@ -1,12 +1,11 @@
 package com.jbirdvegas.mgerrit.cache;
 
-import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
-import android.os.Build;
+
 import com.android.volley.toolbox.ImageLoader;
+
 import org.jetbrains.annotations.Contract;
 
 import java.util.LinkedHashMap;
@@ -106,11 +105,7 @@ public class BitmapLruCache implements ImageLoader.ImageCache {
 
     private static int calculateMaxSize(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        boolean largeHeap = (context.getApplicationInfo().flags & ApplicationInfo.FLAG_LARGE_HEAP) != 0;
         int memoryClass = am.getMemoryClass();
-        if (largeHeap && Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB) {
-            memoryClass = ActivityManagerHoneycomb.getLargeMemoryClass(am);
-        }
         return 1024 * 1024 * memoryClass / 6;
     }
 
@@ -124,28 +119,8 @@ public class BitmapLruCache implements ImageLoader.ImageCache {
         set(url, bitmap);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private static class ActivityManagerHoneycomb {
-        static int getLargeMemoryClass(ActivityManager activityManager) {
-            return activityManager.getLargeMemoryClass();
-        }
-    }
-
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-    private static class BitmapHoneycombMR1 {
-        static int getByteCount(Bitmap bitmap) {
-            return bitmap.getByteCount();
-        }
-    }
-
     private static int getBitmapBytes(Bitmap bitmap) {
-        int result;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-            result = BitmapHoneycombMR1.getByteCount(bitmap);
-        } else {
-            result = bitmap.getRowBytes() * bitmap.getHeight();
-        }
+        int result = bitmap.getByteCount();
         if (result < 0) {
             throw new IllegalStateException("Negative size: " + bitmap);
         }

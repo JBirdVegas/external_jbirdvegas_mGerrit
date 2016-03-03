@@ -93,6 +93,7 @@ public class TextDiffProcessor extends SyncProcessor<String> {
      * This is pretty important as we fetch the diff for all text files in the change, but
      * will only display one file at a time. Hence, requesting other files in the change will
      * result in a cache hit instead of another query. */
+    @Override
     void doPostProcess(String data) {
         CacheManager.put(CacheManager.getDiffKey(mChangeNumber, mPatchsetNumber), data, false);
         /* Cleanup diffs for any superceeded revisions of this change as we will never attempt
