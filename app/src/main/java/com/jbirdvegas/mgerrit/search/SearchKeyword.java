@@ -292,7 +292,8 @@ public abstract class SearchKeyword implements Parcelable {
         if (tokens == null) {
             retVal = new HashSet<>();
         } else {
-            retVal = removeKeyword(tokens, keyword.getClass());
+            Set<SearchKeyword> newSet = new HashSet<>(tokens);
+            retVal = removeKeyword(newSet, keyword.getClass());
         }
 
         if (isParameterValid(keyword.getParam())) retVal.add(keyword);
