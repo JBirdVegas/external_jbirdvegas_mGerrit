@@ -20,14 +20,21 @@ mGerrit TODO List
     - When given a Gerrit link just change the current Gerrit
 - Ability to track projects across different Gerrits
     - Example, I could be following CM's Gerrit and view mGerrit changes on AOKP's Gerrit
-    - May want to put this in a new slide-out menu
+    - May want to put this in the navigation drawer
         - List all tracked projects under the the one heading (that is collapsible)
+    - Would have to save these projects in the shared preferences
 - Separate debug/release versioning
 - Layout optimisations using Android Hierarchy Viewer (debug version)
 - Check BroadcastReceivers across activities
 	- E.g. If a broadcast response is broadcast delivered while the ProjectsList activity is open for a change query, the broadcast should be
 		(re-)delivered to the activity that was listening to broadcasts matching the actual query
+	-  EventBus sticky messages handle this
 - Commit message text highlighting
+- Fix share menu action not working on change details screen
+- Open in browser action on change details screen should never use default viewer
+-  Ability to hide changes from certain projects
+    - Would have to save these in a new table in the DB
+- Build flavor with Google Analytics disabled (for F-Droid)
 
 
 ### Searching (Requires database), action bar

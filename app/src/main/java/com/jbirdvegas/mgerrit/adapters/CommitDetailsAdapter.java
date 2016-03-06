@@ -204,7 +204,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
         RequestQueue rq = Volley.newRequestQueue(mContext);
 
         childGroupDetails.add(new ChildGroupDetails(Cards.COMMIT,
-                new CommitCardBinder(mContext, rq)));
+                new CommitCardBinder(mContext, rq, false)));
         childGroupDetails.add(new ChildGroupDetails(Cards.PROPERTIES,
                 new PatchSetPropertiesCard(mContext, rq)));
         childGroupDetails.add(new ChildGroupDetails(Cards.COMMIT_MSG,

@@ -18,6 +18,7 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.TimeZone;
 
@@ -46,6 +48,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
     private final TimeZone mServerTimeZone;
     private final TimeZone mLocalTimeZone;
     private final LayoutInflater mInflater;
+    private final boolean mIsChangeList;
 
     // Cursor indices
     private Integer userEmailIndex;
@@ -58,7 +61,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
     private Integer projectIndex;
     private Integer subjectIndex;
 
-    public CommitCardBinder(Context context, RequestQueue requestQueue) {
+    public CommitCardBinder(Context context, RequestQueue requestQueue, boolean changeList) {
         this.mRequestQuery = requestQueue;
         this.mContext = context;
 
@@ -69,6 +72,8 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         mServerTimeZone = PrefsFragment.getServerTimeZone(context);
         mLocalTimeZone = PrefsFragment.getLocalTimeZone(context);
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        mIsChangeList = changeList;
     }
 
     // ViewBinder - For including in commit list
@@ -101,7 +106,7 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
     @Override
     public View setViewValue(Cursor cursor, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.commit_card, parent, false);
+            convertView = mInflater.inflate(R.layout.commit_details_card, parent, false);
         }
         setupIndicies(cursor);
 
@@ -210,6 +215,16 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         setStarIcon(view, starred == 1);
         view.setTag(R.id.changeID, cursor.getString(changeIdIndex));
         view.setTag(R.id.changeNumber, cursor.getInt(changeNumberIndex));
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String changeId = (String) view.getTag(R.id.changeID);
+                int changeNumber = (int) view.getTag(R.id.changeNumber);
+                onStarChange(changeId, changeNumber, starred != 1);
+                setStarIcon(view, starred == 1);
+            }
+        });
     }
 
     /**
@@ -230,13 +245,27 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
 
     private void setStarIcon(ImageView view, boolean starred) {
         if (starred) {
-            view.setVisibility(View.VISIBLE);
+            if (mIsChangeList) {
+                view.setVisibility(View.VISIBLE);
+            }
             view.setImageResource(Tools.getResIdFromAttribute(mContext, R.attr.starredIcon));
         } else {
-            view.setVisibility(View.GONE);
-            view.setImageResource(Tools.getResIdFromAttribute(mContext, R.attr.unstarredIcon));
+            if (mIsChangeList) {
+                view.setVisibility(View.GONE);
+            } else {
+                view.setImageResource(Tools.getResIdFromAttribute(mContext, R.attr.unstarredIcon));
+            }
         }
     }
+
+     private void onStarChange(String changeId, int changeNumber, boolean starred) {
+         Intent it = new Intent(mContext, GerritService.class);
+         it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Star);
+         it.putExtra(GerritService.CHANGE_ID, changeId);
+         it.putExtra(GerritService.CHANGE_NUMBER, changeNumber);
+         it.putExtra(GerritService.IS_STARRING, starred);
+         mContext.startService(it);
+     }
 
     private static class ViewHolder {
         private final TextView subject;
