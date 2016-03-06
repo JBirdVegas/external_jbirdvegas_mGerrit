@@ -171,7 +171,7 @@ public abstract class CardsFragment extends Fragment
                 UserChanges.C_STARRED };
 
         mListView = (ExpandableStickyListHeadersListView) mCurrentFragment.findViewById(R.id.commit_cards);
-        mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card_row, null, from, to, 0,
+        mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card, null, from, to, 0,
                 getQuery());
         mAdapter.setViewBinder(new CommitCardBinder(mParent, mRequestQueue));
 
@@ -205,7 +205,7 @@ public abstract class CardsFragment extends Fragment
         mHeaderAdapterWrapper = new HeaderAdapterDecorator(mEndlessAdapter, mHeaderAdapter);
         mListView.setAdapter(mHeaderAdapterWrapper);
         mListView.setDrawingListUnderStickyHeader(false);
-        mListView.getWrappedList().setDividerHeight(32);
+        mListView.getWrappedList().setDividerHeight(2);
 
         sChangesLimit = mParent.getResources().getInteger(R.integer.changes_limit);
 

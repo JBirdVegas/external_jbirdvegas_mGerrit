@@ -17,32 +17,39 @@
   ~  limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_change_details"
         android:icon="?attr/viewIcon"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/context_menu_change_viewer"/>
 
     <item
         android:id="@+id/menu_change_browser"
         android:icon="?attr/browserIcon"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/context_menu_change_browser"/>
 
     <item
         android:id="@+id/menu_change_track_user"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/context_menu_track_user"/>
 
     <item
         android:id="@+id/menu_change_track_project"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/context_menu_track_project"/>
 
     <item
         android:id="@+id/menu_change_share"
         android:icon="?attr/shareIcon"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/share"/>
+
+    <item
+        android:id="@+id/menu_star_change"
+        android:icon="?attr/unstarredIcon"
+        app:showAsAction="ifRoom"
+        android:title="@string/menu_star_change"/>
 </menu>

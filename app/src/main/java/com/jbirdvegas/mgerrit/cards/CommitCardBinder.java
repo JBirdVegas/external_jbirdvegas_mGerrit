@@ -18,7 +18,6 @@ package com.jbirdvegas.mgerrit.cards;
  */
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +32,6 @@ import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
-import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.TimeZone;
 
@@ -212,16 +210,6 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         setStarIcon(view, starred == 1);
         view.setTag(R.id.changeID, cursor.getString(changeIdIndex));
         view.setTag(R.id.changeNumber, cursor.getInt(changeNumberIndex));
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String changeId = (String) view.getTag(R.id.changeID);
-                int changeNumber = (int) view.getTag(R.id.changeNumber);
-                onStarChange(changeId, changeNumber, starred != 1);
-                setStarIcon(view, starred == 1);
-            }
-        });
     }
 
     /**
@@ -242,19 +230,12 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
 
     private void setStarIcon(ImageView view, boolean starred) {
         if (starred) {
+            view.setVisibility(View.VISIBLE);
             view.setImageResource(Tools.getResIdFromAttribute(mContext, R.attr.starredIcon));
         } else {
+            view.setVisibility(View.GONE);
             view.setImageResource(Tools.getResIdFromAttribute(mContext, R.attr.unstarredIcon));
         }
-    }
-
-    private void onStarChange(String changeId, int changeNumber, boolean starred) {
-        Intent it = new Intent(mContext, GerritService.class);
-        it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Star);
-        it.putExtra(GerritService.CHANGE_ID, changeId);
-        it.putExtra(GerritService.CHANGE_NUMBER, changeNumber);
-        it.putExtra(GerritService.IS_STARRING, starred);
-        mContext.startService(it);
     }
 
     private static class ViewHolder {
