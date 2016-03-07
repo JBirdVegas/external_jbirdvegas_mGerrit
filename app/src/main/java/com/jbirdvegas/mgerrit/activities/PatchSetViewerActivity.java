@@ -33,7 +33,6 @@ import android.view.MenuItem;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.PatchSetAdapter;
-import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment;
@@ -161,21 +160,7 @@ public class PatchSetViewerActivity extends BaseDrawerActivity
                 return true;
             case R.id.menu_details_browser:
                 if (mChangeNumber == null) return false;
-
-                // If the server does not support diffs then do not show the dialog
-                if (!Config.isDiffSupported(this)) {
-                    Tools.launchDiffInBrowser(this, mChangeNumber, null, null);
-                    return true;
-                }
-
-                PrefsFragment.DiffModes mode = PrefsFragment.getDiffDefault(this);
-                if (mode == PrefsFragment.DiffModes.INTERNAL) {
-                    Tools.launchDiffViewer(this, mChangeNumber, null, null);
-                } else if (mode == PrefsFragment.DiffModes.EXTERNAL) {
-                    Tools.launchDiffInBrowser(this, mChangeNumber, null, null);
-                } else {
-                    Tools.launchDiffOptionDialog(this, mChangeNumber, null, null);
-                }
+                Tools.launchDiffInBrowser(this, mChangeNumber, null, null);
                 return true;
         }
         return super.onOptionsItemSelected(item);
