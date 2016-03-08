@@ -45,6 +45,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.activities.BaseDrawerActivity;
 import com.jbirdvegas.mgerrit.activities.RefineSearchActivity;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
+import com.jbirdvegas.mgerrit.adapters.ChangeListWrappable;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
@@ -356,14 +357,14 @@ public abstract class CardsFragment extends Fragment
      *  adapter, initialising a new adapter if necessary.
      * @param baseAdapter The current adapter for the listview
      */
-    public void toggleAnimations(BaseAdapter baseAdapter) {
+    public void toggleAnimations(ChangeListWrappable baseAdapter) {
         boolean anim = PrefsFragment.getAnimationPreference(mParent);
         if (mAnimationsEnabled != null && anim == mAnimationsEnabled) return;
         else mAnimationsEnabled = anim;
 
         /* If animations have been enabled, setup and use an animation adapter, otherwise use
          *  the regular adapter. The data should always be bound to mAdapter */
-        BaseAdapter adapter = Tools.toggleAnimations(mAnimationsEnabled, mListView.getWrappedList(), mAnimAdapter, baseAdapter);
+        BaseAdapter adapter = Tools.toggleAnimations(mAnimationsEnabled, mListView, mAnimAdapter, baseAdapter);
         if (mEndlessAdapter != null) {
             mEndlessAdapter.setParentAdatper(adapter);
         }

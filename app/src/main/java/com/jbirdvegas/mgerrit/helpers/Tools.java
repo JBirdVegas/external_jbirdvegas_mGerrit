@@ -30,15 +30,16 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.activities.SigninActivity;
 import com.jbirdvegas.mgerrit.activities.DiffViewer;
+import com.jbirdvegas.mgerrit.activities.SigninActivity;
+import com.jbirdvegas.mgerrit.adapters.ChangeListWrappable;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
+import com.nhaarman.listviewanimations.appearance.StickyListHeadersAdapterDecorator;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import org.greenrobot.eventbus.EventBus;
@@ -53,6 +54,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 
 public class Tools {
@@ -81,15 +84,16 @@ public class Tools {
      * @return The outer-most adapter that was applied to the list view.
      *  a non-null instance of animAdapter if enable, defaultAdapter otherwise.
      */
-    public static BaseAdapter toggleAnimations(boolean enable, ListView lv,
+    public static BaseAdapter toggleAnimations(boolean enable, StickyListHeadersListView lv,
                                            SingleAnimationAdapter animAdapter,
-                                           BaseAdapter defaultAdapter) {
+                                           ChangeListWrappable defaultAdapter) {
         if (enable) {
             if (animAdapter == null) {
                 animAdapter = new SwingBottomInAnimationAdapter(defaultAdapter);
-                animAdapter.setAbsListView(lv);
             }
-            lv.setAdapter(animAdapter);
+            StickyListHeadersAdapterDecorator stickyListHeadersAdapterDecorator = new StickyListHeadersAdapterDecorator(animAdapter);
+            stickyListHeadersAdapterDecorator.setStickyListHeadersListView(lv);
+            lv.setAdapter(stickyListHeadersAdapterDecorator);
             return animAdapter;
         } else if (defaultAdapter != null) {
             lv.setAdapter(defaultAdapter);

@@ -28,12 +28,10 @@ import android.widget.TextView;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.objects.Categorizable;
 
-import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
-
 /**
  * A wrapper to encapsulate the logic for adding headers to a list
  */
-public class HeaderAdapterWrapper extends BaseAdapter implements StickyListHeadersAdapter {
+public class HeaderAdapterWrapper extends ChangeListWrappable {
 
     private LayoutInflater mInflater;
 

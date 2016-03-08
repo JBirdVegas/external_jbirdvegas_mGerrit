@@ -19,14 +19,14 @@ import org.jetbrains.annotations.Nullable;
  *  AdapterWrapper and EndlessAdapter libraries of which neither support
  *  CursorAdapters.
  */
-public abstract class EndlessAdapterWrapper extends BaseAdapter
+public abstract class EndlessAdapterWrapper extends ChangeListWrappable
     implements AbsListView.OnScrollListener {
 
     /**
      * The child adapter that this wraps. Most of the work will be delegated to this adapter
      *  and we need to observe when its data changes.
      */
-    private BaseAdapter wrapped;
+    private ChangeListWrappable wrapped;
     private Context mContext;
 
     private View mPendingView;
@@ -38,7 +38,7 @@ public abstract class EndlessAdapterWrapper extends BaseAdapter
      */
     private BaseAdapter mParentAdapter;
 
-    public EndlessAdapterWrapper(Context context, BaseAdapter wrapped) {
+    public EndlessAdapterWrapper(Context context, ChangeListWrappable wrapped) {
         this(context, wrapped, R.layout.loading_placeholder);
     }
 
@@ -46,7 +46,7 @@ public abstract class EndlessAdapterWrapper extends BaseAdapter
      * Constructor wrapping a supplied Adapter and
      * providing a id for a pending view.
      */
-    public EndlessAdapterWrapper(Context context, BaseAdapter wrapped, int pendingResource) {
+    public EndlessAdapterWrapper(Context context, ChangeListWrappable wrapped, int pendingResource) {
         this.wrapped = wrapped;
         this.mContext = context;
 
@@ -203,5 +203,17 @@ public abstract class EndlessAdapterWrapper extends BaseAdapter
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         // Not used.
+    }
+
+    // These are just passed straight through to the Sticky List Headers adapter
+
+    @Override
+    public View getHeaderView(int position, View convertView, ViewGroup parent) {
+        return wrapped.getHeaderView(position, convertView, parent);
+    }
+
+    @Override
+    public long getHeaderId(int position) {
+        return wrapped.getHeaderId(position);
     }
 }
