@@ -41,7 +41,7 @@
         android:descendantFocusability="blocksDescendants"
         android:paddingBottom="@dimen/standard_padding">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <com.jbirdvegas.mgerrit.views.CircleNetworkImageView
             android:id="@+id/commit_card_committer_image"
             android:layout_width="48dp"
             android:layout_height="48dp"

@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirDeleteCallback;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
@@ -76,9 +77,7 @@ public class CacheManager<T> {
         }
 
         DualCacheContextUtils.setContext(context);
-        if (BuildConfig.DEBUG) {
-            DualCacheLogUtils.enableLog();
-        }
+        if (BuildConfig.DEBUG) DualCacheLogUtils.enableLog();
         // Initialize a cache to store images
         sBitmapCache = new DualCacheBuilder<>(BITMAP_CACHE_NAME, CACHE_VERSION, Bitmap.class)
                 .useReferenceInRam(CACHE_SIZE, new SizeOf<Bitmap>() {
@@ -265,6 +264,28 @@ public class CacheManager<T> {
             return true;
         }
         return null;
+    }
+
+    /**
+     * Get a ImageCache instance to use with Volley's NetworkImageView
+     * @return
+     */
+    public static ImageLoader.ImageCache getImageCache() {
+        return new ImageLoader.ImageCache() {
+            @Override
+            public Bitmap getBitmap(String url) {
+                return new CacheManager<Bitmap>().getImage(getImageKey(url), true);
+            }
+
+            @Override
+            public void putBitmap(String url, Bitmap bitmap) {
+                CacheManager.putImage(getImageKey(url), bitmap, true);
+            }
+
+            public String getImageKey(String url) {
+                return MD5Helper.md5Hex(url);
+            }
+        };
     }
 
     public static String getCommentKey(final String changeId) {

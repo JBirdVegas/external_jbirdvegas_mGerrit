@@ -201,7 +201,7 @@ public class CommitDetailsAdapter extends BaseExpandableListAdapter {
         headerContents.add(mContext.getString(R.string.header_reviewers));
         headerContents.add(mContext.getString(R.string.header_comments));
 
-        RequestQueue rq = Volley.newRequestQueue(mContext);
+        RequestQueue rq = Volley.newRequestQueue(mContext.getApplicationContext());
 
         childGroupDetails.add(new ChildGroupDetails(Cards.COMMIT,
                 new CommitCardBinder(mContext, rq, false)));

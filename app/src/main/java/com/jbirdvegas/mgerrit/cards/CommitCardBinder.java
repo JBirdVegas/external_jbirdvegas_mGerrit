@@ -28,11 +28,14 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.GravatarHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
+import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import java.util.TimeZone;
@@ -40,11 +43,12 @@ import java.util.TimeZone;
 public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBinder {
     private final RequestQueue mRequestQuery;
     private final Context mContext;
+    private final ImageLoader mImageLoader;
 
     private final int mOrange;
     private final int mGreen;
-    private final int mRed;
 
+    private final int mRed;
     private final TimeZone mServerTimeZone;
     private final TimeZone mLocalTimeZone;
     private final LayoutInflater mInflater;
@@ -74,6 +78,8 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mIsChangeList = changeList;
+
+        mImageLoader = new ImageLoader(mRequestQuery, CacheManager.getImageCache());
     }
 
     // ViewBinder - For including in commit list
@@ -174,9 +180,9 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
                 }
             });
         } else if (view.getId() == R.id.commit_card_committer_image) {
-            ImageView imageView = (ImageView) view;
-            GravatarHelper.populateProfilePicture((ImageView) view, cursor.getString(userEmailIndex),
-                    mRequestQuery);
+            NetworkImageView imageView = (NetworkImageView) view;
+            imageView.setImageUrl(GravatarHelper.getGravatarUrl(cursor.getString(userEmailIndex)), mImageLoader);
+            imageView.setDefaultImageResId(R.drawable.gravatar);
             imageView.setTag(R.id.user, cursor.getInt(userIdIndex));
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override

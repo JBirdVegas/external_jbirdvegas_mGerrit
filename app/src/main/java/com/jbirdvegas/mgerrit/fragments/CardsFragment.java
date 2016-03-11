@@ -156,7 +156,7 @@ public abstract class CardsFragment extends Fragment
     private void init(Bundle savedInstanceState) {
         mParent = this.getActivity();
         View mCurrentFragment = this.getView();
-        RequestQueue mRequestQueue = Volley.newRequestQueue(mParent);
+        RequestQueue mRequestQueue = Volley.newRequestQueue(mParent.getApplicationContext());
 
         // We need to setup the SearchView before adding the refine search card
         mSearchView = (GerritSearchView) mParent.findViewById(R.id.search);
@@ -206,7 +206,6 @@ public abstract class CardsFragment extends Fragment
         mHeaderAdapterWrapper = new HeaderAdapterDecorator(mEndlessAdapter, mHeaderAdapter);
         mListView.setAdapter(mHeaderAdapterWrapper);
         mListView.setDrawingListUnderStickyHeader(false);
-        mListView.getWrappedList().setDividerHeight(2);
 
         sChangesLimit = mParent.getResources().getInteger(R.integer.changes_limit);
 
