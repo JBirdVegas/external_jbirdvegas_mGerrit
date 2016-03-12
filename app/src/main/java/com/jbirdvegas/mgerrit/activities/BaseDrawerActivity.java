@@ -113,7 +113,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
     protected void initNavigationDrawer(boolean isParent) {
         Toolbar toolbar = setupActionBar();
 
-        mRequestQuery = Volley.newRequestQueue(this);
+        mRequestQuery = Volley.newRequestQueue(this.getApplicationContext());
 
         DrawerImageLoader.init(mDrawerImageLoader);
 

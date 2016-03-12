@@ -18,24 +18,51 @@
 package com.jbirdvegas.mgerrit.objects;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
+import android.util.Base64;
 import android.util.Log;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirDeleteCallback;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.anupcowkur.reservoir.ReservoirPutCallback;
+import com.jbirdvegas.mgerrit.BuildConfig;
+import com.jbirdvegas.mgerrit.helpers.MD5Helper;
 import com.jbirdvegas.mgerrit.message.CacheDataRetrieved;
 import com.jbirdvegas.mgerrit.message.CacheFailure;
+import com.vincentbrison.openlibraries.android.dualcache.lib.DualCache;
+import com.vincentbrison.openlibraries.android.dualcache.lib.DualCacheBuilder;
+import com.vincentbrison.openlibraries.android.dualcache.lib.DualCacheContextUtils;
+import com.vincentbrison.openlibraries.android.dualcache.lib.DualCacheLogUtils;
+import com.vincentbrison.openlibraries.android.dualcache.lib.Serializer;
+import com.vincentbrison.openlibraries.android.dualcache.lib.SizeOf;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.greenrobot.eventbus.EventBus;
 
-
+/*
+ * Wrapper caching functions acting as a facade around the caching libraries used so we can
+ *  more easily switch out the caching library or libraries being used
+ *
+ * We are going to use two different caching libraries here.
+ * Reservoir: Great caching library which handles multiple objects really well, but requires that
+ *  they can all be serialised into Gson (so no images)
+ * DualCache: Handles images very well but requires a new cache for each object stored for proper
+ *  serialisation
+ */
 public class CacheManager<T> {
 
     public static final String TAG = "CacheManager";
     public static final int CACHE_SIZE = 2048; // in bytes
+    private static final String BITMAP_CACHE_NAME = "bitmap_cache";
+    private static final int CACHE_VERSION = 1;
+    public static final int DISK_MAX_SIZE = 12*1024*1024; // 12MB in bytes
 
     private final EventBus mEventBus;
+    private static DualCache<Bitmap> sBitmapCache;
 
     public CacheManager() {
         this.mEventBus = EventBus.getDefault();
@@ -48,6 +75,41 @@ public class CacheManager<T> {
         } catch (Exception e) {
             Log.e(TAG, "Failed to initialise the cache.", e);
         }
+
+        DualCacheContextUtils.setContext(context);
+        if (BuildConfig.DEBUG) DualCacheLogUtils.enableLog();
+        // Initialize a cache to store images
+        sBitmapCache = new DualCacheBuilder<>(BITMAP_CACHE_NAME, CACHE_VERSION, Bitmap.class)
+                .useReferenceInRam(CACHE_SIZE, new SizeOf<Bitmap>() {
+                    @Override
+                    public int sizeOf(Bitmap object) {
+                        return object.getByteCount();
+                    }
+                })
+                .useCustomSerializerInDisk(DISK_MAX_SIZE, true, new Serializer<Bitmap>() {
+                    @Override
+                    public Bitmap fromString(String encodedString) {
+                        // See: http://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
+                        try {
+                            byte [] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                            return bitmap;
+                        } catch (Exception e) {
+                            e.getMessage();
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    public String toString(Bitmap bitmap) {
+                        // See: http://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+                        byte [] b = baos.toByteArray();
+                        String temp = Base64.encodeToString(b, Base64.DEFAULT);
+                        return temp;
+                    }
+                });
     }
 
     /**
@@ -59,7 +121,9 @@ public class CacheManager<T> {
      */
     @SuppressWarnings("ProhibitedExceptionCaught")
     public static void put(final String key, Object object, final boolean async) {
-        if (async) {
+        if (object.getClass() == Bitmap.class) {
+            putImage(key, (Bitmap) object, async);
+        } else if (async) {
             Reservoir.putAsync(key, object, new ReservoirPutCallback() {
                 @Override
                 public void onSuccess() {
@@ -80,9 +144,29 @@ public class CacheManager<T> {
         }
     }
 
+    /**
+     * Put an image into the cache with the given key.
+     * Previously stored object with the same key (if any) will be overwritten.
+     * @param key the key string
+     * @param bitmap the image to be stored
+     * @param async Whether this should be done asynchronously/non-blocking (true) or synchronously/blocking (false)
+     */
+    public static void putImage(final String key, final Bitmap bitmap, final boolean async) {
+        if (async) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    sBitmapCache.put(key, bitmap);
+                }
+            }).start();
+        } else {
+            sBitmapCache.put(key, bitmap);
+        }
+    }
+
 
     /**
-     * Retreive an object into the cache with the given key.
+     * Retrieve an object from the cache with the given key.
      * Call with new CacheManager<String>().get(mCacheKey, String.class, true)
      * @param key the key string
      * @param clazz the class of the object to be retrieved
@@ -90,11 +174,13 @@ public class CacheManager<T> {
      */
     @SuppressWarnings("ProhibitedExceptionCaught")
     public T get(final String key, final Class<T> clazz, boolean async) {
+        if (clazz == Bitmap.class) return (T) getImage(key, async);
+
         if (async) {
             Reservoir.getAsync(key, clazz, new ReservoirGetCallback<T>() {
                 @Override
                 public void onSuccess(T data) {
-                    mEventBus.post(new CacheDataRetrieved<T>(clazz, key, data));
+                    mEventBus.post(new CacheDataRetrieved<>(clazz, key, data));
                 }
 
                 @Override
@@ -106,6 +192,35 @@ public class CacheManager<T> {
             try {
                 return Reservoir.get(key, clazz);
             } catch (Exception e) {
+                mEventBus.post(new CacheFailure(key, e, false));
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieve an image from the cache with the given key.
+     * Call with new CacheManager<String>().getImage(mCacheKey, true)
+     * @param key the key string
+     * @param async Whether this should be done asynchronously/non-blocking (true) or synchronously/blocking (false)
+     */
+    public Bitmap getImage(@NonNull final String key, final boolean async) {
+        if (async) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Bitmap data = sBitmapCache.get(key);
+                    if (data != null) {
+                        mEventBus.post(new CacheDataRetrieved<>(Bitmap.class, key, data));
+                    } else {
+                        mEventBus.post(new CacheFailure(key, null, false));
+                    }
+                }
+            }).start();
+        } else {
+            try {
+                return sBitmapCache.get(key);
+            } catch (NullPointerException e) {
                 mEventBus.post(new CacheFailure(key, e, false));
             }
         }
@@ -136,11 +251,54 @@ public class CacheManager<T> {
         return null;
     }
 
+    public static Boolean removeImage(final String key, boolean async) {
+        if (async) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    sBitmapCache.delete(key);
+                }
+            }).start();
+        } else {
+            sBitmapCache.delete(key);
+            return true;
+        }
+        return null;
+    }
+
+    /**
+     * Get a ImageCache instance to use with Volley's NetworkImageView
+     * @return
+     */
+    public static ImageLoader.ImageCache getImageCache() {
+        return new ImageLoader.ImageCache() {
+            @Override
+            public Bitmap getBitmap(String url) {
+                return new CacheManager<Bitmap>().getImage(getImageKey(url), true);
+            }
+
+            @Override
+            public void putBitmap(String url, Bitmap bitmap) {
+                CacheManager.putImage(getImageKey(url), bitmap, true);
+            }
+
+            public String getImageKey(String url) {
+                return MD5Helper.md5Hex(url);
+            }
+        };
+    }
+
     public static String getCommentKey(final String changeId) {
         return "comment." + changeId;
     }
 
     public static String getDiffKey(final int changeNumber, final int psNumber) {
         return "diff~" + changeNumber + "~" + psNumber;
+    }
+
+    public static String getImageKey(int changeNumber, int patchsetNumber, String path) {
+        // Since the DualCache proposes rather constictive restrictions on the key, we need to
+        //  hash the key we would use to filter out the characters it does not allow
+        return MD5Helper.md5Hex(path + "@@" + changeNumber + "#" + patchsetNumber);
     }
 }

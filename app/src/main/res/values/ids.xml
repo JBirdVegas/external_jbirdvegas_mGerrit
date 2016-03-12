@@ -30,4 +30,5 @@
     <item type="id" name="imageRequest" />
     <item type="id" name="adapter" />
     <item type="id" name="searchCategory" />
+    <item type="id" name="starred" />
 </resources>

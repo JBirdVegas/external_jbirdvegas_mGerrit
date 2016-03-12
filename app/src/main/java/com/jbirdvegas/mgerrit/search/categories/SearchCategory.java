@@ -47,7 +47,6 @@ import android.widget.TextView;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.fragments.DatePickerFragment;
 import com.jbirdvegas.mgerrit.fragments.TimePickerFragment;
-import com.jbirdvegas.mgerrit.search.AgeSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 
 import org.jetbrains.annotations.NotNull;
@@ -211,7 +210,7 @@ public abstract class SearchCategory<K extends SearchKeyword> {
                                                 Collection<SearchKeyword> keywords) {
         for (SearchCategory category : categories) {
             for (SearchKeyword keyword : keywords) {
-                if (keyword.getClass().equals(category.getClazz())) {
+                if (keyword != null && keyword.getClass().equals(category.getClazz())) {
                     category.setKeyword(context, keyword);
                     break;
                 }

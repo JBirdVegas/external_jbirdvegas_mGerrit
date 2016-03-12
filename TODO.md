@@ -20,15 +20,19 @@ mGerrit TODO List
     - When given a Gerrit link just change the current Gerrit
 - Ability to track projects across different Gerrits
     - Example, I could be following CM's Gerrit and view mGerrit changes on AOKP's Gerrit
-    - May want to put this in a new slide-out menu
+    - May want to put this in the navigation drawer
         - List all tracked projects under the the one heading (that is collapsible)
+    - Would have to save these projects in the shared preferences
 - Separate debug/release versioning
 - Layout optimisations using Android Hierarchy Viewer (debug version)
 - Check BroadcastReceivers across activities
 	- E.g. If a broadcast response is broadcast delivered while the ProjectsList activity is open for a change query, the broadcast should be
 		(re-)delivered to the activity that was listening to broadcasts matching the actual query
-- Option to disable quick scroll
+	-  EventBus sticky messages handle this
 - Commit message text highlighting
+-  Ability to hide changes from certain projects
+    - Would have to save these in a new table in the DB
+- Build flavor with Google Analytics disabled (for F-Droid)
 
 
 ### Searching (Requires database), action bar
@@ -36,12 +40,6 @@ mGerrit TODO List
 	- mimic Gerrit web interface queries
 	- Support searching for a specific commit heading (default). e.g. searching for "commit:[translation]" will show a heading for Commits and list all the commits with "[translation]" in the title.
 	- Where it is ambiguous (e.g. search results from commits and committers) show results under section headings. These section headings should be collapsible.
-- Right navigation filter draw
-	- Modular: users choose a supported filter type from a spinner and a layout is inflated corresponding to that filter type from where they can fill out the filter parameters.
-		- Main layouts will be either a text field or a spinner
-	- Filter options modify search query (present in either action bar (search) or filter draw)
-	- Idea: Users can do filtering and bypass the filter draw entirely. The filter draw provides assistance on how to formulate queries that the web interface uses.
-		- We are going to support new filter types (keywords) and/or new parameters for them (e.g. date range filtering for the age keyword)
 - Support allintitle -
     - `intitle:<QUERY>`
 	- `allintitle:<QUERY1 QUERY2 ...>` == `intitle<QUERY1> intitle:<QUERY2>`
@@ -52,9 +50,6 @@ mGerrit TODO List
 	- Investigate card swiping
 - Titles only
     - Easiest to do with a setting in the preferences
-- Fast scrolling section labels
-    - Implementation similar to the CM Messaging app
-    - See: http://toastdroid.com/2014/05/09/adding-sections-to-cursoradapter/
 
 
 ### Tablet (master-detail layout)

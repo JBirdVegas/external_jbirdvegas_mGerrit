@@ -57,7 +57,7 @@
         <item name="starredIcon">@drawable/ic_action_starred</item>
         <item name="unstarredIcon">@drawable/ic_action_unstarred</item>
         <item name="borderlessButtonBackground">@style/BorderlessBackground</item>
-        <item name="overflowIcon">@drawable/horiz_overflow</item>
+        <item name="overflowIcon">@drawable/ic_action_overflow</item>
         <item name="upIcon">@drawable/ic_nav_expand</item>
         <item name="sendIcon">@drawable/ic_action_send</item>
         <item name="branchIcon">@drawable/ic_action_split</item>
@@ -110,7 +110,7 @@
         <item name="starredIcon">@drawable/ic_action_starred_dark</item>
         <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
         <item name="borderlessButtonBackground">@style/BorderlessBackground.Dark</item>
-        <item name="overflowIcon">@drawable/horiz_overflow_dark</item>
+        <item name="overflowIcon">@drawable/ic_action_overflow_dark</item>
         <item name="upIcon">@drawable/ic_nav_expand_dark</item>
         <item name="sendIcon">@drawable/ic_action_send_dark</item>
         <item name="branchIcon">@drawable/ic_action_split_dark</item>

@@ -37,6 +37,7 @@ import com.urswolfer.gerrit.client.rest.GerritRestApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
+import java.util.NoSuchElementException;
 
 class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
@@ -72,7 +73,7 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
         try {
             change = ApiHelper.fetchChange(mContext, gerritApi, mChangeId, changeNumber);
             return change.get(options);
-        } catch (IllegalArgumentException | RestApiException e1) {
+        } catch (IllegalArgumentException | RestApiException | NoSuchElementException e1) {
             /* We may have a situation where multiple changes have the same change id
              * this usually occurs when cherry-picking or reverting a commit.
              * We have to fallback to the legacy change number
@@ -86,13 +87,15 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
                 } else {
                     throw new RestApiException(e1.getMessage(), e1);
                 }
-                return change.get(options);
+
+                try {
+                    return change.get(options);
+                } catch (IllegalArgumentException | RestApiException | NoSuchElementException e2) {
+                    // The server may have errored out again on this change
+                    throw fetchCommitFailureHelper(e2);
+                }
             } catch (RestApiException e2) {
-                // Track this so we can find what changes cause this issue
-                AnalyticsHelper.sendAnalyticsEvent(mContext, getClass().getSimpleName(),
-                        AnalyticsHelper.CHANGE_NOT_UNIQUE, mChangeId, null);
-                // We don't have anything we can use to uniquely identify the change we are trying to fetch
-                throw new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e2);
+                throw fetchCommitFailureHelper(e2);
             }
         }
     }
@@ -133,5 +136,13 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
         options.add(ListChangesOption.MESSAGES);
         options.add(ListChangesOption.DETAILED_LABELS);
         return options;
+    }
+
+    private RestApiException fetchCommitFailureHelper(Exception e) {
+        // Track this so we can find what changes cause this issue
+        AnalyticsHelper.sendAnalyticsEvent(mContext, getClass().getSimpleName(),
+                AnalyticsHelper.CHANGE_NOT_UNIQUE, mChangeId, null);
+        // We don't have anything we can use to uniquely identify the change we are trying to fetch
+        return new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
     }
 }

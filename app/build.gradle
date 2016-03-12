@@ -39,10 +39,10 @@ dependencies {
     compile 'joda-time:joda-time:2.9.2'
     compile 'org.ajoberstar:gradle-git:1.1.0'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
-    compile('com.github.dmytrodanylyk.android-process-button:library:1.0.3') {
+    compile('com.github.dmytrodanylyk.android-process-button:library:1.0.4') {
         exclude module: 'support-v4'
     }
-    compile 'de.hdodenhof:circleimageview:1.2.2'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
 
 /*  TODO: Enable this when the Android variant of the Gerrit Rest Java Client is officially released
        The corresponding jar can then be removed
@@ -59,9 +59,13 @@ dependencies {
 
     compile 'com.anupcowkur:reservoir:2.1'
 
-    compile('com.mikepenz:materialdrawer:5.0.5@aar') {
+    compile('com.mikepenz:materialdrawer:5.1.1@aar') {
         transitive = true
         exclude module: 'appcompat-v7'
+    }
+
+    compile('com.vincentbrison.openlibraries.android:dualcache:2.2.2@jar') {
+        transitive = true
     }
 }
 
@@ -107,6 +111,8 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/ECLIPSE_.RSA'
         exclude 'META-INF/ECLIPSE_.SF'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
     }
 
     defaultConfig {

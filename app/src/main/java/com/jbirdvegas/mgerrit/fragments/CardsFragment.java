@@ -45,6 +45,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.activities.BaseDrawerActivity;
 import com.jbirdvegas.mgerrit.activities.RefineSearchActivity;
 import com.jbirdvegas.mgerrit.adapters.ChangeListAdapter;
+import com.jbirdvegas.mgerrit.adapters.ChangeListWrappable;
 import com.jbirdvegas.mgerrit.adapters.EndlessAdapterWrapper;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterDecorator;
 import com.jbirdvegas.mgerrit.adapters.HeaderAdapterWrapper;
@@ -155,7 +156,7 @@ public abstract class CardsFragment extends Fragment
     private void init(Bundle savedInstanceState) {
         mParent = this.getActivity();
         View mCurrentFragment = this.getView();
-        RequestQueue mRequestQueue = Volley.newRequestQueue(mParent);
+        RequestQueue mRequestQueue = Volley.newRequestQueue(mParent.getApplicationContext());
 
         // We need to setup the SearchView before adding the refine search card
         mSearchView = (GerritSearchView) mParent.findViewById(R.id.search);
@@ -171,9 +172,9 @@ public abstract class CardsFragment extends Fragment
                 UserChanges.C_STARRED };
 
         mListView = (ExpandableStickyListHeadersListView) mCurrentFragment.findViewById(R.id.commit_cards);
-        mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card_row, null, from, to, 0,
+        mAdapter = new ChangeListAdapter(mParent, R.layout.commit_card, null, from, to, 0,
                 getQuery());
-        mAdapter.setViewBinder(new CommitCardBinder(mParent, mRequestQueue));
+        mAdapter.setViewBinder(new CommitCardBinder(mParent, mRequestQueue, true));
 
         mHeaderAdapter = new HeaderAdapterWrapper(mParent, mAdapter);
 
@@ -205,7 +206,6 @@ public abstract class CardsFragment extends Fragment
         mHeaderAdapterWrapper = new HeaderAdapterDecorator(mEndlessAdapter, mHeaderAdapter);
         mListView.setAdapter(mHeaderAdapterWrapper);
         mListView.setDrawingListUnderStickyHeader(false);
-        mListView.getWrappedList().setDividerHeight(32);
 
         sChangesLimit = mParent.getResources().getInteger(R.integer.changes_limit);
 
@@ -356,14 +356,14 @@ public abstract class CardsFragment extends Fragment
      *  adapter, initialising a new adapter if necessary.
      * @param baseAdapter The current adapter for the listview
      */
-    public void toggleAnimations(BaseAdapter baseAdapter) {
+    public void toggleAnimations(ChangeListWrappable baseAdapter) {
         boolean anim = PrefsFragment.getAnimationPreference(mParent);
         if (mAnimationsEnabled != null && anim == mAnimationsEnabled) return;
         else mAnimationsEnabled = anim;
 
         /* If animations have been enabled, setup and use an animation adapter, otherwise use
          *  the regular adapter. The data should always be bound to mAdapter */
-        BaseAdapter adapter = Tools.toggleAnimations(mAnimationsEnabled, mListView.getWrappedList(), mAnimAdapter, baseAdapter);
+        BaseAdapter adapter = Tools.toggleAnimations(mAnimationsEnabled, mListView, mAnimAdapter, baseAdapter);
         if (mEndlessAdapter != null) {
             mEndlessAdapter.setParentAdatper(adapter);
         }

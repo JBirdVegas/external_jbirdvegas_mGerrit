@@ -29,7 +29,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
  *  expects on the adapter from setAdapter. We can use this to delegate called methods to the relevant
  *  adapter, possibly skipping one level.
  */
-public class HeaderAdapterDecorator extends BaseAdapter implements StickyListHeadersAdapter {
+public class HeaderAdapterDecorator extends ChangeListWrappable {
 
     BaseAdapter mWrappedBase;
     StickyListHeadersAdapter mWrappedHeaders;
@@ -71,5 +71,10 @@ public class HeaderAdapterDecorator extends BaseAdapter implements StickyListHea
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         return mWrappedBase.getView(position, convertView, parent);
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return mWrappedBase.getViewTypeCount();
     }
 }

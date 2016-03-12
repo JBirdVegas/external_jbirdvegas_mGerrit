@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.jbirdvegas.mgerrit.message.ImageLoaded;
+import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
 import com.urswolfer.gerrit.client.rest.RestClient;
@@ -40,10 +41,11 @@ import java.util.zip.ZipInputStream;
 public class ImageProcessor extends SyncProcessor<Bitmap> {
 
     private static final String DEFAULT_CHARSET = "UTF-8";
-
     int mChangeNumber, mPatchsetNumber;
+
     final String mPath;
     final ChangedFileInfo.Status mFileStatus;
+    private final String mCacheKey;
 
     ImageProcessor(Context context, Intent intent) {
         super(context, intent);
@@ -51,6 +53,7 @@ public class ImageProcessor extends SyncProcessor<Bitmap> {
         mPatchsetNumber = intent.getIntExtra(GerritService.PATCHSET_NUMBER, 0);
         mPath = intent.getStringExtra(GerritService.FILE_PATH);
         mFileStatus = (ChangedFileInfo.Status) intent.getSerializableExtra(GerritService.FILE_STATUS);
+        mCacheKey = CacheManager.getImageKey(mChangeNumber, mPatchsetNumber, mPath);
     }
 
     @Override
@@ -100,6 +103,23 @@ public class ImageProcessor extends SyncProcessor<Bitmap> {
         }
 
         return getBitmap(output.toByteArray());
+    }
+
+    /* Save the decoded image to the cache.
+     * This will also clear up old versions of this image from previous patchsets */
+    @Override
+    void doPostProcess(Bitmap data) {
+        CacheManager.putImage(mCacheKey, data, false);
+        /* Cleanup diffs for any superceeded revisions of this change as we will never attempt
+         * to fetch them again) */
+        for (int i = 0; i < mPatchsetNumber; i++) {
+            CacheManager.removeImage(CacheManager.getImageKey(mChangeNumber, i, mPath), false);
+        }
+    }
+
+    protected Bitmap retreiveFromCache(Intent intent) {
+        CacheManager<String> cacheManager = new CacheManager<>();
+        return cacheManager.getImage(mCacheKey, false);
     }
 
     /** Format: <Gerrit>/cat/<change number>,<mRevision number>,<path>^<parent>

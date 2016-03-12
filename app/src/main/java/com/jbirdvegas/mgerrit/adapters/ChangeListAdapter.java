@@ -38,6 +38,7 @@ import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.objects.Categorizable;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
+import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
@@ -117,6 +118,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
         view.setTag(R.id.userName, cursor.getString(mUserName_index));
         view.setTag(R.id.project, cursor.getString(mProject_index));
         view.setTag(R.id.webAddress, tagHolder.webAddress);
+        view.setTag(R.id.starred, tagHolder.isStarred);
 
         super.bindView(view, context, cursor);
     }
@@ -236,6 +238,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
     public boolean onMenuItemClick(MenuItem item) {
         View targetView = mPopupMenuTagHolder;
         String webAddress = (String) mPopupMenuTagHolder.getTag(R.id.webAddress);
+        String changeid = (String) mPopupMenuTagHolder.getTag(R.id.changeID);
         switch (item.getItemId()) {
             case R.id.menu_change_details:
                 itemClickListener(targetView);
@@ -253,10 +256,14 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
                 PrefsFragment.setCurrentProject(mContext, project);
                 return true;
             case R.id.menu_change_share:
-                String changeid = (String) mPopupMenuTagHolder.getTag(R.id.changeID);
                 Intent intent = Tools.createShareIntent(mContext, changeid, webAddress);
                 mContext.startActivity(intent);
                 return true;
+            case R.id.menu_star_change:
+                int changeNumber = (int) mPopupMenuTagHolder.getTag(R.id.changeNumber);
+                int isStarred = (int) mPopupMenuTagHolder.getTag(R.id.starred);
+                onStarChange(changeid, changeNumber, isStarred != 1);
+                notifyDataSetChanged();
             default:
                 return false;
         }
@@ -267,13 +274,18 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
         popup.setOnMenuItemClickListener(this);
         popup.inflate(R.menu.change_list_menu);
 
+        View row = (View) view.getParent().getParent();
+        mPopupMenuTagHolder = row;
+
         // Set the title of the user tracking menu item
         MenuItem userMenuItem = popup.getMenu().findItem(R.id.menu_change_track_user);
-        View row = ((View) view.getParent());
         String title = String.format(mContext.getResources().getString(R.string.context_menu_track_user),
                 (String) row.getTag(R.id.userName));
         userMenuItem.setTitle(title);
-        mPopupMenuTagHolder = row;
+
+        MenuItem starMenuItem = popup.getMenu().findItem(R.id.menu_star_change);
+        int starred = (int) row.getTag(R.id.starred);
+        starMenuItem.setTitle(starred == 1 ? R.string.menu_unstar_change : R.string.menu_star_change);
 
         popup.show();
     }
@@ -284,11 +296,21 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
         return mDateColumnIndex;
     }
 
+    private void onStarChange(String changeId, int changeNumber, boolean starred) {
+        Intent it = new Intent(mContext, GerritService.class);
+        it.putExtra(GerritService.DATA_TYPE_KEY, GerritService.DataType.Star);
+        it.putExtra(GerritService.CHANGE_ID, changeId);
+        it.putExtra(GerritService.CHANGE_NUMBER, changeNumber);
+        it.putExtra(GerritService.IS_STARRING, starred);
+        mContext.startService(it);
+    }
+
     private static class TagHolder {
         String changeid;
         int changeNumber;
         String changeStatus;
         String webAddress;
+        int isStarred;
 
         TagHolder(Context context, Cursor cursor) {
             changeid = cursor.getString(cursor.getColumnIndex(UserChanges.C_CHANGE_ID));
@@ -296,6 +318,7 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
             changeStatus = cursor.getString(cursor.getColumnIndex(UserChanges.C_STATUS));
             webAddress = Tools.getWebAddress(context,
                     cursor.getInt(cursor.getColumnIndex(UserChanges.C_COMMIT_NUMBER)));
+            isStarred = cursor.getInt(cursor.getColumnIndex(UserChanges.C_STARRED));
         }
     }
 }
