@@ -82,6 +82,11 @@ abstract class SyncProcessor<T> {
         return intent.getStringExtra(GerritService.CHANGE_STATUS);
     }
 
+    // Helper method to return the change status
+    protected GerritService.Direction getDirection() {
+        return (GerritService.Direction) intent.getSerializableExtra(GerritService.CHANGES_LIST_DIRECTION);
+    }
+
     @NotNull
     public Intent getIntent() { return intent; }
 

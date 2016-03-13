@@ -310,9 +310,8 @@ public abstract class SearchKeyword implements Parcelable {
         List<AgeSearch> ageSearches = new ArrayList<>();
         List<SearchKeyword> otherSearches = new ArrayList<>();
 
-        ageSearches.add(keyword);
-
         if (tokens.size() > 0) {
+            ageSearches.add(keyword);
             for (SearchKeyword o : tokens) {
                 if (o instanceof AgeSearch) ageSearches.add((AgeSearch) o);
                 else otherSearches.add(o);
@@ -320,6 +319,8 @@ public abstract class SearchKeyword implements Parcelable {
 
             Collections.sort(ageSearches);
             otherSearches.add(ageSearches.get(0));
+        } else {
+            otherSearches.add(keyword);
         }
 
         return new HashSet<>(otherSearches);

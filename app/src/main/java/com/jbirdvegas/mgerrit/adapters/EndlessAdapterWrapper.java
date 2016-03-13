@@ -194,7 +194,7 @@ public abstract class EndlessAdapterWrapper extends ChangeListWrappable
     @Override
     public void onScrollStateChanged(AbsListView listView, int scrollState) {
         if (scrollState == SCROLL_STATE_IDLE) {
-            if (listView.getLastVisiblePosition() == wrapped.getCount() - 1) {
+            if (listView.getLastVisiblePosition() >= wrapped.getCount() - 1) {
                 startDataLoading();
             }
         }

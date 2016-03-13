@@ -34,6 +34,8 @@ import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.search.ProjectSearch;
 
+import org.jetbrains.annotations.Nullable;
+
 public class ProjectCategory extends SearchCategory<ProjectSearch> {
     private SimpleCursorAdapter mAdapter;
 
@@ -92,8 +94,9 @@ public class ProjectCategory extends SearchCategory<ProjectSearch> {
 
         mAdapter.setFilterQueryProvider(new FilterQueryProvider() {
             @Override
-            public Cursor runQuery(CharSequence description) {
-                return ProjectsTable.searchProjects(context, description.toString());
+            public Cursor runQuery(@Nullable CharSequence description) {
+                String query = (description == null) ? null : description.toString();
+                return ProjectsTable.searchProjects(context, query);
             }
         });
     }

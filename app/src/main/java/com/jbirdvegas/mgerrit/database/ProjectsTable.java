@@ -178,10 +178,15 @@ public class ProjectsTable extends DatabaseTable {
                 where.toString(), whereQuery,SORT_BY);
     }
 
-    public static Cursor searchProjects(@NotNull Context context, @NotNull final String query) {
+    public static Cursor searchProjects(@NotNull Context context, final String query) {
         String columns[] = { "rowid AS _id", ProjectsTable.C_PATH, ProjectsTable.C_ROOT, ProjectsTable.C_SUBPROJECT};
-        return context.getContentResolver().query(CONTENT_URI,
-                columns, C_PATH + " LIKE ?", new String[] {"%" + query + "%"}, SORT_BY);
+        if (query != null) {
+            return context.getContentResolver().query(CONTENT_URI,
+                    columns, C_PATH + " LIKE ?", new String[]{"%" + query + "%"}, SORT_BY);
+        } else {
+            return context.getContentResolver().query(CONTENT_URI,
+                    columns, null, null, SORT_BY);
+        }
     }
 
     // Split a project's path (name) into its root and subproject

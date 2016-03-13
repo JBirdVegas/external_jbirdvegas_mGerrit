@@ -219,19 +219,27 @@ public class ChangeListAdapter extends SimpleCursorAdapter implements Categoriza
     @Override
     public String categoryName(int position) {
         Cursor c = (Cursor) getItem(position);
-        Integer index = getDateColumnIndex(c);
-        // Convert to date
-        DateTime date = Tools.parseDate(c.getString(index), mServerTimeZone, mLocalTimeZone);
-        return DateTimeFormat.forPattern(mContext.getString(R.string.header_date_format)).withLocale(mLocale).print(date);
+        if (c != null && !c.isAfterLast()) {
+            Integer index = getDateColumnIndex(c);
+            // Convert to date
+            DateTime date = Tools.parseDate(c.getString(index), mServerTimeZone, mLocalTimeZone);
+            return DateTimeFormat.forPattern(mContext.getString(R.string.header_date_format)).withLocale(mLocale).print(date);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public long categoryId(int position) {
         Cursor c = (Cursor) getItem(position);
-        Integer index = getDateColumnIndex(c);
-        // Convert to date
-        DateTime date = Tools.parseDate(c.getString(index), mServerTimeZone, mLocalTimeZone);
-        return date.getMillis();
+        if (c != null && !c.isAfterLast()) {
+            Integer index = getDateColumnIndex(c);
+            // Convert to date
+            DateTime date = Tools.parseDate(c.getString(index), mServerTimeZone, mLocalTimeZone);
+            return date.getMillis();
+        } else {
+            return 0;
+        }
     }
 
     @Override

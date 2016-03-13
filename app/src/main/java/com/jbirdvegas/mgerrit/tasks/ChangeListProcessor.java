@@ -41,13 +41,14 @@ import com.urswolfer.gerrit.client.rest.GerritRestApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 class ChangeListProcessor extends SyncProcessor<List<ChangeInfo>> {
 
     GerritService.Direction mDirection;
     private final String mStatus;
-    private final List<SearchKeyword> mSearchKeywords;
+    private final ArrayList<SearchKeyword> mSearchKeywords;
     private String mSortKey = null;
 
     /**
@@ -73,7 +74,7 @@ class ChangeListProcessor extends SyncProcessor<List<ChangeInfo>> {
             }
         }
 
-        mSearchKeywords = (List<SearchKeyword>) intent.getSerializableExtra(GerritService.CHANGE_KEYWORDS);
+        mSearchKeywords = intent.getParcelableArrayListExtra(GerritService.CHANGE_KEYWORDS);
     }
 
     @Override
@@ -88,6 +89,7 @@ class ChangeListProcessor extends SyncProcessor<List<ChangeInfo>> {
     protected boolean doesProcessorConflict(@NotNull SyncProcessor processor) {
         if (!this.getClass().equals(processor.getClass())) return false;
         if (!mStatus.equals(processor.getStatus())) return false;
+        if (!mDirection.equals(processor.getDirection())) return false;
         // We are already fetching changes for this status
         return true;
     }

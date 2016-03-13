@@ -111,9 +111,7 @@ public class GerritTeamsHelper {
 
     private static void writeTeamToCache(String teamName, String teamUrl) {
         File teamPath = new File(mExternalCacheDir.getAbsolutePath() + '/' + teamName);
-        if (teamPath.exists()) {
-            teamPath.delete();
-        }
+        teamPath.mkdirs();
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(teamPath));

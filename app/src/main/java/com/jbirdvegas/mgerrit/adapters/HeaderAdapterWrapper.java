@@ -56,22 +56,35 @@ public class HeaderAdapterWrapper extends ChangeListWrappable {
     }
 
     public View getHeaderView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
+        TextView header;
         String dateText = ((Categorizable) wrapped).categoryName(position);
         if (dateText != null) {
-            ViewHolder holder;
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.date_card_header, parent, false);
                 holder = new ViewHolder((TextView) convertView.findViewById(R.id.header));
-                convertView.setTag(holder);
             } else {
-                holder = (ViewHolder) convertView.getTag();
+                header = (TextView) convertView.findViewById(R.id.header);
+                if (header == null) {
+                    convertView = mInflater.inflate(R.layout.date_card_header, parent, false);
+                    holder = new ViewHolder((TextView) convertView.findViewById(R.id.header));
+                } else {
+                    holder = (ViewHolder) convertView.getTag();
+                }
             }
+            convertView.setTag(holder);
             holder.text.setText(dateText);
+        } else {
+            // The List Animations cannot handle animating empty views so we need to put a blank
+            //  one in when the date is not defined
+            convertView = mInflater.inflate(R.layout.empty_row, parent, false);
         }
+
         return convertView;
     }
 
     public long getHeaderId(int position) {
+        if (position > wrapped.getCount()) return 0;
         return ((Categorizable) wrapped).categoryId(position);
     }
 

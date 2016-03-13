@@ -18,12 +18,12 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/standard_padding">
 
     <ProgressBar
         android:id="@+id/loading_progressBar"
@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textSize="@dimen/text_size_large"
+        android:paddingLeft="@dimen/standard_padding"
         android:text="@string/loading_changes"
-        android:paddingLeft="@dimen/standard_padding"/>
+        android:textSize="@dimen/text_size_large"/>
 </LinearLayout>
