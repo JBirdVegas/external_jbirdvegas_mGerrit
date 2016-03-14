@@ -13,6 +13,8 @@ public class AnalyticsHelper {
 
     public static AnalyticsHelper getInstance() {
         if (mHelper == null) {
+            // sender implementation depends on productFlavor.  `googlePlay` implements the analytics where
+            // `noAnalytics` stubs all methods to avoid collecting analytics for those who prefer to not be tracked
             mHelper = new AnalyticsSenderImpl();
         }
         if (mInstance == null) {
@@ -22,7 +24,7 @@ public class AnalyticsHelper {
     }
 
     public void sendAnalyticsEvent(Context context, String category, String action, String label, Long value) {
-        getInstance().mHelper.sendAnalyticsEvent(context, category, action, label, value);
+        mHelper.sendAnalyticsEvent(context, category, action, label, value);
     }
 
     public void startActivity(Activity activity) {
