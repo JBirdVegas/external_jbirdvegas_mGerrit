@@ -25,16 +25,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SearchView;
-
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
 import com.jbirdvegas.mgerrit.message.SearchStateChanged;
 import com.jbirdvegas.mgerrit.search.OwnerSearch;
 import com.jbirdvegas.mgerrit.search.ProjectSearch;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
-
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -119,7 +116,8 @@ public class GerritSearchView extends SearchView
 
     /**
      * Set the search query. This will construct the SQL query and restart
-     *  the loader to perform the query
+     * the loader to perform the query
+     *
      * @param query The search query text
      */
     private Set<SearchKeyword> constructTokens(@Nullable String query) {
@@ -156,7 +154,7 @@ public class GerritSearchView extends SearchView
 
     /**
      * Always show the cancel button and set its onClick listener. The button
-     *  has private visibility so we need reflection to access it.
+     * has private visibility so we need reflection to access it.
      */
     private void setupCancelButton() {
         try {
@@ -171,11 +169,11 @@ public class GerritSearchView extends SearchView
                 }
             });
         } catch (Exception e) {
-            EasyTracker.getInstance(mContext).send(MapBuilder.createEvent(
+            AnalyticsHelper.getInstance().sendAnalyticsEvent(mContext,
                     "GerritSearchView",
                     "setupCancelButton",
                     "search_button_reflection_visibility",
-                    null).build());
+                    null);
             e.printStackTrace();
         }
     }
@@ -185,8 +183,9 @@ public class GerritSearchView extends SearchView
         if (visibility == View.GONE) {
             setVisibility(View.VISIBLE);
             requestFocus();
+        } else {
+            setVisibility(View.GONE);
         }
-        else setVisibility(View.GONE);
     }
 
     @Override
@@ -201,8 +200,8 @@ public class GerritSearchView extends SearchView
 
     /**
      * Modifies future searches for this fragment by appending additional
-     *  keywords to search for that will not be present in the original
-     *  search query. This clears all old keywords that were previously injected.
+     * keywords to search for that will not be present in the original
+     * search query. This clears all old keywords that were previously injected.
      *
      * @param keywords
      */
@@ -218,8 +217,8 @@ public class GerritSearchView extends SearchView
 
     /**
      * Modifies future searches for this fragment by appending additional
-     *  keywords to search for that will not be present in the original
-     *  search query.
+     * keywords to search for that will not be present in the original
+     * search query.
      *
      * @param keyword
      */
@@ -251,7 +250,7 @@ public class GerritSearchView extends SearchView
 
     /**
      * @return The list of search keywords that were included in the query plus any additional
-     *  keywords that were set via injectKeywords(Set<SearchKeyword>)
+     * keywords that were set via injectKeywords(Set<SearchKeyword>)
      */
     public Set<SearchKeyword> getLastQuery() {
         return mCurrentKeywords;
@@ -259,6 +258,7 @@ public class GerritSearchView extends SearchView
 
     /**
      * Search for a given search keyword in the current list of tokens
+     *
      * @param keyword The search keyword to search for (needle)
      * @return Whether the keyword was found in the list or not
      */
