@@ -2,12 +2,14 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
+        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.0'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'org.apache.commons:commons-lang3:3.4'
         classpath 'org.ajoberstar:gradle-git:1.1.0'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 
@@ -16,10 +18,12 @@ import com.jbirdvegas.mgerrit.build.utils.VersionHelper
 apply plugin: 'com.android.application'
 apply plugin: 'hugo'
 apply plugin: 'checkstyle'
+apply plugin: 'io.fabric'
 
 repositories {
     jcenter()
     mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 android {
@@ -47,6 +51,10 @@ android {
         release {}
     }
     buildTypes {
+        debug {
+            // Disable fabric build ID generation for debug builds
+            ext.enableCrashlytics = false
+        }
         release {
             minifyEnabled false
             signingConfig signingConfigs.release
@@ -84,7 +92,9 @@ android {
 
 dependencies {
     googlePlayCompile files('libs/libGoogleAnalyticsServices.jar')
-
+    googlePlayCompile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+        transitive = true
+    }
     compile 'org.jetbrains:annotations:13.0'
 
     compile 'com.android.support:appcompat-v7:23.1.1'
