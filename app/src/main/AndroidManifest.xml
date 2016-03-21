@@ -116,5 +116,9 @@
             android:authorities="com.jbirdvegas.provider.mgerrit"
             android:exported="false">
         </provider>
+        <meta-data
+          android:name="io.fabric.ApiKey"
+          android:value="f9911415dfe29e4665c9843a095f98e45cde532c"
+      />
     </application>
 </manifest>
