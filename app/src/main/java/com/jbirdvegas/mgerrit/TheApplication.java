@@ -6,13 +6,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
-
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
 import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
-
+import io.fabric.sdk.android.Fabric;
 import org.greenrobot.eventbus.EventBus;
 
 
@@ -40,9 +41,17 @@ public class TheApplication extends Application
     @Override
     public void onCreate() {
         super.onCreate();
+        // Set up Crashlytics, disabled for debug builds
+        Crashlytics crashlyticsKit = new Crashlytics.Builder()
+                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build();
+
+        // Initialize Fabric with the debug-disabled crashlytics.
+        Fabric.with(this, crashlyticsKit);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
+
 
         // Don't spam logs with no subscriber event messages as some are used only on tablet devices
         EventBus.builder().logNoSubscriberMessages(false).sendNoSubscriberEvent(false).installDefaultEventBus();
