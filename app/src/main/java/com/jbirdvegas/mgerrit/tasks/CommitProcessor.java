@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
@@ -139,10 +140,11 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
     }
 
     private RestApiException fetchCommitFailureHelper(Exception e) {
-        // Track this so we can find what changes cause this issue
-        AnalyticsHelper.sendAnalyticsEvent(mContext, getClass().getSimpleName(),
-                AnalyticsHelper.CHANGE_NOT_UNIQUE, mChangeId, null);
         // We don't have anything we can use to uniquely identify the change we are trying to fetch
-        return new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
+        RestApiException exception = new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
+        AnalyticsHelper.setCustomString(AnalyticsHelper.C_CHANGE_ID, mChangeId);
+        AnalyticsHelper.setCustomInt(AnalyticsHelper.C_CHANGE_ID, mChangeNumber);
+        Crashlytics.logException(exception);
+        return exception;
     }
 }

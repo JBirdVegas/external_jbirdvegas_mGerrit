@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.helpers;
 
 import android.content.Context;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
 
@@ -34,7 +35,10 @@ public class AnalyticsHelper {
     public static final String GA_THEME_SET_ON_OPEN = "ui_theme";
     public static final String EVENT_CHANGE_COMMENT_ADDED = "Change comment added";
     public static final String EVENT_LOGGED_IN = "User signed in";
-    public static final String CHANGE_NOT_UNIQUE = "Change not unique";
+
+    public static final String C_SERVER_VERSION = "Server version";
+    public static final String C_CHANGE_ID = "Change ID";
+    public static final String C_CHANGE_NUMBER = "Change number";
 
 
     public static void sendAnalyticsEvent(Context context,
@@ -47,4 +51,11 @@ public class AnalyticsHelper {
         easyTracker.send(MapBuilder.createAppView().build());
     }
 
+    public static void setCustomString(String key, String data) {
+        Crashlytics.setString(key, data);
+    }
+
+    public static void setCustomInt(String key, int data) {
+        Crashlytics.setInt(key, data);
+    }
 }
