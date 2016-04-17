@@ -26,6 +26,7 @@ import com.google.gerrit.extensions.api.changes.ReviewInput;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.ApiHelper;
@@ -99,12 +100,12 @@ public class ReviewProcessor extends SyncProcessor<ChangeInfo> {
 
     @Override
     protected void trackEvent(String currentGerrit) {
-        AnalyticsHelper.sendAnalyticsEvent(mContext, AnalyticsHelper.GA_AUTHORISED_ACTION,
-                AnalyticsHelper.EVENT_CHANGE_COMMENT_ADDED, currentGerrit, null);
+        AnalyticsHelper.getInstance().sendAnalyticsEvent(mContext, mContext.getString(R.string.ga_authorized_action),
+                mContext.getString(R.string.ga_change_comment_added), currentGerrit, null);
     }
 
     private EnumSet<ListChangesOption> queryOptions() {
-        EnumSet options = EnumSet.noneOf(ListChangesOption.class);
+        EnumSet<ListChangesOption> options = EnumSet.noneOf(ListChangesOption.class);
         // Need the account id of the owner here to maintain FK db constraint
         options.add(ListChangesOption.DETAILED_ACCOUNTS);
         options.add(ListChangesOption.MESSAGES);

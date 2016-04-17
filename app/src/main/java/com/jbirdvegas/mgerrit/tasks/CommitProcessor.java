@@ -19,11 +19,11 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
 import android.content.Intent;
-
 import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.Labels;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
@@ -33,7 +33,6 @@ import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.ApiHelper;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -127,7 +126,7 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
     }
 
     private EnumSet<ListChangesOption> queryOptions() {
-        EnumSet options = EnumSet.noneOf(ListChangesOption.class);
+        EnumSet<ListChangesOption> options = EnumSet.noneOf(ListChangesOption.class);
         options.add(ListChangesOption.CURRENT_REVISION);
         options.add(ListChangesOption.CURRENT_COMMIT);
         options.add(ListChangesOption.CURRENT_FILES);
@@ -140,8 +139,8 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
     private RestApiException fetchCommitFailureHelper(Exception e) {
         // Track this so we can find what changes cause this issue
-        AnalyticsHelper.sendAnalyticsEvent(mContext, getClass().getSimpleName(),
-                AnalyticsHelper.CHANGE_NOT_UNIQUE, mChangeId, null);
+        AnalyticsHelper.getInstance().sendAnalyticsEvent(mContext, getClass().getSimpleName(),
+                mContext.getString(R.string.ga_change_not_unique), mChangeId, null);
         // We don't have anything we can use to uniquely identify the change we are trying to fetch
         return new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
     }
