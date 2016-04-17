@@ -44,10 +44,9 @@ public class TheApplication extends Application
     @Override
     public void onCreate() {
         super.onCreate();
-        //Fabric.with(this, new Crashlytics());
         // Set up Crashlytics, disabled for debug builds
         Crashlytics crashlyticsKit = new Crashlytics.Builder()
-                .core(new CrashlyticsCore.Builder().build())
+                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
                 .build();
 
         // Initialize Fabric with the debug-disabled crashlytics.
@@ -55,7 +54,6 @@ public class TheApplication extends Application
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
-
 
         // Don't spam logs with no subscriber event messages as some are used only on tablet devices
         EventBus.builder().logNoSubscriberMessages(false).sendNoSubscriberEvent(false).installDefaultEventBus();

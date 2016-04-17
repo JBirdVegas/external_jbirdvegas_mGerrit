@@ -102,10 +102,10 @@ android {
         release {}
     }
     buildTypes {
-/*        debug {
+        debug {
             // Disable fabric build ID generation for debug builds
             ext.enableCrashlytics = false
-        }*/
+        }
         release {
             minifyEnabled false
 //            proguardFile 'proguard-project.txt'

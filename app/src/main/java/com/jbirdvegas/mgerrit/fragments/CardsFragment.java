@@ -238,7 +238,7 @@ public abstract class CardsFragment extends Fragment
         // We would get this event after using the viewpager in the Patchset Viewer
         NewChangeSelected ev = mEventBus.getStickyEvent(NewChangeSelected.class);
         if (ev != null && ev.compareStatuses(getQuery())) {
-            mAdapter.setSelectedChangeId(ev.getChangeId());
+            markChangeAsSelected(ev.getChangeId());
             mEventBus.removeStickyEvent(ev); // Only remove if we processed it
         }
 
@@ -326,8 +326,8 @@ public abstract class CardsFragment extends Fragment
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
         if (mSwipeLayout != null) {
             mSwipeLayout.setRefreshing(mIsRefreshing);
