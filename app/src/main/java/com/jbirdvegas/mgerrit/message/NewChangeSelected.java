@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.jbirdvegas.mgerrit.activities.PatchSetViewerActivity;
 import com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment;
+import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 
 /*
@@ -34,17 +35,26 @@ public class NewChangeSelected {
     boolean mInflate;   // Whether to expand the change and view the change details.
     PatchSetViewerFragment mFragment;
 
-    public NewChangeSelected(String changeId, int changeNumber, String status, boolean inflate) {
+    public static final String CR_CHANGE_ID = "Change ID";
+    public static final String CR_CHANGE_NUMBER = "Change number";
+
+    private NewChangeSelected(String changeId, int changeNumber, String status) {
         this.mChangeId = changeId;
         this.mChangeNumber = changeNumber;
         this.mStatus = status;
+
+        AnalyticsHelper.getInstance()
+                .setCustomString(CR_CHANGE_ID, changeId)
+                .setCustomInt(CR_CHANGE_NUMBER, changeNumber);
+    }
+
+    public NewChangeSelected(String changeId, int changeNumber, String status, boolean inflate) {
+        this(changeId, changeNumber, status);
         this.mInflate = inflate;
     }
 
     public NewChangeSelected(String changeId, int changeNumber, String status, PatchSetViewerFragment fragment) {
-        this.mChangeId = changeId;
-        this.mChangeNumber = changeNumber;
-        this.mStatus = status;
+        this(changeId, changeNumber, status);
         this.mInflate = true;
         this.mFragment = fragment;
     }

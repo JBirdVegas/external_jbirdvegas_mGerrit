@@ -19,6 +19,7 @@ package com.jbirdvegas.mgerrit.tasks;
 
 import android.content.Context;
 import android.content.Intent;
+
 import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
@@ -33,6 +34,7 @@ import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.ApiHelper;
 import com.urswolfer.gerrit.client.rest.GerritRestApi;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -138,10 +140,12 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
     }
 
     private RestApiException fetchCommitFailureHelper(Exception e) {
-        // Track this so we can find what changes cause this issue
-        AnalyticsHelper.getInstance().sendAnalyticsEvent(mContext, getClass().getSimpleName(),
-                mContext.getString(R.string.ga_change_not_unique), mChangeId, null);
         // We don't have anything we can use to uniquely identify the change we are trying to fetch
-        return new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
+        RestApiException exception = new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
+        AnalyticsHelper.getInstance()
+                .setCustomString(getContext().getString(R.string.cr_change_id), mChangeId)
+                .setCustomInt(getContext().getString(R.string.cr_change_number), mChangeNumber)
+                .logException(exception);
+        return exception;
     }
 }

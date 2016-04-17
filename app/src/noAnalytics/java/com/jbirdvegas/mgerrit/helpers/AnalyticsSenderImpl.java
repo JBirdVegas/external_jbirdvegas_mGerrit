@@ -24,4 +24,19 @@ public class AnalyticsSenderImpl implements AnalyticsSender {
     public void initAnalytics(Context context) {
         // no opt
     }
+
+    @Override
+    void setCustomString(String key, String data) {
+       // no opt
+    }
+
+    @Override
+    void setCustomInt(String key, int data) {
+        // no opt
+    }
+
+    @Override
+    public void logException(Exception e) {
+        // no opt
+    }
 }

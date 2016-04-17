@@ -23,4 +23,8 @@
     <string name="ga_change_comment_added" translatable="false">Change comment added</string>
     <string name="ga_user_logged_in" translatable="false">User signed in</string>
     <string name="ga_change_not_unique" translatable="false">Change not unique</string>
+    <string name="cr_server_version" translatable="false">Server version</string>
+    <string name="cr_change_id" translatable="false">Change ID</string>
+    <string name="cr_change_number" translatable="false">Change number</string>
+    <string name="cr_gerrit_instance" translatable="false">Gerrit Instance</string>
 </resources>

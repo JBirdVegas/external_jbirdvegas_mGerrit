@@ -100,7 +100,7 @@
         <item>@string/listview_animations_website</item>
         <item>@string/material_drawer_website</item>
         <item>@string/nine_old_androids_website</item>
-        <item>@string/sticky_list_headers</item>
+        <item>@string/sticky_list_headers_website</item>
         <item>@string/support_library_website</item>
         <item>@string/aosp_volley_website</item>
     </string-array>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 
 public class AnalyticsHelper {
+
     private static AnalyticsHelper sInstance;
     private static AnalyticsSender sAnalyticsSender;
 
@@ -23,19 +24,39 @@ public class AnalyticsHelper {
         return sInstance;
     }
 
-    public void sendAnalyticsEvent(Context context, String category, String action, String label, Long value) {
+    // Return this for method chaining
+    public AnalyticsHelper setCustomString(String key, String data) {
+        sAnalyticsSender.setCustomString(key, data);
+        return this;
+    }
+
+    public AnalyticsHelper setCustomInt(String key, int data) {
+        sAnalyticsSender.setCustomInt(key, data);
+        return this;
+    }
+
+    public AnalyticsHelper logException(Exception e) {
+        sAnalyticsSender.logException(e);
+        return this;
+    }
+
+    public AnalyticsHelper sendAnalyticsEvent(Context context, String category, String action, String label, Long value) {
         sAnalyticsSender.sendAnalyticsEvent(context, category, action, label, value);
+        return this;
     }
 
-    public void startActivity(Activity activity) {
+    public AnalyticsHelper startActivity(Activity activity) {
         sAnalyticsSender.startActivity(activity);
+        return this;
     }
 
-    public void stopActivity(Activity activity) {
+    public AnalyticsHelper stopActivity(Activity activity) {
         sAnalyticsSender.stopActivity(activity);
+        return this;
     }
 
-    public void initAnalytics(Context context) {
+    public AnalyticsHelper initAnalytics(Context context) {
         sAnalyticsSender.initAnalytics(context);
+        return this;
     }
 }

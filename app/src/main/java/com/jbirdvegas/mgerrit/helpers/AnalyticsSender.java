@@ -11,4 +11,10 @@ public interface AnalyticsSender {
     void stopActivity(Activity activity);
 
     void initAnalytics(Context context);
+
+    void setCustomString(String key, String data);
+
+    void setCustomInt(String key, int data);
+
+    void logException(Exception e);
 }
