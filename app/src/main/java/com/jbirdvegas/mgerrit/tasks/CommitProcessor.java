@@ -20,7 +20,6 @@ package com.jbirdvegas.mgerrit.tasks;
 import android.content.Context;
 import android.content.Intent;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
@@ -143,9 +142,10 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
     private RestApiException fetchCommitFailureHelper(Exception e) {
         // We don't have anything we can use to uniquely identify the change we are trying to fetch
         RestApiException exception = new RestApiException("Cannot fetch change " + mChangeId + " as it is not unique", e);
-        AnalyticsHelper.setCustomString(AnalyticsHelper.C_CHANGE_ID, mChangeId);
-        AnalyticsHelper.setCustomInt(AnalyticsHelper.C_CHANGE_ID, mChangeNumber);
-        Crashlytics.logException(exception);
+        AnalyticsHelper.getInstance()
+                .setCustomString(getContext().getString(R.string.cr_change_id), mChangeId)
+                .setCustomInt(getContext().getString(R.string.cr_change_number), mChangeNumber)
+                .logException(exception);
         return exception;
     }
 }

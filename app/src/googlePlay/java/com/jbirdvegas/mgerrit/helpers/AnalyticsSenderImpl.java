@@ -2,6 +2,8 @@ package com.jbirdvegas.mgerrit.helpers;
 
 import android.app.Activity;
 import android.content.Context;
+
+import com.crashlytics.android.Crashlytics;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Logger;
@@ -38,5 +40,20 @@ public class AnalyticsSenderImpl implements AnalyticsSender {
         Tracker tracker = googleAnalytics.getTracker(trackingId);
         googleAnalytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
         tracker.send(MapBuilder.createAppView().build());
+    }
+
+    @Override
+    public void setCustomString(String key, String data) {
+        Crashlytics.setString(key, data);
+    }
+
+    @Override
+    public void setCustomInt(String key, int data) {
+        Crashlytics.setInt(key, data);
+    }
+
+    @Override
+    public void logException(Exception e) {
+        Crashlytics.logException(e);
     }
 }

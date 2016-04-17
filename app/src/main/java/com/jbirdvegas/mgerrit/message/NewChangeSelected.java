@@ -35,13 +35,17 @@ public class NewChangeSelected {
     boolean mInflate;   // Whether to expand the change and view the change details.
     PatchSetViewerFragment mFragment;
 
+    public static final String CR_CHANGE_ID = "Change ID";
+    public static final String CR_CHANGE_NUMBER = "Change number";
+
     private NewChangeSelected(String changeId, int changeNumber, String status) {
         this.mChangeId = changeId;
         this.mChangeNumber = changeNumber;
         this.mStatus = status;
 
-        AnalyticsHelper.setCustomString(AnalyticsHelper.C_CHANGE_ID, changeId);
-        AnalyticsHelper.setCustomInt(AnalyticsHelper.C_CHANGE_NUMBER, changeNumber);
+        AnalyticsHelper.getInstance()
+                .setCustomString(CR_CHANGE_ID, changeId)
+                .setCustomInt(CR_CHANGE_NUMBER, changeNumber);
     }
 
     public NewChangeSelected(String changeId, int changeNumber, String status, boolean inflate) {

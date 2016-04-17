@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.objects.ServerVersion;
 
@@ -75,7 +76,7 @@ public class Config extends DatabaseTable {
         String version = getValue(context, KEY_VERSION);
         if (version == null || version.isEmpty()) return null;
         ServerVersion serverVersion = new ServerVersion(version);
-        AnalyticsHelper.setCustomString(AnalyticsHelper.C_SERVER_VERSION, serverVersion.toString());
+        AnalyticsHelper.getInstance().setCustomString(context.getString(R.string.cr_server_version), serverVersion.toString());
         return serverVersion;
     }
 

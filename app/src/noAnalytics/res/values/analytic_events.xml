@@ -24,4 +24,8 @@
     <string name="ga_change_comment_added" translatable="false" />
     <string name="ga_user_logged_in" translatable="false" />
     <string name="ga_change_not_unique" translatable="false" />
+    <string name="cr_server_version" translatable="false" />
+    <string name="cr_change_id" translatable="false" />
+    <string name="cr_change_number" translatable="false" />
+    <string name="cr_gerrit_instance" translatable="false" />
 </resources>

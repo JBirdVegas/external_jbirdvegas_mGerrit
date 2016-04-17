@@ -133,7 +133,7 @@ public class GerritControllerActivity extends BaseDrawerActivity {
         String gerritName = PrefsFragment.getCurrentGerritName(this);
         if (gerritName != null) {
             setTitle(gerritName);
-            AnalyticsHelper.setCustomString(AnalyticsHelper.C_GERRIT_INSTANCE, mGerritWebsite);
+            AnalyticsHelper.getInstance().setCustomString(getString(R.string.cr_gerrit_instance), mGerritWebsite);
         }
 
         // Get the SearchView and set the searchable configuration

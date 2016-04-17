@@ -3,22 +3,7 @@ package com.jbirdvegas.mgerrit.helpers;
 import android.app.Activity;
 import android.content.Context;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
-
 public class AnalyticsHelper {
-    public static final String GA_APP_OPEN = "app_open";
-    public static final String GA_ROM_VERSION = "rom_version";
-    public static final String GA_AUTHORISED_ACTION = "Authorised Action";
-    public static final String GA_THEME_SET_ON_OPEN = "ui_theme";
-    public static final String EVENT_CHANGE_COMMENT_ADDED = "Change comment added";
-    public static final String EVENT_LOGGED_IN = "User signed in";
-
-    public static final String C_SERVER_VERSION = "Server version";
-    public static final String C_CHANGE_ID = "Change ID";
-    public static final String C_CHANGE_NUMBER = "Change number";
-    public static final String C_GERRIT_INSTANCE = "Gerrit Instance";
 
     private static AnalyticsHelper sInstance;
     private static AnalyticsSender sAnalyticsSender;
@@ -39,27 +24,39 @@ public class AnalyticsHelper {
         return sInstance;
     }
 
-    public static void setCustomString(String key, String data) {
-        Crashlytics.setString(key, data);
+    // Return this for method chaining
+    public AnalyticsHelper setCustomString(String key, String data) {
+        sAnalyticsSender.setCustomString(key, data);
+        return this;
     }
 
-    public static void setCustomInt(String key, int data) {
-        Crashlytics.setInt(key, data);
+    public AnalyticsHelper setCustomInt(String key, int data) {
+        sAnalyticsSender.setCustomInt(key, data);
+        return this;
     }
-}
-    public void sendAnalyticsEvent(Context context, String category, String action, String label, Long value) {
+
+    public AnalyticsHelper logException(Exception e) {
+        sAnalyticsSender.logException(e);
+        return this;
+    }
+
+    public AnalyticsHelper sendAnalyticsEvent(Context context, String category, String action, String label, Long value) {
         sAnalyticsSender.sendAnalyticsEvent(context, category, action, label, value);
+        return this;
     }
 
-    public void startActivity(Activity activity) {
+    public AnalyticsHelper startActivity(Activity activity) {
         sAnalyticsSender.startActivity(activity);
+        return this;
     }
 
-    public void stopActivity(Activity activity) {
+    public AnalyticsHelper stopActivity(Activity activity) {
         sAnalyticsSender.stopActivity(activity);
+        return this;
     }
 
-    public void initAnalytics(Context context) {
+    public AnalyticsHelper initAnalytics(Context context) {
         sAnalyticsSender.initAnalytics(context);
+        return this;
     }
 }
