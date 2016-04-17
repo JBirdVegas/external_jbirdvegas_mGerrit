@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~
   ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
   ~  Author: Evan Conway (p4r4n01d), 2015
@@ -24,7 +23,7 @@
     <!-- versionName  & versionCode are managed by gradle -->
 
     <!-- uses-sdk is managed by gradle -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- We cannot support Google deep linking due to adding custom Gerrits -->
@@ -42,15 +41,17 @@
             android:label="@string/app_name"
             android:launchMode="singleTop">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.SEARCH" />
 
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/changes_searchable"/>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/changes_searchable" />
         </activity>
-        <activity android:name=".activities.PatchSetViewerActivity"
+        <activity
+            android:name=".activities.PatchSetViewerActivity"
             android:parentActivityName=".activities.GerritControllerActivity"
             android:windowSoftInputMode="stateUnchanged|adjustResize">
             <!-- Parent activity meta-data to support 4.0 and lower -->
@@ -59,63 +60,72 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GerritControllerActivity" />
         </activity>
-        <activity android:name=".activities.PrefsActivity"
+        <activity
+            android:name=".activities.PrefsActivity"
             android:parentActivityName=".activities.GerritControllerActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GerritControllerActivity" />
         </activity>
-        <activity android:name=".activities.ProjectsList"
+        <activity
+            android:name=".activities.ProjectsList"
             android:parentActivityName=".activities.GerritControllerActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/projects_searchable"/>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/projects_searchable" />
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GerritControllerActivity" />
         </activity>
-        <activity android:name=".activities.DiffViewer"
+        <activity
+            android:name=".activities.DiffViewer"
             android:parentActivityName=".activities.GerritControllerActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GerritControllerActivity" />
         </activity>
-        <activity android:name=".activities.GerritSwitcher"
+        <activity
+            android:name=".activities.GerritSwitcher"
             android:parentActivityName=".activities.PrefsActivity"
             android:windowSoftInputMode="stateUnchanged|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.PrefsActivity" />
         </activity>
-        <activity android:name=".activities.SigninActivity"
+        <activity
+            android:name=".activities.SigninActivity"
             android:parentActivityName=".activities.GerritControllerActivity"
             android:windowSoftInputMode="stateVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GerritControllerActivity" />
         </activity>
-        <activity android:name=".activities.ReviewActivity"
+        <activity
+            android:name=".activities.ReviewActivity"
             android:parentActivityName=".activities.PatchSetViewerActivity"
             android:windowSoftInputMode="stateUnchanged|adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.PatchSetViewerActivity" />
         </activity>
-        <activity android:name=".activities.RefineSearchActivity"
+        <activity
+            android:name=".activities.RefineSearchActivity"
             android:parentActivityName=".activities.GerritControllerActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.GerritControllerActivity" />
         </activity>
+
         <service android:name=".tasks.GerritService" />
         <provider
             android:name=".database.DatabaseFactory"
             android:authorities="com.jbirdvegas.provider.mgerrit"
-            android:exported="false">
-        </provider>
+            android:exported="false" />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="f9911415dfe29e4665c9843a095f98e45cde532c" />

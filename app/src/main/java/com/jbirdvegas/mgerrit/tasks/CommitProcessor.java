@@ -25,6 +25,7 @@ import com.google.gerrit.extensions.api.changes.ChangeApi;
 import com.google.gerrit.extensions.client.ListChangesOption;
 import com.google.gerrit.extensions.common.ChangeInfo;
 import com.google.gerrit.extensions.restapi.RestApiException;
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.Labels;
 import com.jbirdvegas.mgerrit.database.MessageInfo;
@@ -128,7 +129,7 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
     }
 
     private EnumSet<ListChangesOption> queryOptions() {
-        EnumSet options = EnumSet.noneOf(ListChangesOption.class);
+        EnumSet<ListChangesOption> options = EnumSet.noneOf(ListChangesOption.class);
         options.add(ListChangesOption.CURRENT_REVISION);
         options.add(ListChangesOption.CURRENT_COMMIT);
         options.add(ListChangesOption.CURRENT_FILES);

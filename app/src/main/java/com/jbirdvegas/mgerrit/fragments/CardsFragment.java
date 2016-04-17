@@ -37,10 +37,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.activities.BaseDrawerActivity;
 import com.jbirdvegas.mgerrit.activities.RefineSearchActivity;
@@ -54,6 +52,7 @@ import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.MoreChanges;
 import com.jbirdvegas.mgerrit.database.SyncTime;
 import com.jbirdvegas.mgerrit.database.UserChanges;
+import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeLoadingFinished;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
@@ -69,16 +68,14 @@ import com.jbirdvegas.mgerrit.tasks.GerritService;
 import com.jbirdvegas.mgerrit.tasks.GerritService.Direction;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
 import com.nhaarman.listviewanimations.appearance.SingleAnimationAdapter;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.Nullable;
+import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
 import java.util.ArrayList;
 import java.util.Set;
-
-import se.emilsjolander.stickylistheaders.ExpandableStickyListHeadersListView;
 
 public abstract class CardsFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -231,7 +228,7 @@ public abstract class CardsFragment extends Fragment
             mListView.setOnScrollListener(mEndlessAdapter);
         } else toggleAnimations(mHeaderAdapter);
 
-        EasyTracker.getInstance(getActivity()).activityStart(getActivity());
+        AnalyticsHelper.getInstance().startActivity(getActivity());
 
         mEventBus.register(this);
 
@@ -253,8 +250,7 @@ public abstract class CardsFragment extends Fragment
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance(getActivity()).activityStop(getActivity());
-
+        AnalyticsHelper.getInstance().stopActivity(getActivity());
         mEventBus.unregister(this);
     }
 

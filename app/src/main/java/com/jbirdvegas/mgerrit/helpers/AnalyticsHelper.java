@@ -1,22 +1,6 @@
 package com.jbirdvegas.mgerrit.helpers;
 
-/*
- * Copyright (C) 2013 Android Open Kang Project (AOKP)
- * Author: Jon Stanford (JBirdVegas), 2013
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
+import android.app.Activity;
 import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
@@ -36,15 +20,23 @@ public class AnalyticsHelper {
     public static final String C_CHANGE_NUMBER = "Change number";
     public static final String C_GERRIT_INSTANCE = "Gerrit Instance";
 
+    private static AnalyticsHelper sInstance;
+    private static AnalyticsSender sAnalyticsSender;
 
-    public static void sendAnalyticsEvent(Context context,
-                                          String category, String action, String label, Long value) {
-        EasyTracker easyTracker = EasyTracker.getInstance(context);
-        easyTracker.send(MapBuilder
-                .createEvent(category, action, label, value)
-                .build());
-        // note this screen as viewed
-        easyTracker.send(MapBuilder.createAppView().build());
+    private AnalyticsHelper() {
+        // keep out
+    }
+
+    public static AnalyticsHelper getInstance() {
+        if (sAnalyticsSender == null) {
+            // sender implementation depends on productFlavor.  `googlePlay` implements the analytics where
+            // `noAnalytics` stubs all methods to avoid collecting analytics for those who prefer to not be tracked
+            sAnalyticsSender = new AnalyticsSenderImpl();
+        }
+        if (sInstance == null) {
+            sInstance = new AnalyticsHelper();
+        }
+        return sInstance;
     }
 
     public static void setCustomString(String key, String data) {
@@ -53,5 +45,21 @@ public class AnalyticsHelper {
 
     public static void setCustomInt(String key, int data) {
         Crashlytics.setInt(key, data);
+    }
+}
+    public void sendAnalyticsEvent(Context context, String category, String action, String label, Long value) {
+        sAnalyticsSender.sendAnalyticsEvent(context, category, action, label, value);
+    }
+
+    public void startActivity(Activity activity) {
+        sAnalyticsSender.startActivity(activity);
+    }
+
+    public void stopActivity(Activity activity) {
+        sAnalyticsSender.stopActivity(activity);
+    }
+
+    public void initAnalytics(Context context) {
+        sAnalyticsSender.initAnalytics(context);
     }
 }

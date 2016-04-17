@@ -19,7 +19,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import io.fabric.sdk.android.Fabric;
 
-
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
  *  Author: Evan Conway (P4R4N01D), 2013
@@ -44,6 +43,7 @@ public class TheApplication extends Application
     @Override
     public void onCreate() {
         super.onCreate();
+        BuildConfigurations.applicationOnCreate(this);
         // Set up Crashlytics, disabled for debug builds
         Crashlytics crashlyticsKit = new Crashlytics.Builder()
                 .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())

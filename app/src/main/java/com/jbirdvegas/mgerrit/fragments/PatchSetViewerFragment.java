@@ -40,11 +40,9 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.analytics.tracking.android.EasyTracker;
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.activities.ReviewActivity;
 import com.jbirdvegas.mgerrit.activities.GerritControllerActivity;
+import com.jbirdvegas.mgerrit.activities.ReviewActivity;
 import com.jbirdvegas.mgerrit.adapters.CommitDetailsAdapter;
 import com.jbirdvegas.mgerrit.cards.PatchSetChangesCard;
 import com.jbirdvegas.mgerrit.database.Changes;
@@ -67,7 +65,6 @@ import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.objects.FilesCAB;
 import com.jbirdvegas.mgerrit.objects.JSONCommit;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -131,7 +128,6 @@ public class PatchSetViewerFragment extends Fragment
         mParent = this.getActivity();
         mContext = mParent.getApplicationContext();
     }
-
 
 
     private void init() {
@@ -242,6 +238,7 @@ public class PatchSetViewerFragment extends Fragment
 
     /**
      * Setup the quick reply toolbar.
+     *
      * @param currentFragment This fragment's view - this.getView()
      */
     private void initAddCommentToolbar(View currentFragment) {
@@ -326,7 +323,7 @@ public class PatchSetViewerFragment extends Fragment
             change = Changes.getMostRecentChange(mParent, mStatus);
             if (change == null || change.first.isEmpty()) {
                 // No changes to load data from
-                AnalyticsHelper.sendAnalyticsEvent(mParent, "PatchSetViewerFragment",
+                AnalyticsHelper.getInstance().sendAnalyticsEvent(mParent, "PatchSetViewerFragment",
                         "load_change", "null_changeID", null);
                 return;
             }
@@ -394,13 +391,13 @@ public class PatchSetViewerFragment extends Fragment
     @Override
     public void onStart() {
         super.onStart();
-        EasyTracker.getInstance(mParent).activityStart(mParent);
+        AnalyticsHelper.getInstance().startActivity(mParent);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance(mParent).activityStop(mParent);
+        AnalyticsHelper.getInstance().stopActivity(mParent);
     }
 
     @Override
@@ -530,13 +527,15 @@ public class PatchSetViewerFragment extends Fragment
         onLoadFinished(cursorLoader, null);
     }
 
-    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    @Keep
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStatusChanged(StatusSelected ev) {
         setStatus(ev.getStatus());
         loadChange(false);
     }
 
-    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    @Keep
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onChangeLoaded(ChangeLoadingFinished ev) {
         String status = ev.getStatus();
 
@@ -547,7 +546,8 @@ public class PatchSetViewerFragment extends Fragment
         }
     }
 
-    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    @Keep
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCachedCommentLoaded(CacheDataRetrieved<String> ev) {
         String cacheCommentKey = CacheManager.getCommentKey(mSelectedChange);
         if (ev.getKey().equals(cacheCommentKey) && mCommentText != null) {
@@ -560,7 +560,8 @@ public class PatchSetViewerFragment extends Fragment
         }
     }
 
-    @Keep @Subscribe(threadMode = ThreadMode.MAIN)
+    @Keep
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCommentSuccess(Finished ev) {
         Intent intent = ev.getIntent();
         Serializable dataType = intent.getSerializableExtra(GerritService.DATA_TYPE_KEY);
