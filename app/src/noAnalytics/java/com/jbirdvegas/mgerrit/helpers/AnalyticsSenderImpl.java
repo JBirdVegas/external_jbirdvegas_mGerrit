@@ -26,12 +26,12 @@ public class AnalyticsSenderImpl implements AnalyticsSender {
     }
 
     @Override
-    void setCustomString(String key, String data) {
+    public void setCustomString(String key, String data) {
        // no opt
     }
 
     @Override
-    void setCustomInt(String key, int data) {
+    public void setCustomInt(String key, int data) {
         // no opt
     }
 
