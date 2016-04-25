@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.core.CrashlyticsCore;
 import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
@@ -16,8 +14,6 @@ import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
 
 import org.greenrobot.eventbus.EventBus;
-
-import io.fabric.sdk.android.Fabric;
 
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
@@ -43,14 +39,8 @@ public class TheApplication extends Application
     @Override
     public void onCreate() {
         super.onCreate();
-        BuildConfigurations.applicationOnCreate(this);
         // Set up Crashlytics, disabled for debug builds
-        Crashlytics crashlyticsKit = new Crashlytics.Builder()
-                .core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-                .build();
-
-        // Initialize Fabric with the debug-disabled crashlytics.
-        Fabric.with(this, crashlyticsKit, new Crashlytics());
+        BuildConfigurations.applicationOnCreate(this);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
