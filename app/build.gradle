@@ -24,6 +24,7 @@ repositories {
     jcenter()
     mavenCentral()
     maven { url 'https://maven.fabric.io/public' }
+    maven { url "https://jitpack.io" }
 }
 
 android {
@@ -115,11 +116,13 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
 
 /*  TODO: Enable this when the Android variant of the Gerrit Rest Java Client is officially released
-       The corresponding jar can then be removed
+       The dependency on jitpack can then be removed
     compile('com.urswolfer.gerrit.client.rest:gerrit-rest-java-client:0.8.6-android') {
         exclude module: 'httpclient'
     }*/
-    compile files('libs/gerrit-rest-java-client-0.8.8-android.jar')
+    compile('com.github.p4r4n01d:gerrit-rest-java-client:21e71c12422') {
+        exclude module: 'httpclient'
+    }
     // These are dependencies of the gerrit-rest-java-client library above
     compile 'com.google.guava:guava:18.0'
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
