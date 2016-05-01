@@ -167,23 +167,28 @@ public class GerritSwitcher extends AppCompatActivity {
      * @return Whether the new gerrit was set
      */
     private boolean onCommitSelection() {
-        GerritDetails gerrit = mAdapter.getItem(mListView.getCheckedItemPosition());
-        String gerritName = gerrit.getGerritName().trim();
-        String gerritUrl = gerrit.getGerritUrl().trim();
+        int pos = mListView.getCheckedItemPosition();
+        if (pos >= 0) {
+            GerritDetails gerrit = mAdapter.getItem(mListView.getCheckedItemPosition());
+            String gerritName = gerrit.getGerritName().trim();
+            String gerritUrl = gerrit.getGerritUrl().trim();
 
-        if (gerritName == null || gerritName.length() < 1) {
-            Toast.makeText(this, getString(R.string.invalid_gerrit_name), Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (isUrlValid(gerritUrl)) {
-            // ensure we end with /
-            if ('/' != gerritUrl.charAt(gerritUrl.length() - 1)) {
-                gerritUrl += "/";
+            if (gerritName.length() < 1) {
+                Toast.makeText(this, getString(R.string.invalid_gerrit_name), Toast.LENGTH_SHORT).show();
+                return false;
+            } else if (isUrlValid(gerritUrl)) {
+                // ensure we end with /
+                if ('/' != gerritUrl.charAt(gerritUrl.length() - 1)) {
+                    gerritUrl += "/";
+                }
+                GerritTeamsHelper.saveTeam(gerritName, gerritUrl);
+                PrefsFragment.setCurrentGerrit(this, gerritUrl, gerritName);
+                return true;
+            } else {
+                Toast.makeText(this, getString(R.string.invalid_gerrit_url), Toast.LENGTH_SHORT).show();
+                return false;
             }
-            GerritTeamsHelper.saveTeam(gerritName, gerritUrl);
-            PrefsFragment.setCurrentGerrit(this, gerritUrl, gerritName);
-            return true;
         } else {
-            Toast.makeText(this, getString(R.string.invalid_gerrit_url), Toast.LENGTH_SHORT).show();
             return false;
         }
     }

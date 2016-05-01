@@ -10,5 +10,5 @@ fi
 
 if [[ $(git branch) != "master" ]]; then
     echo "Branch build detected.  Compile, package and perform tests but in the end we don't care about the result";
-    gradle clean build
+    gradle clean assembleGooglePlay
 fi
