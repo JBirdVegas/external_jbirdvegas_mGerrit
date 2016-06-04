@@ -41,6 +41,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.ProjectsListAdapter;
 import com.jbirdvegas.mgerrit.database.ProjectsTable;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.Finished;
 import com.jbirdvegas.mgerrit.message.StartingRequest;
@@ -75,7 +76,7 @@ public class ProjectsList extends BaseDrawerActivity
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        this.setTheme(PrefsFragment.getCurrentThemeID(this));
+        ThemeHelper.setTheme(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.projects_list);

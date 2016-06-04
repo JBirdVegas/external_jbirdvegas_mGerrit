@@ -34,7 +34,7 @@ import android.widget.ViewFlipper;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.FileAdapter;
 import com.jbirdvegas.mgerrit.database.FileChanges;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeDiffLoaded;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
@@ -124,7 +124,7 @@ public class DiffViewer extends BaseDrawerActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.setTheme(PrefsFragment.getCurrentThemeID(this));
+        ThemeHelper.setTheme(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.diff_viewer);

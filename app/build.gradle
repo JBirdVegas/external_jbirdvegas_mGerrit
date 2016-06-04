@@ -5,7 +5,7 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle:2.1.2'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'org.apache.commons:commons-lang3:3.4'
         classpath 'org.ajoberstar:gradle-git:1.1.0'
@@ -117,7 +117,7 @@ dependencies {
 
     /* TODO: Enable this when the Android variant of the Gerrit Rest Java Client is officially
      *  released. The dependency on jitpack can then be removed */
-    compile('com.github.p4r4n01d:gerrit-rest-java-client:21e71c12422') {
+    compile('com.github.uwolfer:gerrit-rest-java-client:dd4837b7205') {
         exclude module: 'httpclient'
     }
     // These are dependencies of the gerrit-rest-java-client library above

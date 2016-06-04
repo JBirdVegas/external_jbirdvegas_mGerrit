@@ -34,7 +34,7 @@ import android.widget.ListView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.SearchCategoryAdapter;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.search.SearchKeyword;
 import com.jbirdvegas.mgerrit.search.categories.AfterCategory;
 import com.jbirdvegas.mgerrit.search.categories.BeforeCategory;
@@ -60,7 +60,7 @@ public class RefineSearchActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        this.setTheme(PrefsFragment.getCurrentThemeID(this));
+        ThemeHelper.setTheme(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_search_categories);

@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.FileChanges;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 
 import org.jetbrains.annotations.Nullable;
@@ -53,7 +53,7 @@ public class FileAdapter extends CursorAdapter {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mContext = context;
-        mUsingLightTheme = (PrefsFragment.getCurrentThemeID(context) == R.style.Theme_Light);
+        mUsingLightTheme = ThemeHelper.usingLightTheme(context);
     }
 
     @Override

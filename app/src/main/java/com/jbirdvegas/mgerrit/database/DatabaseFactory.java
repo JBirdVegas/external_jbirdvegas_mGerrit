@@ -30,7 +30,9 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.DBParams;
 import org.jetbrains.annotations.NotNull;
 
@@ -197,6 +199,8 @@ public class DatabaseFactory extends ContentProvider {
         String sLimit = (limit == null ? null : limit.toString());
         String groupby = DBParams.getGroupByCondition(uri);
 
+        AnalyticsHelper.getInstance().setCustomString(getContext().getString(R.string.cr_querying_table), table);
+
         lock();
         Cursor c = wdb.query(table, projection, selection, selectionArgs,
                 groupby, null, sortOrder, sLimit);
@@ -215,8 +219,8 @@ public class DatabaseFactory extends ContentProvider {
         else throw new IllegalArgumentException("Unsupported URI: " + uri);
     }
 
-    @Override  @Contract("null -> fail")
-    public Uri insert(Uri uri, ContentValues values) {
+    @Override
+    public Uri insert(@NotNull Uri uri, ContentValues values) {
         long id;
 
         if (!isUriList(uri))
@@ -242,8 +246,8 @@ public class DatabaseFactory extends ContentProvider {
         return null;
     }
 
-    @Override  @Contract("null -> fail")
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    @Override
+    public int delete(@NotNull Uri uri, String selection, String[] selectionArgs) {
         if (!isUriList(uri))
             selection = handleID(uri, selection);
 
@@ -259,8 +263,8 @@ public class DatabaseFactory extends ContentProvider {
         return rows;
     }
 
-    @Override  @Contract("null -> fail")
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    @Override
+    public int update(@NotNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int updateCount = 0, result = URI_MATCHER.match(uri);
 
         if (!isUriList(uri)) selection = handleID(uri, selection);
@@ -277,8 +281,8 @@ public class DatabaseFactory extends ContentProvider {
         return updateCount;
     }
 
-    @Override  @Contract("null -> fail")
-    public int bulkInsert(Uri uri, @NotNull ContentValues[] values) {
+    @Override
+    public int bulkInsert(@NotNull Uri uri, @NotNull ContentValues[] values) {
         String table = getUriTable(uri);
 
         Integer conflictAlgorithm = DBParams.getConflictParameter(uri);
@@ -289,7 +293,7 @@ public class DatabaseFactory extends ContentProvider {
         wdb.beginTransaction();
         try {
             for (ContentValues cv : values) {
-                numInserted = (insert(table, cv, conflictAlgorithm, update)) ?
+                numInserted = (insert(table, cv, conflictAlgorithm)) ?
                         numInserted + 1 : numInserted;
             }
             wdb.setTransactionSuccessful();
@@ -307,11 +311,10 @@ public class DatabaseFactory extends ContentProvider {
      * @param table the table to insert the row into
      * @param values A set of column_name/value pairs to add to the database. This must not be null.
      * @param conflictAlgorithm for insert conflict resolver
-     * @param updateOnDuplicate
      * @return Whether the database table changed as a result of the insertion
      */
     public boolean insert(String table, ContentValues values,
-                          Integer conflictAlgorithm, boolean updateOnDuplicate) {
+                          Integer conflictAlgorithm) {
         long id;
         if (table == null) return false;
 

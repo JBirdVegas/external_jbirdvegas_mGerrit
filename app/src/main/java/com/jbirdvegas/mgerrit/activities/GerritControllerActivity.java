@@ -34,6 +34,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.TheApplication;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
@@ -42,10 +43,12 @@ import com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.ROMHelper;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.NotSupported;
 import com.jbirdvegas.mgerrit.views.GerritSearchView;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -63,7 +66,7 @@ public class GerritControllerActivity extends BaseDrawerActivity {
     // This will be null if mTwoPane is false (i.e. not tablet mode)
     private PatchSetViewerFragment mChangeDetail;
 
-    private int mTheme;
+    private String mThemeName;
     private GerritSearchView mSearchView;
 
     @Override
@@ -82,8 +85,8 @@ public class GerritControllerActivity extends BaseDrawerActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        mTheme = PrefsFragment.getCurrentThemeID(this);
-        setTheme(mTheme);
+        mThemeName = ThemeHelper.getCurrentTheme(this);
+        ThemeHelper.setTheme(this);
 
         super.onCreate(savedInstanceState);
 
@@ -105,7 +108,7 @@ public class GerritControllerActivity extends BaseDrawerActivity {
 
         // Keep track of what theme is being used
         AnalyticsHelper.getInstance().sendAnalyticsEvent(this, getString(R.string.ga_app_open),
-                getString(R.string.ga_ui_theme), PrefsFragment.getCurrentTheme(this), null);
+                getString(R.string.ga_ui_theme), ThemeHelper.getCurrentTheme(this), null);
 
         setContentView(R.layout.main);
 
@@ -221,10 +224,10 @@ public class GerritControllerActivity extends BaseDrawerActivity {
         if (!s.equals(mGerritWebsite)) onGerritChanged(s);
 
         // Apply the theme if it has changed
-        int themeId = PrefsFragment.getCurrentThemeID(this);
-        if (themeId != mTheme) {
-            mTheme = themeId;
-            setTheme(themeId);
+        String themeName = ThemeHelper.getCurrentTheme(this);
+        if (!mThemeName.equals(themeName)) {
+            mThemeName = themeName;
+            ThemeHelper.setTheme(this);
             this.recreate();
         }
 

@@ -13,6 +13,6 @@ public class BuildConfigurations {
                 .build();
 
         // Initialize Fabric with the debug-disabled crashlytics.
-        Fabric.with(application, crashlyticsKit, new Crashlytics());
+        Fabric.with(application, crashlyticsKit);
     }
 }

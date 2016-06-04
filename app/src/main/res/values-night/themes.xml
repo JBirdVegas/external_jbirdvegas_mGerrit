@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2016 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2016
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
+<resources>
+    <!-- The dark theme (Theme.Dark) -->
+    <style name="Theme.Base" parent="MaterialDrawerTheme">
+        <item name="android:textColorPrimary">@color/actionbar_text_dark</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow.Dark</item>
+        <item name="appBarTheme">@style/NoActionBar.AppBarOverlay.Dark</item>
+        <item name="toolbarTheme">@style/NoActionBar.PopupOverlay.Dark</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
+        <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
+        <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
+        <item name="shareIcon">@drawable/ic_action_share_dark</item>
+        <item name="mainBackgroundColor">@color/main_background_dark</item>
+        <item name="cardTextStyle">@style/CardText.Dark</item>
+        <item name="cardTitleStyle">@style/CardTitle.Dark</item>
+        <item name="colorCardBackground">@color/card_background_dark</item>
+        <item name="clickableCardBackground">@drawable/commit_card_background_states_dark</item>
+        <item name="selectableCardBackground">@drawable/files_card_background_states_dark</item>
+        <item name="viewIcon">@android:drawable/ic_menu_view</item>
+        <item name="browserIcon">@drawable/ic_action_web_site_dark</item>
+        <item name="warningIcon">@drawable/ic_action_warning_dark</item>
+        <item name="saveIcon">@drawable/ic_action_save_dark</item>
+        <item name="searchMenuIcon">@drawable/ic_action_search_dark</item>
+        <item name="diffStyle">@style/Diff.Dark</item>
+        <item name="changeInsertedStyle">@style/CardText.Inserted.Dark</item>
+        <item name="changeDeletedStyle">@style/CardText.Deleted.Dark</item>
+        <item name="backIcon">@drawable/ic_nav_previous_item_dark</item>
+        <item name="nextIcon">@drawable/ic_action_next_item_dark</item>
+        <item name="backgroundTop">@drawable/border_top_dark</item>
+        <item name="acceptIcon">@drawable/ic_action_accept_dark</item>
+        <item name="cancelIcon">@drawable/ic_action_cancel_dark</item>
+        <item name="signinButtonStyle">@style/SignInButton</item>
+        <item name="signinErrorStyle">@style/SigninFailure</item>
+        <item name="secureIcon">@drawable/ic_action_secure_dark</item>
+        <item name="starredIcon">@drawable/ic_action_starred_dark</item>
+        <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
+        <item name="borderlessButtonBackground">@style/BorderlessBackground.Dark</item>
+        <item name="overflowIcon">@drawable/ic_action_overflow_dark</item>
+        <item name="upIcon">@drawable/ic_nav_expand_dark</item>
+        <item name="sendIcon">@drawable/ic_action_send_dark</item>
+        <item name="branchIcon">@drawable/ic_action_split_dark</item>
+        <item name="userIcon">@drawable/ic_account_dark</item>
+        <item name="dateIcon">@drawable/ic_calendar_dark</item>
+
+        <item name="colorAccent">@color/material_drawer_accent</item>
+        <item name="colorPrimary">@color/card_background_dark</item>
+    </style>
+</resources>

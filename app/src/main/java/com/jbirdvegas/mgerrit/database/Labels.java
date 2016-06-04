@@ -105,7 +105,7 @@ public class Labels extends DatabaseTable {
                 try {
                     int i = Integer.parseInt(value.trim());
                     row.put(C_VALUE, i);
-                    row.put(C_IS_DEFAULT, infoEntry.defaultValue == i);
+                    row.put(C_IS_DEFAULT, infoEntry.defaultValue != null && infoEntry.defaultValue == i);
                 } catch (NumberFormatException e) {
                     // Label may not be an int - unlikely but we can still handle it
                     row.put(C_VALUE, value);

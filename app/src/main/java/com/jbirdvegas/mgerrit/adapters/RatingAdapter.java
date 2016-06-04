@@ -25,7 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.objects.LabelValues;
 
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +48,7 @@ public class RatingAdapter extends ArrayAdapter<LabelValues> {
         mGreen = context.getResources().getColor(R.color.text_green);
         mRed = context.getResources().getColor(R.color.text_red);
 
-        mUsingLightTheme = (PrefsFragment.getCurrentThemeID(context) == R.style.Theme_Light);
+        mUsingLightTheme = ThemeHelper.usingLightTheme(context);
         mData = objects;
     }
 

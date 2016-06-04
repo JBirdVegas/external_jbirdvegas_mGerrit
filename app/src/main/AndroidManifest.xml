@@ -32,7 +32,7 @@
         android:name=".TheApplication"
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher"
-        android:theme="@style/Theme.Light"
+        android:theme="@style/Theme.Base"
         android:allowBackup="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="jelly_bean">

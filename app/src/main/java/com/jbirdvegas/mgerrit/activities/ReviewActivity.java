@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.fragments.CommentFragment;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.objects.CacheManager;
 
 /**
@@ -43,7 +43,7 @@ public class ReviewActivity extends BaseDrawerActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(PrefsFragment.getCurrentThemeID(this));
+        ThemeHelper.setTheme(this);
         setContentView(R.layout.activity_single_pane);
 
         initNavigationDrawer(false);

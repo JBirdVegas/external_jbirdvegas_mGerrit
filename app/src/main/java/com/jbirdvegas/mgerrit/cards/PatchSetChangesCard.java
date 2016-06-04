@@ -28,6 +28,7 @@ import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.database.FileChanges;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 
@@ -60,7 +61,7 @@ public class PatchSetChangesCard implements CardBinder {
         mRed = context.getResources().getColor(R.color.text_red);
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        mUsingLightTheme = (PrefsFragment.getCurrentThemeID(mContext) == R.style.Theme_Light);
+        mUsingLightTheme = ThemeHelper.usingLightTheme(context);
     }
 
     @Override

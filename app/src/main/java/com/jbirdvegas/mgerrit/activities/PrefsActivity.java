@@ -27,13 +27,14 @@ import android.view.MenuItem;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 
 public class PrefsActivity extends AppCompatActivity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(PrefsFragment.getCurrentThemeID(this));
+        ThemeHelper.setTheme(this);
         setContentView(R.layout.activity_single_pane);
 
         setupActionBar();
