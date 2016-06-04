@@ -19,16 +19,16 @@ package com.jbirdvegas.mgerrit.cards;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Config;
 import com.jbirdvegas.mgerrit.database.FileChanges;
-import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
+import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.objects.ChangedFileInfo;
 
@@ -39,8 +39,6 @@ public class PatchSetChangesCard implements CardBinder {
     // Colors
     private final int mGreen;
     private final int mRed;
-    // The theme we are using, so we can get the default text color
-    private final boolean mUsingLightTheme;
 
     // Cursor indices
     private Integer mChangeId_index;
@@ -61,7 +59,6 @@ public class PatchSetChangesCard implements CardBinder {
         mRed = context.getResources().getColor(R.color.text_red);
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        mUsingLightTheme = ThemeHelper.usingLightTheme(context);
     }
 
     @Override
@@ -89,11 +86,8 @@ public class PatchSetChangesCard implements CardBinder {
             viewHolder.path.setTextColor(mRed);
         } else {
             // Need to determine from the current theme what the default color is and set it back
-            if (mUsingLightTheme) {
-                viewHolder.path.setTextColor(mContext.getResources().getColor(R.color.text_light));
-            } else {
-                viewHolder.path.setTextColor(mContext.getResources().getColor(R.color.text_dark));
-            }
+            int color = ContextCompat.getColor(mContext, R.color.text);
+            viewHolder.path.setTextColor(color);
         }
 
         String oldPath = cursor.getString(mOldPath_index);

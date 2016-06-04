@@ -209,7 +209,7 @@ public abstract class BaseDrawerActivity extends AppCompatActivity
 
             mProfileHeader.addProfile(
                     new ProfileDrawerItem().withName(name).withEmail(email)
-                            .withTextColor(getResources().getColor(R.color.text_light))
+                            .withTextColor(getResources().getColor(R.color.text))
                             .withIcon(Uri.parse(GravatarHelper.getGravatarUrl(email))), 0
             );
             mProfileHeader.setDrawer(mDrawer);

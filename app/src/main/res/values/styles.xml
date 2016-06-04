@@ -20,7 +20,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
     <style name="NoActionBar.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="android:background">@color/main_background_dark</item>
+        <item name="android:background">@color/main_background</item>
     </style>
 
     <style name="NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -33,7 +33,6 @@
 
     <style name="OverFlow.Dark" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_action_overflow_dark</item>
-        <item name="android:colorBackground">@color/card_background_dark</item>
     </style>
 
     <!-- Resize the action bar activity indicator to match the other action items -->
@@ -54,9 +53,7 @@
         <item name="android:textColor">@color/card_text</item>
     </style>
 
-    <style name="CardText.Dark">
-        <item name="android:textColor">@color/card_text_dark</item>
-    </style>
+    <style name="CardText.Dark" />
 
     <style name="CardText.Committer">
         <item name="android:textStyle">bold</item>
@@ -91,9 +88,7 @@
         <item name="android:textColor">@color/card_title_text</item>
     </style>
 
-    <style name="CardTitle.Dark" parent="style/CardTitle">
-        <item name="android:textColor">@color/card_light_text</item>
-    </style>
+    <style name="CardTitle.Dark" parent="style/CardTitle" />
 
     <style name="ActionViewsStyle">
         <item name="android:layout_width">wrap_content</item>
@@ -118,15 +113,9 @@
     </style>
     <style name="Diff.Light">
         <item name="removed">@color/text_red</item>
-        <item name="rangeInfo">@color/text_purple</item>
-        <item name="origHeader">@color/text_brown</item>
-        <item name="newHeader">@color/text_blue</item>
     </style>
     <style name="Diff.Dark">
         <item name="removed">@color/text_light_red</item>
-        <item name="rangeInfo">@color/text_purple_light</item>
-        <item name="origHeader">@color/text_brown_light</item>
-        <item name="newHeader">@color/text_blue_light</item>
     </style>
 
     <style name="Help"/>
@@ -150,9 +139,8 @@
     <style name="CardText.Inserted.Light">
         <item name="android:textColor">@color/text_green</item>
     </style>
-    <style name="CardText.Inserted.Dark">
-        <item name="android:textColor">@color/text_green_light</item>
-    </style>
+    <style name="CardText.Inserted.Dark" />
+
     <style name="CardText.Deleted">
         <item name="android:gravity">right</item>
         <item name="android:paddingLeft">@dimen/standard_padding</item>
@@ -176,10 +164,10 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
     <style name="SignInButton.Light">
-        <item name="pb_colorComplete">@color/signin_complete_light</item>
+        <item name="pb_colorComplete">@color/signin_complete</item>
         <item name="pb_colorNormal">@android:color/white</item>
         <item name="pb_colorPressed">@android:color/white</item>
-        <item name="pb_colorError">@color/signin_error_light</item>
+        <item name="pb_colorError">@color/signin_error</item>
         <item name="android:background">@android:color/white</item>
     </style>
     <style name="SigninFailure" parent="CardText.Deleted.Dark" />

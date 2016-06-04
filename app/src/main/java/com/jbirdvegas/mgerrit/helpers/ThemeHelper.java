@@ -34,11 +34,6 @@ public class ThemeHelper {
                 context.getResources().getString(R.string.theme_light_value));
     }
 
-    public static boolean usingLightTheme(Context context) {
-        String themeName = getCurrentTheme(context);
-        return themeName.equals(context.getResources().getString(R.string.theme_light_value));
-    }
-
     /**
      * Set the theme based on what is saved in the preferences.
      * This uses the setDefaultNightMode in the support library to set whether we want to use night

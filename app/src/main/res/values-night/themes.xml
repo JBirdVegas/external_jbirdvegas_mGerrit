@@ -19,23 +19,23 @@
 <resources>
     <!-- The dark theme (Theme.Dark) -->
     <style name="Theme.Base" parent="MaterialDrawerTheme">
-        <item name="android:textColorPrimary">@color/actionbar_text_dark</item>
+        <item name="android:textColorPrimary">@color/actionbar_text</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow.Dark</item>
         <item name="appBarTheme">@style/NoActionBar.AppBarOverlay.Dark</item>
         <item name="toolbarTheme">@style/NoActionBar.PopupOverlay.Dark</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-        <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
+        <item name="gerritIcon">@drawable/ic_menu_source</item>
         <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
         <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
         <item name="shareIcon">@drawable/ic_action_share_dark</item>
-        <item name="mainBackgroundColor">@color/main_background_dark</item>
+        <item name="mainBackgroundColor">@color/main_background</item>
         <item name="cardTextStyle">@style/CardText.Dark</item>
         <item name="cardTitleStyle">@style/CardTitle.Dark</item>
-        <item name="colorCardBackground">@color/card_background_dark</item>
-        <item name="clickableCardBackground">@drawable/commit_card_background_states_dark</item>
-        <item name="selectableCardBackground">@drawable/files_card_background_states_dark</item>
+        <item name="colorCardBackground">@color/card_background</item>
+        <item name="clickableCardBackground">@drawable/commit_card_background_states</item>
+        <item name="selectableCardBackground">@drawable/files_card_background_states</item>
         <item name="viewIcon">@android:drawable/ic_menu_view</item>
         <item name="browserIcon">@drawable/ic_action_web_site_dark</item>
         <item name="warningIcon">@drawable/ic_action_warning_dark</item>
@@ -44,10 +44,10 @@
         <item name="diffStyle">@style/Diff.Dark</item>
         <item name="changeInsertedStyle">@style/CardText.Inserted.Dark</item>
         <item name="changeDeletedStyle">@style/CardText.Deleted.Dark</item>
-        <item name="backIcon">@drawable/ic_nav_previous_item_dark</item>
+        <item name="backIcon">@drawable/ic_nav_previous_item</item>
         <item name="nextIcon">@drawable/ic_action_next_item_dark</item>
         <item name="backgroundTop">@drawable/border_top_dark</item>
-        <item name="acceptIcon">@drawable/ic_action_accept_dark</item>
+        <item name="acceptIcon">@drawable/ic_action_accept</item>
         <item name="cancelIcon">@drawable/ic_action_cancel_dark</item>
         <item name="signinButtonStyle">@style/SignInButton</item>
         <item name="signinErrorStyle">@style/SigninFailure</item>
@@ -56,13 +56,13 @@
         <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
         <item name="borderlessButtonBackground">@style/BorderlessBackground.Dark</item>
         <item name="overflowIcon">@drawable/ic_action_overflow_dark</item>
-        <item name="upIcon">@drawable/ic_nav_expand_dark</item>
+        <item name="upIcon">@drawable/ic_nav_expand</item>
         <item name="sendIcon">@drawable/ic_action_send_dark</item>
         <item name="branchIcon">@drawable/ic_action_split_dark</item>
-        <item name="userIcon">@drawable/ic_account_dark</item>
-        <item name="dateIcon">@drawable/ic_calendar_dark</item>
+        <item name="userIcon">@drawable/ic_account</item>
+        <item name="dateIcon">@drawable/ic_calendar</item>
 
         <item name="colorAccent">@color/material_drawer_accent</item>
-        <item name="colorPrimary">@color/card_background_dark</item>
+        <item name="colorPrimary">@color/card_background</item>
     </style>
 </resources>

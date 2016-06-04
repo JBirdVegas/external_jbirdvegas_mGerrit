@@ -20,32 +20,33 @@
 
 <resources>
 
-    <color name="icon">#868686</color>
+    <color name="icon">#ffffff</color>
 
-    <color name="stroke">#dddddd</color>
-    <color name="text">#ff000000</color>
-    <color name="card_text">#ff606060</color>
-    <color name="card_title_text">#ff606060</color>
-    <color name="main_background">#ffe0e0e0</color>
+    <color name="stroke">#222222</color>
+    <color name="text">#ffffffff</color>
+    <color name="card_text">#ff9F9F9F</color>
+    <color name="card_title_text">#ffb5b5b5</color>
+    <color name="main_background">#000000</color>
 
-    <color name="text_brown">#663300</color>
-    <color name="text_green">#ff669900</color>
+    <color name="text_brown">#AA3300</color>
+    <color name="text_green">#ff8ec600</color>
     <color name="text_orange">#ee8800</color>
-    <color name="text_red">#ffCC0000</color>
-    <color name="text_purple">#FF800080</color>
-    <color name="text_blue">#FF0000FF</color>
+    <color name="text_red_light">#ffff0000</color>
+    <color name="text_light_red">#faa</color>
+    <color name="text_purple">#FFD000D0</color>
+    <color name="text_blue">#ff7f9eff</color>
 
-    <color name="actionbar_text">#ff555555</color>
-    <color name="card_background">#ffffff</color>
-    <color name="card_pressed">#e3e3e3</color>
-    <color name="card_selected">#ffececec</color>
+    <color name="actionbar_text">#ffAAAAAA</color>
+    <color name="card_background">#ff1F1F1F</color>
+    <color name="card_pressed">#101010</color>
+    <color name="card_selected">#ff0f0f0f</color>
 
-    <color name="signin_complete">#ff9cea8d</color>
-    <color name="signin_error">#ffcc6164</color>
-    <color name="ripple_material_light">#40000000</color>
+    <color name="signin_complete">#ff468945</color>
+    <color name="signin_error">#ff7e2624</color>
+    <color name="ripple_material_dark">#20ffffff</color>
 
     <!-- Material Drawer colors -->
-    <color name="material_drawer_primary_light">@color/main_background</color>
+    <color name="material_drawer_primary_dark">@color/main_background</color>
     <color name="material_drawer_accent">@color/text_orange</color>
     <color name="material_drawer_selected_text">@color/text_orange</color>
     <color name="material_drawer_dark_selected_text">@color/text_orange</color>

@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.FileChanges;
-import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +36,6 @@ public class FileAdapter extends CursorAdapter {
 
     private final Context mContext;
     private final LayoutInflater mInflater;
-    private final boolean mUsingLightTheme;
 
     private static Integer mStatus_index;
     private static Integer mPath_index;
@@ -53,7 +51,6 @@ public class FileAdapter extends CursorAdapter {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mContext = context;
-        mUsingLightTheme = ThemeHelper.usingLightTheme(context);
     }
 
     @Override
@@ -158,7 +155,7 @@ public class FileAdapter extends CursorAdapter {
 
     private void colorPath(TextView view, Cursor cursor) {
         Tools.colorPath(mContext.getResources(), view,
-                cursor.getString(mStatus_index), mUsingLightTheme);
+                cursor.getString(mStatus_index));
         mFilename = Tools.getFileName(cursor.getString(mPath_index));
         view.setText(mFilename);
     }

@@ -54,7 +54,7 @@
                 android:singleLine="true"
                 android:textSize="@dimen/text_size_small"
                 tools:text="CyanogenMod"
-                android:textColor="@color/text_dark"/>
+                android:textColor="@color/text"/>
 
             <TextView
                 android:id="@+id/txtHeaderLine2"
@@ -65,7 +65,7 @@
                 android:singleLine="true"
                 android:textSize="@dimen/text_size_small"
                 android:text="@string/gerrit_signin_signin"
-                android:textColor="@color/text_dark"/>
+                android:textColor="@color/text"/>
 
         </LinearLayout>
 

@@ -18,6 +18,7 @@
 package com.jbirdvegas.mgerrit.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.objects.LabelValues;
 
 import org.jetbrains.annotations.Nullable;
@@ -34,21 +34,21 @@ import java.util.List;
 
 public class RatingAdapter extends ArrayAdapter<LabelValues> {
 
+    private final Context mContext;
     private final LayoutInflater mInflater;
     private final int mGreen;
     private final int mRed;
-    private final boolean mUsingLightTheme;
     private final List<LabelValues> mData;
 
 
     public RatingAdapter(Context context, int resource, List<LabelValues> objects) {
         super(context, resource, objects);
 
+        mContext = context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mGreen = context.getResources().getColor(R.color.text_green);
         mRed = context.getResources().getColor(R.color.text_red);
 
-        mUsingLightTheme = ThemeHelper.usingLightTheme(context);
         mData = objects;
     }
 
@@ -86,13 +86,8 @@ public class RatingAdapter extends ArrayAdapter<LabelValues> {
             setTextColor(mRed, viewHolder.txtValue, viewHolder.txtDescription);
         } else {
             // Need to determine from the current theme what the default color is and set it back
-            if (mUsingLightTheme) {
-                int light = getContext().getResources().getColor(R.color.text_light);
-                setTextColor(light, viewHolder.txtValue, viewHolder.txtDescription);
-            } else {
-                int dark = getContext().getResources().getColor(R.color.text_dark);
-                setTextColor(dark, viewHolder.txtValue, viewHolder.txtDescription);
-            }
+            int color = ContextCompat.getColor(getContext(), R.color.text);
+            setTextColor(color, viewHolder.txtValue, viewHolder.txtDescription);
         }
 
         viewHolder.txtDescription.setText(labelValues.description);

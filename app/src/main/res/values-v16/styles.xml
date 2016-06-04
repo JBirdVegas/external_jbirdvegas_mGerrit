@@ -28,7 +28,7 @@
     </style>
 
     <style name="CardText.Dark">
-        <item name="android:textColor">@color/card_text_dark</item>
+        <item name="android:textColor">@color/card_text</item>
     </style>
 
     <style name="CardText.Committer">
