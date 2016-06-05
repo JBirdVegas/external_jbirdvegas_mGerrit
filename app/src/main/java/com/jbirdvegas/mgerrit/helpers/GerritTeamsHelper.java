@@ -53,7 +53,7 @@ public class GerritTeamsHelper {
         mGerritUrlsList = getAllUrls();
     }
 
-    private void ensureDirs() {
+    private static void ensureDirs() {
         if (!mExternalCacheDir.isDirectory()) {
             mExternalCacheDir.delete();
         }
@@ -110,8 +110,9 @@ public class GerritTeamsHelper {
     }
 
     private static void writeTeamToCache(String teamName, String teamUrl) {
+        ensureDirs();
         File teamPath = new File(mExternalCacheDir.getAbsolutePath() + '/' + teamName);
-        teamPath.mkdirs();
+
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(teamPath));
