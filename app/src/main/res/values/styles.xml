@@ -47,13 +47,8 @@
         <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">2</item>
-    </style>
-
-    <style name="CardText.Light">
         <item name="android:textColor">@color/card_text</item>
     </style>
-
-    <style name="CardText.Dark" />
 
     <style name="CardText.Committer">
         <item name="android:textStyle">bold</item>
@@ -82,13 +77,8 @@
         <item name="android:textStyle">italic</item>
         <item name="android:paddingLeft">@dimen/standard_padding</item>
         <item name="android:paddingRight">@dimen/standard_padding</item>
-    </style>
-
-    <style name="CardTitle.Light" parent="style/CardTitle">
         <item name="android:textColor">@color/card_title_text</item>
     </style>
-
-    <style name="CardTitle.Dark" parent="style/CardTitle" />
 
     <style name="ActionViewsStyle">
         <item name="android:layout_width">wrap_content</item>
@@ -135,22 +125,14 @@
         <item name="android:gravity">right</item>
         <item name="android:paddingLeft">@dimen/standard_padding</item>
         <item name="android:paddingRight">@dimen/standard_padding</item>
-    </style>
-    <style name="CardText.Inserted.Light">
         <item name="android:textColor">@color/text_green</item>
     </style>
-    <style name="CardText.Inserted.Dark" />
 
     <style name="CardText.Deleted">
         <item name="android:gravity">right</item>
         <item name="android:paddingLeft">@dimen/standard_padding</item>
         <item name="android:paddingRight">@dimen/standard_padding</item>
-    </style>
-    <style name="CardText.Deleted.Light">
         <item name="android:textColor">@color/text_red</item>
-    </style>
-    <style name="CardText.Deleted.Dark">
-        <item name="android:textColor">@color/text_red_light</item>
     </style>
 
     <style name="SignInButton">
@@ -170,8 +152,7 @@
         <item name="pb_colorError">@color/signin_error</item>
         <item name="android:background">@android:color/white</item>
     </style>
-    <style name="SigninFailure" parent="CardText.Deleted.Dark" />
-    <style name="SigninFailure.Light" parent="CardText.Deleted.Light" />
+    <style name="SigninFailure" parent="CardText.Deleted" />
 
     <style name="BorderlessBackground" parent="Widget.AppCompat.Button.Borderless"/>
     <style name="BorderlessBackground.Dark" parent="Widget.AppCompat.Button.Borderless"/>

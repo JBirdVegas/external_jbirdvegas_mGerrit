@@ -21,13 +21,6 @@
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">2</item>
         <item name="android:fontFamily">sans-serif-thin</item>
-    </style>
-
-    <style name="CardText.Light">
-        <item name="android:textColor">@color/card_text</item>
-    </style>
-
-    <style name="CardText.Dark">
         <item name="android:textColor">@color/card_text</item>
     </style>
 
@@ -40,6 +33,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/text_size_larger</item>
         <item name="android:textStyle">italic</item>
+        <item name="android:textColor">@color/card_title_text</item>
     </style>
 
     <style name="CardText.CommitOwnerText">
