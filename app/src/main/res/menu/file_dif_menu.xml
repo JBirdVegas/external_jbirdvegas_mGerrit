@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
-  ~  Author: Evan Conway (P4R4N01D), 2015
+  ~ Copyright (C) 2016 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2016
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -16,9 +16,12 @@
   ~  limitations under the License.
   -->
 
-<rotate xmlns:android="http://schemas.android.com/apk/res/android"
-    android:fromDegrees="90"
-    android:toDegrees="90"
-    android:pivotX="50%"
-    android:pivotY="50%"
-    android:drawable="@drawable/ic_action_overflow" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:title="Select a file"
+        app:showAsAction="always"
+        android:id="@+id/diff_spinner"
+        app:actionViewClass="android.widget.Spinner"
+        android:dropDownVerticalOffset="25dp"/>
+</menu>

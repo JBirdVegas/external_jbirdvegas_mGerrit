@@ -65,6 +65,7 @@
         <item name="dateIcon">@drawable/ic_calendar</item>
 
         <item name="colorPrimary">@color/card_background</item>
+        <item name="colorPrimaryDark">@color/actionbar_text</item>
         <item name="material_drawer_background">@color/card_background</item>
     </style>
 </resources>

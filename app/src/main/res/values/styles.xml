@@ -31,10 +31,6 @@
         <item name="android:colorBackground">@color/card_background</item>
     </style>
 
-    <style name="OverFlow.Dark" parent="Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:src">@drawable/ic_action_overflow_dark</item>
-    </style>
-
     <!-- Resize the action bar activity indicator to match the other action items -->
     <style name="IndeterminateProgress" parent="Widget.AppCompat.ProgressBar">
         <item name="android:minWidth">32dp</item>
@@ -163,4 +159,6 @@
         <item name="submitBackground">@null</item>
         <item name="android:maxWidth">99999999dp</item>
     </style>
+
+    <style name="Diff.Text" parent="@android:style/TextAppearance.DeviceDefault.Small" />
 </resources>
