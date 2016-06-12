@@ -57,7 +57,7 @@ public class GravatarHelper {
                 imageRequest = GravatarHelper.imageVolleyRequest(imageView, url, requestQueue);
                 requestQueue.start();
                 imageView.setTag(R.id.imageRequest, imageRequest);
-            } else if (!imageRequest.getOriginUrl().equals(url)) {
+            } else if (!imageRequest.equals(url)) {
                 imageRequest.cancel();
                 imageRequest = GravatarHelper.imageVolleyRequest(imageView, url, requestQueue);
                 requestQueue.start();

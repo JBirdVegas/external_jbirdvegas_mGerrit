@@ -36,7 +36,7 @@ import com.jbirdvegas.mgerrit.adapters.PatchSetAdapter;
 import com.jbirdvegas.mgerrit.database.SelectedChange;
 import com.jbirdvegas.mgerrit.database.UserChanges;
 import com.jbirdvegas.mgerrit.fragments.PatchSetViewerFragment;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.NewChangeSelected;
 import com.jbirdvegas.mgerrit.message.SearchQueryChanged;
@@ -82,7 +82,7 @@ public class PatchSetViewerActivity extends BaseDrawerActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.setTheme(PrefsFragment.getCurrentThemeID(this));
+        ThemeHelper.setTheme(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.patchset_pager);

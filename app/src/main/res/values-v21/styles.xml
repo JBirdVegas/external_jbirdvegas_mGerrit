@@ -37,4 +37,5 @@
         <item name="android:background">@drawable/ripple_dark</item>
     </style>
 
+    <style name="Diff.Text" parent="@android:style/TextAppearance.Material.Body1" />
 </resources>

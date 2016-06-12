@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~
-  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
-  ~  Author: Evan Conway (p4r4n01d), 2015
+  ~ Copyright (C) 2016 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2016
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -15,57 +14,56 @@
   ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
-  ~
   -->
 
 <resources>
-    <!-- The light theme (Theme.Light) -->
-    <style name="Theme.Base" parent="MaterialDrawerTheme.Light">
+    <!-- The dark theme (Theme.Dark) -->
+    <style name="Theme.Base" parent="MaterialDrawerTheme">
         <item name="android:textColorPrimary">@color/actionbar_text</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
-        <item name="appBarTheme">@style/NoActionBar.AppBarOverlay</item>
-        <item name="toolbarTheme">@style/NoActionBar.PopupOverlay</item>
+        <item name="appBarTheme">@style/NoActionBar.AppBarOverlay.Dark</item>
+        <item name="toolbarTheme">@style/NoActionBar.PopupOverlay.Dark</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
         <item name="gerritIcon">@drawable/ic_menu_source</item>
-        <item name="projectsIcon">@drawable/ic_menu_project</item>
-        <item name="refreshIcon">@drawable/ic_action_refresh</item>
-        <item name="shareIcon">@drawable/ic_action_share</item>
+        <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
+        <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
+        <item name="shareIcon">@drawable/ic_action_share_dark</item>
         <item name="mainBackgroundColor">@color/main_background</item>
         <item name="cardTextStyle">@style/CardText</item>
         <item name="cardTitleStyle">@style/CardTitle</item>
         <item name="colorCardBackground">@color/card_background</item>
         <item name="clickableCardBackground">@drawable/commit_card_background_states</item>
         <item name="selectableCardBackground">@drawable/files_card_background_states</item>
-        <item name="viewIcon">@drawable/ic_menu_view</item>
-        <item name="browserIcon">@drawable/ic_action_web_site</item>
+        <item name="viewIcon">@android:drawable/ic_menu_view</item>
+        <item name="browserIcon">@drawable/ic_action_web_site_dark</item>
         <item name="warningIcon">@drawable/ic_action_warning</item>
-        <item name="saveIcon">@drawable/ic_action_save</item>
-        <item name="searchMenuIcon">@drawable/ic_action_search</item>
-        <item name="diffStyle">@style/Diff.Light</item>
+        <item name="saveIcon">@drawable/ic_action_save_dark</item>
+        <item name="searchMenuIcon">@drawable/ic_action_search_dark</item>
+        <item name="diffStyle">@style/Diff.Dark</item>
         <item name="changeInsertedStyle">@style/CardText.Inserted</item>
         <item name="changeDeletedStyle">@style/CardText.Deleted</item>
         <item name="backIcon">@drawable/ic_nav_previous_item</item>
-        <item name="nextIcon">@drawable/ic_action_next_item</item>
-        <item name="backgroundTop">@drawable/border_top</item>
+        <item name="nextIcon">@drawable/ic_action_next_item_dark</item>
+        <item name="backgroundTop">@drawable/border_top_dark</item>
         <item name="acceptIcon">@drawable/ic_action_accept</item>
-        <item name="cancelIcon">@drawable/ic_action_cancel</item>
-        <item name="signinButtonStyle">@style/SignInButton.Light</item>
+        <item name="cancelIcon">@drawable/ic_action_cancel_dark</item>
+        <item name="signinButtonStyle">@style/SignInButton</item>
         <item name="signinErrorStyle">@style/SigninFailure</item>
-        <item name="secureIcon">@drawable/ic_action_secure</item>
-        <item name="starredIcon">@drawable/ic_action_starred</item>
-        <item name="unstarredIcon">@drawable/ic_action_unstarred</item>
-        <item name="borderlessButtonBackground">@style/BorderlessBackground</item>
+        <item name="secureIcon">@drawable/ic_action_secure_dark</item>
+        <item name="starredIcon">@drawable/ic_action_starred_dark</item>
+        <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
+        <item name="borderlessButtonBackground">@style/BorderlessBackground.Dark</item>
         <item name="overflowIcon">@drawable/ic_action_overflow</item>
         <item name="upIcon">@drawable/ic_nav_expand</item>
-        <item name="sendIcon">@drawable/ic_action_send</item>
-        <item name="branchIcon">@drawable/ic_action_split</item>
+        <item name="sendIcon">@drawable/ic_action_send_dark</item>
+        <item name="branchIcon">@drawable/ic_action_split_dark</item>
         <item name="userIcon">@drawable/ic_account</item>
         <item name="dateIcon">@drawable/ic_calendar</item>
 
         <item name="colorPrimary">@color/card_background</item>
-        <item name="colorPrimaryDark">@color/actionbar_text</item>
-        <item name="material_drawer_background">@color/card_background</item>
+        <item name="colorPrimaryDark">@color/main_background</item>
+        <item name="colorAccent">@color/text_orange</item>
     </style>
 </resources>

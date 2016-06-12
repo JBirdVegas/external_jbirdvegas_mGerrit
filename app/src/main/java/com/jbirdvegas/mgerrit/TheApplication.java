@@ -9,6 +9,7 @@ import android.support.multidex.MultiDex;
 
 import com.jbirdvegas.mgerrit.database.DatabaseFactory;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.message.GerritChanged;
 import com.jbirdvegas.mgerrit.objects.CacheManager;
 import com.jbirdvegas.mgerrit.tasks.GerritService;
@@ -81,7 +82,7 @@ public class TheApplication extends Application
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(PrefsFragment.GERRIT_URL_KEY)) onGerritChanged(PrefsFragment.getCurrentGerrit(this));
         if (key.equals(PrefsFragment.APP_THEME)) {
-            this.setTheme(PrefsFragment.getCurrentThemeID(this));
+            ThemeHelper.setTheme(this);
         }
     }
 

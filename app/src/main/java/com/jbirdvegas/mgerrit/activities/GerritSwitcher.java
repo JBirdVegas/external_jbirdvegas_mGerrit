@@ -35,6 +35,7 @@ import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.TeamListAdapter;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.objects.GerritDetails;
 
 import org.jetbrains.annotations.Contract;
@@ -70,7 +71,7 @@ public class GerritSwitcher extends AppCompatActivity {
         Resources res = getResources();
         initialiseGerritList(res);
 
-        setTheme(PrefsFragment.getCurrentThemeID(this));
+        ThemeHelper.setTheme(this);
 
         setContentView(R.layout.gerrit_switcher);
 

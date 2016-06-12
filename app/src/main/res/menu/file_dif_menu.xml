@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
-  ~ Copyright (C) 2014 Android Open Kang Project (AOKP)
-  ~  Author: Evan Conway (P4R4N01D), 2014
+  ~ Copyright (C) 2016 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2016
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -16,15 +15,13 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="#FFFFFFFF" />
-        </shape>
-    </item>
-    <item android:top="1dp">
-        <shape android:shape="rectangle">
-            <solid android:color="@color/main_background" />
-        </shape>
-    </item>
-</layer-list>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:title="Select a file"
+        app:showAsAction="always"
+        android:id="@+id/diff_spinner"
+        app:actionViewClass="android.widget.Spinner"
+        android:dropDownVerticalOffset="25dp"/>
+</menu>

@@ -13,9 +13,8 @@
     <ViewFlipper
         android:id="@+id/diff_switcher"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:padding="@dimen/standard_padding"
-        android:layout_weight="9"
         android:background="?attr/mainBackgroundColor">
 
         <com.jbirdvegas.mgerrit.views.LoadingView
@@ -60,41 +59,4 @@
             app:modifiedStripeColor="@android:color/transparent"/>
 
     </ViewFlipper>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="?attr/backgroundTop">
-
-        <ImageButton
-            android:id="@+id/diff_previous"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:contentDescription="@string/diff_back"
-            android:onClick="onPreviousClick"
-            android:src="?attr/backIcon"/>
-
-        <ImageButton
-            android:id="@+id/diff_next"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:contentDescription="@string/diff_next"
-            android:onClick="onNextClick"
-            android:src="?attr/nextIcon"/>
-
-        <Spinner
-            android:id="@+id/diff_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_toLeftOf="@id/diff_next"
-            android:layout_toRightOf="@id/diff_previous"
-            android:dropDownVerticalOffset="25dp"/>
-    </RelativeLayout>
 </LinearLayout>

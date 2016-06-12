@@ -39,6 +39,7 @@ import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.database.Changes;
 import com.jbirdvegas.mgerrit.database.Users;
 import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
 import com.jbirdvegas.mgerrit.message.SigninCompleted;
 import com.jbirdvegas.mgerrit.objects.EventQueue;
@@ -71,7 +72,7 @@ public class SigninActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActive = true;
-        setTheme(PrefsFragment.getCurrentThemeID(this));
+        ThemeHelper.setTheme(this);
         setContentView(R.layout.sign_in);
 
         setupActionBar();

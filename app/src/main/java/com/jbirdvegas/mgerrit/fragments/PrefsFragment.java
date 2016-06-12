@@ -17,13 +17,6 @@ package com.jbirdvegas.mgerrit.fragments;
  *  limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.TimeZone;
-
-import org.jetbrains.annotations.Contract;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,10 +32,18 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.jbirdvegas.mgerrit.R;
-import com.jbirdvegas.mgerrit.activities.SigninActivity;
 import com.jbirdvegas.mgerrit.activities.GerritSwitcher;
+import com.jbirdvegas.mgerrit.activities.SigninActivity;
 import com.jbirdvegas.mgerrit.helpers.GerritTeamsHelper;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.objects.CommitterObject;
+
+import org.jetbrains.annotations.Contract;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.TimeZone;
 
 public class PrefsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
     public static final String GERRIT_URL_KEY = "gerrit_instances_key";
@@ -145,7 +146,7 @@ public class PrefsFragment extends PreferenceFragment implements Preference.OnPr
                 String summary = getReadableThemeName(o.toString());
                 if (summary != null){
                     preference.setSummary(summary);
-                    getActivity().setTheme(getInternalTheme(o.toString()));
+                    ThemeHelper.setTheme(getActivity(), o.toString());
                     getActivity().recreate();
                 } else {
                     preference.setSummary("");
@@ -333,22 +334,6 @@ public class PrefsFragment extends PreferenceFragment implements Preference.OnPr
         return userid;
     }
 
-    public static String getCurrentTheme(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(APP_THEME,
-                context.getResources().getString(R.string.theme_light_value));
-    }
-
-    public static int getCurrentThemeID(Context context) {
-        String themename = PreferenceManager.getDefaultSharedPreferences(context).getString(APP_THEME,
-                context.getResources().getString(R.string.theme_light_value));
-        Resources res = context.getResources();
-        if (themename.equalsIgnoreCase(res.getString(R.string.theme_dark_value))) {
-            return R.style.Theme_Dark;
-        } else {
-            return R.style.Theme_Light;
-        }
-    }
-
     private String getReadableThemeName(String pref) {
         Context context = getActivity();
         String[] entries = context.getResources().getStringArray(R.array.themes_entries);
@@ -362,20 +347,11 @@ public class PrefsFragment extends PreferenceFragment implements Preference.OnPr
     }
 
     private void setThemeSummary(Preference preference) {
-        String summary = getReadableThemeName(getCurrentTheme(getActivity()));
+        String summary = getReadableThemeName(ThemeHelper.getCurrentTheme(getActivity()));
         if (summary != null) {
             preference.setSummary(summary);
         } else {
             preference.setSummary("");
-        }
-    }
-
-    private int getInternalTheme(String pref) {
-        Resources res = getActivity().getResources();
-        if (pref.equalsIgnoreCase(res.getString(R.string.theme_dark_value))) {
-            return R.style.Theme_Dark;
-        } else {
-            return R.style.Theme_Light;
         }
     }
 

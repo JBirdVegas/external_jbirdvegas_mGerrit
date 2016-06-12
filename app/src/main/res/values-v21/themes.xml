@@ -19,7 +19,7 @@
   -->
 
 <resources>
-    <style name="Theme.Light" parent="MaterialDrawerTheme.Light">
+    <style name="Theme.Base" parent="MaterialDrawerTheme.Light">
         <item name="android:colorAccent">@color/text_green</item>
         <item name="android:textColorPrimary">@color/actionbar_text</item>
         <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
@@ -33,8 +33,8 @@
         <item name="refreshIcon">@drawable/ic_action_refresh</item>
         <item name="shareIcon">@drawable/ic_action_share</item>
         <item name="mainBackgroundColor">@color/main_background</item>
-        <item name="cardTextStyle">@style/CardText.Light</item>
-        <item name="cardTitleStyle">@style/CardTitle.Light</item>
+        <item name="cardTextStyle">@style/CardText</item>
+        <item name="cardTitleStyle">@style/CardTitle</item>
         <item name="colorCardBackground">@color/card_background</item>
         <item name="clickableCardBackground">@drawable/commit_card_background_states</item>
         <item name="selectableCardBackground">@drawable/files_card_background_states</item>
@@ -44,15 +44,15 @@
         <item name="saveIcon">@drawable/ic_action_save</item>
         <item name="searchMenuIcon">@drawable/ic_action_search</item>
         <item name="diffStyle">@style/Diff.Light</item>
-        <item name="changeInsertedStyle">@style/CardText.Inserted.Light</item>
-        <item name="changeDeletedStyle">@style/CardText.Deleted.Light</item>
+        <item name="changeInsertedStyle">@style/CardText.Inserted</item>
+        <item name="changeDeletedStyle">@style/CardText.Deleted</item>
         <item name="backIcon">@drawable/ic_nav_previous_item</item>
         <item name="nextIcon">@drawable/ic_action_next_item</item>
         <item name="backgroundTop">@drawable/border_top</item>
         <item name="acceptIcon">@drawable/ic_action_accept</item>
         <item name="cancelIcon">@drawable/ic_action_cancel</item>
         <item name="signinButtonStyle">@style/SignInButton.Light</item>
-        <item name="signinErrorStyle">@style/SigninFailure.Light</item>
+        <item name="signinErrorStyle">@style/SigninFailure</item>
         <item name="secureIcon">@drawable/ic_action_secure</item>
         <item name="starredIcon">@drawable/ic_action_starred</item>
         <item name="unstarredIcon">@drawable/ic_action_unstarred</item>
@@ -66,64 +66,10 @@
         <item name="searchViewStyle">@style/MaterialSearchView</item>
 
         <item name="colorPrimary">@color/card_background</item>
+        <item name="colorPrimaryDark">@color/actionbar_text</item>
         <item name="material_drawer_background">@color/card_background</item>
 
         <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowSharedElementEnterTransition">@transition/shared_view_transform</item>
-        <item name="android:windowSharedElementExitTransition">@transition/shared_view_transform</item>
-    </style>
-
-    <style name="Theme.Dark" parent="MaterialDrawerTheme">
-        <item name="android:colorAccent">@color/text_orange</item>
-        <item name="android:textColorPrimary">@color/actionbar_text_dark</item>
-        <item name="android:actionOverflowButtonStyle">@style/OverFlow.Dark</item>
-        <item name="appBarTheme">@style/NoActionBar.AppBarOverlay.Dark</item>
-        <item name="toolbarTheme">@style/NoActionBar.PopupOverlay.Dark</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-
-        <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
-        <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
-        <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
-        <item name="shareIcon">@drawable/ic_action_share_dark</item>
-        <item name="mainBackgroundColor">@color/main_background_dark</item>
-        <item name="cardTextStyle">@style/CardText.Dark</item>
-        <item name="cardTitleStyle">@style/CardTitle.Dark</item>
-        <item name="colorCardBackground">@color/card_background_dark</item>
-        <item name="clickableCardBackground">@drawable/commit_card_background_states_dark</item>
-        <item name="selectableCardBackground">@drawable/files_card_background_states_dark</item>
-        <item name="viewIcon">@android:drawable/ic_menu_view</item>
-        <item name="browserIcon">@drawable/ic_action_web_site_dark</item>
-        <item name="warningIcon">@drawable/ic_action_warning_dark</item>
-        <item name="saveIcon">@drawable/ic_action_save_dark</item>
-        <item name="searchMenuIcon">@drawable/ic_action_search_dark</item>
-        <item name="diffStyle">@style/Diff.Dark</item>
-        <item name="changeInsertedStyle">@style/CardText.Inserted.Dark</item>
-        <item name="changeDeletedStyle">@style/CardText.Deleted.Dark</item>
-        <item name="backIcon">@drawable/ic_nav_previous_item_dark</item>
-        <item name="nextIcon">@drawable/ic_action_next_item_dark</item>
-        <item name="backgroundTop">@drawable/border_top_dark</item>
-        <item name="acceptIcon">@drawable/ic_action_accept_dark</item>
-        <item name="cancelIcon">@drawable/ic_action_cancel_dark</item>
-        <item name="signinButtonStyle">@style/SignInButton</item>
-        <item name="signinErrorStyle">@style/SigninFailure</item>
-        <item name="secureIcon">@drawable/ic_action_secure_dark</item>
-        <item name="starredIcon">@drawable/ic_action_starred_dark</item>
-        <item name="unstarredIcon">@drawable/ic_action_unstarred_dark</item>
-        <item name="borderlessButtonBackground">@style/BorderlessBackground.Dark</item>
-        <item name="overflowIcon">@drawable/ic_action_overflow_dark</item>
-        <item name="upIcon">@drawable/ic_nav_expand_dark</item>
-        <item name="sendIcon">@drawable/ic_action_send_dark</item>
-        <item name="branchIcon">@drawable/ic_action_split_dark</item>
-        <item name="userIcon">@drawable/ic_account_dark</item>
-        <item name="dateIcon">@drawable/ic_calendar_dark</item>
-        <item name="searchViewStyle">@style/MaterialSearchView</item>
-
-        <item name="colorAccent">@color/material_drawer_accent</item>
-        <item name="colorPrimary">@color/card_background_dark</item>
-
-        <item name="android:windowContentTransitions">true</item>
-        <!-- Shared element transitions -->
         <item name="android:windowSharedElementEnterTransition">@transition/shared_view_transform</item>
         <item name="android:windowSharedElementExitTransition">@transition/shared_view_transform</item>
     </style>

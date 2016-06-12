@@ -25,16 +25,19 @@ import android.os.Bundle;
 import android.support.annotation.Keep;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.TextViewCompat;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.ViewFlipper;
 
 import com.jbirdvegas.mgerrit.R;
 import com.jbirdvegas.mgerrit.adapters.FileAdapter;
 import com.jbirdvegas.mgerrit.database.FileChanges;
-import com.jbirdvegas.mgerrit.fragments.PrefsFragment;
+import com.jbirdvegas.mgerrit.helpers.ThemeHelper;
 import com.jbirdvegas.mgerrit.helpers.Tools;
 import com.jbirdvegas.mgerrit.message.ChangeDiffLoaded;
 import com.jbirdvegas.mgerrit.message.ErrorDuringConnection;
@@ -84,12 +87,6 @@ public class DiffViewer extends BaseDrawerActivity
                 mSelectedFilePath = null;
                 switchViews(DiffType.Text);
             }
-
-            int previousPosition = mAdapter.getPreviousPosition(position);
-            mBtnPrevious.setVisibility(previousPosition >= 0 ? View.VISIBLE : View.INVISIBLE);
-
-            int nextPosition = mAdapter.getNextPosition(position);
-            mBtnNext.setVisibility(nextPosition >= 0 ? View.VISIBLE : View.INVISIBLE);
         }
 
         @Override
@@ -98,7 +95,6 @@ public class DiffViewer extends BaseDrawerActivity
         }
     };
 
-    private ImageButton mBtnPrevious, mBtnNext;
     private ViewFlipper mSwitcher;
     private LoadingView mLoadingView;
 
@@ -119,12 +115,11 @@ public class DiffViewer extends BaseDrawerActivity
 
     private enum DiffType { Loading, Text, Image }
 
-
-    public static int LOADER_DIFF = 14;
+    private static int LOADER_DIFF = 14;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        this.setTheme(PrefsFragment.getCurrentThemeID(this));
+        ThemeHelper.setTheme(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.diff_viewer);
@@ -136,28 +131,15 @@ public class DiffViewer extends BaseDrawerActivity
         }
 
         initNavigationDrawer(false);
-        setChangeTitle(mChangeNumber);
 
         mFilePath = intent.getStringExtra(FILE_PATH_TAG);
         mPatchsetNumber = intent.getIntExtra(PATCH_SET_NUMBER_TAG, 0);
 
         mLoadingView = (LoadingView) findViewById(R.id.diff_loading);
         mDiffTextView = (DiffTextView) findViewById(R.id.diff_view_diff);
-        mSpinner = (Spinner) findViewById(R.id.diff_spinner);
+
         mSwitcher = (ViewFlipper) findViewById(R.id.diff_switcher);
         mSwitcher.setDisplayedChild(DiffType.Loading.ordinal());
-
-        mBtnPrevious = (ImageButton) findViewById(R.id.diff_previous);
-        mBtnNext = (ImageButton) findViewById(R.id.diff_next);
-
-        mAdapter = new FileAdapter(this, null);
-        mSpinner.setAdapter(mAdapter);
-        mSpinner.setOnItemSelectedListener(mSelectedListener);
-
-        mAdapter = new FileAdapter(this, null);
-        mSpinner.setAdapter(mAdapter);
-        mSpinner.setOnItemSelectedListener(mSelectedListener);
-        getSupportLoaderManager().initLoader(LOADER_DIFF, null, this);
 
         mEventBus = EventBus.getDefault();
     }
@@ -215,17 +197,11 @@ public class DiffViewer extends BaseDrawerActivity
             builder.append("Diff not found!");
         } else {
             // reset text size to default
-            mDiffTextView.setTextAppearance(this, android.R.style.TextAppearance_DeviceDefault_Small);
+            TextViewCompat.setTextAppearance(mDiffTextView, android.R.style.TextAppearance_DeviceDefault_Small);
             mDiffTextView.setTypeface(Typeface.MONOSPACE);
         }
         // rebuild text; required to respect the \n
         mDiffTextView.setDiffText(builder.toString());
-    }
-
-    // Set the title of this activity
-    private void setChangeTitle(Integer changeNumber) {
-        String s = getResources().getString(R.string.change_detail_heading);
-        setTitle(String.format(s, changeNumber));
     }
 
     private void switchViews(DiffType type) {
@@ -234,18 +210,6 @@ public class DiffViewer extends BaseDrawerActivity
 
     private boolean isDisplayedView(DiffType type) {
         return mSwitcher.getDisplayedChild() == type.ordinal();
-    }
-
-    // Handler for clicking on the previous file button
-    public void onPreviousClick(View view) {
-        int position = mAdapter.getPreviousPosition(mSpinner.getSelectedItemPosition());
-        if (position >= 0) mSpinner.setSelection(position);
-    }
-
-    // Handler for clicking on the next file button
-    public void onNextClick(View view) {
-        int position = mAdapter.getNextPosition(mSpinner.getSelectedItemPosition());
-        if (position >= 0) mSpinner.setSelection(position);
     }
 
     @Override
@@ -274,6 +238,22 @@ public class DiffViewer extends BaseDrawerActivity
         } else {
             mSwitcher.setDisplayedChild(savedInstanceState.getInt(_DIFF_STATE, 0));
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.file_dif_menu, menu);
+
+        MenuItem item = menu.findItem(R.id.diff_spinner);
+        mSpinner = (Spinner) MenuItemCompat.getActionView(item);
+
+        mAdapter = new FileAdapter(this, null);
+        mSpinner.setAdapter(mAdapter);
+        mSpinner.setOnItemSelectedListener(mSelectedListener);
+
+        getSupportLoaderManager().initLoader(LOADER_DIFF, null, this);
+
+        return true;
     }
 
     @Override

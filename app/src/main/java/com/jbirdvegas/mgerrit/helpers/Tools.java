@@ -26,6 +26,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.BaseAdapter;
@@ -168,7 +169,7 @@ public class Tools {
     }
 
     public static void colorPath(Resources r, TextView view,
-                                 String statusText, boolean usingLightTheme) {
+                                 String statusText) {
         ChangedFileInfo.Status status = ChangedFileInfo.Status.getValue(statusText);
         int green = r.getColor(R.color.text_green);
         int red = r.getColor(R.color.text_red);
@@ -179,11 +180,8 @@ public class Tools {
             view.setTextColor(red);
         } else {
             // Need to determine from the current theme what the default color is and set it back
-            if (usingLightTheme) {
-                view.setTextColor(r.getColor(R.color.text_light));
-            } else {
-                view.setTextColor(r.getColor(R.color.text_dark));
-            }
+            int color = ContextCompat.getColor(view.getContext(), R.color.text);
+            view.setTextColor(color);
         }
     }
 

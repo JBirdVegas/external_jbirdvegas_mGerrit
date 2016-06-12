@@ -5,7 +5,7 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle:2.1.2'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'org.apache.commons:commons-lang3:3.4'
         classpath 'org.ajoberstar:gradle-git:1.1.0'
@@ -74,6 +74,8 @@ android {
         exclude 'META-INF/ECLIPSE_.SF'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
     }
 
     defaultConfig {
@@ -83,6 +85,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 23
         println("versionCode: $versionCode versionName: $versionName")
+        vectorDrawables.useSupportLibrary = true
     }
 
     productFlavors {
@@ -102,12 +105,12 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
 
     compile 'com.google.code.gson:gson:2.6.1'
-    compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.android.volley:volley:1.0.0'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'joda-time:joda-time:2.9.2'
+    compile 'joda-time:joda-time:2.9.4'
     compile 'org.ajoberstar:gradle-git:1.1.0'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile('com.github.dmytrodanylyk.android-process-button:library:1.0.4') {
@@ -117,7 +120,7 @@ dependencies {
 
     /* TODO: Enable this when the Android variant of the Gerrit Rest Java Client is officially
      *  released. The dependency on jitpack can then be removed */
-    compile('com.github.p4r4n01d:gerrit-rest-java-client:21e71c12422') {
+    compile('com.github.uwolfer:gerrit-rest-java-client:dd4837b7205') {
         exclude module: 'httpclient'
     }
     // These are dependencies of the gerrit-rest-java-client library above
@@ -129,7 +132,7 @@ dependencies {
 
     compile 'com.anupcowkur:reservoir:2.1'
 
-    compile('com.mikepenz:materialdrawer:5.1.1@aar') {
+    compile('com.mikepenz:materialdrawer:5.2.9@aar') {
         transitive = true
         exclude module: 'appcompat-v7'
     }

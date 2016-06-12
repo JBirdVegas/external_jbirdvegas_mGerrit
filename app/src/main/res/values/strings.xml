@@ -158,6 +158,7 @@
     <string name="commit_topic">Topic:</string>
 
     <string name="change_theme">Select Theme</string>
+    <string name="theme_auto">Auto (Day/Night)</string>
     <string name="theme_light">Light theme</string>
     <string name="theme_dark">Dark theme</string>
 

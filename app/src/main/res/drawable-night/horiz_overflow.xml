@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
-  ~ Copyright (C) 2014 Android Open Kang Project (AOKP)
-  ~  Author: Evan Conway (P4R4N01D), 2014
+  ~ Copyright (C) 2015 Android Open Kang Project (AOKP)
+  ~  Author: Evan Conway (P4R4N01D), 2015
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -17,10 +16,9 @@
   ~  limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_enabled="false" android:drawable="@color/card_background_dark"/>
-    <item android:state_pressed="true" android:drawable="@color/card_pressed_dark" />
-    <item android:state_selected="true" android:drawable="@color/card_pressed_dark" />
-    <item android:state_activated="true" android:drawable="@color/card_pressed_dark" />
-    <item android:drawable="@color/card_background_dark"/>
-</selector>
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="90"
+    android:toDegrees="90"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:drawable="@drawable/ic_action_overflow" />
