@@ -1,7 +1,7 @@
 package com.jbirdvegas.mgerrit.helpers;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
-import org.jetbrains.annotations.Contract;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -31,8 +31,7 @@ public class MD5Helper {
     }
 
     @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
-    @Contract("null -> null")
-    public static String md5Hex(String message) {
+    public static String md5Hex(@NonNull String message) {
         try {
             MessageDigest md =
                     MessageDigest.getInstance("MD5");

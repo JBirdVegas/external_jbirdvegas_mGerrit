@@ -20,6 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/colorCardBackground"
     android:orientation="vertical"
     android:id="@+id/layout_quick_comment"
@@ -53,7 +54,7 @@
             android:contentDescription="@string/review_advanced_comment_description"
             android:minHeight="36dp"
             android:minWidth="36dp"
-            android:src="?attr/upIcon"
+            app:srcCompat="?attr/upIcon"
             android:tint="?attr/mainBackgroundColor" />
 
         <EditText

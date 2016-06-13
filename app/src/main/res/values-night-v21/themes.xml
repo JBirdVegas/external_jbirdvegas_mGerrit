@@ -37,7 +37,7 @@
         <item name="selectableCardBackground">@drawable/files_card_background_states</item>
         <item name="viewIcon">@android:drawable/ic_menu_view</item>
         <item name="browserIcon">@drawable/ic_action_web_site_dark</item>
-        <item name="warningIcon">@drawable/ic_action_warning</item>
+        <item name="warningIcon">@drawable/ic_action_warning_dark</item>
         <item name="saveIcon">@drawable/ic_action_save_dark</item>
         <item name="searchMenuIcon">@drawable/ic_action_search_dark</item>
         <item name="diffStyle">@style/Diff.Dark</item>
