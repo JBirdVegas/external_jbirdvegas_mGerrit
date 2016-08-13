@@ -109,6 +109,8 @@ public class ImageProcessor extends SyncProcessor<Bitmap> {
      * This will also clear up old versions of this image from previous patchsets */
     @Override
     void doPostProcess(Bitmap data) {
+        if (data == null) return;
+
         CacheManager.putImage(mCacheKey, data, false);
         /* Cleanup diffs for any superceeded revisions of this change as we will never attempt
          * to fetch them again) */

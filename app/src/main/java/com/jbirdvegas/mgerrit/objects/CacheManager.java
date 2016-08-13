@@ -30,18 +30,20 @@ import com.anupcowkur.reservoir.ReservoirDeleteCallback;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.anupcowkur.reservoir.ReservoirPutCallback;
 import com.jbirdvegas.mgerrit.BuildConfig;
+import com.jbirdvegas.mgerrit.R;
+import com.jbirdvegas.mgerrit.helpers.AnalyticsHelper;
 import com.jbirdvegas.mgerrit.helpers.MD5Helper;
 import com.jbirdvegas.mgerrit.message.CacheDataRetrieved;
 import com.jbirdvegas.mgerrit.message.CacheFailure;
-import com.vincentbrison.openlibraries.android.dualcache.lib.DualCache;
-import com.vincentbrison.openlibraries.android.dualcache.lib.DualCacheBuilder;
-import com.vincentbrison.openlibraries.android.dualcache.lib.DualCacheContextUtils;
-import com.vincentbrison.openlibraries.android.dualcache.lib.DualCacheLogUtils;
-import com.vincentbrison.openlibraries.android.dualcache.lib.Serializer;
-import com.vincentbrison.openlibraries.android.dualcache.lib.SizeOf;
+import com.vincentbrison.openlibraries.android.dualcache.Builder;
+import com.vincentbrison.openlibraries.android.dualcache.CacheSerializer;
+import com.vincentbrison.openlibraries.android.dualcache.DualCache;
+import com.vincentbrison.openlibraries.android.dualcache.SizeOf;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
 
 /*
  * Wrapper caching functions acting as a facade around the caching libraries used so we can
@@ -60,6 +62,7 @@ public class CacheManager<T> {
     private static final String BITMAP_CACHE_NAME = "bitmap_cache";
     private static final int CACHE_VERSION = 1;
     public static final int DISK_MAX_SIZE = 12*1024*1024; // 12MB in bytes
+    public static final String CACHE_FILE_PREFIX = "dualcache";
 
     private final EventBus mEventBus;
     private static DualCache<Bitmap> sBitmapCache;
@@ -76,22 +79,22 @@ public class CacheManager<T> {
             Log.e(TAG, "Failed to initialise the cache.", e);
         }
 
-        DualCacheContextUtils.setContext(context);
-        if (BuildConfig.DEBUG) DualCacheLogUtils.enableLog();
+        File folder = context.getDir(CACHE_FILE_PREFIX + BITMAP_CACHE_NAME, Context.MODE_PRIVATE);
+
         // Initialize a cache to store images
-        sBitmapCache = new DualCacheBuilder<>(BITMAP_CACHE_NAME, CACHE_VERSION, Bitmap.class)
+        Builder<Bitmap> cacheBuilder = new Builder<>(BITMAP_CACHE_NAME, CACHE_VERSION, Bitmap.class)
                 .useReferenceInRam(CACHE_SIZE, new SizeOf<Bitmap>() {
                     @Override
                     public int sizeOf(Bitmap object) {
                         return object.getByteCount();
                     }
                 })
-                .useCustomSerializerInDisk(DISK_MAX_SIZE, true, new Serializer<Bitmap>() {
+                .useSerializerInDisk(DISK_MAX_SIZE, folder, new CacheSerializer<Bitmap>() {
                     @Override
                     public Bitmap fromString(String encodedString) {
                         // See: http://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
                         try {
-                            byte [] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+                            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
                             Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
                             return bitmap;
                         } catch (Exception e) {
@@ -104,12 +107,15 @@ public class CacheManager<T> {
                     public String toString(Bitmap bitmap) {
                         // See: http://stackoverflow.com/questions/13562429/how-many-ways-to-convert-bitmap-to-string-and-vice-versa
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-                        byte [] b = baos.toByteArray();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        byte[] b = baos.toByteArray();
                         String temp = Base64.encodeToString(b, Base64.DEFAULT);
                         return temp;
                     }
                 });
+
+        if (BuildConfig.DEBUG) cacheBuilder.enableLog();
+        sBitmapCache = cacheBuilder.build();
     }
 
     /**

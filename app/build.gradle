@@ -120,7 +120,7 @@ dependencies {
 
     /* TODO: Enable this when the Android variant of the Gerrit Rest Java Client is officially
      *  released. The dependency on jitpack can then be removed */
-    compile('com.github.uwolfer:gerrit-rest-java-client:2a9ccee699c') {
+    compile('com.github.uwolfer:gerrit-rest-java-client:dd4837b7205') {
         exclude module: 'httpclient'
     }
     // These are dependencies of the gerrit-rest-java-client library above
@@ -132,12 +132,12 @@ dependencies {
 
     compile 'com.anupcowkur:reservoir:2.1'
 
-    compile('com.mikepenz:materialdrawer:5.2.9@aar') {
+    compile('com.mikepenz:materialdrawer:5.4.0@aar') {
         transitive = true
         exclude module: 'appcompat-v7'
     }
 
-    compile('com.vincentbrison.openlibraries.android:dualcache:2.2.2@jar') {
+    compile('com.vincentbrison.openlibraries.android:dualcache:3.0.0@jar') {
         transitive = true
     }
 }
