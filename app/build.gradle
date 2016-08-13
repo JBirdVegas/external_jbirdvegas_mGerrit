@@ -104,7 +104,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:design:23.3.0'
 
-    compile 'com.google.code.gson:gson:2.6.1'
+    compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
@@ -132,12 +132,12 @@ dependencies {
 
     compile 'com.anupcowkur:reservoir:2.1'
 
-    compile('com.mikepenz:materialdrawer:5.2.9@aar') {
+    compile('com.mikepenz:materialdrawer:5.4.0@aar') {
         transitive = true
         exclude module: 'appcompat-v7'
     }
 
-    compile('com.vincentbrison.openlibraries.android:dualcache:2.2.2@jar') {
+    compile('com.vincentbrison.openlibraries.android:dualcache:3.0.0@jar') {
         transitive = true
     }
 }

@@ -26,7 +26,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
-        <item name="gerritIcon">@drawable/ic_menu_source</item>
+        <item name="gerritIcon">@drawable/ic_menu_source_dark</item>
         <item name="projectsIcon">@drawable/ic_menu_project_dark</item>
         <item name="refreshIcon">@drawable/ic_action_refresh_dark</item>
         <item name="shareIcon">@drawable/ic_action_share_dark</item>

@@ -28,4 +28,5 @@
     <string name="cr_change_id" translatable="false" />
     <string name="cr_change_number" translatable="false" />
     <string name="cr_gerrit_instance" translatable="false" />
+    <string name="cr_querying_table" translatable="false" />
 </resources>
