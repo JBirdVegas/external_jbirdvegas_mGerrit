@@ -5,11 +5,11 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'com.android.tools.build:gradle:2.3.0-beta1'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'org.apache.commons:commons-lang3:3.4'
         classpath 'org.ajoberstar:gradle-git:1.1.0'
-        classpath 'io.fabric.tools:gradle:1.15.2'
+        classpath 'io.fabric.tools:gradle:1.21.6'
     }
 }
 
@@ -28,8 +28,8 @@ repositories {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
     // compile Using Java 7
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -83,7 +83,7 @@ android {
         versionName helper.versionName
         versionCode helper.versionCode
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 25
         println("versionCode: $versionCode versionName: $versionName")
         vectorDrawables.useSupportLibrary = true
     }
@@ -101,10 +101,10 @@ dependencies {
     }
     compile 'org.jetbrains:annotations:13.0'
 
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:design:23.3.0'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
 
-    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.google.code.gson:gson:2.7'
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'

@@ -148,6 +148,10 @@ public class GerritSearchView extends SearchView
             }
         }
 
+        /* In case we change the search query without showing the search view post a new event
+         * for the CardsFragment to show the Refine Search card */
+        mEventBus.post(new SearchStateChanged(getVisibility() == VISIBLE));
+
         mEventBus.postSticky(new SearchQueryChanged(where, bindArgs,
                 getContext().getClass().getSimpleName(), tokens));
         return true;

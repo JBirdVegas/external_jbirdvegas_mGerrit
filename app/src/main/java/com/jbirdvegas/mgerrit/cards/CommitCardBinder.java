@@ -20,6 +20,7 @@ package com.jbirdvegas.mgerrit.cards;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,9 +70,9 @@ public class CommitCardBinder implements SimpleCursorAdapter.ViewBinder, CardBin
         this.mRequestQuery = requestQueue;
         this.mContext = context;
 
-        this.mOrange = context.getResources().getColor(android.R.color.holo_orange_light);
-        this.mGreen = context.getResources().getColor(R.color.text_green);
-        this.mRed = context.getResources().getColor(R.color.text_red);
+        this.mOrange = ContextCompat.getColor(context, R.color.text_orange);
+        this.mGreen = ContextCompat.getColor(context, R.color.text_green);
+        this.mRed = ContextCompat.getColor(context, R.color.text_red);
 
         mServerTimeZone = PrefsFragment.getServerTimeZone(context);
         mLocalTimeZone = PrefsFragment.getLocalTimeZone(context);

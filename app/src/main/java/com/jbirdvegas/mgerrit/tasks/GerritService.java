@@ -21,10 +21,9 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
-
-import org.jetbrains.annotations.NotNull;
 
 public class GerritService extends IntentService {
 
@@ -75,8 +74,11 @@ public class GerritService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(@NotNull Intent intent) {
+    protected void onHandleIntent(@Nullable Intent intent) {
         SyncProcessor processor;
+
+        // We cannot do anything if no intent was provided
+        if (intent == null) return;
 
         // Determine which SyncProcessor to use here
         DataType dataType = (DataType) intent.getSerializableExtra(DATA_TYPE_KEY);

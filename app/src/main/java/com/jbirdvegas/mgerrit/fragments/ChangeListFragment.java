@@ -2,7 +2,7 @@ package com.jbirdvegas.mgerrit.fragments;
 
 /*
  * Copyright (C) 2013 Android Open Kang Project (AOKP)
- *  Author: Evan Conway (P4R4N01D), 2013
+ *  Author: Evan Conway (P4R4N01D), 2015
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class ChangeListFragment extends Fragment {
         // tab. We can also use ActionBar.Tab#select() to do this if we have
         // a reference to the Tab.
         mViewPager
-                .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener()
+                .addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener()
                 {
                     @Override
                     public void onPageSelected(int position)
@@ -112,6 +112,12 @@ public class ChangeListFragment extends Fragment {
         mTitles = new ArrayList<>();
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++)
             mTitles.add(mSectionsPagerAdapter.getPageTitle(i));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mViewPager.clearOnPageChangeListeners();
     }
 
     public void refreshTabs() {

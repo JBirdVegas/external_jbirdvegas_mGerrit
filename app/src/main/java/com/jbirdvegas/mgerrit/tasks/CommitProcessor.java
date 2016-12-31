@@ -120,7 +120,7 @@ class CommitProcessor extends SyncProcessor<ChangeInfo> {
 
         UserChanges.updateChange(context, commit);
 
-        if (!commit.permittedLabels.isEmpty()) {
+        if (commit.permittedLabels != null && !commit.permittedLabels.isEmpty()) {
             Labels.insertLabels(context, commit.project, commit.labels, commit.permittedLabels);
         }
 

@@ -23,7 +23,7 @@
         <item>AOSP</item>
         <item>BlissRoms</item>
         <item>CarbonROM</item>
-        <item>CyanogenMod</item>
+        <item>LineageOS</item>
         <item>DirtyUnicorns</item>
         <item>Gerrit Review</item>
         <item>LiquidSmooth</item>
@@ -43,7 +43,7 @@
         <item>https://android-review.googlesource.com/</item>
         <item>http://review.blissroms.com/</item>
         <item>https://review.carbonrom.org/</item>
-        <item>http://review.cyanogenmod.org/</item>
+        <item>https://review.lineageos.org/</item>
         <item>http://gerrit.dirtyunicorns.com/</item>
         <item>https://gerrit-review.googlesource.com/</item>
         <item>http://gerrit.liquidsmooth.net/</item>
