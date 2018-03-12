@@ -1,6 +1,7 @@
 mGerrit
 =======
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 [![Build Status](https://api.travis-ci.org/JBirdVegas/external_jbirdvegas_mGerrit.png?branch=master)](https://api.travis-ci.org/JBirdVegas/external_jbirdvegas_mGerrit)
 
 Gerrit instance viewer supporting the most popular Android ROMs. Supports tracking the Gerrit Instances for
